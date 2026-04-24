@@ -12,7 +12,7 @@ User config: `data/user.json` (gitignored).
 
 ```jsonc
 {
-  "schema_version": "1.1.2",
+  "schema_version": "1.1.3",
   "ingested_at": "2026-04-23T14:00:00Z",
   "source": "albert-paste",
   "term": {
@@ -100,7 +100,8 @@ User config: `data/user.json` (gitignored).
   "notes": null,
   "topic": null,
   "display_timezone": null,
-  "last_updated_from_paste": "2026-04-23T14:00:00Z"
+  "last_updated_from_paste": "2026-04-23T14:00:00Z",
+  "_raw_paste_block": "ENGR-UH 2010 | 4 units\nClass#: 20668\n..."
 }
 ```
 
@@ -132,6 +133,16 @@ User config: `data/user.json` (gitignored).
 - `last_updated_from_paste` — ISO timestamp of the paste that produced
   the current record. Upserted on every paste that mentions this
   `class_number`.
+- `_raw_paste_block` — the source text that produced this section,
+  preserved verbatim (trailing blank lines trimmed). Used by the Edit
+  module (Piece 3c) to show parser input alongside parser output for
+  repair workflows. Not intended for display in normal UI. For
+  variable-topic courses, the preceding `Topic: <topic>` line is
+  included in the section it prefixes — that line is contextual to the
+  section that immediately follows it in the paste. The leading
+  underscore marks this as internal/provenance data; fields prefixed
+  with `_` are not user-editable (the store rejects `setEdit` calls
+  targeting them).
 
 ### Status
 

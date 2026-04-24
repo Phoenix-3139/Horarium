@@ -24,7 +24,7 @@
 
 import { parseCourse } from "./course.js";
 
-const SCHEMA_VERSION = "1.1.2";
+const SCHEMA_VERSION = "1.1.3";
 
 // Prefer the "Course Search" form when present (it's the unambiguous term
 // header). Fall back to a bare "<Season> <Year>" anywhere in the preamble,

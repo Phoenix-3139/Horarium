@@ -812,3 +812,76 @@ describe("parseCourse — duplicate disagreement", () => {
     expect(lengthWarning.values).toEqual([1, 2]);
   });
 });
+
+describe("parseCourse — _raw_paste_block provenance", () => {
+  it("every section carries a _raw_paste_block equal to its source slice", () => {
+    const sec1 = sectionBlock({
+      code: "ENGR-UH 1000",
+      classNum: "20800",
+      session: "A71 08/31/2026 - 10/16/2026",
+      sectionCode: "001",
+      meeting: "08/31/2026 - 10/16/2026 Mon 9.55 AM - 11.10 AM at SS 018 with A, A",
+    });
+    const sec2 = sectionBlock({
+      code: "ENGR-UH 1000",
+      classNum: "20801",
+      session: "A71 08/31/2026 - 10/16/2026",
+      sectionCode: "LAB1",
+      component: "Laboratory",
+      meeting: "08/31/2026 - 10/16/2026 Wed 2.00 PM - 3.15 PM at SS 019 with B, B",
+    });
+    const block = courseBlock({
+      header: "ENGR-UH 1000 Test",
+      description: "Desc.",
+      sections: [sec1, sec2],
+    });
+    const { course } = parseCourse(block);
+    expect(course.sections).toHaveLength(2);
+    for (const s of course.sections) {
+      expect(typeof s._raw_paste_block).toBe("string");
+      expect(s._raw_paste_block.length).toBeGreaterThan(0);
+      expect(s._raw_paste_block).toContain(`Class#: ${s.class_number}`);
+      expect(s._raw_paste_block.startsWith("ENGR-UH 1000")).toBe(true);
+      // trailing blank lines trimmed
+      expect(/\s$/.test(s._raw_paste_block)).toBe(false);
+    }
+    // Blocks should not overlap: class numbers stay inside their own block.
+    expect(course.sections[0]._raw_paste_block).not.toContain("20801");
+    expect(course.sections[1]._raw_paste_block).not.toContain("20800");
+  });
+
+  it("Topics course: Topic: line is included in the block of the section it prefixes, not the previous section", () => {
+    const sec1 = sectionBlock({
+      code: "GERM-UA 9111",
+      classNum: "30001",
+      session: "AD 08/31/2026 - 12/14/2026",
+      sectionCode: "001",
+      meeting: "08/31/2026 - 12/14/2026 Mon 10.00 AM - 11.15 AM at Room 1 with Prof, A",
+    });
+    const sec2 = sectionBlock({
+      code: "GERM-UA 9111",
+      classNum: "30002",
+      session: "AD 08/31/2026 - 12/14/2026",
+      sectionCode: "002",
+      meeting: "08/31/2026 - 12/14/2026 Tue 10.00 AM - 11.15 AM at Room 2 with Prof, B",
+    });
+    const block = courseBlock({
+      header: "GERM-UA 9111 Topics in German",
+      description: "Varies.",
+      sections: [
+        "Topic: Kafka and Modernity\n" + sec1,
+        "Topic: Weimar Cinema\n" + sec2,
+      ],
+    });
+    const { course } = parseCourse(block);
+    expect(course.has_topics).toBe(true);
+    expect(course.sections[0].topic).toBe("Kafka and Modernity");
+    expect(course.sections[1].topic).toBe("Weimar Cinema");
+    // Each section's raw block starts with its own Topic: line.
+    expect(course.sections[0]._raw_paste_block.startsWith("Topic: Kafka and Modernity")).toBe(true);
+    expect(course.sections[1]._raw_paste_block.startsWith("Topic: Weimar Cinema")).toBe(true);
+    // Boundaries are clean — each Topic line appears in exactly one block.
+    expect(course.sections[0]._raw_paste_block).not.toContain("Weimar Cinema");
+    expect(course.sections[1]._raw_paste_block).not.toContain("Kafka and Modernity");
+  });
+});

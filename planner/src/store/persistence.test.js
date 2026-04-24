@@ -91,7 +91,7 @@ function buildParserOutput(courseCount = 1) {
     ],
   }));
   return {
-    schema_version: "1.1.2",
+    schema_version: "1.1.3",
     header: {
       term: "Fall 2026",
       subject_code: "ENGR-UH",
@@ -359,7 +359,7 @@ describe("persistence — schema version mismatch on load", () => {
     expect(r.warning).toBeDefined();
     expect(r.warning.type).toBe("schema_version_mismatch");
     expect(r.warning.loaded_version).toBe("1.0");
-    expect(r.warning.current_version).toBe("1.1.2");
+    expect(r.warning.current_version).toBe("1.1.3");
     // Data still loaded.
     expect(cat2.getEffective().courses).toHaveLength(1);
   });

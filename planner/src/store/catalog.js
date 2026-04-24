@@ -17,7 +17,7 @@
 // Paths are validated against a schema allowlist at setEdit time. Invalid
 // paths throw synchronously so the UI can't accumulate garbage.
 
-const SCHEMA_VERSION = "1.1.2";
+const SCHEMA_VERSION = "1.1.3";
 
 // Path shapes we accept on a Section edit. The "_deleted" escape hatch is
 // listed explicitly here rather than in a separate branch.

@@ -1,6 +1,6 @@
 {
   "_comment": "Expected parser output for the first 3 courses in engr-uh-fall2026.txt. This is the ground truth the parser must match. See EXPECTED_OUTPUT_WALKTHROUGH.md for the reasoning behind every field.",
-  "schema_version": "1.1.2",
+  "schema_version": "1.1.3",
   "header": {
     "term": "Fall 2026",
     "subject_code": "ENGR-UH",

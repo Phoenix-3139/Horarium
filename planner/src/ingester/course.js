@@ -306,7 +306,9 @@ export function parseCourse(blockText) {
   );
   const sectionStarts = [];
   const topicByStartLine = new Map();
+  const topicLineByStartLine = new Map();
   let pendingTopic = null;
+  let pendingTopicLine = null;
   let no_sections_offered = false;
   const NO_CLASSES_MARKER = "No Classes Scheduled for the Terms Offered";
   for (let j = sectionRegionStart; j < lines.length; j++) {
@@ -318,6 +320,7 @@ export function parseCourse(blockText) {
     }
     const topicMatch = trimmed.match(/^Topic:\s+(.+?)\s*$/);
     if (topicMatch) {
+      if (pendingTopic === null) pendingTopicLine = j;
       pendingTopic = topicMatch[1];
       continue;
     }
@@ -325,17 +328,33 @@ export function parseCourse(blockText) {
       sectionStarts.push(j);
       if (pendingTopic !== null) {
         topicByStartLine.set(j, pendingTopic);
+        topicLineByStartLine.set(j, pendingTopicLine);
         pendingTopic = null;
+        pendingTopicLine = null;
       }
     }
   }
   const has_topics = topicByStartLine.size > 0;
 
+  // Raw-block boundaries: the parser-facing slice still starts at the
+  // section-header line (so parseSection sees exactly what it did before),
+  // but the `_raw_paste_block` provenance field includes any preceding
+  // "Topic: ..." line as part of the section it prefixes. Rationale: a
+  // Topic: line is context for the section that immediately follows it in
+  // the paste, so the repair-tool UI should show it next to that section's
+  // output, not the previous section's.
   const parsedSections = [];
   for (let idx = 0; idx < sectionStarts.length; idx++) {
     const start = sectionStarts[idx];
     const end = idx + 1 < sectionStarts.length ? sectionStarts[idx + 1] : lines.length;
     const sectionText = lines.slice(start, end).join("\n");
+    const rawStart = topicLineByStartLine.has(start) ? topicLineByStartLine.get(start) : start;
+    const nextStart = idx + 1 < sectionStarts.length ? sectionStarts[idx + 1] : null;
+    const nextTopicLine = nextStart != null && topicLineByStartLine.has(nextStart)
+      ? topicLineByStartLine.get(nextStart)
+      : null;
+    const rawEnd = nextTopicLine != null ? nextTopicLine : (nextStart != null ? nextStart : lines.length);
+    const rawBlock = lines.slice(rawStart, rawEnd).join("\n").replace(/\s+$/, "");
     const result = parseSection(sectionText, {
       course_code,
       course_units: units,
@@ -343,6 +362,7 @@ export function parseCourse(blockText) {
     if (result.section) {
       const topic = topicByStartLine.get(start);
       if (topic != null) result.section.topic = topic;
+      result.section._raw_paste_block = rawBlock;
       parsedSections.push(result.section);
     }
     for (const w of result.warnings) warnings.push(w);
@@ -363,6 +383,10 @@ export function parseCourse(blockText) {
       const first = byClassNumber.get(s.class_number);
       const fields = new Set([...Object.keys(first), ...Object.keys(s)]);
       for (const field of fields) {
+        // Skip internal/provenance fields — they're expected to differ
+        // across duplicate occurrences (different paste positions) and
+        // aren't user-facing data.
+        if (field.startsWith("_")) continue;
         if (JSON.stringify(first[field]) === JSON.stringify(s[field])) continue;
         for (const leaf of diffAtLeaves(first[field], s[field], field)) {
           warnings.push({

@@ -101,7 +101,7 @@ describe("parse — empty input", () => {
   it("returns the empty shape with an empty_input warning, not an exception", () => {
     const out = parse("");
     expect(out).toEqual({
-      schema_version: "1.1.2",
+      schema_version: "1.1.3",
       header: null,
       courses: [],
       warnings: [{ type: "empty_input", message: "Input paste text was empty" }],
@@ -115,7 +115,7 @@ describe("parse — empty input", () => {
 describe("parse — header parsing", () => {
   it("extracts all four header fields from a well-formed paste", () => {
     const out = parse(minimalPaste());
-    expect(out.schema_version).toBe("1.1.2");
+    expect(out.schema_version).toBe("1.1.3");
     expect(out.header).toEqual({
       term: "Fall 2026",
       subject_code: "ENGR-UH",
@@ -563,7 +563,7 @@ describe("parse — real fixture (engr-uh-fall2026.txt)", () => {
         return obj;
       };
       const expectedCourses = stripAnnotations(expected.courses);
-      expect(out.courses.slice(0, 3)).toEqual(expectedCourses);
+      expect(stripAnnotations(out.courses.slice(0, 3))).toEqual(expectedCourses);
     },
   );
 });

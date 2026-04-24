@@ -5,7 +5,7 @@ import { createCatalog } from "./catalog.js";
 function buildParserOutput({ subject = "ENGR-UH", courses } = {}) {
   const section_count = courses.reduce((n, c) => n + c.sections.length, 0);
   return {
-    schema_version: "1.1.2",
+    schema_version: "1.1.3",
     header: {
       term: "Fall 2026",
       subject_code: subject,
@@ -68,7 +68,7 @@ describe("createCatalog — empty store", () => {
   it("returns an empty effective view", () => {
     const cat = createCatalog();
     const eff = cat.getEffective();
-    expect(eff.schema_version).toBe("1.1.2");
+    expect(eff.schema_version).toBe("1.1.3");
     expect(eff.courses).toEqual([]);
     expect(cat.listEdits()).toEqual({
       edits: [],
@@ -583,7 +583,7 @@ describe("createCatalog — migration warnings for stale paths", () => {
     // Hand-craft a serialized blob that contains an edit with a path that
     // was valid in some hypothetical future/past schema but isn't now.
     const blob = {
-      schema_version: "1.1.2",
+      schema_version: "1.1.3",
       parsed: {
         "ENGR-UH": buildParserOutput({ courses: [buildCourse()] }),
       },
@@ -629,7 +629,7 @@ describe("createCatalog — subscribe (pub/sub for UI re-render)", () => {
     cat.setEdit({ class_number: "20607", field_path: "meetings[0].room", value: "X" });
     cat.deleteSection("20607");
     cat.clear({ parsed: true, edits: true });
-    cat.fromJSON({ schema_version: "1.1.2" });
+    cat.fromJSON({ schema_version: "1.1.3" });
 
     const reasons = events.map((e) => e.reason);
     expect(reasons).toEqual(["ingest", "setEdit", "delete", "clear", "hydrate"]);
@@ -685,5 +685,52 @@ describe("createCatalog — metadata", () => {
     expect(meta["ENGR-UH"].section_count).toBe(2);
     expect(meta["ENGR-UH"].total_class_count).toBe(2);
     expect(meta["ENGR-UH"].last_updated >= before).toBe(true);
+  });
+});
+
+describe("createCatalog — _raw_paste_block provenance field", () => {
+  it("survives ingest → toJSON → fromJSON round-trip unchanged", () => {
+    const cat = createCatalog();
+    const RAW = "ENGR-UH 1000 | 4 units\nClass#: 20607\nSession: AD\n(etc)";
+    cat.ingestSubject(
+      "ENGR-UH",
+      buildParserOutput({
+        courses: [
+          buildCourse({
+            sections: [buildSection({ _raw_paste_block: RAW })],
+          }),
+        ],
+      }),
+    );
+    const eff1 = cat.getEffective();
+    expect(eff1.courses[0].sections[0]._raw_paste_block).toBe(RAW);
+
+    const snapshot = JSON.parse(JSON.stringify(cat.toJSON()));
+    const cat2 = createCatalog();
+    cat2.fromJSON(snapshot);
+    const eff2 = cat2.getEffective();
+    expect(eff2.courses[0].sections[0]._raw_paste_block).toBe(RAW);
+  });
+
+  it("is not user-editable: setEdit on section _raw_paste_block throws", () => {
+    const cat = createCatalog();
+    expect(() =>
+      cat.setEdit({
+        class_number: "20607",
+        field_path: "_raw_paste_block",
+        value: "tampered",
+      }),
+    ).toThrow(/Invalid section field_path/);
+  });
+
+  it("is not user-editable: setEdit on meetings[0]._raw_paste_block throws", () => {
+    const cat = createCatalog();
+    expect(() =>
+      cat.setEdit({
+        class_number: "20607",
+        field_path: "meetings[0]._raw_paste_block",
+        value: "tampered",
+      }),
+    ).toThrow(/Invalid section field_path/);
   });
 });
