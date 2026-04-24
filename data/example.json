@@ -1,0 +1,169 @@
+{
+  "schema_version": "1.0",
+  "scraped_at": "2026-04-23T14:00:00Z",
+  "source": "https://bulletins.nyu.edu/class-search/",
+  "term": {
+    "name": "Fall 2026",
+    "slug": "fall2026",
+    "start_date": "2026-08-31",
+    "end_date": "2026-12-14"
+  },
+  "school": "NYUAD",
+  "subjects": ["ENGR-UH", "MATH-UH"],
+  "courses": [
+    {
+      "code": "ENGR-UH 2011",
+      "subject": "ENGR-UH",
+      "catalog_number": "2011",
+      "title": "Engineering Statics",
+      "description": "This course introduces students to the field of mechanics through study of rigid bodies in static equilibrium...",
+      "school": "NYU Abu Dhabi",
+      "units": 2,
+      "sections": [
+        {
+          "class_number": "20612",
+          "section_code": "001",
+          "component": "Lecture",
+          "session": {
+            "code": "A71",
+            "start_date": "2026-08-31",
+            "end_date": "2026-10-16"
+          },
+          "status": {
+            "raw": "Open",
+            "type": "open",
+            "count": null
+          },
+          "grading": "Ugrd Abu Dhabi Graded",
+          "instruction_mode": "In-Person",
+          "location": "Abu Dhabi",
+          "meetings": [
+            {
+              "days": ["Mon", "Wed"],
+              "start_time": "09:55",
+              "end_time": "11:10",
+              "start_date": "2026-08-31",
+              "end_date": "2026-10-16",
+              "room": "East Administration Building Room 003",
+              "building": "East Administration Building",
+              "room_number": "003",
+              "instructors": ["Sousa, Rita Leal"]
+            }
+          ],
+          "linked_components": ["20613"],
+          "notes": null
+        },
+        {
+          "class_number": "20613",
+          "section_code": "LAB1",
+          "component": "Laboratory",
+          "session": {
+            "code": "A71",
+            "start_date": "2026-08-31",
+            "end_date": "2026-10-16"
+          },
+          "status": {
+            "raw": "Open",
+            "type": "open",
+            "count": null
+          },
+          "grading": "Ugrd Abu Dhabi Graded",
+          "instruction_mode": "In-Person",
+          "location": "Abu Dhabi",
+          "meetings": [
+            {
+              "days": ["Mon"],
+              "start_time": "14:10",
+              "end_time": "16:50",
+              "start_date": "2026-08-31",
+              "end_date": "2026-10-16",
+              "room": "Computational Research Room 003",
+              "building": "Computational Research",
+              "room_number": "003",
+              "instructors": ["Sousa, Rita Leal"]
+            }
+          ],
+          "linked_components": ["20612"],
+          "notes": null
+        }
+      ]
+    },
+    {
+      "code": "MATH-UH 1022",
+      "subject": "MATH-UH",
+      "catalog_number": "1022",
+      "title": "Linear Algebra",
+      "description": "In many applications of mathematics, a response of some systems is nearly a linear function of the input...",
+      "school": "NYU Abu Dhabi",
+      "units": 4,
+      "sections": [
+        {
+          "class_number": "20756",
+          "section_code": "001",
+          "component": "Lecture",
+          "session": {
+            "code": "AD",
+            "start_date": "2026-08-31",
+            "end_date": "2026-12-14"
+          },
+          "status": {
+            "raw": "Closed",
+            "type": "closed",
+            "count": null
+          },
+          "grading": "Ugrd Abu Dhabi Graded",
+          "instruction_mode": "In-Person",
+          "location": "Abu Dhabi",
+          "meetings": [
+            {
+              "days": ["Mon", "Wed"],
+              "start_time": "12:45",
+              "end_time": "14:00",
+              "start_date": "2026-08-31",
+              "end_date": "2026-12-14",
+              "room": "Campus Center Room E052",
+              "building": "Campus Center",
+              "room_number": "E052",
+              "instructors": ["Ghoul, Tej-Eddine"]
+            }
+          ],
+          "linked_components": ["20761"],
+          "notes": "MATH-UH 1022 Linear Algebra and MATH-UH 1023 Fundamentals of Linear Algebra cannot both be taken for credit."
+        },
+        {
+          "class_number": "20761",
+          "section_code": "REC1",
+          "component": "Recitation",
+          "session": {
+            "code": "AD",
+            "start_date": "2026-08-31",
+            "end_date": "2026-12-14"
+          },
+          "status": {
+            "raw": "Closed",
+            "type": "closed",
+            "count": null
+          },
+          "grading": "Ugrd Abu Dhabi Graded",
+          "instruction_mode": "In-Person",
+          "location": "Abu Dhabi",
+          "meetings": [
+            {
+              "days": ["Fri"],
+              "start_time": "14:20",
+              "end_time": "15:35",
+              "start_date": "2026-08-31",
+              "end_date": "2026-12-14",
+              "room": "Campus Center Room W008",
+              "building": "Campus Center",
+              "room_number": "W008",
+              "instructors": []
+            }
+          ],
+          "linked_components": ["20756"],
+          "notes": "MATH-UH 1022 Linear Algebra and MATH-UH 1023 Fundamentals of Linear Algebra cannot both be taken for credit."
+        }
+      ]
+    }
+  ]
+}

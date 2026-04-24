@@ -1,0 +1,2396 @@
+Skip to Main Content
+Fall 2026 Course Search
+Return to Add Classes
+Search through:
+Subject, Catalog Number,Title
+& Instructor Names
+Search
+Course Description
+(may take a while to process)
+Search
+Return to browse by subject
+Hide Filters
+Filters
+Selecting more than one unit/class time/day filter will show results that correspond to at least one of the multiple filter criteria.
+Clear Filters
+Academic Career:
+School:
+Academic Threads:
+Session:
+Show only classes with 0 to 1 Unit?
+Show only classes with 2 Units?
+Show only classes with 3 Units?
+Show only classes with 4 Units?
+Show only classes with 5 Units?
+Show only classes with >5 Units?
+Component:
+Instruction Mode:
+Open/Closed/Wait List Classes:
+Global & Other Study Away Sites
+Early Morning (before 10am) classes only?
+Morning (10am-12pm) classes only?
+Lunchtime (12pm-2pm) classes only?
+Afternoon (2pm-5pm) classes only?
+Evening (after 5pm) classes only?
+Monday classes only?
+Tuesday classes only?
+Wednesday classes only?
+Thursday classes only?
+Friday classes only?
+Saturday classes only?
+Sunday classes only?
+1 - 56 results for: ENGR-UH | Total Class Count: 141
+ENGR-UH 1000 Computer Programming for Engineers
+
+The objective of the course is for students to acquire the fundamental knowledge of computer programming, develop transferable programming skills, and learn to solve engineering problems via programming. The course is primarily based on the C++ programming language and an introduction to another programming language such as MATLAB (to demonstrate transferring programming knowledge from one language to another). The course explores the application of engineering computation in various engineering domains including mechanical, civil, computer, and electrical engineering. The following topics are... more description for ENGR-UH 1000 »
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 1000 | 4 units
+Class#: 20607
+Session: AD 08/31/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 12/14/2026 Mon,Wed 5.00 PM - 6.15 PM at West Administration Room 001
+
+Visit the Bookstore
+Select Class #20607
+ENGR-UH 1000
+Class#: 20609
+Session: AD 08/31/2026 - 12/14/2026
+Section: LAB1
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 12/14/2026 Wed 11.20 AM - 2.00 PM at A1 Building Room 002 with Negoiu, Elena
+
+Visit the Bookstore
+ENGR-UH 1000
+Class#: 20608
+Session: AD 08/31/2026 - 12/14/2026
+Section: LAB2
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 12/14/2026 Tue 3.20 PM - 6.00 PM at A1 Building Room 002 with Melouk, Mouad
+
+Visit the Bookstore
+ENGR-UH 1000
+Class#: 20610
+Session: AD 08/31/2026 - 12/14/2026
+Section: LAB3
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 12/14/2026 Thu 3.20 PM - 6.00 PM at A1 Building Room 002 with Negoiu, Elena
+
+Visit the Bookstore
+ENGR-UH 1000
+Class#: 20611
+Session: AD 08/31/2026 - 12/14/2026
+Section: LAB4
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 12/14/2026 Fri 2.20 PM - 5.00 PM at A1 Building Room 002 with Melouk, Mouad
+
+Visit the Bookstore
+ENGR-UH 1801 Bioengineering Principles
+
+This introductory course is designed to give students a glimpse of a broad selection of bioengineering topics that are currently underway in the field of biomechanics, biomaterials, bioimaging, and bioinstrumentation as well as in mechanobiology and biophysics. Students will become familiar with bioengineering applications in the various areas and see how engineering principles can be applied to solve a variety of biological and biomedical problems. This course will also give students perspectives about the possibilities of working as bioengineers in academia and industry. This course is reco... more description for ENGR-UH 1801 »
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 1801 | 2 units
+Class#: 20700
+Session: A71 08/31/2026 - 10/16/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Seminar
+
+08/31/2026 - 10/16/2026 Mon,Wed 12.45 PM - 2.00 PM at Social Sciences Room 005 with Zam, Azhar
+
+Visit the Bookstore
+Select Class #20700
+ENGR-UH 1801 | 2 units
+Class#: 20700
+Session: A71 08/31/2026 - 10/16/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Seminar
+
+08/31/2026 - 10/16/2026 Mon,Wed 12.45 PM - 2.00 PM at Social Sciences Room 005 with Zam, Azhar
+
+Visit the Bookstore
+Select Class #20700
+ENGR-UH 1801
+Class#: 20701
+Session: A71 08/31/2026 - 10/16/2026
+Section: LAB
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 10/16/2026 Fri 2.20 PM - 5.00 PM at Social Sciences Room 018 with Zam, Azhar; Sabah, Shafiya
+
+Visit the Bookstore
+ENGR-UH 1801
+Class#: 20701
+Session: A71 08/31/2026 - 10/16/2026
+Section: LAB
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 10/16/2026 Fri 2.20 PM - 5.00 PM at Social Sciences Room 018 with Zam, Azhar; Sabah, Shafiya
+
+Visit the Bookstore
+ENGR-UH 2010 Probability and Statistics for Engineers
+
+Introductory course in probability and statistics with an emphasis on how these topics are relevant in engineering disciplines. Topics in probability theory include sample spaces, and counting, random variables (discrete and continuous), probability distributions, cumulative density functions, rules and theorems of probability, expectation, and variance. Topics in statistics include sampling, central limit theorem, and linear regression. The course emphasizes correct application of probability and statistics and highlights the limitations of each method presented. NOTE: This course may be rep... more description for ENGR-UH 2010 »
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 2010 | 2 units
+Class#: 20668
+Session: A71 08/31/2026 - 10/16/2026
+Section: 001
+Class Status: Wait List (5)
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 10/16/2026 Mon,Wed 9.55 AM - 11.10 AM at Social Sciences Room 018 with Jabari, Saif Eddin Ghazi
+
+Visit the Bookstore
+Select Class #20668
+ENGR-UH 2010
+Class#: 20669
+Session: A71 08/31/2026 - 10/16/2026
+Section: REC1
+Class Status: Wait List (5)
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Recitation
+
+08/31/2026 - 10/16/2026 Mon 2.10 PM - 4.50 PM at Social Sciences Room 005 with Jabari, Saif Eddin Ghazi
+
+Visit the Bookstore
+ENGR-UH 2010 | 2 units
+Class#: 20670
+Session: A72 10/26/2026 - 12/14/2026
+Section: 002
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+10/26/2026 - 12/14/2026 Tue,Thu 9.55 AM - 11.10 AM at Social Sciences Room 018 with Nadeem, Qurrat-Ul-Ain
+
+Visit the Bookstore
+Select Class #20670
+ENGR-UH 2010
+Class#: 20671
+Session: A72 10/26/2026 - 12/14/2026
+Section: REC2
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Recitation
+
+10/26/2026 - 12/14/2026 Tue 3.20 PM - 6.00 PM at Computational Research Room 004 with Nadeem, Qurrat-Ul-Ain
+
+Visit the Bookstore
+ENGR-UH 2011 Engineering Statics
+
+This course introduces students to the field of mechanics through study of rigid bodies in static equilibrium. Knowledge and understanding of static equilibrium is essential for future study of topics as diverse as dynamics, solid mechanics, structures, robotics, and fluid mechanics. The methods, techniques, theory, and application of equilibrium in the solution of engineering problems are presented for two-dimensional systems. Topics covered include collinear forces, coincident forces, general equilibrium, moments and torques, analysis of trusses, frames and machines, Coulomb friction, centro... more description for ENGR-UH 2011 »
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 2011 | 2 units
+Class#: 20612
+Session: A71 08/31/2026 - 10/16/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 10/16/2026 Mon,Wed 9.55 AM - 11.10 AM at East Administration Building Room 003 with Sousa, Rita Leal
+
+Visit the Bookstore
+Select Class #20612
+ENGR-UH 2011
+Class#: 20613
+Session: A71 08/31/2026 - 10/16/2026
+Section: LAB1
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 10/16/2026 Mon 2.10 PM - 4.50 PM at Computational Research Room 003 with Sousa, Rita Leal
+
+Visit the Bookstore
+ENGR-UH 2011 | 2 units
+Class#: 20614
+Session: A72 10/26/2026 - 12/14/2026
+Section: 002
+Class Status: Wait List (0)
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+10/26/2026 - 12/14/2026 Mon,Wed 9.55 AM - 11.10 AM at Computational Research Room 007 with Sousa, Rita Leal
+
+Visit the Bookstore
+Select Class #20614
+ENGR-UH 2011
+Class#: 20615
+Session: A72 10/26/2026 - 12/14/2026
+Section: LAB
+Class Status: Wait List (0)
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+10/26/2026 - 12/14/2026 Mon 2.10 PM - 4.50 PM at Computational Research Room 003 with Sousa, Rita Leal
+
+Visit the Bookstore
+ENGR-UH 2012 Conservation Laws in Engineering
+
+Conservation laws play a fundamental role in the analysis of engineering problems by providing a framework to derive the relationships between various physical properties of isolated systems. This course aims to introduce the students to these laws, namely, the conservation of mass, conservation of linear momentum, conservation of angular momentum, conservation of energy, and conservation of charge. These laws of conservation will be derived in integral forms and applied to selected case studies involving electrical, chemical, thermal, and fluid mechanical systems. In addition to the developme... more description for ENGR-UH 2012 »
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 2012 | 2 units
+Class#: 20616
+Session: A71 08/31/2026 - 10/16/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 10/16/2026 Mon,Wed 11.20 AM - 12.35 PM at Computational Research Room 001 with Hashaikeh, Raed; Salim, Wahib
+
+Visit the Bookstore
+Select Class #20616
+ENGR-UH 2012
+Class#: 20617
+Session: A71 08/31/2026 - 10/16/2026
+Section: LAB1
+Class Status: Wait List (16)
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 10/16/2026 Wed 2.10 PM - 4.50 PM at Social Sciences Room 005 with Hashaikeh, Raed; Salim, Wahib
+
+Visit the Bookstore
+ENGR-UH 2012 | 2 units
+Class#: 20618
+Session: A72 10/26/2026 - 12/14/2026
+Section: 002
+Class Status: Wait List (10)
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+10/26/2026 - 12/14/2026 Tue,Thu 11.20 AM - 12.35 PM at Social Sciences Room 004 with Hashaikeh, Raed; Al-Chalabi, Mohammed
+
+Visit the Bookstore
+Select Class #20618
+ENGR-UH 2012
+Class#: 20619
+Session: A72 10/26/2026 - 12/14/2026
+Section: LAB2
+Class Status: Wait List (10)
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+10/26/2026 - 12/14/2026 Thu 3.20 PM - 6.00 PM at Social Sciences Room 018 with Hashaikeh, Raed; Al-Chalabi, Mohammed
+
+Visit the Bookstore
+ENGR-UH 2013 Digital Logic
+
+This module provides a rigorous introduction to topics in digital logic design mostly focusing on combinational circuits but also touching upon basic concepts in sequential circuits. Introductory topics include: classification of digital systems, number systems and binary arithmetic, error detection and correction, and switching algebra. Combinational design analysis and synthesis topics include: logic function optimization, arithmetic units such as adders and subtractors, and control units such as decoders and multiplexers. A brief overview of sequential circuits by introducing basic memory e... more description for ENGR-UH 2013 »
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 2013 | 2 units
+Class#: 20620
+Session: A71 08/31/2026 - 10/16/2026
+Section: 001
+Class Status: Wait List (14)
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 10/16/2026 Mon,Wed 9.55 AM - 11.10 AM at Computational Research Room 007 with Rasras, Mahmoud
+
+Visit the Bookstore
+Select Class #20620
+ENGR-UH 2013
+Class#: 20621
+Session: A71 08/31/2026 - 10/16/2026
+Section: LAB
+Class Status: Wait List (14)
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 10/16/2026 Mon 2.10 PM - 4.50 PM at West Administration Room 005 with Rasras, Mahmoud; Negoiu, Elena
+
+Visit the Bookstore
+ENGR-UH 2013 | 2 units
+Class#: 20622
+Session: A72 10/26/2026 - 12/14/2026
+Section: 002
+Class Status: Wait List (17)
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+10/26/2026 - 12/14/2026 Tue,Thu 9.55 AM - 11.10 AM at Computational Research Room 001 with Rasras, Mahmoud
+
+Visit the Bookstore
+Select Class #20622
+ENGR-UH 2013
+Class#: 20623
+Session: A72 10/26/2026 - 12/14/2026
+Section: LAB2
+Class Status: Wait List (17)
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+10/26/2026 - 12/14/2026 Tue 3.20 PM - 6.00 PM at Computational Research Room 001 with Rasras, Mahmoud; Negoiu, Elena
+
+Visit the Bookstore
+ENGR-UH 2017 Numerical Methods
+
+This course provides an introduction to the methods, techniques, theory, and application of numerical methods in the solution of engineering problems. Topics to be covered include the following: finding roots of equations, numerical differentiation and integration, time marching methods in solving ordinary differential equations, and optimization. MATLAB software is the primary computing environment.
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 2017 | 2 units
+Class#: 20624
+Session: A72 10/26/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+10/26/2026 - 12/14/2026 Mon,Wed 9.55 AM - 11.10 AM at West Administration Room 003 with Cherchi, Elisabetta
+
+Visit the Bookstore
+Select Class #20624
+ENGR-UH 2017
+Class#: 20627
+Session: A72 10/26/2026 - 12/14/2026
+Section: LAB
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+10/26/2026 - 12/14/2026 Mon 2.10 PM - 4.50 PM at West Administration Room 005 with Cherchi, Elisabetta; Khan, Qasim
+
+Visit the Bookstore
+ENGR-UH 2017 | 2 units
+Class#: 20625
+Session: A72 10/26/2026 - 12/14/2026
+Section: 002
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+10/26/2026 - 12/14/2026 Tue,Thu 11.20 AM - 12.35 PM at Computational Research Room 001 with Cherchi, Elisabetta
+
+Visit the Bookstore
+Select Class #20625
+ENGR-UH 2017
+Class#: 20626
+Session: A72 10/26/2026 - 12/14/2026
+Section: LAB2
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+10/26/2026 - 12/14/2026 Thu 3.20 PM - 6.00 PM at Computational Research Room 001 with Cherchi, Elisabetta; Khan, Qasim
+
+Visit the Bookstore
+ENGR-UH 2019 Circuits Fundamentals
+
+This module provides an introduction to electrical circuits. The topics covered include DC circuits, passive DC circuit elements, Kirchoff's laws, electric power calculations, analysis of DC circuits, nodal and loop analysis techniques, voltage and current division, Thevenin's and Norton's theorems, and source free and forced responses of RL, RC and RLC circuits.
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 2019 | 2 units
+Class#: 20672
+Session: A71 08/31/2026 - 10/16/2026
+Section: 001
+Class Status: Wait List (19)
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 10/16/2026 Tue,Thu 11.20 AM - 12.35 PM at Social Sciences Room 004 with Gyorgy, Andras
+
+Visit the Bookstore
+Select Class #20672
+ENGR-UH 2019
+Class#: 20675
+Session: A71 08/31/2026 - 10/16/2026
+Section: LAB
+Class Status: Wait List (19)
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 10/16/2026 Thu 3.20 PM - 6.00 PM at A1 Building Room 001 with Gyorgy, Andras; Sheikh, Muhammad Faraz
+
+Visit the Bookstore
+ENGR-UH 2019 | 2 units
+Class#: 20673
+Session: A71 08/31/2026 - 10/16/2026
+Section: 002
+Class Status: Wait List (8)
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 10/16/2026 Mon,Wed 11.20 AM - 12.35 PM at East Administration Room 004 with Gyorgy, Andras
+
+Visit the Bookstore
+Select Class #20673
+ENGR-UH 2019 | 2 units
+Class#: 20673
+Session: A71 08/31/2026 - 10/16/2026
+Section: 002
+Class Status: Wait List (8)
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 10/16/2026 Mon,Wed 11.20 AM - 12.35 PM at East Administration Room 004 with Gyorgy, Andras
+
+Visit the Bookstore
+Select Class #20673
+ENGR-UH 2019
+Class#: 20674
+Session: A71 08/31/2026 - 10/16/2026
+Section: LAB2
+Class Status: Wait List (8)
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 10/16/2026 Wed 2.10 PM - 4.50 PM at A1 Building Room 001 with Gyorgy, Andras; Mulugeta, Tadesse
+
+Visit the Bookstore
+ENGR-UH 2019
+Class#: 20674
+Session: A71 08/31/2026 - 10/16/2026
+Section: LAB2
+Class Status: Wait List (8)
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 10/16/2026 Wed 2.10 PM - 4.50 PM at A1 Building Room 001 with Gyorgy, Andras; Mulugeta, Tadesse
+
+Visit the Bookstore
+ENGR-UH 2019 | 2 units
+Class#: 20676
+Session: A72 10/26/2026 - 12/14/2026
+Section: 003
+Class Status: Wait List (7)
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+10/26/2026 - 12/14/2026 Mon,Wed 11.20 AM - 12.35 PM at Computational Research Room 001 with Gyorgy, Andras
+
+Visit the Bookstore
+Select Class #20676
+ENGR-UH 2019
+Class#: 20677
+Session: A72 10/26/2026 - 12/14/2026
+Section: LAB3
+Class Status: Wait List (7)
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+10/26/2026 - 12/14/2026 Thu 3.20 PM - 6.00 PM at A1 Building Room 001 with Gyorgy, Andras
+
+Visit the Bookstore
+ENGR-UH 2027 Introduction to Data Analysis for Engineers
+
+This course introduces students to the fundamentals of data analysis. The course starts with tools used to summarize and visualize data. The focus then shifts to fitting and parameter estimation. The derivation of estimators of parameters using both maximum likelihood and least-squares techniques are covered. Analysis of the statistical properties of estimators is also covered. The course includes hands-on exercises using MATLAB.
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 2027 | 2 units
+Class#: 20696
+Session: A72 10/26/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+10/26/2026 - 12/14/2026 Mon,Wed 9.55 AM - 11.10 AM at Social Science Building Room 019 with Jabari, Saif Eddin Ghazi
+
+Visit the Bookstore
+Select Class #20696
+ENGR-UH 2027
+Class#: 20697
+Session: A72 10/26/2026 - 12/14/2026
+Section: REC
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Recitation
+
+10/26/2026 - 12/14/2026 Mon 2.10 PM - 4.50 PM at Social Sciences Room 006 with Jabari, Saif Eddin Ghazi
+
+Visit the Bookstore
+ENGR-UH 2112 Engineers for Social Impact
+
+This course is intended for students who are highly motivated and seek the opportunity to investigate and co-develop transformative concepts and solutions wherein the application of engineering and design methodologies are put to productive use in affecting social impact. Students with the necessary background course work and who, in the opinion of the faculty, possess intellectual independence and ability may register for this course. The course includes a required fieldwork component to be completed during spring break with the supervision of the faculty involved in this course. Course appli... more description for ENGR-UH 2112 »
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 2112 | 2 units
+Class#: 20688
+Session: AD 08/31/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 12/14/2026 Tue,Thu 4.45 PM - 6.00 PM at Social Sciences Room 005 with Karau, Matthew
+
+Visit the Bookstore
+Select Class #20688
+ENGR-UH 2211 Solid Mechanics
+
+Designed as a first course in the mechanics of materials, this course introduces students to the basic concepts of stress and strain in the normal and tangential directions, and the two dimensional transformations of stress and strain. Topics include stress-strain relationships for members subject to axial forces, torsion, bending moments, and shear forces.
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 2211 | 2 units
+Class#: 20654
+Session: A71 08/31/2026 - 10/16/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 10/16/2026 Tue,Thu 11.20 AM - 12.35 PM at Computational Research Room 012 with Moustafa, Mohamed
+
+Visit the Bookstore
+Select Class #20654
+ENGR-UH 2211
+Class#: 20655
+Session: A71 08/31/2026 - 10/16/2026
+Section: LAB1
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 10/16/2026 Thu 3.20 PM - 6.00 PM at Campus Center Room E048 with Moustafa, Mohamed; Zekar, Aicha
+
+Visit the Bookstore
+ENGR-UH 2710 Differential Equations for Engineers
+
+This course presents many of the common analytical techniques for solving ordinary and partial differential equations with special focus on equations that appear in engineering. Solution methods for first, second, and higher-order homogeneous/inhomogeneous ordinary differential equations (ODEs) will be presented using time-domain methods, the Laplace Transforms, and Fourier Series. The response behavior of partial differential equations (PDEs), namely the Heat Equation, Laplace's Equation, and the Wave Equation will also be studied using separation of variables and the companion methods of Fou... more description for ENGR-UH 2710 »
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 2710 | 4 units
+Class#: 20714
+Session: AD 08/31/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 12/14/2026 Mon,Wed 9.55 AM - 11.10 AM at Computational Research Room 003 with Panindre, Prabodh
+
+Visit the Bookstore
+Select Class #20714
+ENGR-UH 2710
+Class#: 20715
+Session: AD 08/31/2026 - 12/14/2026
+Section: LAB1
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 12/14/2026 Mon 2.10 PM - 4.50 PM at Computational Research Room 001 with Panindre, Prabodh
+
+Visit the Bookstore
+ENGR-UH 2810 Biomechanics
+
+This first undergraduate course in biomechanics introduces fundamentals principles of solid mechanics applied to related anatomical features excerpted from musculoskeletal physiology. Concepts of loading stresses, strains, stress-strain relationship, deformable bodies, contact mechanics, friction, and solving static equilibrium problems using free body diagram will be applied to bone, cartilage, and ligaments, and functional systems, highlighting biological composition, concepts of form versus function, and adaptation in musculoskeletal physiology.
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 2810 | 2 units
+Class#: 20702
+Session: A71 08/31/2026 - 10/16/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 10/16/2026 Tue,Thu 9.55 AM - 11.10 AM at Computational Research Room 001 with Teo, Jeremy; Allum Saib, Zubeir
+
+Visit the Bookstore
+Select Class #20702
+ENGR-UH 2810
+Class#: 20703
+Session: A71 08/31/2026 - 10/16/2026
+Section: LAB
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 10/16/2026 Fri 9.20 AM - 11.55 AM at Social Sciences Room 005 with Teo, Jeremy; Allum Saib, Zubeir
+
+Visit the Bookstore
+ENGR-UH 2812 Bioimaging
+
+This introductory course to Bioimaging is designed to provide an understanding on how images of organs, tissues, cells and molecules can be obtained using different forms of penetrating radiation and waves. Students will learn the imaging techniques used for soft and hard tissue visualization such as X-ray, Computed Tomography (CT), Ultrasound (US), Magnetic Resonance Imaging (MRI), Spectroscopy and Optical Imaging. The course will give students an insight into the theoretical physics of imaging, real-life clinical applications of these modalities and demonstration of post-processing of the im... more description for ENGR-UH 2812 »
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 2812 | 2 units
+Class#: 20704
+Session: A72 10/26/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+10/26/2026 - 12/14/2026 Tue,Thu 11.20 AM - 12.35 PM at Computational Research Room 007 with Zam, Azhar
+
+Visit the Bookstore
+Select Class #20704
+ENGR-UH 2812
+Class#: 20705
+Session: A72 10/26/2026 - 12/14/2026
+Section: LAB
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+10/26/2026 - 12/14/2026 Fri 9.20 AM - 11.55 AM at Social Sciences Room 004 with Zam, Azhar; Sabah, Shafiya
+
+Visit the Bookstore
+ENGR-UH 2813 Bioinstrumentation
+
+This course will provide an overview of instrumentation systems used in clinical medicine and biomedical research. We will review some circuit theory, and its application to bioinstrumentation. Systems for measuring biologic signals will be discussed including biopotentials, electrochemical concentrations, electrical impedance, pressure, and temperature. In addition, electrode interfaces, voltage and current interface circuits will be discussed. The lab component has the design of a biomedical instrument for measuring biopotentials.
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 2813 | 2 units
+Class#: 20716
+Session: A72 10/26/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+10/26/2026 - 12/14/2026 Mon,Wed 8.30 AM - 9.45 AM at Social Sciences Room 004 with Ha, Sohmyung
+
+Visit the Bookstore
+Select Class #20716
+ENGR-UH 2813 | 2 units
+Class#: 20716
+Session: A72 10/26/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+10/26/2026 - 12/14/2026 Mon,Wed 8.30 AM - 9.45 AM at Social Sciences Room 004 with Ha, Sohmyung
+
+Visit the Bookstore
+Select Class #20716
+ENGR-UH 2813
+Class#: 22103
+Session: A72 10/26/2026 - 12/14/2026
+Section: LAB
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+10/26/2026 - 12/14/2026 Fri 2.20 PM - 5.00 PM at Social Sciences Room 004 with Ha, Sohmyung
+
+Visit the Bookstore
+ENGR-UH 2813
+Class#: 22103
+Session: A72 10/26/2026 - 12/14/2026
+Section: LAB
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+10/26/2026 - 12/14/2026 Fri 2.20 PM - 5.00 PM at Social Sciences Room 004 with Ha, Sohmyung
+
+Visit the Bookstore
+ENGR-UH 3111 Analysis of Chemical and Biological Processes
+
+Many problems can arise in the design of a new process or in the analysis of an existing process. This course introduces basic concepts and methods to solve problems in chemical and biological processes. We will focus on using the principle of mass conservation to determine the amount of products when given amounts of raw materials and vice versa. We will also apply the principle of energy conservation to analyze processes involving reactive and non-reactive systems. This course will prepare students for their subsequent courses in the chemical and biological engineering major such as transpor... more description for ENGR-UH 3111 »
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 3111 | 4 units
+Class#: 20689
+Session: AD 08/31/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Seminar
+
+08/31/2026 - 12/14/2026 Mon,Wed 12.45 PM - 2.00 PM at Social Sciences Room 004 with Alhashmi, Safiya Tariq Ahmed Khalil; Garduque, Renz Gabriel
+
+Visit the Bookstore
+Select Class #20689
+ENGR-UH 3111
+Class#: 20690
+Session: AD 08/31/2026 - 12/14/2026
+Section: LAB
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 12/14/2026 Fri 2.20 PM - 5.00 PM at Social Sciences Room 005 with Alhashmi, Safiya Tariq Ahmed Khalil; Garduque, Renz Gabriel
+
+Visit the Bookstore
+ENGR-UH 3120 Engineering Materials
+
+Designed as a first course in materials, this course introduces students to engineering properties of materials, applying basic principles of the atomic and crystal structure of solids to the study of properties as well as to the selection and use of engineering materials. The course content includes examination of engineering materials such as metals, plastics, and composites with an emphasis on material selection. Through an immersive laboratory component, the course has an emphasis on experiential learning of the basic structure and properties of metallic, polymeric, semiconducting, ceramic... more description for ENGR-UH 3120 »
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 3120 | 2 units
+Class#: 20628
+Session: A71 08/31/2026 - 10/16/2026
+Section: 001
+Class Status: Wait List (4)
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 10/16/2026 Mon,Wed 11.20 AM - 12.35 PM at East Administration Building Room 003 with Celik, Kemal
+
+Visit the Bookstore
+Select Class #20628
+ENGR-UH 3120
+Class#: 20629
+Session: A71 08/31/2026 - 10/16/2026
+Section: LAB1
+Class Status: Wait List (4)
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 10/16/2026 Wed 2.10 PM - 4.50 PM at West Administration Room 003 with Celik, Kemal; Mengiste, Eyob
+
+Visit the Bookstore
+ENGR-UH 3120 | 2 units
+Class#: 20630
+Session: A72 10/26/2026 - 12/14/2026
+Section: 002
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+10/26/2026 - 12/14/2026 Tue,Thu 11.20 AM - 12.35 PM at Computational Research Room 006 with Al Nahyan, Maryam
+
+Visit the Bookstore
+Select Class #20630
+ENGR-UH 3120
+Class#: 20631
+Session: A72 10/26/2026 - 12/14/2026
+Section: LAB2
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+10/26/2026 - 12/14/2026 at Campus Center Room E047
+
+Visit the Bookstore
+ENGR-UH 3210 Advanced Solid Mechanics
+
+The course introduces students to the fundamentals of structural components analysis thus enabling them to employ that knowledge for structural analysis and for design of structural members. Topics include: three-dimensional analysis of stress; torsion of thin-walled sections; inelastic torsion; analysis of composite and unsymmetric beams; inelastic bending; beam deflections; elastic buckling of columns; and strength failure criteria.
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 3210 | 2 units
+Class#: 20658
+Session: A72 10/26/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+10/26/2026 - 12/14/2026 Mon,Wed 11.20 AM - 12.35 PM at West Administration Room 003 with Karathanasopoulos, Nikolaos
+
+Visit the Bookstore
+Select Class #20658
+ENGR-UH 3210
+Class#: 20659
+Session: A72 10/26/2026 - 12/14/2026
+Section: LAB
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+10/26/2026 - 12/14/2026 Wed 2.10 PM - 4.50 PM at Social Science Building Room 019 with Karathanasopoulos, Nikolaos
+
+Visit the Bookstore
+ENGR-UH 3230 Finite Element Modeling and Analysis
+
+Students study the basic theory and equations involved in the finite element analysis (FEA) for simulating behavior of materials and structures. Topics include use of shape functions, numerical integration, assembly of finite elements into a structure, and solution of the resulting system of equations. The course emphasizes both theory and application of modeling for simulation. Students also learn to recognize modeling errors and inconsistencies that could lead to either inaccurate or invalid results.
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 3230 | 4 units
+Class#: 20656
+Session: AD 08/31/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 12/14/2026 Mon,Wed 9.55 AM - 11.10 AM at East Administration Room 004 with Mobasher, Mostafa
+
+Visit the Bookstore
+Select Class #20656
+ENGR-UH 3230
+Class#: 20657
+Session: AD 08/31/2026 - 12/14/2026
+Section: LAB
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 12/14/2026 Mon 2.10 PM - 4.50 PM at West Administration Room 003 with Mobasher, Mostafa
+
+Visit the Bookstore
+ENGR-UH 3410 Structural Systems
+
+The course provides an in-depth coverage of structural analysis techniques. Topics in this course include: analysis of statically determinate beams, frames and trusses; influence lines for determinate beams and trusses; deflection calculations using geometrical and energy methods; analysis of statically indeterminate structures using superposition; slope deflection; moment distribution; and matrix analysis of structures. The course includes computer assignments using commercial structural analysis software.
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 3410 | 2 units
+Class#: 20681
+Session: A72 10/26/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+10/26/2026 - 12/14/2026 Tue,Thu 11.20 AM - 12.35 PM at Social Sciences Room 003 with Moustafa, Mohamed
+
+Visit the Bookstore
+Select Class #20681
+ENGR-UH 3410
+Class#: 20682
+Session: A72 10/26/2026 - 12/14/2026
+Section: LAB
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+10/26/2026 - 12/14/2026 Thu 3.20 PM - 6.00 PM at Computational Research Room 005 with Moustafa, Mohamed
+
+Visit the Bookstore
+ENGR-UH 3412 Geotechnical Engineering
+
+This course introduces soil mechanics and foundation engineering, including origin of soils; phase relationships; classification of soils; permeability; effective stress; seepage; consolidation; shear strength; slope stability; and bearing capacity. Design in geotechnical engineering is introduced and parameters affecting design are discussed.
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 3412 | 4 units
+Class#: 20662
+Session: AD 08/31/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 12/14/2026 Tue,Thu 8.30 AM - 9.45 AM at Social Sciences Room 001 with Abdoun, Tarek
+
+Visit the Bookstore
+Select Class #20662
+ENGR-UH 3412
+Class#: 20663
+Session: AD 08/31/2026 - 12/14/2026
+Section: LAB
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 12/14/2026 Fri 2.20 PM - 5.00 PM at Social Sciences Room 013 with Abdoun, Tarek
+
+Visit the Bookstore
+ENGR-UH 3413 Transportation and Traffic Engineering
+
+The course introduces students to fundamental concepts that underlie highway design, traffic operations and control, and transportation systems. The course begins with vehicle performance and the role it has on road design. We later cover the fundamentals of traffic flow theory and operations. In combination with such fundamentals we also discuss the use and collection of traffic data, as well as more advanced concepts on traffic safety, public transportation, and traffic management and control. Moreover, we look at clear applications of the concepts covered in class with a real-world student ... more description for ENGR-UH 3413 »
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 3413 | 4 units
+Class#: 20666
+Session: AD 08/31/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 12/14/2026 Tue,Thu 9.55 AM - 11.10 AM at Computational Research Room 019 with Jabari, Saif Eddin Ghazi; Cherchi, Elisabetta
+
+Visit the Bookstore
+Select Class #20666
+ENGR-UH 3413
+Class#: 20667
+Session: AD 08/31/2026 - 12/14/2026
+Section: LAB
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 12/14/2026 Tue 3.20 PM - 6.00 PM at Social Sciences Room 002 with Jabari, Saif Eddin Ghazi; Cherchi, Elisabetta
+
+Visit the Bookstore
+ENGR-UH 3415 Mathematical Models for Individual Choices
+
+This is an elective course which introduces students with the often called 'art' of building mathematical models to simulate and forecast consumers choices. Consciously or unconsciously, we make choice every moment of our lives. Predicting what drives consumers choices is a key question in several disciplines such as transport, economics, sociology, psychology, marketing, environment. The course provides students with knowledge on the mathematical models most commonly used to simulate and forecast individual choices, starting with the very popular discrete choice models (based on the neoclassi... more description for ENGR-UH 3415 »
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 3415 | 2 units
+Class#: 22194
+Session: A71 08/31/2026 - 10/16/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 10/16/2026 Mon,Wed 12.45 PM - 2.00 PM at Computational Research Room 007 with Cherchi, Elisabetta
+
+Visit the Bookstore
+Select Class #22194
+ENGR-UH 3415
+Class#: 22195
+Session: A71 08/31/2026 - 10/16/2026
+Section: LAB1
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 10/16/2026 Fri 2.20 PM - 5.00 PM at Campus Center Room W005 with Cherchi, Elisabetta
+
+Visit the Bookstore
+ENGR-UH 3420 Project Management
+
+This course is designed to lay down the foundation of the different concepts, techniques, and tools for successful project management with an emphasis on construction projects. At the end of this course students will have a good understanding of the different project management knowledge areas, the phases required for successful project management, and the role of a project manager. The main contents of the course are summarized in the following topics: project and organization structures, scheduling, resource management, cost estimating, risk management, and interpersonal skills.
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 3420 | 2 units
+Class#: 20685
+Session: A71 08/31/2026 - 10/16/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 10/16/2026 Tue,Thu 11.20 AM - 12.35 PM at East Administration Room 002 with García de Soto, Borja
+
+Visit the Bookstore
+Select Class #20685
+ENGR-UH 3420
+Class#: 20686
+Session: A71 08/31/2026 - 10/16/2026
+Section: REC
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Recitation
+
+08/31/2026 - 10/16/2026 Thu 3.20 PM - 6.00 PM at A1 Building Room 004 with García de Soto, Borja; Mengiste, Eyob
+
+Visit the Bookstore
+ENGR-UH 3430 Steel Structures Design
+
+This course examines structural steel design principles and techniques based on the Load Resistance Factor Design (LRFD). A detailed treatment of material properties and design based on American Institute of Steel Construction (AISC) codes is provided. Topics include: design of tension and compression members; design of beams and beam-columns; design for serviceability limit states; and design of simple bolted and welded connections. The course includes a design project in which students work in groups to simulate and solve specific design problems using structural analysis and design software... more description for ENGR-UH 3430 »
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 3430 | 2 units
+Class#: 20660
+Session: A71 08/31/2026 - 10/16/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 10/16/2026 Mon,Wed 8.30 AM - 9.45 AM at Social Sciences Room 001 with Shahin, Khaled
+
+Visit the Bookstore
+Select Class #20660
+ENGR-UH 3430
+Class#: 20661
+Session: A71 08/31/2026 - 10/16/2026
+Section: LAB
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 10/16/2026 Fri 9.20 AM - 11.55 AM at Social Sciences Room 001 with Shahin, Khaled
+
+Visit the Bookstore
+ENGR-UH 3432 Water and Wastewater Systems Design
+
+This course introduces students to the concepts of design related to solving problems in environmental engineering. It provides an exposure to real-world problems in water systems and wastewater treatment. Students work in small teams and experience the design process, including the definition of the design objectives and constraints, formation of the design concept, synthesis, and analysis of design options, as well as the development and testing of the proposed solution.
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 3432 | 2 units
+Class#: 22428
+Session: A72 10/26/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+10/26/2026 - 12/14/2026 Tue,Thu 1.55 PM - 3.10 PM at Computational Research Room 001 with Johnson, Daniel
+
+Visit the Bookstore
+Select Class #22428
+ENGR-UH 3432
+Class#: 22429
+Session: A72 10/26/2026 - 12/14/2026
+Section: LAB1
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+10/26/2026 - 12/14/2026 Fri 2.20 PM - 5.00 PM at Campus Center Room W005 with Johnson, Daniel
+
+Visit the Bookstore
+ENGR-UH 3511 Computer Organization and Architecture
+
+The course introduces the principles of computer organization and basic architecture concepts. It discusses the basic structure of a digital computer and study in details formal descriptions, machine instruction sets design, formats and data representation, addressing structures, mechanization of procedure calls, memory management, arithmetic and logical unit, virtual and cache memory organization, I/O processing and interrupts, fundamental of reliability aspects. The course also covers performance and distributed system models. The labs emphasize experiential learning of computer organization... more description for ENGR-UH 3511 »
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 3511 | 4 units
+Class#: 20635
+Session: AD 08/31/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 12/14/2026 Mon,Wed 11.20 AM - 12.35 PM at Computational Research Room 005 with Maniatakos, Michail
+
+Visit the Bookstore
+Select Class #20635
+ENGR-UH 3511
+Class#: 20636
+Session: AD 08/31/2026 - 12/14/2026
+Section: LAB
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 12/14/2026 Wed 2.10 PM - 4.50 PM at Social Sciences Room 006 with Maniatakos, Michail
+
+Visit the Bookstore
+ENGR-UH 3512 Computer Networks
+
+The course introduces the basic concepts of computer and communication networks, including flow control, congestion control, end-to-end reliability, routing, framing, error-recovery, multiple access, and statistical multiplexing. There is in-depth presentation of the different networking layers, with emphasis on the Internet reference model. Protocols and architectures such as the TCP, IP, Ethernet, wireless networks etc. are described in order to illustrate important networking concepts. The course includes an introduction to quantitative analysis and modeling of networks. The labs cover basi... more description for ENGR-UH 3512 »
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 3512 | 4 units
+Class#: 20637
+Session: AD 08/31/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 12/14/2026 Mon,Wed 12.45 PM - 2.00 PM at Computational Research Room 006 with Shamout, Farah
+
+Visit the Bookstore
+Select Class #20637
+ENGR-UH 3512
+Class#: 20638
+Session: AD 08/31/2026 - 12/14/2026
+Section: LAB
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 12/14/2026 Fri 2.20 PM - 5.00 PM at Campus Center Room W009 with Shamout, Farah; Tripathi, Dhurba
+
+Visit the Bookstore
+ENGR-UH 3520 Operating Systems
+
+This course discusses the operating systems that run computers. The course is designed to familiarize students with operating systems, user and program interfacing concepts. Topics include an overview of user interface, process structure, creation and context switching; system calls; process cooperation, memory management; virtual memory, I/O management; interrupt handling, file structures; directories, fault-tolerance. The course includes discussion of the role of the operative system in security systems and related ethical practice.
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 3520 | 4 units
+Class#: 20639
+Session: AD 08/31/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 12/14/2026 Mon,Wed 9.55 AM - 11.10 AM at Social Sciences Room 005
+
+Visit the Bookstore
+Select Class #20639
+ENGR-UH 3520
+Class#: 20640
+Session: AD 08/31/2026 - 12/14/2026
+Section: LAB
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 12/14/2026 Mon 2.10 PM - 4.50 PM at Social Sciences Room 004
+
+Visit the Bookstore
+ENGR-UH 3530 Embedded Systems
+
+This course presents an overview of embedded systems, covering a selection of topics including microcontroller architecture, assembler programming, interrupts, peripheral interfacing, embedded system design, higher-level languages on embedded systems, as well as a brief introduction to real-time operating systems. Practical lab exercises complement the lectures. The students further specialize and consolidate their knowledge through semester-long hands-on projects.
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 3530 | 4 units
+Class#: 20647
+Session: AD 08/31/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 12/14/2026 Tue,Thu 11.20 AM - 12.35 PM at Social Sciences Room 005 with Shafique, Muhammad
+
+Visit the Bookstore
+Select Class #20647
+ENGR-UH 3530 | 4 units
+Class#: 20647
+Session: AD 08/31/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 12/14/2026 Tue,Thu 11.20 AM - 12.35 PM at Social Sciences Room 005 with Shafique, Muhammad
+
+Visit the Bookstore
+Select Class #20647
+ENGR-UH 3530
+Class#: 20648
+Session: AD 08/31/2026 - 12/14/2026
+Section: LAB
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 12/14/2026 Thu 3.20 PM - 6.00 PM at Social Science Building Room 019 with Shafique, Muhammad; Melouk, Mouad
+
+Visit the Bookstore
+ENGR-UH 3530
+Class#: 20648
+Session: AD 08/31/2026 - 12/14/2026
+Section: LAB
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 12/14/2026 Thu 3.20 PM - 6.00 PM at Social Science Building Room 019 with Shafique, Muhammad; Melouk, Mouad
+
+Visit the Bookstore
+ENGR-UH 3610 Signals and Systems
+
+This module covers analytical techniques for analyzing, characterizing and synthesizing engineering systems. Systems approaches where the entire system or each of the sub-systems is considered as single units are introduced. Introductory topics in this course include: sinusoids, phase and time shift, and complex exponentials. Operations on sinusoidal signals include addition of signals with the same frequency via the phasor addition rule, conversion between time-shift and phase, and addition of signals with different frequencies via the introduction of the frequency spectrum concept. Topics on... more description for ENGR-UH 3610 »
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 3610 | 4 units
+Class#: 20643
+Session: AD 08/31/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 12/14/2026 Tue,Thu 8.30 AM - 9.45 AM at Campus Center Room E052 with Nadeem, Qurrat-Ul-Ain
+
+Visit the Bookstore
+Select Class #20643
+ENGR-UH 3610
+Class#: 20644
+Session: AD 08/31/2026 - 12/14/2026
+Section: LAB
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 12/14/2026 Fri 9.20 AM - 11.55 AM at Computational Research Room 003 with Nadeem, Qurrat-Ul-Ain; Mulugeta, Tadesse
+
+Visit the Bookstore
+ENGR-UH 3611 Electronics
+
+This course focuses on fundamentals of electronics theory and design. The topics covered include semiconductor physics, diodes, diode circuits such as limiters, clamps; bipolar junction transistors; small-signal models; cut-off, saturation, and active regions; common emitter, common base and emitter-follower amplifier configurations; field-effect transistors (MOSFET and JFET); biasing; small-signal models; common-source and common gate amplifiers; and integrated circuit MOS amplifiers. The laboratory experiments include the design, building and testing of diode circuits, including rectifiers, ... more description for ENGR-UH 3611 »
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 3611 | 4 units
+Class#: 20683
+Session: AD 08/31/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 12/14/2026 Mon,Wed 11.20 AM - 12.35 PM at Social Sciences Room 005 with Ha, Sohmyung
+
+Visit the Bookstore
+Select Class #20683
+ENGR-UH 3611
+Class#: 20684
+Session: AD 08/31/2026 - 12/14/2026
+Section: LAB
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 12/14/2026 Wed 2.10 PM - 4.50 PM at Social Sciences Room 004 with Ha, Sohmyung
+
+Visit the Bookstore
+ENGR-UH 3620 Analog and Digital Communication Theory
+
+The course introduces the principles of the various analog communication fundamentals. Topics covered include: analog modulation techniques such as FM, AM, and PM; noise performance of various receivers; and digital data transmission, data encoding, BER, modulation techniques such as ASK, FSK, PSK and QAM, and the effects of noise and bandwidth. The labs emphasize experiential learning of basic analog and digital communication theory concepts and applications, including experiments demonstrating analog and digital modulation techniques.
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 3620 | 4 units
+Class#: 20645
+Session: AD 08/31/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 12/14/2026 Tue,Thu 9.55 AM - 11.10 AM at Social Sciences Room 005 with Chafii, Marwa
+
+Visit the Bookstore
+Select Class #20645
+ENGR-UH 3620
+Class#: 20646
+Session: AD 08/31/2026 - 12/14/2026
+Section: LAB
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 12/14/2026 Tue 3.20 PM - 6.00 PM at Social Science Building Room 019 with Chafii, Marwa
+
+Visit the Bookstore
+ENGR-UH 3720 Computer-Aided Design
+
+This course provides an introduction to computer-aided design (CAD) using solid modeling. Students learn to create solid object models using extrusions, revolutions, and swept paths, and learn to modify parts using cutting, patterns, fillets, chamfers, and other techniques. Assemblies of multiple parts are used to demonstrate the need for geometric tolerances, and students spend a large portion of class in hands-on use of software tools. The labs emphasize experiential learning of CAD concepts and applications using software tools.
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 3720 | 2 units
+Class#: 20678
+Session: A72 10/26/2026 - 12/14/2026
+Section: 001
+Class Status: Wait List (9)
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+10/26/2026 - 12/14/2026 Tue,Thu 1.55 PM - 3.10 PM at West Administration Room 003 with Montalvo Navarette, Jorge
+
+Visit the Bookstore
+Select Class #20678
+ENGR-UH 3720 | 2 units
+Class#: 20678
+Session: A72 10/26/2026 - 12/14/2026
+Section: 001
+Class Status: Wait List (9)
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+10/26/2026 - 12/14/2026 Tue,Thu 1.55 PM - 3.10 PM at West Administration Room 003 with Montalvo Navarette, Jorge
+
+Visit the Bookstore
+Select Class #20678
+ENGR-UH 3720
+Class#: 20679
+Session: A72 10/26/2026 - 12/14/2026
+Section: LAB1
+Class Status: Wait List (9)
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+10/26/2026 - 12/14/2026 Fri 9.20 AM - 11.55 AM at A1 Building Room 004 with Montalvo Navarette, Jorge
+
+Visit the Bookstore
+ENGR-UH 3720
+Class#: 20679
+Session: A72 10/26/2026 - 12/14/2026
+Section: LAB1
+Class Status: Wait List (9)
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+10/26/2026 - 12/14/2026 Fri 9.20 AM - 11.55 AM at A1 Building Room 004 with Montalvo Navarette, Jorge
+
+Visit the Bookstore
+ENGR-UH 3730 Modeling and Analysis of Dynamical Systems
+
+This course presents techniques for developing and analyzing mathematical models of mechanical, electrical, electromechanical, fluid and thermal systems. Transient, steady-state, and frequency responses of single- or multi- degree of freedom systems with lumped parameters are determined using analytical and numerical methods. Linearization and state-space representation of Dynamical Systems are also presented. Linear free- and forced vibrations in single- and multi-degree-of-freedom systems are discussed and methods of vibration absorption and isolation are introduced.
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 3730 | 3 units
+Class#: 20695
+Session: AD 08/31/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 12/14/2026 Tue,Thu 8.30 AM - 9.45 AM at Social Sciences Room 005 with Daqaq, Mohammed; Salim, Wahib
+
+Visit the Bookstore
+Select Class #20695
+ENGR-UH 3751 Heat Transport
+
+This course introduces students to the basic principles and engineering applications of heat transfer. Fundamental concepts and principles of conduction, convection, and radiation heat transfer are introduced and the pertinent governing equations are developed. This is followed by the application of these equations in analysis of heat transfer systems such as fins and heat exchangers. The following topics are covered in this course: introduction to conduction, convection, and radiation; one-dimensional, steady-state conduction; multi-dimensional, steady-state conduction; introduction to convec... more description for ENGR-UH 3751 »
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 3751 | 3 units
+Class#: 20653
+Session: AD 08/31/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 12/14/2026 Tue,Thu 9.55 AM - 11.10 AM at West Administration Room 003 with Panindre, Prabodh
+
+Visit the Bookstore
+Select Class #20653
+ENGR-UH 3752 Thermofluids Lab
+
+This course introduces students to the practical application of some fundamental concepts covered in Conservation Laws in Engineering, Fluid Mechanics, Thermodynamics and Heat Transport courses. Students will get the chance to perform experiments and analyze gathered data to test theoretical concepts. The following topics will be experimentally covered in this course: conservation of linear momentum, Reynold's apparatus, Bernoulli’s equation, flow through an orifice plate and venturi meter, refrigeration cycle, heat conduction and convection, and heat exchangers.
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 3752 | 1 units
+Class#: 20718
+Session: AD 08/31/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 12/14/2026 Tue 3.20 PM - 6.00 PM at Social Sciences Room 018 with Hashaikeh, Raed; Al-Chalabi, Mohammed; Salim, Wahib
+
+Visit the Bookstore
+Select Class #20718
+ENGR-UH 3811 Neuroengineering
+
+Mind and bodily control of devices has long been a goal of mankind. Advancements in various disciplines including neuromodulation and prosthetics bring us closer to this goal. This course will delve into the latest technologies and research in peripheral and central nervous systems. Students will learn the basic structure and functions of the nervous system, engineering approaches for interfacing with the nervous system, and existing and emerging clinical therapies for specific disorders. Sessions will present a holistic view of the neuroengineering field, combining engineering, translational,... more description for ENGR-UH 3811 »
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 3811 | 4 units
+Class#: 20706
+Session: AD 08/31/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 12/14/2026 Tue,Thu 8.30 AM - 9.45 AM at Social Sciences Room 004 with Ramadi, Khalil
+
+Visit the Bookstore
+Select Class #20706
+ENGR-UH 3811
+Class#: 20707
+Session: AD 08/31/2026 - 12/14/2026
+Section: LAB
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 12/14/2026 Tue 3.20 PM - 6.00 PM at Computational Research Room 002 with Ramadi, Khalil
+
+Visit the Bookstore
+ENGR-UH 3813 Nanobiotechnology
+
+Nanobiotechnology is an exciting interdisciplinary field that combines principles from biology, physics, chemistry, and engineering to create new applications and technologies at the nanoscale. Nanoscale refers to materials that are measured in nanometers (nm), which is about 1-100 nanometers in size, and is much smaller than what can be seen with the naked eye. Nanobiotechnology has the potential to revolutionize many areas of biology and medicine, including cancer treatment, regenerative medicine, and gene therapy. Additionally, the development of new nanobiotechnology applications has signi... more description for ENGR-UH 3813 »
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 3813 | 2 units
+Class#: 20710
+Session: A72 10/26/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+10/26/2026 - 12/14/2026 Mon,Wed 9.55 AM - 11.10 AM at Social Sciences Room 018 with Kamei, Kenichiro
+
+Visit the Bookstore
+Select Class #20710
+ENGR-UH 3813
+Class#: 20711
+Session: A72 10/26/2026 - 12/14/2026
+Section: LAB
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+10/26/2026 - 12/14/2026 Mon 2.10 PM - 4.50 PM at Social Sciences Room 018 with Kamei, Kenichiro
+
+Visit the Bookstore
+ENGR-UH 4011 Senior Design Capstone Project I
+
+Students learn about the process of design with measurable metrics, and how to incorporate appropriate engineering standards and multiple realistic constraints in the design process. Students learn how to clearly frame the design problem and follow the design process to result in an optimized solution. Students perform a review of the relevant literature, develop a preliminary design, generate solution concepts and selection criteria, and review and evaluate the chosen design. Students must consider social, economic, lifecycle, environmental, ethical, and other constraints, and must document t... more description for ENGR-UH 4011 »
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 4011 | 2 units
+Class#: 20633
+Session: AD 08/31/2026 - 12/14/2026
+Section: PR1
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Project
+
+08/31/2026 - 12/14/2026 Fri 8.00 AM - 9.15 AM at West Administration Room 001 with George, Pradeep
+
+Visit the Bookstore
+Select Class #20633
+ENGR-UH 4011 | 2 units
+Class#: 20634
+Session: AD 08/31/2026 - 12/14/2026
+Section: PR2
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Project
+
+08/31/2026 - 12/14/2026 No Room Required with George, Pradeep
+
+Visit the Bookstore
+Select Class #20634
+ENGR-UH 4011
+Class#: 20632
+Session: AD 08/31/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 12/14/2026 No Room Required with George, Pradeep
+
+Visit the Bookstore
+ENGR-UH 4020 Senior Design Capstone Project II
+
+The students finalize the proposed design solution, and test and verify the solution. Design modifications based on the test data are incorporated. If applicable, prototypes are built and tested. A final report for the project is prepared and the students make a presentation of their project to peers, faculty, and other professionals.
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 4020 | 4 units
+Class#: 20687
+Session: AD 08/31/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Seminar
+
+08/31/2026 - 12/14/2026 Thu 3.20 PM - 6.00 PMNo Room Required with George, Pradeep
+
+Visit the Bookstore
+Select Class #20687
+ENGR-UH 4140 Mechatronics
+
+This course applies a Problem-Based Learning (PBL) approach to introduce students to Mechatronics, the integration of mechanical systems, electronics, control systems, and computer systems. Through solving real-world problems, students will design, model, and control systems that incorporate sensors, actuators, and microcontrollers. This course emphasizes practical applications in robotics, automation, and dynamic control systems, focusing on team-based learning and culminating in a comprehensive term project.
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 4140 | 3 units
+Class#: 20680
+Session: AD 08/31/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 12/14/2026 Mon,Wed 11.20 AM - 12.35 PM at Social Sciences Room 018 with Abu-Dakka, Fares
+
+Visit the Bookstore
+Select Class #20680
+ENGR-UH 4142 Biosensors and Biochips
+
+This course covers the principles, technologies, methods and applications of biosensors and bioinstrumentation beginning with an examination of the ethical, legal, cultural, religious, and social implications of nanotechnologies. The objective of this course is to link engineering principles to understanding of biosystems in sensors and bioelectronics. The course provides students with detail of methods and procedures used in the design, fabrication, and application of biosensors and bioelectronic devices. The fundamentals of measurement science are applied to optical, electrochemical, mass, a... more description for ENGR-UH 4142 »
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 4142 | 4 units
+Class#: 20651
+Session: AD 08/31/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 12/14/2026 Tue,Thu 1.55 PM - 3.10 PM at Social Sciences Room 017 with Song, Yong-Ak (Rafael)
+
+Visit the Bookstore
+Select Class #20651
+ENGR-UH 4142 | 4 units
+Class#: 20651
+Session: AD 08/31/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 12/14/2026 Tue,Thu 1.55 PM - 3.10 PM at Social Sciences Room 017 with Song, Yong-Ak (Rafael)
+
+Visit the Bookstore
+Select Class #20651
+ENGR-UH 4142
+Class#: 20652
+Session: AD 08/31/2026 - 12/14/2026
+Section: LAB
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 12/14/2026 Fri 2.20 PM - 5.00 PM at Social Sciences Room 017 with Song, Yong-Ak (Rafael); Allum Saib, Zubeir
+
+Visit the Bookstore
+ENGR-UH 4142
+Class#: 20652
+Session: AD 08/31/2026 - 12/14/2026
+Section: LAB
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 12/14/2026 Fri 2.20 PM - 5.00 PM at Social Sciences Room 017 with Song, Yong-Ak (Rafael); Allum Saib, Zubeir
+
+Visit the Bookstore
+ENGR-UH 4143 Computer Vision and Pattern Recognition
+
+This advanced course in Computer Vision and Pattern Recognition is a focused offering within the expansive field of Artificial Intelligence (AI). The course aims to provide a comprehensive understanding of both foundational and advanced topics in computer vision. Foundational topics include image representation, image pre-processing, edge detection, and image segmentation. The course also covers a range of advanced topics such as image registration, object detection, object tracking, and 3D scene understanding with semantic interpretation. A significant emphasis is placed on the integration of... more description for ENGR-UH 4143 »
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 4143 | 4 units
+Class#: 20712
+Session: AD 08/31/2026 - 12/14/2026
+Section: LEC
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 12/14/2026 Mon,Wed 8.30 AM - 9.45 AM at Campus Center Room E048 with Fang, Yi
+
+Visit the Bookstore
+Select Class #20712
+ENGR-UH 4143
+Class#: 20713
+Session: AD 08/31/2026 - 12/14/2026
+Section: REC
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Recitation
+
+08/31/2026 - 12/14/2026 Fri 9.20 AM - 11.55 AM at Social Sciences Room 002 with Fang, Yi
+
+Visit the Bookstore
+ENGR-UH 4145 Mechatronics Lab
+
+The Mechatronics Lab is designed to complement the theoretical aspects of the course by providing students with individual, hands-on experience in designing and testing mechatronic systems. Unlike the course's team-based, Problem-Based Learning (PBL) approach, the lab emphasizes independent work, where students will individually develop practical skills in integrating mechanical components, electronics, sensors, actuators, and microcontrollers. Each lab session will focus on a distinct technical challenge related to core topics in mechatronics, such as sensor interfacing, actuator control, mic... more description for ENGR-UH 4145 »
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 4145 | 1 units
+Class#: 20719
+Session: AD 08/31/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 12/14/2026 Wed 3.20 PM - 6.00 PM at A1 Building Room 003 with Abu-Dakka, Fares
+
+Visit the Bookstore
+Select Class #20719
+ENGR-UH 4230 Applied Optimization
+
+This course provides an introduction to systems optimization focusing on understanding system tradeoffs. The course introduces modeling methodology (linear, integer, stochastic, dynamic, and nonlinear programming), with applications in production planning, scheduling and manpower planning, time-phased planning, inventory and logistics management, supply chain network design, facility sizing and capacity expansion, capital budgeting models, assignment and matching, and transportation models. In this class, students learn powerful modeling and solution techniques for decision-making problems tha... more description for ENGR-UH 4230 »
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 4230 | 4 units
+Class#: 22220
+Session: AD 08/31/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 12/14/2026 Tue,Thu 3.20 PM - 4.35 PM at Computational Research Room 017 with Diabat, Ali
+
+Visit the Bookstore
+Select Class #22220
+ENGR-UH 4230
+Class#: 22219
+Session: AD 08/31/2026 - 12/14/2026
+Section: LAB1
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 12/14/2026 Fri 9.20 AM - 10.35 AM at Computational Research Room 019 with Diabat, Ali
+
+Visit the Bookstore
+ENGR-UH 4231 Membrane Science and Engineering
+
+Modern membrane engineering is critical to the development of process-intensification strategies and to the stimulation of industrial growth. Membrane separation is an important process in water processing, food technology, pharmaceutical industry as well as the management of water resources and it has a large societal, economic and environmental impact. This course will give engineering students a solid grounding in membrane science and related separation processes from basic phenomena to the most advanced applications and future perspectives. It presents all types of pressure driven membrane... more description for ENGR-UH 4231 »
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 4231 | 2 units
+Class#: 20708
+Session: A71 08/31/2026 - 10/16/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 10/16/2026 Mon,Wed 9.55 AM - 11.10 AM at Social Science Building Room 019 with Hilal, Nidal; Khanzada, Noman Khalid
+
+Visit the Bookstore
+Select Class #20708
+ENGR-UH 4231
+Class#: 20709
+Session: A71 08/31/2026 - 10/16/2026
+Section: LAB
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 10/16/2026 Wed 2.10 PM - 4.50 PM at East Administration Building Room 003 with Hilal, Nidal; Khanzada, Noman Khalid
+
+Visit the Bookstore
+ENGR-UH 4330 Robotics
+
+This course presents an overview of robotics, covering a selection of topics including controls, localization, motion planning, sensing, kinematics, and human-robot interaction, and related social-ethical issues. Practical lab and simulation exercises complement the lectures. The students further specialize and consolidate their knowledge through semester-long hands-on projects that involve the design, implementation, and testing of robotic systems and applications.
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 4330 | 4 units
+Class#: 20641
+Session: AD 08/31/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 12/14/2026 Mon,Wed 8.30 AM - 9.45 AM at Computational Research Room 004 with Kyriakopoulos, Konstantinos
+
+Visit the Bookstore
+Select Class #20641
+ENGR-UH 4330 | 4 units
+Class#: 20641
+Session: AD 08/31/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 12/14/2026 Mon,Wed 8.30 AM - 9.45 AM at Computational Research Room 004 with Kyriakopoulos, Konstantinos
+
+Visit the Bookstore
+Select Class #20641
+ENGR-UH 4330
+Class#: 20642
+Session: AD 08/31/2026 - 12/14/2026
+Section: LAB
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 12/14/2026 Fri 9.20 AM - 11.55 AM at East Administration Building Room 003 with Kyriakopoulos, Konstantinos; Avdeev, Alexander
+
+Visit the Bookstore
+ENGR-UH 4330
+Class#: 20642
+Session: AD 08/31/2026 - 12/14/2026
+Section: LAB
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 12/14/2026 Fri 9.20 AM - 11.55 AM at East Administration Building Room 003 with Kyriakopoulos, Konstantinos; Avdeev, Alexander
+
+Visit the Bookstore
+ENGR-UH 4423 Production and Logistics Management
+
+This course provides an introduction to operations research models and techniques developed for a variety of problems arising in production and logistical systems. The course focuses on planning models for production, inventory, and distribution strategies. Topics include production planning, inventory management with deterministic demand, inventory management with stochastic demand, operations scheduling, facility location problems, and routing problems.
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 4423 | 4 units
+Class#: 22218
+Session: AD 08/31/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Seminar
+
+08/31/2026 - 12/14/2026 Tue,Thu 4.45 PM - 6.00 PM at Computational Research Room 018 with Diabat, Ali
+
+Visit the Bookstore
+Select Class #22218
+ENGR-UH 4423
+Class#: 22221
+Session: AD 08/31/2026 - 12/14/2026
+Section: LAB
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 12/14/2026 Fri 10.40 AM - 11.55 AM at Computational Research Room 020 with Diabat, Ali
+
+Visit the Bookstore
+ENGR-UH 4431 Foundation Engineering Design
+
+This course introduces the development of foundation engineering, including site exploration, soil sampling, interpretation of boring logs, bearing capacity of footings, settlement of structures, lateral earth pressure. Design of retaining walls, design of braced excavations and sheet pile walls; and design of deep foundations are covered.
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 4431 | 2 units
+Class#: 20664
+Session: A72 10/26/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+10/26/2026 - 12/14/2026 Mon,Wed 8.30 AM - 9.45 AM at Social Sciences Room 001 with Sousa, Rita Leal
+
+Visit the Bookstore
+Select Class #20664
+ENGR-UH 4431
+Class#: 20665
+Session: A72 10/26/2026 - 12/14/2026
+Section: LAB
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+10/26/2026 - 12/14/2026 Fri 9.20 AM - 11.55 AM at Social Sciences Room 001 with Sousa, Rita Leal
+
+Visit the Bookstore
+ENGR-UH 4433 Structure and Properties of Civil Engineering Materials
+
+In this course, students are introduced to the structure and properties of civil engineering materials such as asphalt, cements, concrete, geological materials (e.g. soil and rocks), steel, polymers, and wood. The properties range from elastic, plastic and fracture properties to porosity and thermal and environmental responses. Laboratory tests include evaluation of behavior of these materials under a wide range of conditions.
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 4433 | 2 units
+Class#: 20691
+Session: A72 10/26/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+10/26/2026 - 12/14/2026 Mon,Wed 11.20 AM - 12.35 PM at East Administration Room 004 with Celik, Kemal
+
+Visit the Bookstore
+Select Class #20691
+ENGR-UH 4433
+Class#: 20692
+Session: A72 10/26/2026 - 12/14/2026
+Section: LAB
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+10/26/2026 - 12/14/2026 Wed 2.10 PM - 4.50 PM at Campus Center Room 307 with Celik, Kemal; Mengiste, Eyob
+
+Visit the Bookstore
+ENGR-UH 4436 Computer Assisted Design for Civil Engineers
+
+This course introduces students to essential tools and techniques in computer-aided design (CAD) with a focus on AutoCAD, REVIT, and structural and soil analysis software. Through a hands-on, project-based approach, students will gain knowledge in drafting 2D drawings, and understanding architectural and structural layouts. The course emphasizes the use of CAD in architectural and civil engineering applications, progressing from basic AutoCAD skills to more advanced integration with structural and geotechnical design tools. Students will also explore how these software systems communicate, hel... more description for ENGR-UH 4436 »
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 4436 | 2 units
+Class#: 20720
+Session: A72 10/26/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+10/26/2026 - 12/14/2026 Tue,Thu 11.20 AM - 12.35 PM at A1 Building Room 002 with Elsekelly, Waleed
+
+Visit the Bookstore
+Select Class #20720
+ENGR-UH 4436
+Class#: 20721
+Session: A72 10/26/2026 - 12/14/2026
+Section: LAB
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+10/26/2026 - 12/14/2026 Thu 3.20 PM - 6.00 PM at A1 Building Room 004 with Elsekelly, Waleed
+
+Visit the Bookstore
+ENGR-UH 4560 Selected Topics in Information and Computational Systems
+
+This course explores advanced topics of special interest in information and computational systems and is designed to aid students in gaining extra knowledge in an area not covered in the program's mainstay courses. Different topics may be repeated for credit as long as the topic is different. The course is open to junior and senior students. Students must obtain permission from their faculty mentor. Topics: 1. Hardware Security: Computer Engineering electives; Computer Engineering Hardware electives, Electrical Engineering electives, General Engineering electives. 2. Machine Learning: Civil En... more description for ENGR-UH 4560 »
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 4560 | 2 - 4 units
+Class#: 21933
+Session: AD 08/31/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 12/14/2026 Tue,Thu 1.55 PM - 3.10 PM at Computational Research Room 017 with Alhanai, Tuka
+Notes: Course Repeatable for Credit.
+Visit the Bookstore
+Select Class #21933
+ENGR-UH 4560
+Class#: 21932
+Session: AD 08/31/2026 - 12/14/2026
+Section: LAB1
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 12/14/2026 Fri 2.20 PM - 5.00 PM at Social Sciences Room 001 with Alhanai, Tuka
+Notes: Course Repeatable for Credit.
+Visit the Bookstore
+ENGR-UH 4610 Control Systems Engineering
+
+The course introduces the principles of dynamic system modeling, analysis, and feedback control design with extensive, hands-on computer simulation. Modeling and analysis of dynamic systems. Description of interconnected systems via transfer functions and block/signal-flow diagrams. System response characterization as transient and steady-state responses and error considerations. Stability of dynamical systems: Routh-Hurwitz criterion. Controller design using root-locus and Bode-diagrams (frequency domain). Introduction to modern state-space controller designs. Computer-aided feedback control ... more description for ENGR-UH 4610 »
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 4610 | 4 units
+Class#: 20649
+Session: AD 08/31/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 12/14/2026 Mon,Wed 11.20 AM - 12.35 PM at Social Science Building Room 019 with Kyriakopoulos, Konstantinos; Avdeev, Alexander
+
+Visit the Bookstore
+Select Class #20649
+ENGR-UH 4610 | 4 units
+Class#: 20649
+Session: AD 08/31/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+08/31/2026 - 12/14/2026 Mon,Wed 11.20 AM - 12.35 PM at Social Science Building Room 019 with Kyriakopoulos, Konstantinos; Avdeev, Alexander
+
+Visit the Bookstore
+Select Class #20649
+ENGR-UH 4610
+Class#: 20650
+Session: AD 08/31/2026 - 12/14/2026
+Section: LAB
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 12/14/2026 Wed 2.10 PM - 4.50 PM at Social Sciences Room 018 with Kyriakopoulos, Konstantinos; Avdeev, Alexander
+
+Visit the Bookstore
+ENGR-UH 4610
+Class#: 20650
+Session: AD 08/31/2026 - 12/14/2026
+Section: LAB
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+08/31/2026 - 12/14/2026 Wed 2.10 PM - 4.50 PM at Social Sciences Room 018 with Kyriakopoulos, Konstantinos; Avdeev, Alexander
+
+Visit the Bookstore
+ENGR-UH 4713 Computational Fluid Dynamics
+
+This course introduces the basic concepts of numerical modeling of various flows. The class does not require prior background in computational fluid dynamics (CFD). The course will start with learning general numerical methods for solving partial differential equations, and we will consider variations and modifications for fluid flows. There will be hands-on learning through programming assignments using MATLAB and commercial CFD software. The goal of the course is to understand both the numerical techniques for fluid flows and the physical processes from the calculations.
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 4713 | 2 units
+Class#: 22192
+Session: A72 10/26/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+10/26/2026 - 12/14/2026 Mon,Wed 12.45 PM - 2.00 PM at West Administration Room 003 with Ryu, Je Ir
+
+Visit the Bookstore
+Select Class #22192
+ENGR-UH 4713
+Class#: 22193
+Session: A72 10/26/2026 - 12/14/2026
+Section: LAB
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+10/26/2026 - 12/14/2026 Fri 2.20 PM - 5.00 PM at West Administration Building Room 004 with Ryu, Je Ir
+
+Visit the Bookstore
+ENGR-UH 4810 Biomaterials
+
+Introduction to the field of biomaterials used in applications for the challenging field of tissue engineering and regenerative medicine. Confined to discussions on synthetic or naturally derived biopolymers, the course will touch on bulk properties, degradation mechanisms, cell-material interactions and biocompatibility, material and immune response, techniques for biomaterials assessments, methods of processability and special considerations for in situ regeneration.
+
+School:
+NYU Abu Dhabi
+Term:
+Fall 2026
+ENGR-UH 4810 | 2 units
+Class#: 20698
+Session: A72 10/26/2026 - 12/14/2026
+Section: 001
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Lecture
+
+10/26/2026 - 12/14/2026 Tue,Thu 9.55 AM - 11.10 AM at Social Science Building Room 019 with Teo, Jeremy
+
+Visit the Bookstore
+Select Class #20698
+ENGR-UH 4810
+Class#: 20699
+Session: A72 10/26/2026 - 12/14/2026
+Section: LAB
+Class Status: Open
+Grading: Ugrd Abu Dhabi Graded
+Instruction Mode: In-Person
+Course Location: Abu Dhabi
+Component: Laboratory
+
+10/26/2026 - 12/14/2026 Tue 3.20 PM - 6.00 PM at Campus Center Room E050 with Teo, Jeremy; Sabah, Shafiya
+
+Visit the Bookstore

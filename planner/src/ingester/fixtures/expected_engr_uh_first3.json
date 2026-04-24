@@ -1,0 +1,369 @@
+{
+  "_comment": "Expected parser output for the first 3 courses in engr-uh-fall2026.txt. This is the ground truth the parser must match. See EXPECTED_OUTPUT_WALKTHROUGH.md for the reasoning behind every field.",
+  "schema_version": "1.1.2",
+  "header": {
+    "term": "Fall 2026",
+    "subject_code": "ENGR-UH",
+    "results_shown": 56,
+    "total_class_count": 141
+  },
+  "courses": [
+    {
+      "code": "ENGR-UH 1000",
+      "subject": "ENGR-UH",
+      "catalog_number": "1000",
+      "title": "Computer Programming for Engineers",
+      "title_flags": [],
+      "description": "The objective of the course is for students to acquire the fundamental knowledge of computer programming, develop transferable programming skills, and learn to solve engineering problems via programming. The course is primarily based on the C++ programming language and an introduction to another programming language such as MATLAB (to demonstrate transferring programming knowledge from one language to another). The course explores the application of engineering computation in various engineering domains including mechanical, civil, computer, and electrical engineering. The following topics are...",
+      "description_truncated": true,
+      "school": "NYU Abu Dhabi",
+      "units": 4,
+      "no_sections_offered": false,
+      "has_topics": false,
+      "sections": [
+        {
+          "class_number": "20607",
+          "section_code": "001",
+          "component": "Lecture",
+          "session": { "code": "AD", "start_date": "2026-08-31", "end_date": "2026-12-14" },
+          "status": { "raw": "Open", "type": "open", "count": null },
+          "requires_consent": false,
+          "grading": "Ugrd Abu Dhabi Graded",
+          "instruction_mode": "In-Person",
+          "location": "Abu Dhabi",
+          "meetings": [
+            {
+              "days": ["Mon", "Wed"],
+              "start_time": "17:00",
+              "end_time": "18:15",
+              "start_date": "2026-08-31",
+              "end_date": "2026-12-14",
+              "room": "West Administration Room 001",
+              "building": "West Administration",
+              "room_number": "001",
+              "instructors": []
+            }
+          ],
+          "linked_components": [],
+          "notes": null,
+          "topic": null,
+          "display_timezone": null
+        },
+        {
+          "class_number": "20609",
+          "section_code": "LAB1",
+          "component": "Laboratory",
+          "session": { "code": "AD", "start_date": "2026-08-31", "end_date": "2026-12-14" },
+          "status": { "raw": "Open", "type": "open", "count": null },
+          "requires_consent": false,
+          "grading": "Ugrd Abu Dhabi Graded",
+          "instruction_mode": "In-Person",
+          "location": "Abu Dhabi",
+          "meetings": [
+            {
+              "days": ["Wed"],
+              "start_time": "11:20",
+              "end_time": "14:00",
+              "start_date": "2026-08-31",
+              "end_date": "2026-12-14",
+              "room": "A1 Building Room 002",
+              "building": "A1 Building",
+              "room_number": "002",
+              "instructors": ["Negoiu, Elena"]
+            }
+          ],
+          "linked_components": [],
+          "notes": null,
+          "topic": null,
+          "display_timezone": null
+        },
+        {
+          "class_number": "20608",
+          "section_code": "LAB2",
+          "component": "Laboratory",
+          "session": { "code": "AD", "start_date": "2026-08-31", "end_date": "2026-12-14" },
+          "status": { "raw": "Open", "type": "open", "count": null },
+          "requires_consent": false,
+          "grading": "Ugrd Abu Dhabi Graded",
+          "instruction_mode": "In-Person",
+          "location": "Abu Dhabi",
+          "meetings": [
+            {
+              "days": ["Tue"],
+              "start_time": "15:20",
+              "end_time": "18:00",
+              "start_date": "2026-08-31",
+              "end_date": "2026-12-14",
+              "room": "A1 Building Room 002",
+              "building": "A1 Building",
+              "room_number": "002",
+              "instructors": ["Melouk, Mouad"]
+            }
+          ],
+          "linked_components": [],
+          "notes": null,
+          "topic": null,
+          "display_timezone": null
+        },
+        {
+          "class_number": "20610",
+          "section_code": "LAB3",
+          "component": "Laboratory",
+          "session": { "code": "AD", "start_date": "2026-08-31", "end_date": "2026-12-14" },
+          "status": { "raw": "Open", "type": "open", "count": null },
+          "requires_consent": false,
+          "grading": "Ugrd Abu Dhabi Graded",
+          "instruction_mode": "In-Person",
+          "location": "Abu Dhabi",
+          "meetings": [
+            {
+              "days": ["Thu"],
+              "start_time": "15:20",
+              "end_time": "18:00",
+              "start_date": "2026-08-31",
+              "end_date": "2026-12-14",
+              "room": "A1 Building Room 002",
+              "building": "A1 Building",
+              "room_number": "002",
+              "instructors": ["Negoiu, Elena"]
+            }
+          ],
+          "linked_components": [],
+          "notes": null,
+          "topic": null,
+          "display_timezone": null
+        },
+        {
+          "class_number": "20611",
+          "section_code": "LAB4",
+          "component": "Laboratory",
+          "session": { "code": "AD", "start_date": "2026-08-31", "end_date": "2026-12-14" },
+          "status": { "raw": "Open", "type": "open", "count": null },
+          "requires_consent": false,
+          "grading": "Ugrd Abu Dhabi Graded",
+          "instruction_mode": "In-Person",
+          "location": "Abu Dhabi",
+          "meetings": [
+            {
+              "days": ["Fri"],
+              "start_time": "14:20",
+              "end_time": "17:00",
+              "start_date": "2026-08-31",
+              "end_date": "2026-12-14",
+              "room": "A1 Building Room 002",
+              "building": "A1 Building",
+              "room_number": "002",
+              "instructors": ["Melouk, Mouad"]
+            }
+          ],
+          "linked_components": [],
+          "notes": null,
+          "topic": null,
+          "display_timezone": null
+        }
+      ]
+    },
+    {
+      "code": "ENGR-UH 1801",
+      "subject": "ENGR-UH",
+      "catalog_number": "1801",
+      "title": "Bioengineering Principles",
+      "title_flags": [],
+      "description": "This introductory course is designed to give students a glimpse of a broad selection of bioengineering topics that are currently underway in the field of biomechanics, biomaterials, bioimaging, and bioinstrumentation as well as in mechanobiology and biophysics. Students will become familiar with bioengineering applications in the various areas and see how engineering principles can be applied to solve a variety of biological and biomedical problems. This course will also give students perspectives about the possibilities of working as bioengineers in academia and industry. This course is reco...",
+      "description_truncated": true,
+      "school": "NYU Abu Dhabi",
+      "units": 2,
+      "no_sections_offered": false,
+      "has_topics": false,
+      "sections": [
+        {
+          "class_number": "20700",
+          "section_code": "001",
+          "component": "Seminar",
+          "session": { "code": "A71", "start_date": "2026-08-31", "end_date": "2026-10-16" },
+          "status": { "raw": "Open", "type": "open", "count": null },
+          "requires_consent": false,
+          "grading": "Ugrd Abu Dhabi Graded",
+          "instruction_mode": "In-Person",
+          "location": "Abu Dhabi",
+          "meetings": [
+            {
+              "days": ["Mon", "Wed"],
+              "start_time": "12:45",
+              "end_time": "14:00",
+              "start_date": "2026-08-31",
+              "end_date": "2026-10-16",
+              "room": "Social Sciences Room 005",
+              "building": "Social Sciences",
+              "room_number": "005",
+              "instructors": ["Zam, Azhar"]
+            }
+          ],
+          "linked_components": [],
+          "notes": null,
+          "topic": null,
+          "display_timezone": null,
+          "_parser_note": "This section appeared TWICE in the source paste (duplicate block for 'Select Class #20700'). Parser must dedupe by class_number — output exactly one."
+        },
+        {
+          "class_number": "20701",
+          "section_code": "LAB",
+          "component": "Laboratory",
+          "session": { "code": "A71", "start_date": "2026-08-31", "end_date": "2026-10-16" },
+          "status": { "raw": "Open", "type": "open", "count": null },
+          "requires_consent": false,
+          "grading": "Ugrd Abu Dhabi Graded",
+          "instruction_mode": "In-Person",
+          "location": "Abu Dhabi",
+          "meetings": [
+            {
+              "days": ["Fri"],
+              "start_time": "14:20",
+              "end_time": "17:00",
+              "start_date": "2026-08-31",
+              "end_date": "2026-10-16",
+              "room": "Social Sciences Room 018",
+              "building": "Social Sciences",
+              "room_number": "018",
+              "instructors": ["Zam, Azhar", "Sabah, Shafiya"]
+            }
+          ],
+          "linked_components": [],
+          "notes": null,
+          "topic": null,
+          "display_timezone": null,
+          "_parser_note": "Two instructors, semicolon-separated in source: 'Zam, Azhar; Sabah, Shafiya'. Also duplicated in source — dedupe."
+        }
+      ]
+    },
+    {
+      "code": "ENGR-UH 2010",
+      "subject": "ENGR-UH",
+      "catalog_number": "2010",
+      "title": "Probability and Statistics for Engineers",
+      "title_flags": [],
+      "description": "Introductory course in probability and statistics with an emphasis on how these topics are relevant in engineering disciplines. Topics in probability theory include sample spaces, and counting, random variables (discrete and continuous), probability distributions, cumulative density functions, rules and theorems of probability, expectation, and variance. Topics in statistics include sampling, central limit theorem, and linear regression. The course emphasizes correct application of probability and statistics and highlights the limitations of each method presented. NOTE: This course may be rep...",
+      "description_truncated": true,
+      "school": "NYU Abu Dhabi",
+      "units": 2,
+      "no_sections_offered": false,
+      "has_topics": false,
+      "sections": [
+        {
+          "class_number": "20668",
+          "section_code": "001",
+          "component": "Lecture",
+          "session": { "code": "A71", "start_date": "2026-08-31", "end_date": "2026-10-16" },
+          "status": { "raw": "Wait List (5)", "type": "waitlist", "count": 5 },
+          "requires_consent": false,
+          "grading": "Ugrd Abu Dhabi Graded",
+          "instruction_mode": "In-Person",
+          "location": "Abu Dhabi",
+          "meetings": [
+            {
+              "days": ["Mon", "Wed"],
+              "start_time": "09:55",
+              "end_time": "11:10",
+              "start_date": "2026-08-31",
+              "end_date": "2026-10-16",
+              "room": "Social Sciences Room 018",
+              "building": "Social Sciences",
+              "room_number": "018",
+              "instructors": ["Jabari, Saif Eddin Ghazi"]
+            }
+          ],
+          "linked_components": [],
+          "notes": null,
+          "topic": null,
+          "display_timezone": null
+        },
+        {
+          "class_number": "20669",
+          "section_code": "REC1",
+          "component": "Recitation",
+          "session": { "code": "A71", "start_date": "2026-08-31", "end_date": "2026-10-16" },
+          "status": { "raw": "Wait List (5)", "type": "waitlist", "count": 5 },
+          "requires_consent": false,
+          "grading": "Ugrd Abu Dhabi Graded",
+          "instruction_mode": "In-Person",
+          "location": "Abu Dhabi",
+          "meetings": [
+            {
+              "days": ["Mon"],
+              "start_time": "14:10",
+              "end_time": "16:50",
+              "start_date": "2026-08-31",
+              "end_date": "2026-10-16",
+              "room": "Social Sciences Room 005",
+              "building": "Social Sciences",
+              "room_number": "005",
+              "instructors": ["Jabari, Saif Eddin Ghazi"]
+            }
+          ],
+          "linked_components": [],
+          "notes": null,
+          "topic": null,
+          "display_timezone": null
+        },
+        {
+          "class_number": "20670",
+          "section_code": "002",
+          "component": "Lecture",
+          "session": { "code": "A72", "start_date": "2026-10-26", "end_date": "2026-12-14" },
+          "status": { "raw": "Open", "type": "open", "count": null },
+          "requires_consent": false,
+          "grading": "Ugrd Abu Dhabi Graded",
+          "instruction_mode": "In-Person",
+          "location": "Abu Dhabi",
+          "meetings": [
+            {
+              "days": ["Tue", "Thu"],
+              "start_time": "09:55",
+              "end_time": "11:10",
+              "start_date": "2026-10-26",
+              "end_date": "2026-12-14",
+              "room": "Social Sciences Room 018",
+              "building": "Social Sciences",
+              "room_number": "018",
+              "instructors": ["Nadeem, Qurrat-Ul-Ain"]
+            }
+          ],
+          "linked_components": [],
+          "notes": null,
+          "topic": null,
+          "display_timezone": null
+        },
+        {
+          "class_number": "20671",
+          "section_code": "REC2",
+          "component": "Recitation",
+          "session": { "code": "A72", "start_date": "2026-10-26", "end_date": "2026-12-14" },
+          "status": { "raw": "Open", "type": "open", "count": null },
+          "requires_consent": false,
+          "grading": "Ugrd Abu Dhabi Graded",
+          "instruction_mode": "In-Person",
+          "location": "Abu Dhabi",
+          "meetings": [
+            {
+              "days": ["Tue"],
+              "start_time": "15:20",
+              "end_time": "18:00",
+              "start_date": "2026-10-26",
+              "end_date": "2026-12-14",
+              "room": "Computational Research Room 004",
+              "building": "Computational Research",
+              "room_number": "004",
+              "instructors": ["Nadeem, Qurrat-Ul-Ain"]
+            }
+          ],
+          "linked_components": [],
+          "notes": null,
+          "topic": null,
+          "display_timezone": null
+        }
+      ]
+    }
+  ],
+  "warnings": [],
+  "unparsed_lines": []
+}

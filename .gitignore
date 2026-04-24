@@ -1,0 +1,45 @@
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# Nomenclature-harvester scraper scratch (ephemeral, regeneratable).
+# The scraped result files (nomenclature-raw.json, nomenclature-reduced.md,
+# scrape.js) stay; only the fetch cache and its own node_modules are
+# ignored so the scraper's ~100 MB of cached HTML doesn't bloat the repo.
+_scrapedData */cache/
+_scrapedData */node_modules/
+
+# TypeScript build output
+dist/
+build/
+*.tsbuildinfo
+
+# Generated scraped data — don't commit, ages fast
+data/*.json
+!data/example.json
+
+# User config — personal info, don't commit
+data/user.json
+
+# Editor / OS
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Environment
+.env
+.env.local
+.env.*.local

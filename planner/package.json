@@ -1,0 +1,14 @@
+{
+  "name": "horarium-planner",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "Horarium planner — paste ingester and schedule UI. Browser-only at runtime; vitest in Node for tests.",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "vitest": "^1.6.0"
+  }
+}
