@@ -254,6 +254,11 @@ export function diffSectionFormToEdits({ classNumber, formFlat, formMeetings, pa
   // Meetings: we edit the whole array at once (path "meetings") rather
   // than per-index — simpler, and matches the store's path regex which
   // accepts "meetings" as a full-array write.
+  // TODO(meetings): per-meeting edits rather than array-rewrite. Surfaces
+  // as a problem only when a section has multiple meetings with
+  // independent edits (e.g. MW in room A + F in room B, edit just F's
+  // room) — today that rewrites both entries as a single blob, losing
+  // the granularity. Defer until real user data exposes the limitation.
   if (formMeetings !== undefined) {
     const parsed = parsedMeetings || [];
     if (deepEqual(formMeetings, parsed)) {

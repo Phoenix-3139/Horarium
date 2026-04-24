@@ -688,6 +688,37 @@ describe("createCatalog — metadata", () => {
   });
 });
 
+describe("createCatalog — pub/sub fires on setEdit so Browse auto-refreshes", () => {
+  it("a subscriber called after setEdit sees the edit reflected in getEffective", () => {
+    const cat = createCatalog();
+    cat.ingestSubject(
+      "ENGR-UH",
+      buildParserOutput({
+        courses: [
+          buildCourse({
+            code: "ENGR-UH 1000",
+            sections: [buildSection({ class_number: "20607" })],
+          }),
+        ],
+      }),
+    );
+    const events = [];
+    cat.subscribe((e) => {
+      events.push(e);
+    });
+    cat.setEdit({
+      class_number: "20607",
+      field_path: "meetings[0].room",
+      value: "NEW ROOM",
+    });
+    // The subscriber fired and the effective view reflects the edit.
+    expect(events.some((e) => e.reason === "setEdit")).toBe(true);
+    const eff = cat.getEffective();
+    const sec = eff.courses[0].sections[0];
+    expect(sec.meetings[0].room).toBe("NEW ROOM");
+  });
+});
+
 describe("createCatalog — _raw_paste_block provenance field", () => {
   it("survives ingest → toJSON → fromJSON round-trip unchanged", () => {
     const cat = createCatalog();

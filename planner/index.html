@@ -3884,6 +3884,10 @@
     background: rgba(183, 129, 63, 0.12);
     border-color: rgba(183, 129, 63, 0.4);
   }
+  .ed-scope-switch a.disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
 
   .ed-field {
     display: grid;
@@ -4094,19 +4098,22 @@
     border-left-color: rgba(160, 60, 40, 0.7);
   }
 
-  /* "Fix this" button attached to Browse warning chips */
+  /* "Fix this" button lives below the expanded warning copy, outside
+     <summary>, so it doesn't toggle the details when clicked. */
+  .br-warn-fix-row {
+    margin-top: 0.4rem;
+  }
   .br-warn-fix {
-    margin-left: 0.5rem;
-    font-size: 0.7rem;
-    padding: 0.12rem 0.45rem;
-    border: 1px solid rgba(183, 129, 63, 0.45);
-    background: #fff;
+    font-size: 0.72rem;
+    padding: 0.2rem 0.55rem;
+    border: 1px solid rgba(183, 129, 63, 0.5);
+    background: #fffaf3;
     border-radius: 2px;
     cursor: pointer;
-    color: rgba(28, 26, 23, 0.75);
+    color: rgba(28, 26, 23, 0.8);
     font-family: inherit;
   }
-  .br-warn-fix:hover { background: rgba(183, 129, 63, 0.1); }
+  .br-warn-fix:hover { background: rgba(183, 129, 63, 0.12); }
   /* Browse section "Edit" button */
   .br-section-edit {
     font-size: 0.72rem;
@@ -4979,14 +4986,26 @@ function buildCatTabs() {
 // ============ COURSE LIST ============
 function buildCourseList() {
   const list = document.getElementById('course-list');
+  if (!list) return; // Cores module not in the current layout — nothing to do.
   list.innerHTML = '';
+  // Defensive lookup: SCHED_DATA.conflicts[currentOption] is populated only
+  // for class numbers the user has committed to a plan. When the catalog is
+  // freshly pasted, getCoresList() returns ids that aren't yet in the
+  // conflicts map (the placeholder plan has {} for option 0). Fall back to
+  // an empty array so missing entries don't crash .length access.
+  const _conflictsFor = (id) => {
+    const opt = SCHED_DATA.conflicts && SCHED_DATA.conflicts[currentOption];
+    if (!opt) return [];
+    const v = opt[id];
+    return Array.isArray(v) ? v : [];
+  };
   const courses = HS.adapter.getCoresList().filter(c => c.cat === currentCat);
   courses.sort((a,b) => {
     const aLocked = isLocked(a) ? -3 : 0;
     const bLocked = isLocked(b) ? -3 : 0;
     if (aLocked !== bLocked) return aLocked - bLocked;
-    const ac = SCHED_DATA.conflicts[currentOption][a.id].length;
-    const bc = SCHED_DATA.conflicts[currentOption][b.id].length;
+    const ac = _conflictsFor(a.id).length;
+    const bc = _conflictsFor(b.id).length;
     if (ac !== bc) return ac - bc;
     const statusOrder = { 'Open': 0, 'Waitlist': 1, 'Closed': 2 };
     const as = statusOrder[a.status] ?? 3;
@@ -4996,7 +5015,7 @@ function buildCourseList() {
   });
 
   courses.forEach(c => {
-    const conflicts = SCHED_DATA.conflicts[currentOption][c.id];
+    const conflicts = _conflictsFor(c.id);
     const hasConflict = conflicts.length > 0;
     const isSelected = selected[c.cat] === c.id;
 
@@ -5525,8 +5544,8 @@ function exportAsJSON() {
       status: core.status,
       description: core.desc,
       credits: core.cat === 'PHYED' ? 0 : 4,
-      fits_current_plan: SCHED_DATA.conflicts[currentOption][core.id].length === 0,
-      conflicts_with: SCHED_DATA.conflicts[currentOption][core.id].slice(),
+      fits_current_plan: ((SCHED_DATA.conflicts[currentOption] || {})[core.id] || []).length === 0,
+      conflicts_with: ((SCHED_DATA.conflicts[currentOption] || {})[core.id] || []).slice(),
       meetings: core.meetings.map(([days, start, end, session, label]) => ({
         days: days.slice(), start_minute: start, end_minute: end,
         start_time: hhmm(start), end_time: hhmm(end),
@@ -6373,15 +6392,21 @@ buildCourseList = function() {
   if (filters.length === 0) return;
   // Walk the rendered course rows and annotate
   const list = document.getElementById('course-list');
+  if (!list) return;
   const rows = list.querySelectorAll('.course-row');
+  const _conflictsFor = (id) => {
+    const opt = SCHED_DATA.conflicts && SCHED_DATA.conflicts[currentOption];
+    const v = opt ? opt[id] : null;
+    return Array.isArray(v) ? v : [];
+  };
   const courses = HS.adapter.getCoresList().filter(c => c.cat === currentCat);
   // Match order used by _buildCourseListBeforeFilters
   courses.sort((a,b) => {
     const aLocked = isLocked(a) ? -3 : 0;
     const bLocked = isLocked(b) ? -3 : 0;
     if (aLocked !== bLocked) return aLocked - bLocked;
-    const ac = SCHED_DATA.conflicts[currentOption][a.id].length;
-    const bc = SCHED_DATA.conflicts[currentOption][b.id].length;
+    const ac = _conflictsFor(a.id).length;
+    const bc = _conflictsFor(b.id).length;
     if (ac !== bc) return ac - bc;
     const statusOrder = { 'Open': 0, 'Waitlist': 1, 'Closed': 2 };
     const as = statusOrder[a.status] ?? 3;
@@ -6603,7 +6628,7 @@ const MODULE_DEFS = {
 };
 
 let userTabs = [
-  { id: 'main',    label: 'Main',    moduleIds: ['plan', 'schedule', 'cores'] },
+  { id: 'main',    label: 'Main',    moduleIds: ['plan', 'schedule'] },
   { id: 'catalog', label: 'Catalog', moduleIds: ['catalog', 'browse'] },
   { id: 'edit',    label: 'Edit',    moduleIds: ['edit'] },
   { id: 'compare', label: 'Compare', moduleIds: ['compare'] },
@@ -7110,11 +7135,11 @@ function configDeleteTab(tabId) {
 }
 
 function configResetDefault() {
-  if (!confirm('Reset to the default 3-tab layout? Main will contain Plan + Schedule + Cores.')) return;
+  if (!confirm('Reset to the default 3-tab layout? Main will contain Plan + Schedule.')) return;
 
   // Set state
   const defaults = [
-    { id: 'main',    label: 'Main',    moduleIds: ['plan', 'schedule', 'cores'] },
+    { id: 'main',    label: 'Main',    moduleIds: ['plan', 'schedule'] },
     { id: 'compare', label: 'Compare', moduleIds: ['compare'] },
     { id: 'export',  label: 'Export',  moduleIds: ['export'] },
   ];
@@ -7385,13 +7410,25 @@ function _brFmtDate(iso) {
   return months[parseInt(m[2], 10) - 1] + ' ' + parseInt(m[3], 10);
 }
 
-// Fetch the current parser output for a subject from the catalog store.
-// Used to read warnings + raw course/section data. getEffective() merges
-// edits but strips the `warnings` array — we need the raw parsed data.
+// Fetch the PARSED parser output for a subject. Use only when warnings
+// are needed — getEffective() drops them. Course/section field values
+// (titles, rooms, status, etc.) should come from _brEffectiveFor instead
+// so user edits in the overlay are reflected in Browse.
 function _brParsedFor(subject) {
   try {
     var dump = window.HS.catalog.toJSON();
     return (dump && dump.parsed && dump.parsed[subject]) || null;
+  } catch (_) { return null; }
+}
+
+// Fetch the effective view (parsed + edits overlay) scoped to one subject.
+// Returns the courses array for that subject, merging overlays so saves
+// from the Edit module immediately show up on re-render.
+function _brEffectiveFor(subject) {
+  try {
+    var eff = window.HS.catalog.getEffective();
+    if (!eff || !Array.isArray(eff.courses)) return null;
+    return eff.courses.filter(function (c) { return c.subject === subject; });
   } catch (_) { return null; }
 }
 
@@ -7479,15 +7516,19 @@ function _renderBrowseCourses() {
   var el = document.getElementById('browse-courses');
   if (!el) return;
   var parsed = _brParsedFor(_browseSel.subject);
-  if (!parsed || !parsed.courses || parsed.courses.length === 0) {
+  var effCourses = _brEffectiveFor(_browseSel.subject) || [];
+  if (!parsed || !effCourses.length) {
     el.innerHTML = '<div class="browse-detail-empty" style="padding:1rem">' +
       'No courses in this subject. Try re-pasting.</div>';
     return;
   }
   var cls = window.HS.browse.classifyWarnings(parsed);
   var html = '';
-  for (var i = 0; i < parsed.courses.length; i++) {
-    var c = parsed.courses[i];
+  // Iterate the effective courses (so edited titles show up) but compute
+  // warning chips from parsed (since warnings describe parser behavior,
+  // not post-edit state).
+  for (var i = 0; i < effCourses.length; i++) {
+    var c = effCourses[i];
     var flagged = window.HS.browse.countFlaggedSectionsInCourse(c, cls.byClass);
     var courseWarns = cls.byCourse.get(c.code) || [];
     var active = c.catalog_number === _browseSel.catnum ? ' active' : '';
@@ -7526,10 +7567,11 @@ function _onBrowseCourseClick(e) {
 
 function _brRenderWarning(w, ctx) {
   var t = window.HS.translateWarning(w);
-  // ctx = { subject, catnum, class_number? } — when passed, the warning
-  // gets a "fix this" button that deep-links into Edit focused on the
-  // anchored field. Course-level warnings drop the class_number; we still
-  // link to edit in course scope so the user can fix course-level fields.
+  // ctx = { subject, catnum, class_number? } — when passed, the warning's
+  // expanded view gets a "Fix this" button that deep-links into Edit
+  // focused on the anchored field. The button lives OUTSIDE <summary>
+  // (below the expanded copy) so clicking it doesn't also toggle the
+  // details open/closed — simpler than stopPropagation.
   var fix = '';
   if (ctx && ctx.subject && ctx.catnum) {
     var anchor = window.HS.edit ? window.HS.edit.warningAnchor(w) : null;
@@ -7542,12 +7584,13 @@ function _brRenderWarning(w, ctx) {
     };
     var hash = window.HS.edit ? window.HS.edit.formatEditHash(hashSel) : '';
     if (hash) {
-      fix = ' <button type="button" class="br-warn-fix" data-edit-hash="' + _brEscape(hash) + '">Fix this</button>';
+      fix = '<div class="br-warn-fix-row"><button type="button" class="br-warn-fix" data-edit-hash="' + _brEscape(hash) + '">Fix this →</button></div>';
     }
   }
   return '<details class="br-warn sev-' + (t.severity || 'info') + '">' +
-    '<summary><span class="br-warn-short">⚠ ' + _brEscape(t.short) + '</span>' + fix + '</summary>' +
+    '<summary><span class="br-warn-short">⚠ ' + _brEscape(t.short) + '</span></summary>' +
     '<span class="br-warn-full">' + _brEscape(t.full) + '</span>' +
+    fix +
     '</details>';
 }
 
@@ -7559,7 +7602,12 @@ function _renderBrowseDetail() {
     el.innerHTML = '<div class="browse-detail-empty">Select a course on the left to see its sections and warnings.</div>';
     return;
   }
-  var course = parsed.courses.find(function (c) { return c.catalog_number === _browseSel.catnum; });
+  // The displayed course/sections come from the effective view (parsed +
+  // edits overlay) so saves from the Edit module show up here immediately.
+  // Warnings still come from parsed — a warning describes what the parser
+  // saw, not the effective post-edit state.
+  var effCourses = _brEffectiveFor(_browseSel.subject) || [];
+  var course = effCourses.find(function (c) { return c.catalog_number === _browseSel.catnum; });
   if (!course) {
     el.innerHTML = '<div class="browse-detail-empty">Course not found. Try re-selecting from the list.</div>';
     return;
@@ -7758,6 +7806,10 @@ var _editSel = { subject: null, catnum: null, class_number: null, field: null, s
 var _editForm = null; // the current form state { flat, meetings } or null
 var _editDirty = false;
 var _editUnsub = null;
+// Remembers the last section visited per (subject, catnum) so the scope-
+// switch's "Section" button has a target when the user toggles away from
+// section scope and wants to come back.
+var _editLastSectionByCourse = Object.create(null);
 
 function _bootEdit() {
   if (!window.HS || !window.HS.catalog || !window.HS.edit) return;
@@ -7780,6 +7832,40 @@ function _applyEditHash() {
   _editSel.class_number = parsed.class_number;
   _editSel.field = parsed.field;
   _editSel.scope = parsed.scope;
+  // Remember the most recent section visited for this (subject, catnum)
+  // so the course-scope scope switch can offer a Section toggle back.
+  if (parsed.class_number && parsed.subject && parsed.catnum) {
+    _editLastSectionByCourse[parsed.subject + ' ' + parsed.catnum] = parsed.class_number;
+  }
+}
+
+// Build the "Section | Course" scope-switch HTML. Both buttons always
+// present so the user can see the toggle is a toggle. The one matching
+// current scope is marked active (no hash, no-op click); the other
+// carries a data-edit-hash to jump to the other scope.
+function _edRenderScopeSwitch(currentScope, sel) {
+  var ED = window.HS.edit;
+  var sectionCN = sel.class_number || _editLastSectionByCourse[sel.subject + ' ' + sel.catnum] || null;
+  var sectionHash = sectionCN ? ED.formatEditHash({
+    subject: sel.subject, catnum: sel.catnum, class_number: sectionCN,
+  }) : null;
+  var courseHash = ED.formatEditHash({ subject: sel.subject, catnum: sel.catnum });
+  var sectionBtn, courseBtn;
+  if (currentScope === 'section') {
+    sectionBtn = '<a class="active" title="Currently in section scope">Section</a>';
+    courseBtn = '<a data-edit-hash="' + _brEscape(courseHash) + '" title="Switch to course scope">Course</a>';
+  } else {
+    // course scope
+    if (sectionHash) {
+      sectionBtn = '<a data-edit-hash="' + _brEscape(sectionHash) + '" title="Switch to section scope">Section</a>';
+    } else {
+      // No section to jump to — render a disabled placeholder so the
+      // toggle still shows both states.
+      sectionBtn = '<a class="disabled" title="No section selected — pick one from Browse">Section</a>';
+    }
+    courseBtn = '<a class="active" title="Currently in course scope">Course</a>';
+  }
+  return '<div class="ed-scope-switch">' + sectionBtn + courseBtn + '</div>';
 }
 
 function navigateToEdit(sel) {
@@ -7794,7 +7880,6 @@ function _edOnGlobalClick(e) {
   var t = e.target.closest ? e.target.closest('[data-edit-hash]') : null;
   if (!t) return;
   e.preventDefault();
-  e.stopPropagation(); // so clicking "Fix this" doesn't also toggle the <details>
   var hash = t.getAttribute('data-edit-hash');
   if (!hash) return;
   location.hash = hash;
@@ -7998,10 +8083,9 @@ function _renderEditSectionForm(ctx) {
   parts.push('<div class="ed-form-panel-head-title">Edit section ' + _brEscape(s.section_code || '—') +
     ' <span style="font-family:monospace;font-size:0.85rem;color:rgba(0,0,0,0.5)">#' +
     _brEscape(s.class_number) + '</span></div>');
-  parts.push('<div class="ed-scope-switch">' +
-    '<a class="active">Section</a>' +
-    '<a data-edit-hash="' + _brEscape(ED.formatEditHash({ subject: c.subject, catnum: c.catalog_number })) + '">Course</a>' +
-    '</div>');
+  parts.push(_edRenderScopeSwitch('section', {
+    subject: c.subject, catnum: c.catalog_number, class_number: s.class_number,
+  }));
   parts.push('</div>');
 
   parts.push('<div id="ed-banner-host"></div>');
@@ -8052,7 +8136,13 @@ function _renderEditSectionForm(ctx) {
 }
 
 function _edRenderField(f, value, hint, sectionForParsed) {
-  var parsedStr = _edParsedDisplay(f.path);
+  // Only surface the "parsed: X" provenance line when an edit exists on
+  // this field — i.e. the effective value has diverged from parsed. On
+  // untouched fields the input's own value IS the parsed value, so
+  // printing it again is just noise. Read-only fields (class_number)
+  // also show it since that's a display-only provenance anchor.
+  var hasEdit = _edHasEditAt(f.path);
+  var parsedStr = (hasEdit || f.readOnly) ? _edParsedDisplay(f.path) : null;
   var ctrl = '';
   var id = 'ed-f-' + f.id;
   var readOnly = f.readOnly ? ' readonly' : '';
@@ -8116,13 +8206,16 @@ function _edParsedDisplay(path) {
 
 function _edHasEditAt(path) {
   // Sparse check: the store exposes listEdits() — iterate for an edit
-  // with class_number=_editSel.class_number + field_path=path.
+  // matching the current scope's identity + field_path.
   if (!window.HS.catalog.listEdits) return false;
   var list = window.HS.catalog.listEdits().edits || [];
+  var courseCode = _editSel.subject && _editSel.catnum
+    ? (_editSel.subject + ' ' + _editSel.catnum) : null;
   for (var i = 0; i < list.length; i++) {
     var e = list[i];
-    if (e.class_number === _editSel.class_number && e.field_path === path) return true;
-    if (e.course_code && _editSel.scope === 'course' && e.field_path === path) return true;
+    if (e.field_path !== path) continue;
+    if (_editSel.scope === 'section' && e.class_number === _editSel.class_number) return true;
+    if (_editSel.scope === 'course' && e.course_code === courseCode) return true;
   }
   return false;
 }
@@ -8435,7 +8528,9 @@ function _renderEditCourseForm(ctx) {
   var parts = [];
   parts.push('<div class="ed-form-panel-head">');
   parts.push('<div class="ed-form-panel-head-title">Edit course ' + _brEscape(c.code) + '</div>');
-  parts.push('<div class="ed-scope-switch"><a class="active">Course</a></div>');
+  parts.push(_edRenderScopeSwitch('course', {
+    subject: c.subject, catnum: c.catalog_number, class_number: null,
+  }));
   parts.push('</div>');
   parts.push('<div id="ed-banner-host"></div>');
 
