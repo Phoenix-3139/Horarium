@@ -142,6 +142,22 @@ export function createCatalog() {
     subjectMetadata: new Map(),
   };
 
+  // Pub/sub for mutation events. Subscribers get an event object of the
+  // form { type: 'mutation', reason: 'ingest'|'setEdit'|'delete'|'undelete'
+  // |'clear'|'hydrate', subject?, class_number?, course_code? }. Used by
+  // UI modules (Browse, etc.) to re-render on state change without each
+  // module wiring an ad-hoc refresh on every mutator call site.
+  const subscribers = new Set();
+  function subscribe(fn) {
+    subscribers.add(fn);
+    return () => subscribers.delete(fn);
+  }
+  function _notify(event) {
+    for (const fn of subscribers) {
+      try { fn(event); } catch (e) { console.error('catalog subscriber error:', e); }
+    }
+  }
+
   const editKey = (e) =>
     e.class_number
       ? `section:${e.class_number}|${e.field_path}`
@@ -213,6 +229,7 @@ export function createCatalog() {
         });
       }
     }
+    _notify({ type: "mutation", reason: "ingest", subject: subjectCode });
   }
 
   function setEdit({ class_number, course_code, field_path, value }) {
@@ -246,6 +263,13 @@ export function createCatalog() {
     } else {
       state.edits.set(key, edit);
     }
+    _notify({
+      type: "mutation",
+      reason: field_path === "_deleted" ? (value === true ? "delete" : "undelete") : "setEdit",
+      class_number: edit.class_number,
+      course_code: edit.course_code,
+      field_path,
+    });
   }
 
   function deleteSection(class_number) {
@@ -261,6 +285,7 @@ export function createCatalog() {
     if (course_code) {
       state.edits.delete(`course:${course_code}|_deleted`);
     }
+    _notify({ type: "mutation", reason: "undelete", class_number, course_code });
   }
 
   function applyEditsToSection(section, edits) {
@@ -370,6 +395,7 @@ export function createCatalog() {
       state.autoPruneLog.length = 0;
       state.migrationWarnings.length = 0;
     }
+    _notify({ type: "mutation", reason: "clear", parsed: !!parsed, edits: !!edits });
   }
 
   function toJSON() {
@@ -413,6 +439,7 @@ export function createCatalog() {
     for (const ap of data.auto_pruned || []) state.autoPruneLog.push(ap);
     for (const mw of data.migration_warnings || [])
       state.migrationWarnings.push(mw);
+    _notify({ type: "mutation", reason: "hydrate" });
   }
 
   function getSubjectMetadata() {
@@ -432,5 +459,6 @@ export function createCatalog() {
     fromJSON,
     getSubjectMetadata,
     getParsedValue,
+    subscribe,
   };
 }

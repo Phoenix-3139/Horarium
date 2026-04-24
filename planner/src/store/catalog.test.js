@@ -619,6 +619,49 @@ describe("createCatalog — migration warnings for stale paths", () => {
   });
 });
 
+describe("createCatalog — subscribe (pub/sub for UI re-render)", () => {
+  it("fires the subscriber on ingestSubject, setEdit, delete, clear, and fromJSON", () => {
+    const cat = createCatalog();
+    const events = [];
+    cat.subscribe((e) => events.push(e));
+
+    cat.ingestSubject("ENGR-UH", buildParserOutput({ courses: [buildCourse()] }));
+    cat.setEdit({ class_number: "20607", field_path: "meetings[0].room", value: "X" });
+    cat.deleteSection("20607");
+    cat.clear({ parsed: true, edits: true });
+    cat.fromJSON({ schema_version: "1.1.2" });
+
+    const reasons = events.map((e) => e.reason);
+    expect(reasons).toEqual(["ingest", "setEdit", "delete", "clear", "hydrate"]);
+    // ingest event carries subject
+    expect(events[0].subject).toBe("ENGR-UH");
+    // setEdit carries identifying info
+    expect(events[1].class_number).toBe("20607");
+    expect(events[1].field_path).toBe("meetings[0].room");
+  });
+
+  it("unsubscribe stops notifications", () => {
+    const cat = createCatalog();
+    const events = [];
+    const unsub = cat.subscribe((e) => events.push(e));
+    cat.ingestSubject("ENGR-UH", buildParserOutput({ courses: [buildCourse()] }));
+    expect(events).toHaveLength(1);
+    unsub();
+    cat.setEdit({ class_number: "20607", field_path: "notes", value: "x" });
+    expect(events).toHaveLength(1); // no new events after unsubscribe
+  });
+
+  it("multiple subscribers all fire, and one throwing doesn't break others", () => {
+    const cat = createCatalog();
+    const got = [];
+    cat.subscribe(() => { throw new Error("boom"); });
+    cat.subscribe((e) => got.push(e.reason));
+    cat.subscribe((e) => got.push(e.reason + ":2"));
+    cat.ingestSubject("ENGR-UH", buildParserOutput({ courses: [buildCourse()] }));
+    expect(got).toEqual(["ingest", "ingest:2"]);
+  });
+});
+
 describe("createCatalog — metadata", () => {
   it("getSubjectMetadata reports last_updated and counts per subject", () => {
     const cat = createCatalog();

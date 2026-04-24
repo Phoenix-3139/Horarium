@@ -3356,6 +3356,303 @@
     line-height: 1.45;
   }
 
+  /* ========== BROWSE MODULE (Piece 3b) ========== */
+  .browse-empty { margin-top: 1.25rem; }
+  .browse-layout {
+    display: grid;
+    grid-template-columns: 16rem 18rem 1fr;
+    gap: 0;
+    margin-top: 1.25rem;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    overflow: hidden;
+    min-height: 28rem;
+    background: var(--cream);
+  }
+  .browse-layout[hidden] { display: none; }
+
+  /* ----- subjects + courses list columns ----- */
+  .browse-subjects,
+  .browse-courses {
+    background: var(--paper-soft);
+    border-right: 1px solid var(--rule);
+    overflow-y: auto;
+    max-height: 40rem;
+  }
+  .br-row {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--rule-soft);
+    padding: 0.75rem 0.95rem;
+    cursor: pointer;
+    transition: background 0.12s;
+    font: inherit;
+    color: var(--ink);
+  }
+  .br-row:hover { background: var(--cream); }
+  .br-row:focus {
+    outline: 2px solid var(--ink-soft);
+    outline-offset: -2px;
+  }
+  .br-row.active {
+    background: var(--cream);
+    box-shadow: inset 3px 0 0 var(--ink);
+  }
+  .br-row-title {
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: 0.01em;
+  }
+  .br-row-sub {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--ink-faint);
+    margin-top: 0.15rem;
+    letter-spacing: 0.02em;
+  }
+  .br-row-meta {
+    display: flex;
+    gap: 0.45rem;
+    margin-top: 0.25rem;
+    flex-wrap: wrap;
+  }
+  .br-row-chip {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    padding: 0.08rem 0.4rem;
+    border-radius: 10px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .br-chip-info      { background: rgba(28,26,23,0.06); color: var(--ink-soft); }
+  .br-chip-flag      { background: rgba(197,139,58,0.16); color: #8A5E1B; }
+  .br-chip-topics    { background: rgba(139,158,181,0.18); color: #465E79; }
+  .br-chip-cancelled { background: rgba(168,78,58,0.14); color: #8A3826; }
+
+  /* ----- detail column ----- */
+  .browse-detail {
+    padding: 1.25rem 1.4rem 2rem;
+    overflow-y: auto;
+    max-height: 40rem;
+  }
+  .browse-detail-empty {
+    color: var(--ink-faint);
+    font-style: italic;
+    padding: 2rem 0.5rem;
+  }
+  .br-course-head {
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 0.85rem;
+    margin-bottom: 1rem;
+  }
+  .br-course-code {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.1em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+  }
+  .br-course-title {
+    font-family: var(--font-display);
+    font-size: 1.55rem;
+    font-weight: 500;
+    font-style: italic;
+    color: var(--ink);
+    margin: 0.2rem 0 0.5rem;
+    line-height: 1.15;
+  }
+  .br-course-title em { font-style: normal; color: var(--ink-soft); font-weight: 400; }
+  .br-course-meta {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+    flex-wrap: wrap;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+    letter-spacing: 0.02em;
+  }
+  .br-course-meta > * { padding: 0.12rem 0; }
+  .br-course-desc {
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+    line-height: 1.55;
+    margin-top: 0.75rem;
+  }
+  .br-course-desc.truncated { font-style: italic; }
+
+  /* Per-course warnings (shown at the top of the detail area). */
+  .br-course-warnings {
+    margin: 0.85rem 0 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  /* ----- section cards ----- */
+  .br-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+  .br-sections-empty {
+    font-style: italic;
+    color: var(--ink-faint);
+    padding: 1rem 0;
+  }
+  .br-section-card {
+    border: 1px solid var(--rule);
+    border-radius: 5px;
+    padding: 0.85rem 1rem;
+    background: var(--paper);
+  }
+  .br-section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .br-section-ident {
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    color: var(--ink);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+  .br-section-ident .class-num { color: var(--ink-faint); }
+  .br-section-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+    letter-spacing: 0.04em;
+  }
+  .br-section-status .dot {
+    display: inline-block;
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 50%;
+    background: var(--ink-faint);
+  }
+  .br-status-open      .dot { background: #5F8E5A; }
+  .br-status-waitlist  .dot { background: #C58B3A; }
+  .br-status-closed    .dot { background: #7D7669; }
+  .br-status-cancelled .dot { background: #A84E3A; }
+  .br-status-unknown   .dot { background: #8B9EB5; }
+
+  .br-section-body {
+    margin-top: 0.55rem;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    color: var(--ink);
+    line-height: 1.55;
+  }
+  .br-meeting {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    padding: 0.2rem 0;
+    color: var(--ink-soft);
+  }
+  .br-meeting .day { font-weight: 500; color: var(--ink); }
+  .br-meeting .sep { color: var(--ink-whisper); }
+  .br-section-extras {
+    margin-top: 0.55rem;
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+  .br-section-topic,
+  .br-section-tz,
+  .br-section-consent {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    padding: 0.12rem 0.5rem;
+    border-radius: 3px;
+    background: rgba(28,26,23,0.05);
+    color: var(--ink-soft);
+    letter-spacing: 0.02em;
+  }
+  .br-section-topic   { background: rgba(139,158,181,0.16); color: #465E79; }
+  .br-section-tz      { background: rgba(107,142,90,0.14); color: #436B3E; }
+  .br-section-consent { background: rgba(197,139,58,0.16); color: #8A5E1B; }
+  .br-section-notes {
+    margin-top: 0.5rem;
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    white-space: pre-wrap;
+    border-left: 2px solid var(--rule);
+    padding: 0.1rem 0 0.1rem 0.65rem;
+  }
+
+  /* ----- warnings (chips with expandable detail) ----- */
+  .br-warn {
+    display: block;
+    border-left: 3px solid var(--ink-faint);
+    background: rgba(28,26,23,0.03);
+    padding: 0.45rem 0.7rem;
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    cursor: pointer;
+    border-radius: 0 3px 3px 0;
+  }
+  .br-warn summary {
+    cursor: pointer;
+    list-style: none;
+    font-family: var(--font-body);
+  }
+  .br-warn summary::-webkit-details-marker { display: none; }
+  .br-warn .br-warn-short {
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .br-warn .br-warn-full {
+    display: block;
+    margin-top: 0.35rem;
+    color: var(--ink-soft);
+    line-height: 1.45;
+  }
+  .br-warn.sev-info      { border-left-color: #8B9EB5; }
+  .br-warn.sev-attention {
+    border-left-color: #C58B3A;
+    background: rgba(197,139,58,0.06);
+  }
+  .br-warn.sev-attention .br-warn-short { color: #8A5E1B; }
+
+  /* Section-card warnings are laid out tighter. */
+  .br-section-warnings {
+    margin-top: 0.55rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  /* ----- responsive collapse ----- */
+  @media (max-width: 900px) {
+    .browse-layout {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto auto auto;
+      max-height: none;
+    }
+    .browse-subjects,
+    .browse-courses,
+    .browse-detail {
+      max-height: 16rem;
+      border-right: none;
+      border-bottom: 1px solid var(--rule);
+    }
+  }
+
   /* ========== IDENTITY FORM (Manage) ========== */
   .ident-form {
     display: flex;
@@ -3491,6 +3788,27 @@
         <div class="cat-empty-body">
           Your store is empty. The plan tabs render from placeholder data while you populate the catalog. After your first paste, the Cores picker and schedule rooms will show real Albert data.
         </div>
+      </div>
+    </section>
+
+    <!-- Module: Browse (Piece 3b — read-only inspection of pasted catalog) -->
+    <section class="module" data-module-id="browse">
+      <button class="module-menu-btn" onclick="openModuleMenu(event, 'browse')" title="Move module">⋮</button>
+      <div class="section-label"><span class="num">◆</span> Catalog · <em>browse</em></div>
+      <h2>See what's <em>in your catalog</em>.</h2>
+      <p class="picker-sub">Three-panel view: subjects on the left, courses in the middle, section detail on the right. Warnings surface inline where they apply.</p>
+
+      <!-- Empty state: shown when no subjects have been ingested yet. -->
+      <div class="cat-empty browse-empty" id="browse-empty">
+        <div class="cat-empty-head">◌ Nothing to browse yet</div>
+        <div class="cat-empty-body">Paste subject data above and click Apply. Your catalog will appear here.</div>
+      </div>
+
+      <!-- Three-panel browse layout. Hidden when browse-empty is shown. -->
+      <div class="browse-layout" id="browse-layout" hidden>
+        <nav class="browse-subjects" id="browse-subjects" aria-label="Subjects"></nav>
+        <nav class="browse-courses" id="browse-courses" aria-label="Courses"></nav>
+        <section class="browse-detail" id="browse-detail" aria-label="Course detail"></section>
       </div>
     </section>
 
@@ -3839,6 +4157,15 @@ import { createPersistence } from './src/store/persistence.js';
 import { createLegacyAdapter } from './src/store/legacy_adapter.js';
 import { parse } from './src/ingester/parse.js';
 import { computeOverlayBlocks } from './src/ui/filter_overlay.js';
+import { translateWarning, WARNING_COPY } from './src/ui/warning_copy.js';
+import {
+  classifyWarnings,
+  subjectSummary,
+  humanRelativeTime,
+  parseBrowseHash,
+  formatBrowseHash,
+  countFlaggedSectionsInCourse,
+} from './src/ui/browse.js';
 const catalog = createCatalog();
 const persistence = createPersistence(catalog);
 persistence.load();
@@ -3847,6 +4174,18 @@ window.HS.persistence = persistence;
 window.HS.adapter = createLegacyAdapter(catalog);
 window.HS.parse = parse;
 window.HS.computeOverlayBlocks = computeOverlayBlocks;
+window.HS.translateWarning = translateWarning;
+window.HS.browse = {
+  classifyWarnings,
+  subjectSummary,
+  humanRelativeTime,
+  parseBrowseHash,
+  formatBrowseHash,
+  countFlaggedSectionsInCourse,
+};
+// Fire horarium:ready after exposures so the classic controller can
+// subscribe to catalog mutations and render its first Browse frame.
+window.dispatchEvent(new CustomEvent('horarium:ready'));
 // Broadcast that HS is fully ready so the Catalog module can refresh any
 // post-load UI (e.g. if localStorage already had catalog data from a prior
 // session, the effective view is populated now).
@@ -5793,6 +6132,7 @@ buildScheduleTable();
 
 const MODULE_DEFS = {
   catalog:  { label: 'Catalog' },
+  browse:   { label: 'Browse' },
   plan:     { label: 'Plan' },
   schedule: { label: 'Schedule' },
   cores:    { label: 'Cores' },
@@ -5802,7 +6142,7 @@ const MODULE_DEFS = {
 };
 
 let userTabs = [
-  { id: 'catalog', label: 'Catalog', moduleIds: ['catalog'] },
+  { id: 'catalog', label: 'Catalog', moduleIds: ['catalog', 'browse'] },
   { id: 'main',    label: 'Main',    moduleIds: ['plan', 'schedule', 'cores'] },
   { id: 'compare', label: 'Compare', moduleIds: ['compare'] },
   { id: 'export',  label: 'Export',  moduleIds: ['export'] },
@@ -6548,6 +6888,352 @@ function renderHeader() {
     sub.textContent = 'No term loaded. Go to Catalog → Paste to begin.';
   }
 }
+
+// ============ BROWSE MODULE (Piece 3b) ============
+// Read-only three-panel inspector for the catalog store. Lives inside the
+// Catalog tab beneath Paste. Pure helpers + warning translations live in
+// src/ui/browse.js and src/ui/warning_copy.js respectively and are
+// exposed on window.HS via the module script.
+
+var _browseSel = { subject: null, catnum: null };
+var _browseUnsubCatalog = null;
+
+function _brEscape(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+function _brEnc(s) { return encodeURIComponent(String(s == null ? '' : s)); }
+
+function _brFmtTime(hhmm) {
+  if (!hhmm) return '';
+  var m = hhmm.match(/^(\d{1,2}):(\d{2})$/);
+  if (!m) return hhmm;
+  var h = parseInt(m[1], 10);
+  var suffix = h >= 12 ? 'pm' : 'am';
+  var h12 = h % 12; if (h12 === 0) h12 = 12;
+  return h12 + ':' + m[2] + suffix;
+}
+
+function _brFmtDate(iso) {
+  if (!iso) return '';
+  var m = iso.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!m) return iso;
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return months[parseInt(m[2], 10) - 1] + ' ' + parseInt(m[3], 10);
+}
+
+// Fetch the current parser output for a subject from the catalog store.
+// Used to read warnings + raw course/section data. getEffective() merges
+// edits but strips the `warnings` array — we need the raw parsed data.
+function _brParsedFor(subject) {
+  try {
+    var dump = window.HS.catalog.toJSON();
+    return (dump && dump.parsed && dump.parsed[subject]) || null;
+  } catch (_) { return null; }
+}
+
+function _brAllSubjects() {
+  try { return Object.keys(window.HS.catalog.getSubjectMetadata() || {}).sort(); }
+  catch (_) { return []; }
+}
+
+function renderBrowse() {
+  var empty = document.getElementById('browse-empty');
+  var layout = document.getElementById('browse-layout');
+  if (!empty || !layout) return;
+
+  var subjects = _brAllSubjects();
+  if (subjects.length === 0) {
+    empty.hidden = false;
+    layout.hidden = true;
+    return;
+  }
+  empty.hidden = true;
+  layout.hidden = false;
+
+  // If nothing selected, pick the first subject by default.
+  if (!_browseSel.subject || subjects.indexOf(_browseSel.subject) === -1) {
+    _browseSel.subject = subjects[0];
+    _browseSel.catnum = null;
+  }
+
+  _renderBrowseSubjects(subjects);
+  _renderBrowseCourses();
+  _renderBrowseDetail();
+}
+
+function _renderBrowseSubjects(subjects) {
+  var el = document.getElementById('browse-subjects');
+  if (!el) return;
+  var meta = window.HS.catalog.getSubjectMetadata() || {};
+  var nowMs = Date.now();
+  var html = '';
+  for (var i = 0; i < subjects.length; i++) {
+    var s = subjects[i];
+    var parsed = _brParsedFor(s);
+    var sum = window.HS.browse.subjectSummary(s, meta[s], parsed);
+    var rel = window.HS.browse.humanRelativeTime(sum.lastUpdatedISO, nowMs);
+    var active = s === _browseSel.subject ? ' active' : '';
+    var chips = '';
+    if (sum.flaggedTotal > 0) {
+      chips += '<span class="br-row-chip br-chip-flag" title="' +
+        sum.flaggedSections + ' flagged section' + (sum.flaggedSections === 1 ? '' : 's') +
+        ', ' + sum.flaggedCourses + ' flagged course' + (sum.flaggedCourses === 1 ? '' : 's') + '">' +
+        '⚠ ' + sum.flaggedTotal + ' flagged</span>';
+    }
+    if (sum.globalInfo.length > 0) {
+      chips += '<span class="br-row-chip br-chip-info" title="Subject-level notices">' +
+        'ⓘ ' + sum.globalInfo.length + '</span>';
+    }
+    html += '<button type="button" class="br-row' + active + '" data-subject="' + _brEscape(s) + '" tabindex="0">' +
+      '<div class="br-row-title">' + _brEscape(s) + '</div>' +
+      '<div class="br-row-sub">' + sum.courseCount + ' course' + (sum.courseCount === 1 ? '' : 's') +
+      ' · ' + sum.sectionCount + ' section' + (sum.sectionCount === 1 ? '' : 's') +
+      (rel ? ' · ' + _brEscape(rel) : '') +
+      '</div>' +
+      (chips ? '<div class="br-row-meta">' + chips + '</div>' : '') +
+      '</button>';
+  }
+  el.innerHTML = html;
+  // Wire clicks.
+  var rows = el.querySelectorAll('.br-row');
+  for (var j = 0; j < rows.length; j++) {
+    rows[j].addEventListener('click', _onBrowseSubjectClick);
+    rows[j].addEventListener('keydown', _onBrowseRowKey);
+  }
+}
+
+function _onBrowseSubjectClick(e) {
+  var subj = this.dataset.subject;
+  if (!subj || subj === _browseSel.subject) return;
+  _browseSel.subject = subj;
+  _browseSel.catnum = null;
+  _syncBrowseHash();
+  renderBrowse();
+}
+
+function _renderBrowseCourses() {
+  var el = document.getElementById('browse-courses');
+  if (!el) return;
+  var parsed = _brParsedFor(_browseSel.subject);
+  if (!parsed || !parsed.courses || parsed.courses.length === 0) {
+    el.innerHTML = '<div class="browse-detail-empty" style="padding:1rem">' +
+      'No courses in this subject. Try re-pasting.</div>';
+    return;
+  }
+  var cls = window.HS.browse.classifyWarnings(parsed);
+  var html = '';
+  for (var i = 0; i < parsed.courses.length; i++) {
+    var c = parsed.courses[i];
+    var flagged = window.HS.browse.countFlaggedSectionsInCourse(c, cls.byClass);
+    var courseWarns = cls.byCourse.get(c.code) || [];
+    var active = c.catalog_number === _browseSel.catnum ? ' active' : '';
+    var chips = '';
+    if (flagged > 0 || courseWarns.length > 0) {
+      var n = flagged + courseWarns.length;
+      chips += '<span class="br-row-chip br-chip-flag">⚠ ' + n + '</span>';
+    }
+    if (c.no_sections_offered) chips += '<span class="br-row-chip br-chip-cancelled">cancelled term</span>';
+    if (c.has_topics) chips += '<span class="br-row-chip br-chip-topics">topics</span>';
+    var unitsStr = (c.units == null) ? '—' :
+      (typeof c.units === 'object' ? c.units.min + '–' + c.units.max : c.units);
+    html += '<button type="button" class="br-row' + active + '" data-catnum="' + _brEscape(c.catalog_number) + '" tabindex="0">' +
+      '<div class="br-row-title">' + _brEscape(c.code) + '</div>' +
+      '<div class="br-row-sub">' + _brEscape(c.title || '(no title)') + '</div>' +
+      '<div class="br-row-sub">' + unitsStr + ' unit' + (unitsStr === 1 ? '' : 's') +
+      ' · ' + c.sections.length + ' section' + (c.sections.length === 1 ? '' : 's') + '</div>' +
+      (chips ? '<div class="br-row-meta">' + chips + '</div>' : '') +
+      '</button>';
+  }
+  el.innerHTML = html;
+  var rows = el.querySelectorAll('.br-row');
+  for (var j = 0; j < rows.length; j++) {
+    rows[j].addEventListener('click', _onBrowseCourseClick);
+    rows[j].addEventListener('keydown', _onBrowseRowKey);
+  }
+}
+
+function _onBrowseCourseClick(e) {
+  var cn = this.dataset.catnum;
+  if (!cn) return;
+  _browseSel.catnum = cn;
+  _syncBrowseHash();
+  renderBrowse();
+}
+
+function _brRenderWarning(w) {
+  var t = window.HS.translateWarning(w);
+  return '<details class="br-warn sev-' + (t.severity || 'info') + '">' +
+    '<summary><span class="br-warn-short">⚠ ' + _brEscape(t.short) + '</span></summary>' +
+    '<span class="br-warn-full">' + _brEscape(t.full) + '</span>' +
+    '</details>';
+}
+
+function _renderBrowseDetail() {
+  var el = document.getElementById('browse-detail');
+  if (!el) return;
+  var parsed = _brParsedFor(_browseSel.subject);
+  if (!parsed || !_browseSel.catnum) {
+    el.innerHTML = '<div class="browse-detail-empty">Select a course on the left to see its sections and warnings.</div>';
+    return;
+  }
+  var course = parsed.courses.find(function (c) { return c.catalog_number === _browseSel.catnum; });
+  if (!course) {
+    el.innerHTML = '<div class="browse-detail-empty">Course not found. Try re-selecting from the list.</div>';
+    return;
+  }
+
+  var cls = window.HS.browse.classifyWarnings(parsed);
+  var courseWarns = cls.byCourse.get(course.code) || [];
+  var unitsStr = (course.units == null) ? '—' :
+    (typeof course.units === 'object' ? course.units.min + '–' + course.units.max : course.units);
+
+  var metaParts = [unitsStr + ' unit' + (unitsStr === 1 ? '' : 's')];
+  if (course.has_topics) metaParts.push('<span class="br-chip-topics br-row-chip">topics course</span>');
+  if (course.no_sections_offered) metaParts.push('<span class="br-chip-cancelled br-row-chip">no sections offered</span>');
+  if (course.title_flags && course.title_flags.length > 0) {
+    metaParts.push('flags: ' + course.title_flags.join(', '));
+  }
+  if (course.school) metaParts.push(_brEscape(course.school));
+
+  var descHtml = '';
+  if (course.description) {
+    descHtml = '<div class="br-course-desc' + (course.description_truncated ? ' truncated' : '') + '">' +
+      _brEscape(course.description) + '</div>';
+  } else {
+    descHtml = '<div class="br-course-desc truncated">No description.</div>';
+  }
+
+  var warningsHtml = '';
+  if (courseWarns.length > 0) {
+    warningsHtml = '<div class="br-course-warnings">' +
+      courseWarns.map(_brRenderWarning).join('') + '</div>';
+  }
+
+  var sectionsHtml = '';
+  if (course.sections.length === 0) {
+    sectionsHtml = '<div class="br-sections-empty">' +
+      (course.no_sections_offered
+        ? 'Albert marked this course "No Classes Scheduled for the Terms Offered." Nothing to show.'
+        : 'No sections found for this course. This may indicate a parse issue — check the raw paste or re-paste.') +
+      '</div>';
+  } else {
+    sectionsHtml = '<div class="br-sections">' +
+      course.sections.map(function (s) { return _brRenderSectionCard(s, cls.byClass.get(s.class_number) || []); }).join('') +
+      '</div>';
+  }
+
+  el.innerHTML =
+    '<div class="br-course-head">' +
+      '<div class="br-course-code">' + _brEscape(course.code) + '</div>' +
+      '<h3 class="br-course-title">' + _brEscape(course.title || '(untitled)') + '</h3>' +
+      '<div class="br-course-meta">' + metaParts.join(' · ') + '</div>' +
+      descHtml +
+    '</div>' +
+    warningsHtml +
+    sectionsHtml;
+}
+
+function _brRenderSectionCard(s, warns) {
+  var statusClass = 'br-status-' + (s.status && s.status.type ? s.status.type : 'unknown');
+  var statusLabel = (s.status && s.status.raw) ? s.status.raw : (s.status && s.status.type) || 'Unknown';
+  var session = s.session || {};
+  var sessionStr = (session.code || '—') +
+    (session.start_date ? ' · ' + _brFmtDate(session.start_date) + ' – ' + _brFmtDate(session.end_date || '') : '');
+
+  var meetings = '';
+  if (!s.meetings || s.meetings.length === 0) {
+    meetings = '<div class="br-meeting"><em>No meetings listed.</em></div>';
+  } else {
+    meetings = s.meetings.map(function (m) {
+      var days = (m.days || []).join(', ') || '—';
+      var tr = (m.start_time ? _brFmtTime(m.start_time) : '—') +
+        (m.end_time ? '–' + _brFmtTime(m.end_time) : '');
+      var room = m.room || '—';
+      var instr = (m.instructors && m.instructors.length > 0) ? m.instructors.join('; ') : '';
+      return '<div class="br-meeting">' +
+        '<span class="day">' + _brEscape(days) + '</span>' +
+        '<span>' + _brEscape(tr) + '</span>' +
+        '<span class="sep">·</span>' +
+        '<span>' + _brEscape(room) + '</span>' +
+        (instr ? '<span class="sep">·</span><span>' + _brEscape(instr) + '</span>' : '') +
+        '</div>';
+    }).join('');
+  }
+
+  var extras = '';
+  if (s.topic) extras += '<span class="br-section-topic">Topic: ' + _brEscape(s.topic) + '</span>';
+  if (s.display_timezone) extras += '<span class="br-section-tz">Shown in ' + _brEscape(s.display_timezone) + ' time</span>';
+  if (s.requires_consent) extras += '<span class="br-section-consent">Requires department consent</span>';
+
+  var warnHtml = '';
+  if (warns.length > 0) {
+    warnHtml = '<div class="br-section-warnings">' + warns.map(_brRenderWarning).join('') + '</div>';
+  }
+  var notesHtml = s.notes ? '<div class="br-section-notes">' + _brEscape(s.notes) + '</div>' : '';
+
+  return '<article class="br-section-card">' +
+    '<div class="br-section-head">' +
+      '<div class="br-section-ident">' + _brEscape(s.section_code || '—') + ' · ' + _brEscape(s.component || '—') +
+        ' <span class="class-num">#' + _brEscape(s.class_number || '—') + '</span>' +
+      '</div>' +
+      '<div class="br-section-status ' + statusClass + '"><span class="dot"></span>' + _brEscape(statusLabel) + '</div>' +
+    '</div>' +
+    '<div class="br-section-body">' +
+      '<div><strong>Session:</strong> ' + _brEscape(sessionStr) + '</div>' +
+      meetings +
+      (extras ? '<div class="br-section-extras">' + extras + '</div>' : '') +
+      notesHtml +
+    '</div>' +
+    warnHtml +
+    '</article>';
+}
+
+function _onBrowseRowKey(e) {
+  if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
+  e.preventDefault();
+  var parent = this.parentElement;
+  var rows = parent.querySelectorAll('.br-row');
+  var idx = Array.prototype.indexOf.call(rows, this);
+  var nextIdx = e.key === 'ArrowDown' ? idx + 1 : idx - 1;
+  if (nextIdx < 0 || nextIdx >= rows.length) return;
+  rows[nextIdx].focus();
+  rows[nextIdx].click();
+}
+
+function _syncBrowseHash() {
+  var h = window.HS.browse.formatBrowseHash({
+    subject: _browseSel.subject,
+    catnum: _browseSel.catnum,
+  });
+  if (location.hash !== h) {
+    // Use replaceState to avoid polluting history on every list click.
+    try { history.replaceState(null, '', h); } catch (_) { location.hash = h; }
+  }
+}
+
+function _applyBrowseHash() {
+  var parsed = window.HS.browse.parseBrowseHash(location.hash);
+  if (parsed.subject) _browseSel.subject = parsed.subject;
+  if (parsed.catnum) _browseSel.catnum = parsed.catnum;
+}
+
+function _bootBrowse() {
+  if (!window.HS || !window.HS.catalog || !window.HS.browse) return; // not ready
+  _applyBrowseHash();
+  renderBrowse();
+  if (_browseUnsubCatalog) _browseUnsubCatalog();
+  _browseUnsubCatalog = window.HS.catalog.subscribe(function () { renderBrowse(); });
+  window.addEventListener('hashchange', function () {
+    var prev = _browseSel.subject + '/' + _browseSel.catnum;
+    _applyBrowseHash();
+    var next = _browseSel.subject + '/' + _browseSel.catnum;
+    if (prev !== next) renderBrowse();
+  });
+}
+
+window.addEventListener('horarium:ready', _bootBrowse);
 
 // ============ INITIAL TAB STATE ============
 // Start on Plan tab; grids will build once schedule tab is opened.
