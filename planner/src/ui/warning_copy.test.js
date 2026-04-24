@@ -109,6 +109,23 @@ describe("translateWarning — fallback for unknown types", () => {
   });
 });
 
+describe("translateWarning — repair_hint for Edit module", () => {
+  it("attaches a repair_hint string for anchored warning types", () => {
+    const t = translateWarning({ type: "meeting_missing_time", class_number: "20631" });
+    expect(typeof t.repair_hint).toBe("string");
+    expect(t.repair_hint.length).toBeGreaterThan(0);
+    expect(t.repair_hint).toMatch(/meeting time/i);
+  });
+  it("attaches repair_hint for unknown_status and unknown_component", () => {
+    expect(translateWarning({ type: "unknown_status", raw: "Tentative" }).repair_hint).toMatch(/status/i);
+    expect(translateWarning({ type: "unknown_component", value: "Gym" }).repair_hint).toMatch(/component/i);
+  });
+  it("unknown warning types and un-hinted types both get repair_hint: null", () => {
+    expect(translateWarning({ type: "count_mismatch", expected: 1, actual: 2, delta: 1 }).repair_hint).toBe(null);
+    expect(translateWarning({ type: "brand_new_type_x" }).repair_hint).toBe(null);
+  });
+});
+
 describe("WARNING_COPY — coverage", () => {
   it("every current ingester warning type has a translation", () => {
     // Pinning the known set here so we notice at test time when the parser

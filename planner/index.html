@@ -3729,6 +3729,405 @@
     opacity: 1;
     transform: translateX(-50%) translateY(0);
   }
+
+  /* ====================== Edit module (Piece 3c) ====================== */
+  .ed-empty {
+    padding: 2rem 0;
+    max-width: 44rem;
+  }
+  .ed-empty-lead {
+    font-size: 1rem;
+    color: rgba(28, 26, 23, 0.75);
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+  }
+  .ed-empty-lead a { color: #7c4a2e; text-decoration: underline; }
+  .br-warn-inline {
+    display: inline-block;
+    padding: 0 0.35rem;
+    background: rgba(183, 129, 63, 0.18);
+    border-radius: 3px;
+    font-size: 0.9em;
+  }
+  .ed-empty-recents { margin-top: 1rem; }
+  .ed-empty-recents-title {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(28, 26, 23, 0.55);
+    margin-bottom: 0.5rem;
+  }
+  .ed-recent-row {
+    display: block;
+    padding: 0.5rem 0.75rem;
+    border-left: 3px solid rgba(183, 129, 63, 0.4);
+    background: rgba(255, 248, 240, 0.5);
+    margin-bottom: 0.35rem;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    font-size: 0.88rem;
+    transition: background 0.15s;
+  }
+  .ed-recent-row:hover { background: rgba(255, 240, 220, 0.8); }
+  .ed-recent-row-id {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: rgba(28, 26, 23, 0.6);
+    margin-right: 0.75rem;
+  }
+
+  .ed-layout {
+    display: grid;
+    grid-template-columns: 18rem 1fr;
+    gap: 1.5rem;
+    align-items: start;
+  }
+  @media (max-width: 900px) {
+    .ed-layout { grid-template-columns: 1fr; }
+  }
+
+  .ed-context {
+    background: rgba(255, 248, 240, 0.5);
+    border: 1px solid rgba(183, 129, 63, 0.2);
+    border-radius: 4px;
+    padding: 1rem;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    position: sticky;
+    top: 1rem;
+  }
+  .ed-breadcrumb {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.76rem;
+    color: rgba(28, 26, 23, 0.65);
+    margin-bottom: 0.35rem;
+    word-break: break-word;
+  }
+  .ed-breadcrumb a { color: inherit; text-decoration: underline dotted; cursor: pointer; }
+  .ed-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+  }
+  .ed-warnings-block {
+    margin: 0.75rem 0;
+    padding: 0.6rem;
+    border-left: 3px solid rgba(183, 129, 63, 0.5);
+    background: rgba(255, 238, 220, 0.5);
+    font-size: 0.82rem;
+  }
+  .ed-warnings-block-title {
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+  }
+  .ed-warnings-block ul {
+    margin: 0;
+    padding-left: 1.2rem;
+  }
+  .ed-warnings-block li { margin-bottom: 0.15rem; }
+
+  details.ed-source { margin-top: 1rem; }
+  details.ed-source > summary {
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.82rem;
+    color: rgba(28, 26, 23, 0.7);
+    list-style: revert;
+  }
+  .ed-source-pre {
+    margin-top: 0.5rem;
+    padding: 0.7rem;
+    background: rgba(28, 26, 23, 0.04);
+    border-left: 3px solid rgba(28, 26, 23, 0.2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.76rem;
+    line-height: 1.45;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 22rem;
+    overflow: auto;
+  }
+
+  .ed-form-panel {
+    background: #fffdf9;
+    border: 1px solid rgba(28, 26, 23, 0.1);
+    border-radius: 4px;
+    padding: 1.25rem;
+  }
+  .ed-form-panel-head {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+  }
+  .ed-form-panel-head-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+  }
+  .ed-scope-switch {
+    display: inline-flex;
+    gap: 0.25rem;
+    font-size: 0.82rem;
+  }
+  .ed-scope-switch a {
+    padding: 0.2rem 0.6rem;
+    border-radius: 3px;
+    border: 1px solid rgba(28, 26, 23, 0.15);
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+  }
+  .ed-scope-switch a.active {
+    background: rgba(183, 129, 63, 0.12);
+    border-color: rgba(183, 129, 63, 0.4);
+  }
+
+  .ed-field {
+    display: grid;
+    grid-template-columns: 11rem 1fr auto;
+    align-items: start;
+    gap: 0.65rem;
+    padding: 0.55rem 0;
+    border-top: 1px solid rgba(28, 26, 23, 0.06);
+  }
+  .ed-field:first-of-type { border-top: none; }
+  .ed-field-label {
+    font-size: 0.85rem;
+    color: rgba(28, 26, 23, 0.8);
+    padding-top: 0.35rem;
+  }
+  .ed-field-parsed {
+    display: block;
+    font-size: 0.7rem;
+    color: rgba(28, 26, 23, 0.5);
+    font-family: 'JetBrains Mono', monospace;
+    margin-top: 0.15rem;
+    word-break: break-word;
+  }
+  .ed-field-control input[type="text"],
+  .ed-field-control input[type="number"],
+  .ed-field-control input[type="time"],
+  .ed-field-control input[type="date"],
+  .ed-field-control textarea,
+  .ed-field-control select {
+    width: 100%;
+    padding: 0.35rem 0.5rem;
+    border: 1px solid rgba(28, 26, 23, 0.2);
+    border-radius: 3px;
+    font-family: inherit;
+    font-size: 0.88rem;
+    background: #fff;
+  }
+  .ed-field-control textarea { min-height: 3.5rem; resize: vertical; }
+  .ed-field-control input:focus,
+  .ed-field-control textarea:focus,
+  .ed-field-control select:focus {
+    outline: none;
+    border-color: rgba(183, 129, 63, 0.6);
+    box-shadow: 0 0 0 2px rgba(183, 129, 63, 0.15);
+  }
+  .ed-field-reset {
+    font-size: 0.72rem;
+    padding: 0.2rem 0.45rem;
+    background: transparent;
+    border: 1px solid rgba(28, 26, 23, 0.15);
+    border-radius: 3px;
+    cursor: pointer;
+    color: rgba(28, 26, 23, 0.7);
+  }
+  .ed-field-reset:disabled {
+    opacity: 0.3;
+    cursor: default;
+  }
+  .ed-field-reset:not(:disabled):hover { background: rgba(28, 26, 23, 0.04); }
+  .ed-field.is-dirty {
+    background: rgba(255, 245, 225, 0.45);
+  }
+  .ed-field.is-focused {
+    animation: ed-pulse 1.2s ease-out 1;
+  }
+  @keyframes ed-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(183, 129, 63, 0.6); }
+    100% { box-shadow: 0 0 0 8px rgba(183, 129, 63, 0); }
+  }
+
+  .ed-repair-hint {
+    grid-column: 1 / -1;
+    padding: 0.55rem 0.7rem;
+    background: rgba(183, 129, 63, 0.12);
+    border-left: 3px solid rgba(183, 129, 63, 0.7);
+    font-size: 0.82rem;
+    line-height: 1.45;
+    color: rgba(28, 26, 23, 0.8);
+    margin: 0.3rem 0;
+  }
+
+  .ed-checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .ed-checkbox-row input[type="checkbox"] { margin: 0; }
+
+  .ed-days {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+  .ed-day-btn {
+    padding: 0.3rem 0.55rem;
+    border: 1px solid rgba(28, 26, 23, 0.2);
+    border-radius: 3px;
+    background: #fff;
+    font-size: 0.76rem;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .ed-day-btn.active {
+    background: rgba(183, 129, 63, 0.25);
+    border-color: rgba(183, 129, 63, 0.6);
+  }
+
+  .ed-meetings {
+    margin-top: 0.5rem;
+  }
+  .ed-meeting {
+    border: 1px solid rgba(28, 26, 23, 0.12);
+    border-radius: 4px;
+    padding: 0.75rem;
+    margin-bottom: 0.6rem;
+    background: rgba(28, 26, 23, 0.015);
+  }
+  .ed-meeting-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.4rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: rgba(28, 26, 23, 0.7);
+  }
+  .ed-meeting-remove {
+    font-size: 0.72rem;
+    padding: 0.18rem 0.5rem;
+    border: 1px solid rgba(160, 60, 40, 0.4);
+    color: rgba(160, 60, 40, 0.9);
+    background: transparent;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  .ed-meeting-remove:hover { background: rgba(160, 60, 40, 0.08); }
+  .ed-add-meeting {
+    font-size: 0.82rem;
+    padding: 0.35rem 0.7rem;
+    background: rgba(28, 26, 23, 0.05);
+    border: 1px dashed rgba(28, 26, 23, 0.25);
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .ed-add-meeting:hover { background: rgba(28, 26, 23, 0.1); }
+
+  .ed-instr-row {
+    display: flex;
+    gap: 0.35rem;
+    margin-bottom: 0.3rem;
+  }
+  .ed-instr-row input { flex: 1; }
+  .ed-instr-rm, .ed-instr-add {
+    padding: 0.25rem 0.55rem;
+    border: 1px solid rgba(28, 26, 23, 0.2);
+    background: #fff;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-family: inherit;
+  }
+
+  .ed-footer {
+    display: flex;
+    gap: 0.6rem;
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(28, 26, 23, 0.1);
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .ed-save-btn, .ed-cancel-btn, .ed-revert-btn {
+    padding: 0.45rem 0.9rem;
+    border-radius: 3px;
+    font-family: inherit;
+    font-size: 0.88rem;
+    cursor: pointer;
+    border: 1px solid rgba(28, 26, 23, 0.15);
+    background: #fff;
+  }
+  .ed-save-btn {
+    background: #7c4a2e;
+    color: #fff;
+    border-color: #7c4a2e;
+  }
+  .ed-save-btn:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+  .ed-revert-btn {
+    color: rgba(160, 60, 40, 0.9);
+    border-color: rgba(160, 60, 40, 0.3);
+    margin-left: auto;
+  }
+  .ed-revert-btn:hover { background: rgba(160, 60, 40, 0.06); }
+  .ed-banner {
+    padding: 0.5rem 0.75rem;
+    margin-bottom: 0.75rem;
+    border-radius: 3px;
+    font-size: 0.85rem;
+    background: rgba(80, 140, 90, 0.12);
+    border-left: 3px solid rgba(80, 140, 90, 0.7);
+    color: rgba(28, 26, 23, 0.85);
+  }
+  .ed-banner.is-error {
+    background: rgba(160, 60, 40, 0.12);
+    border-left-color: rgba(160, 60, 40, 0.7);
+  }
+
+  /* "Fix this" button attached to Browse warning chips */
+  .br-warn-fix {
+    margin-left: 0.5rem;
+    font-size: 0.7rem;
+    padding: 0.12rem 0.45rem;
+    border: 1px solid rgba(183, 129, 63, 0.45);
+    background: #fff;
+    border-radius: 2px;
+    cursor: pointer;
+    color: rgba(28, 26, 23, 0.75);
+    font-family: inherit;
+  }
+  .br-warn-fix:hover { background: rgba(183, 129, 63, 0.1); }
+  /* Browse section "Edit" button */
+  .br-section-edit {
+    font-size: 0.72rem;
+    padding: 0.15rem 0.55rem;
+    border: 1px solid rgba(28, 26, 23, 0.2);
+    border-radius: 2px;
+    background: #fff;
+    color: rgba(28, 26, 23, 0.7);
+    cursor: pointer;
+    font-family: inherit;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .br-section-edit:hover { background: rgba(28, 26, 23, 0.04); }
+  .br-course-edit {
+    font-size: 0.76rem;
+    margin-left: 0.5rem;
+    color: #7c4a2e;
+    text-decoration: underline dotted;
+    cursor: pointer;
+  }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
@@ -4010,6 +4409,30 @@
   </div>
   <!-- end tab-pane "manage" -->
 
+  <!-- ========== TAB: Edit (Piece 3c — repair tool) ========== -->
+  <div class="tab-pane" data-tab-id="edit">
+    <section class="module" data-module-id="edit">
+      <button class="module-menu-btn" onclick="openModuleMenu(event, 'edit')" title="Move module">⋮</button>
+      <div class="section-label"><span class="num">◆</span> Edit · <em>repair tool</em></div>
+      <h2>Fix what the parser <em>couldn't figure out</em>.</h2>
+
+      <!-- Empty state: shown when no section/course is selected -->
+      <div class="ed-empty" id="ed-empty">
+        <div class="ed-empty-lead">
+          Select a section from <a href="#browse" onclick="switchTab('catalog');return false;">Catalog → Browse</a> to edit it. Or click a <span class="br-warn-inline">⚠</span> warning on any section to enter repair mode.
+        </div>
+        <div class="ed-empty-recents" id="ed-empty-recents"></div>
+      </div>
+
+      <!-- Edit layout: two panels (context/source + form) -->
+      <div class="ed-layout" id="ed-layout" hidden>
+        <aside class="ed-context" id="ed-context"></aside>
+        <section class="ed-form-panel" id="ed-form-panel"></section>
+      </div>
+    </section>
+  </div>
+  <!-- end tab-pane "edit" -->
+
 </div>
 <!-- end #tab-container -->
 
@@ -4157,7 +4580,7 @@ import { createPersistence } from './src/store/persistence.js';
 import { createLegacyAdapter } from './src/store/legacy_adapter.js';
 import { parse } from './src/ingester/parse.js';
 import { computeOverlayBlocks } from './src/ui/filter_overlay.js';
-import { translateWarning, WARNING_COPY } from './src/ui/warning_copy.js';
+import { translateWarning, WARNING_COPY, REPAIR_HINTS } from './src/ui/warning_copy.js';
 import {
   classifyWarnings,
   subjectSummary,
@@ -4166,6 +4589,24 @@ import {
   formatBrowseHash,
   countFlaggedSectionsInCourse,
 } from './src/ui/browse.js';
+import {
+  SECTION_FIELDS,
+  COURSE_FIELDS,
+  MEETING_FIELDS,
+  COMPONENT_OPTIONS,
+  SESSION_OPTIONS,
+  STATUS_OPTIONS,
+  DAY_OPTIONS,
+  parseEditHash,
+  formatEditHash,
+  findEditContext,
+  sectionToFormState,
+  courseToFormState,
+  diffSectionFormToEdits,
+  diffCourseFormToEdits,
+  listRecentWarnings,
+  warningAnchor,
+} from './src/ui/edit.js';
 const catalog = createCatalog();
 const persistence = createPersistence(catalog);
 persistence.load();
@@ -4182,6 +4623,25 @@ window.HS.browse = {
   parseBrowseHash,
   formatBrowseHash,
   countFlaggedSectionsInCourse,
+};
+window.HS.REPAIR_HINTS = REPAIR_HINTS;
+window.HS.edit = {
+  SECTION_FIELDS,
+  COURSE_FIELDS,
+  MEETING_FIELDS,
+  COMPONENT_OPTIONS,
+  SESSION_OPTIONS,
+  STATUS_OPTIONS,
+  DAY_OPTIONS,
+  parseEditHash,
+  formatEditHash,
+  findEditContext,
+  sectionToFormState,
+  courseToFormState,
+  diffSectionFormToEdits,
+  diffCourseFormToEdits,
+  listRecentWarnings,
+  warningAnchor,
 };
 // Fire horarium:ready after exposures so the classic controller can
 // subscribe to catalog mutations and render its first Browse frame.
@@ -6139,11 +6599,13 @@ const MODULE_DEFS = {
   compare:  { label: 'Compare' },
   export:   { label: 'Export' },
   manage:   { label: 'Manage' },
+  edit:     { label: 'Edit' },
 };
 
 let userTabs = [
-  { id: 'catalog', label: 'Catalog', moduleIds: ['catalog', 'browse'] },
   { id: 'main',    label: 'Main',    moduleIds: ['plan', 'schedule', 'cores'] },
+  { id: 'catalog', label: 'Catalog', moduleIds: ['catalog', 'browse'] },
+  { id: 'edit',    label: 'Edit',    moduleIds: ['edit'] },
   { id: 'compare', label: 'Compare', moduleIds: ['compare'] },
   { id: 'export',  label: 'Export',  moduleIds: ['export'] },
   { id: 'manage',  label: 'Manage',  moduleIds: ['manage'] },
@@ -7062,10 +7524,29 @@ function _onBrowseCourseClick(e) {
   renderBrowse();
 }
 
-function _brRenderWarning(w) {
+function _brRenderWarning(w, ctx) {
   var t = window.HS.translateWarning(w);
+  // ctx = { subject, catnum, class_number? } — when passed, the warning
+  // gets a "fix this" button that deep-links into Edit focused on the
+  // anchored field. Course-level warnings drop the class_number; we still
+  // link to edit in course scope so the user can fix course-level fields.
+  var fix = '';
+  if (ctx && ctx.subject && ctx.catnum) {
+    var anchor = window.HS.edit ? window.HS.edit.warningAnchor(w) : null;
+    var isCourseAnchor = anchor && anchor.indexOf('course.') === 0;
+    var hashSel = {
+      subject: ctx.subject,
+      catnum: ctx.catnum,
+      class_number: isCourseAnchor ? null : (ctx.class_number || null),
+      field: anchor && !isCourseAnchor ? anchor : (isCourseAnchor ? anchor : null),
+    };
+    var hash = window.HS.edit ? window.HS.edit.formatEditHash(hashSel) : '';
+    if (hash) {
+      fix = ' <button type="button" class="br-warn-fix" data-edit-hash="' + _brEscape(hash) + '">Fix this</button>';
+    }
+  }
   return '<details class="br-warn sev-' + (t.severity || 'info') + '">' +
-    '<summary><span class="br-warn-short">⚠ ' + _brEscape(t.short) + '</span></summary>' +
+    '<summary><span class="br-warn-short">⚠ ' + _brEscape(t.short) + '</span>' + fix + '</summary>' +
     '<span class="br-warn-full">' + _brEscape(t.full) + '</span>' +
     '</details>';
 }
@@ -7105,10 +7586,11 @@ function _renderBrowseDetail() {
     descHtml = '<div class="br-course-desc truncated">No description.</div>';
   }
 
+  var courseCtx = { subject: _browseSel.subject, catnum: _browseSel.catnum };
   var warningsHtml = '';
   if (courseWarns.length > 0) {
     warningsHtml = '<div class="br-course-warnings">' +
-      courseWarns.map(_brRenderWarning).join('') + '</div>';
+      courseWarns.map(function (w) { return _brRenderWarning(w, courseCtx); }).join('') + '</div>';
   }
 
   var sectionsHtml = '';
@@ -7124,9 +7606,16 @@ function _renderBrowseDetail() {
       '</div>';
   }
 
+  var courseEditHash = window.HS.edit
+    ? window.HS.edit.formatEditHash({ subject: _browseSel.subject, catnum: _browseSel.catnum })
+    : '';
+  var courseEditLink = courseEditHash
+    ? ' <a class="br-course-edit" data-edit-hash="' + _brEscape(courseEditHash) + '">Edit course</a>'
+    : '';
+
   el.innerHTML =
     '<div class="br-course-head">' +
-      '<div class="br-course-code">' + _brEscape(course.code) + '</div>' +
+      '<div class="br-course-code">' + _brEscape(course.code) + courseEditLink + '</div>' +
       '<h3 class="br-course-title">' + _brEscape(course.title || '(untitled)') + '</h3>' +
       '<div class="br-course-meta">' + metaParts.join(' · ') + '</div>' +
       descHtml +
@@ -7167,16 +7656,28 @@ function _brRenderSectionCard(s, warns) {
   if (s.display_timezone) extras += '<span class="br-section-tz">Shown in ' + _brEscape(s.display_timezone) + ' time</span>';
   if (s.requires_consent) extras += '<span class="br-section-consent">Requires department consent</span>';
 
+  var sectionCtx = {
+    subject: _browseSel.subject,
+    catnum: _browseSel.catnum,
+    class_number: s.class_number || null,
+  };
   var warnHtml = '';
   if (warns.length > 0) {
-    warnHtml = '<div class="br-section-warnings">' + warns.map(_brRenderWarning).join('') + '</div>';
+    warnHtml = '<div class="br-section-warnings">' +
+      warns.map(function (w) { return _brRenderWarning(w, sectionCtx); }).join('') + '</div>';
   }
   var notesHtml = s.notes ? '<div class="br-section-notes">' + _brEscape(s.notes) + '</div>' : '';
+  var sectionEditHash = window.HS.edit && s.class_number
+    ? window.HS.edit.formatEditHash(sectionCtx) : '';
+  var sectionEditBtn = sectionEditHash
+    ? '<button type="button" class="br-section-edit" data-edit-hash="' + _brEscape(sectionEditHash) + '">Edit</button>'
+    : '';
 
   return '<article class="br-section-card">' +
     '<div class="br-section-head">' +
       '<div class="br-section-ident">' + _brEscape(s.section_code || '—') + ' · ' + _brEscape(s.component || '—') +
         ' <span class="class-num">#' + _brEscape(s.class_number || '—') + '</span>' +
+        (sectionEditBtn ? ' ' + sectionEditBtn : '') +
       '</div>' +
       '<div class="br-section-status ' + statusClass + '"><span class="dot"></span>' + _brEscape(statusLabel) + '</div>' +
     '</div>' +
@@ -7234,6 +7735,749 @@ function _bootBrowse() {
 }
 
 window.addEventListener('horarium:ready', _bootBrowse);
+
+// ============ EDIT MODULE (Piece 3c) ============
+// Repair-tool UI. Two entry points:
+//   (1) Warning-anchored: user clicks "Fix this" on a Browse warning chip,
+//       lands on Edit with the affected section loaded, the relevant field
+//       scrolled into view + pulse-highlighted, and the warning's repair
+//       hint rendered inline above that field.
+//   (2) Direct: user clicks the "Edit" button on a Browse section card or
+//       "Edit course" on a course header — same Edit view, no specific
+//       field focused.
+// Hash deep-linking: #edit/<subject>/<catnum>/<class_number>[?field=<path>]
+// — reproducible URLs, survives reload. Bare "#edit" shows the empty state.
+//
+// Warnings do NOT disappear when the user fills in a field the parser
+// couldn't find. A warning describes what the parser saw in the source
+// text, not what the user later provided. This distinction matters for
+// re-paste: if Albert's next paste still omits the time, the warning
+// still fires, and the user's prior override is still in force (the
+// overlay layer preserves it). The repair is *additive*, not corrective.
+var _editSel = { subject: null, catnum: null, class_number: null, field: null, scope: null };
+var _editForm = null; // the current form state { flat, meetings } or null
+var _editDirty = false;
+var _editUnsub = null;
+
+function _bootEdit() {
+  if (!window.HS || !window.HS.catalog || !window.HS.edit) return;
+  _applyEditHash();
+  renderEdit();
+  if (_editUnsub) _editUnsub();
+  _editUnsub = window.HS.catalog.subscribe(function () {
+    // If nothing in the form is dirty, a catalog mutation (e.g. a new
+    // paste) should refresh the rendered view so parsed values stay in
+    // sync. When dirty, we keep the user's in-flight edits.
+    if (!_editDirty) renderEdit();
+  });
+}
+
+function _applyEditHash() {
+  if (!window.HS || !window.HS.edit) return;
+  var parsed = window.HS.edit.parseEditHash(location.hash);
+  _editSel.subject = parsed.subject;
+  _editSel.catnum = parsed.catnum;
+  _editSel.class_number = parsed.class_number;
+  _editSel.field = parsed.field;
+  _editSel.scope = parsed.scope;
+}
+
+function navigateToEdit(sel) {
+  if (!window.HS || !window.HS.edit) return;
+  var hash = window.HS.edit.formatEditHash(sel);
+  // Using hash assignment triggers hashchange, which switches tab + renders.
+  location.hash = hash;
+  switchTab('edit');
+}
+
+function _edOnGlobalClick(e) {
+  var t = e.target.closest ? e.target.closest('[data-edit-hash]') : null;
+  if (!t) return;
+  e.preventDefault();
+  e.stopPropagation(); // so clicking "Fix this" doesn't also toggle the <details>
+  var hash = t.getAttribute('data-edit-hash');
+  if (!hash) return;
+  location.hash = hash;
+  switchTab('edit');
+}
+document.addEventListener('click', _edOnGlobalClick);
+
+window.addEventListener('hashchange', function () {
+  if (!location.hash || location.hash.indexOf('#edit') !== 0) {
+    // Still reset selection so leaving Edit clears focus.
+    if (_editSel.subject) {
+      _editSel = { subject: null, catnum: null, class_number: null, field: null, scope: null };
+      _editDirty = false;
+      _editForm = null;
+      if (currentTab === 'edit') renderEdit();
+    }
+    return;
+  }
+  _applyEditHash();
+  _editDirty = false;
+  _editForm = null;
+  renderEdit();
+});
+
+// --- rendering ---
+function renderEdit() {
+  var emptyEl = document.getElementById('ed-empty');
+  var layoutEl = document.getElementById('ed-layout');
+  if (!emptyEl || !layoutEl) return;
+  if (!window.HS || !window.HS.catalog || !window.HS.edit) return;
+
+  if (!_editSel.subject || !_editSel.catnum) {
+    layoutEl.hidden = true;
+    emptyEl.hidden = false;
+    _renderEditEmptyRecents();
+    return;
+  }
+  var eff = window.HS.catalog.getEffective();
+  var ctx = window.HS.edit.findEditContext(eff, {
+    subject: _editSel.subject,
+    catnum: _editSel.catnum,
+    class_number: _editSel.class_number,
+  });
+  if (!ctx.course) {
+    emptyEl.hidden = true;
+    layoutEl.hidden = false;
+    layoutEl.innerHTML = '<div class="ed-form-panel"><div class="ed-banner is-error">' +
+      'No course found at ' + _brEscape(_editSel.subject + ' ' + _editSel.catnum) +
+      '. It may not be in the catalog yet. ' +
+      '<a onclick="switchTab(\'catalog\')">Return to Catalog</a>.' +
+      '</div></div>';
+    return;
+  }
+
+  emptyEl.hidden = true;
+  layoutEl.hidden = false;
+
+  // Build left context panel + right form panel.
+  layoutEl.innerHTML =
+    '<aside class="ed-context" id="ed-context"></aside>' +
+    '<section class="ed-form-panel" id="ed-form-panel"></section>';
+  _renderEditContext(ctx);
+  if (_editSel.scope === 'section' && ctx.section) {
+    _renderEditSectionForm(ctx);
+  } else {
+    _renderEditCourseForm(ctx);
+  }
+
+  // Pulse-highlight the anchored field, if any.
+  if (_editSel.field) {
+    requestAnimationFrame(function () {
+      var el = document.querySelector('[data-field-id="' + _edFieldIdFromPath(_editSel.field) + '"]');
+      if (el) {
+        el.classList.add('is-focused');
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        var input = el.querySelector('input, textarea, select');
+        if (input) setTimeout(function () { try { input.focus(); } catch (e) {} }, 200);
+      }
+    });
+  }
+}
+
+function _edFieldIdFromPath(path) {
+  // Meetings anchor to the first meeting's block since we don't index
+  // per-meeting in this iteration.
+  if (!path) return '';
+  if (path === 'meetings' || path.indexOf('meetings') === 0) return 'meetings-block';
+  return path;
+}
+
+function _renderEditEmptyRecents() {
+  var recentsEl = document.getElementById('ed-empty-recents');
+  if (!recentsEl) return;
+  var cat = window.HS.catalog;
+  var meta = cat.getSubjectMetadata ? cat.getSubjectMetadata() : {};
+  // Pull parsed output from the store's toJSON snapshot (the parsed Map
+  // isn't directly exposed). toJSON returns { parsed: {subject: out} }.
+  var snap = cat.toJSON ? cat.toJSON() : { parsed: {} };
+  var recents = window.HS.edit.listRecentWarnings(snap.parsed || {}, meta, { limit: 5 });
+  if (recents.length === 0) {
+    recentsEl.innerHTML =
+      '<div class="ed-empty-recents-title">No warnings to repair</div>' +
+      '<div style="font-size:0.85rem;color:rgba(28,26,23,0.6)">' +
+      'Nothing in the catalog has flagged a parser issue. Click any section in Browse to edit it directly.' +
+      '</div>';
+    return;
+  }
+  var rows = recents.map(function (r) {
+    var t = window.HS.translateWarning(r.warning);
+    var ident = r.class_number ? (r.subject + ' #' + r.class_number) :
+      (r.course_code || r.subject);
+    // Build an edit hash for the anchor.
+    var anchor = window.HS.edit.warningAnchor(r.warning);
+    var isCourseAnchor = anchor && anchor.indexOf('course.') === 0;
+    var catnum = r.course_code ? r.course_code.replace(/^[^\s]+\s+/, '') : null;
+    // For section-level warnings we need catnum too — derive from
+    // r.course_code when present, else leave and let the user land on
+    // the subject-level empty state.
+    var hash = '#edit';
+    if (r.class_number && catnum) {
+      hash = window.HS.edit.formatEditHash({
+        subject: r.subject, catnum: catnum, class_number: r.class_number,
+        field: isCourseAnchor ? null : anchor,
+      });
+    } else if (catnum) {
+      hash = window.HS.edit.formatEditHash({
+        subject: r.subject, catnum: catnum,
+        field: isCourseAnchor ? anchor : null,
+      });
+    }
+    return '<a class="ed-recent-row" data-edit-hash="' + _brEscape(hash) + '">' +
+      '<span class="ed-recent-row-id">' + _brEscape(ident) + '</span>' +
+      _brEscape(t.short) + '</a>';
+  }).join('');
+  recentsEl.innerHTML =
+    '<div class="ed-empty-recents-title">Recent parser warnings (' + recents.length + ')</div>' + rows;
+}
+
+function _renderEditContext(ctx) {
+  var el = document.getElementById('ed-context');
+  if (!el) return;
+  var c = ctx.course;
+  var s = ctx.section;
+  var breadcrumb = '<span>' + _brEscape(c.subject) + '</span> › ' +
+    '<a data-edit-hash="' + _brEscape(window.HS.edit.formatEditHash({ subject: c.subject, catnum: c.catalog_number })) + '">' +
+    _brEscape(c.catalog_number + ' ' + (c.title || '')) + '</a>';
+  if (s) {
+    breadcrumb += ' › <span>Section ' + _brEscape(s.section_code || '—') +
+      ' (class# ' + _brEscape(s.class_number || '—') + ')</span>';
+  }
+
+  // Warnings for this section / course.
+  var eff = window.HS.catalog.getEffective();
+  var parsed = null;
+  var snap = window.HS.catalog.toJSON ? window.HS.catalog.toJSON() : null;
+  if (snap && snap.parsed && snap.parsed[c.subject]) parsed = snap.parsed[c.subject];
+  var cls = parsed ? window.HS.browse.classifyWarnings(parsed) : { byClass: new Map(), byCourse: new Map(), global: [] };
+  var warns = s
+    ? (cls.byClass.get(s.class_number) || [])
+    : (cls.byCourse.get(c.code) || []);
+
+  var warnsHtml = '';
+  if (warns.length > 0) {
+    var items = warns.map(function (w) {
+      var t = window.HS.translateWarning(w);
+      return '<li><strong>' + _brEscape(t.short) + '</strong> — ' + _brEscape(t.full) + '</li>';
+    }).join('');
+    warnsHtml = '<div class="ed-warnings-block">' +
+      '<div class="ed-warnings-block-title">' + warns.length + ' warning' +
+        (warns.length === 1 ? '' : 's') + ' on this ' + (s ? 'section' : 'course') + '</div>' +
+      '<ul>' + items + '</ul></div>';
+  }
+
+  // Source panel — open by default when arriving via a warning field.
+  var sourceOpen = _editSel.field ? ' open' : '';
+  var source = s && s._raw_paste_block ? s._raw_paste_block : '';
+  var sourceHtml = source
+    ? '<details class="ed-source"' + sourceOpen + '>' +
+      '<summary>Source (what Albert said)</summary>' +
+      '<pre class="ed-source-pre">' + _brEscape(source) + '</pre></details>'
+    : '';
+
+  el.innerHTML =
+    '<div class="ed-breadcrumb">' + breadcrumb + '</div>' +
+    '<div class="ed-title">' + _brEscape((s ? ('Section ' + (s.section_code || '—')) : (c.title || c.code))) + '</div>' +
+    warnsHtml +
+    sourceHtml;
+}
+
+// --- Section form ---
+function _renderEditSectionForm(ctx) {
+  var el = document.getElementById('ed-form-panel');
+  if (!el) return;
+  var c = ctx.course;
+  var s = ctx.section;
+  var ED = window.HS.edit;
+  if (!_editForm) _editForm = ED.sectionToFormState(s);
+
+  var parts = [];
+  parts.push('<div class="ed-form-panel-head">');
+  parts.push('<div class="ed-form-panel-head-title">Edit section ' + _brEscape(s.section_code || '—') +
+    ' <span style="font-family:monospace;font-size:0.85rem;color:rgba(0,0,0,0.5)">#' +
+    _brEscape(s.class_number) + '</span></div>');
+  parts.push('<div class="ed-scope-switch">' +
+    '<a class="active">Section</a>' +
+    '<a data-edit-hash="' + _brEscape(ED.formatEditHash({ subject: c.subject, catnum: c.catalog_number })) + '">Course</a>' +
+    '</div>');
+  parts.push('</div>');
+
+  parts.push('<div id="ed-banner-host"></div>');
+
+  // Get anchored warning + parsed baseline for per-field hints.
+  var anchoredField = _editSel.field;
+  var snap = window.HS.catalog.toJSON ? window.HS.catalog.toJSON() : null;
+  var parserOutput = snap && snap.parsed && snap.parsed[c.subject] ? snap.parsed[c.subject] : null;
+  var cls = parserOutput ? window.HS.browse.classifyWarnings(parserOutput) : { byClass: new Map(), byCourse: new Map(), global: [] };
+  var secWarns = cls.byClass.get(s.class_number) || [];
+  var hintByField = {};
+  for (var wi = 0; wi < secWarns.length; wi++) {
+    var w = secWarns[wi];
+    var a = ED.warningAnchor(w);
+    if (a) {
+      var key = _edFieldIdFromPath(a);
+      var t = window.HS.translateWarning(w);
+      if (t.repair_hint) hintByField[key] = t.repair_hint;
+    }
+  }
+
+  // Render simple fields in order.
+  parts.push('<div class="ed-fields">');
+  for (var i = 0; i < ED.SECTION_FIELDS.length; i++) {
+    var f = ED.SECTION_FIELDS[i];
+    if (f.visibleWhen) {
+      var gate = _editForm.flat[f.visibleWhen.path];
+      if (gate !== f.visibleWhen.equals) continue;
+    }
+    var hint = hintByField[f.path] || '';
+    parts.push(_edRenderField(f, _editForm.flat[f.path], hint, s));
+  }
+  parts.push('</div>');
+
+  // Meetings repeatable block.
+  parts.push(_edRenderMeetings(_editForm.meetings, hintByField['meetings-block'] || ''));
+
+  // Footer.
+  var hasEdits = _edSectionHasEdits(s.class_number);
+  parts.push('<div class="ed-footer">');
+  parts.push('<button type="button" class="ed-save-btn"' + (_editDirty ? '' : ' disabled') + ' onclick="_edSave()">Save changes</button>');
+  parts.push('<button type="button" class="ed-cancel-btn" onclick="_edCancel()">Cancel</button>');
+  if (hasEdits) parts.push('<button type="button" class="ed-revert-btn" onclick="_edRevertAll()">Revert all edits on this section</button>');
+  parts.push('</div>');
+
+  el.innerHTML = parts.join('');
+  _edBindSectionFormEvents();
+}
+
+function _edRenderField(f, value, hint, sectionForParsed) {
+  var parsedStr = _edParsedDisplay(f.path);
+  var ctrl = '';
+  var id = 'ed-f-' + f.id;
+  var readOnly = f.readOnly ? ' readonly' : '';
+  switch (f.kind) {
+    case 'text':
+      ctrl = '<input type="text" id="' + id + '" value="' + _brEscape(value == null ? '' : String(value)) + '"' + readOnly + '>';
+      break;
+    case 'textarea':
+      ctrl = '<textarea id="' + id + '"' + readOnly + '>' + _brEscape(value == null ? '' : String(value)) + '</textarea>';
+      break;
+    case 'number':
+      ctrl = '<input type="number" id="' + id + '" value="' + _brEscape(value == null ? '' : String(value)) + '">';
+      break;
+    case 'time':
+      ctrl = '<input type="time" id="' + id + '" value="' + _brEscape(value == null ? '' : String(value)) + '">';
+      break;
+    case 'date':
+      ctrl = '<input type="date" id="' + id + '" value="' + _brEscape(value == null ? '' : String(value)) + '">';
+      break;
+    case 'checkbox':
+      ctrl = '<div class="ed-checkbox-row"><input type="checkbox" id="' + id + '"' + (value ? ' checked' : '') + '></div>';
+      break;
+    case 'select':
+      var opts = f.options.map(function (o) {
+        return '<option value="' + _brEscape(o) + '"' + (value === o ? ' selected' : '') + '>' + _brEscape(o) + '</option>';
+      }).join('');
+      var other = '';
+      if (f.allowOther) {
+        var isOther = value != null && f.options.indexOf(value) === -1;
+        opts += '<option value="__other__"' + (isOther ? ' selected' : '') + '>Other (specify)</option>';
+        other = '<input type="text" class="ed-other-input" id="' + id + '-other" value="' +
+          (isOther ? _brEscape(String(value)) : '') + '"' + (isOther ? '' : ' hidden') + ' placeholder="Custom value">';
+      }
+      ctrl = '<select id="' + id + '">' + opts + '</select>' + other;
+      break;
+    default:
+      ctrl = '<input type="text" id="' + id + '" value="' + _brEscape(value == null ? '' : String(value)) + '">';
+  }
+  var hintHtml = hint ? '<div class="ed-repair-hint">' + _brEscape(hint) + '</div>' : '';
+  return hintHtml +
+    '<div class="ed-field" data-field-id="' + _brEscape(f.path) + '">' +
+      '<label class="ed-field-label" for="' + id + '">' + _brEscape(f.label) +
+        (parsedStr !== null ? '<span class="ed-field-parsed">parsed: ' + _brEscape(parsedStr) + '</span>' : '') +
+      '</label>' +
+      '<div class="ed-field-control">' + ctrl + '</div>' +
+      '<button type="button" class="ed-field-reset" data-field-path="' + _brEscape(f.path) + '"' +
+        (_edHasEditAt(f.path) ? '' : ' disabled') + ' title="Reset to parsed value">↺</button>' +
+    '</div>';
+}
+
+function _edParsedDisplay(path) {
+  try {
+    if (!window.HS.catalog.getParsedValue) return null;
+    var val = window.HS.catalog.getParsedValue(_editSel.class_number, path);
+    if (val === undefined) return null;
+    if (val === null) return '(none)';
+    if (typeof val === 'object') return JSON.stringify(val);
+    return String(val);
+  } catch (e) { return null; }
+}
+
+function _edHasEditAt(path) {
+  // Sparse check: the store exposes listEdits() — iterate for an edit
+  // with class_number=_editSel.class_number + field_path=path.
+  if (!window.HS.catalog.listEdits) return false;
+  var list = window.HS.catalog.listEdits().edits || [];
+  for (var i = 0; i < list.length; i++) {
+    var e = list[i];
+    if (e.class_number === _editSel.class_number && e.field_path === path) return true;
+    if (e.course_code && _editSel.scope === 'course' && e.field_path === path) return true;
+  }
+  return false;
+}
+
+function _edSectionHasEdits(classNumber) {
+  if (!window.HS.catalog.listEdits) return false;
+  var list = window.HS.catalog.listEdits().edits || [];
+  for (var i = 0; i < list.length; i++) {
+    if (list[i].class_number === classNumber) return true;
+  }
+  return false;
+}
+
+function _edRenderMeetings(meetings, hint) {
+  var parts = [];
+  parts.push('<h3 style="font-size:0.95rem;margin:1.25rem 0 0.5rem 0">Meetings</h3>');
+  if (hint) parts.push('<div class="ed-repair-hint">' + _brEscape(hint) + '</div>');
+  parts.push('<div class="ed-meetings" data-field-id="meetings-block">');
+  for (var i = 0; i < meetings.length; i++) parts.push(_edRenderMeetingBlock(meetings[i], i));
+  parts.push('</div>');
+  parts.push('<button type="button" class="ed-add-meeting" onclick="_edAddMeeting()">+ Add meeting</button>');
+  return parts.join('');
+}
+
+function _edRenderMeetingBlock(m, idx) {
+  var parts = [];
+  parts.push('<div class="ed-meeting" data-meeting-idx="' + idx + '">');
+  parts.push('<div class="ed-meeting-head"><span>Meeting ' + (idx + 1) + '</span>' +
+    '<button type="button" class="ed-meeting-remove" onclick="_edRemoveMeeting(' + idx + ')">Remove</button></div>');
+
+  // Days toggle
+  parts.push('<div class="ed-field"><label class="ed-field-label">Days</label><div class="ed-field-control"><div class="ed-days">');
+  for (var di = 0; di < window.HS.edit.DAY_OPTIONS.length; di++) {
+    var d = window.HS.edit.DAY_OPTIONS[di];
+    var active = m.days && m.days.indexOf(d) !== -1;
+    parts.push('<button type="button" class="ed-day-btn' + (active ? ' active' : '') +
+      '" data-meeting-idx="' + idx + '" data-day="' + d + '">' + d + '</button>');
+  }
+  parts.push('</div></div><span></span></div>');
+
+  // Times
+  parts.push(_edMeetingField(idx, 'start_time', 'Start time', 'time', m.start_time));
+  parts.push(_edMeetingField(idx, 'end_time', 'End time', 'time', m.end_time));
+  parts.push(_edMeetingField(idx, 'start_date', 'Start date', 'date', m.start_date));
+  parts.push(_edMeetingField(idx, 'end_date', 'End date', 'date', m.end_date));
+  parts.push(_edMeetingField(idx, 'room', 'Room', 'text', m.room));
+  parts.push(_edMeetingField(idx, 'building', 'Building', 'text', m.building));
+  parts.push(_edMeetingField(idx, 'room_number', 'Room number', 'text', m.room_number));
+
+  // Instructors
+  parts.push('<div class="ed-field"><label class="ed-field-label">Instructors</label><div class="ed-field-control" id="ed-instr-' + idx + '">');
+  var instrs = m.instructors || [];
+  for (var ii = 0; ii < instrs.length; ii++) {
+    parts.push('<div class="ed-instr-row">' +
+      '<input type="text" value="' + _brEscape(instrs[ii]) + '" data-meeting-idx="' + idx + '" data-instr-idx="' + ii + '">' +
+      '<button type="button" class="ed-instr-rm" onclick="_edRemoveInstr(' + idx + ',' + ii + ')">−</button>' +
+      '</div>');
+  }
+  parts.push('<button type="button" class="ed-instr-add" onclick="_edAddInstr(' + idx + ')">+ Add instructor</button>');
+  parts.push('</div><span></span></div>');
+
+  parts.push('</div>');
+  return parts.join('');
+}
+
+function _edMeetingField(idx, key, label, kind, value) {
+  var id = 'ed-m-' + idx + '-' + key;
+  var ctrl = '<input type="' + kind + '" id="' + id + '" value="' + _brEscape(value == null ? '' : String(value)) +
+    '" data-meeting-idx="' + idx + '" data-meeting-key="' + key + '">';
+  return '<div class="ed-field"><label class="ed-field-label" for="' + id + '">' + _brEscape(label) +
+    '</label><div class="ed-field-control">' + ctrl + '</div><span></span></div>';
+}
+
+// Bind form events AFTER innerHTML has been set.
+function _edBindSectionFormEvents() {
+  var root = document.getElementById('ed-form-panel');
+  if (!root) return;
+
+  // Simple field inputs
+  var ED = window.HS.edit;
+  for (var i = 0; i < ED.SECTION_FIELDS.length; i++) {
+    (function (f) {
+      var id = 'ed-f-' + f.id;
+      var el = document.getElementById(id);
+      if (!el) return;
+      var handler = function () {
+        if (f.kind === 'checkbox') { _editForm.flat[f.path] = !!el.checked; }
+        else if (f.kind === 'number') { _editForm.flat[f.path] = el.value === '' ? null : Number(el.value); }
+        else if (f.kind === 'select') {
+          if (el.value === '__other__') {
+            var other = document.getElementById(id + '-other');
+            if (other) { other.hidden = false; _editForm.flat[f.path] = other.value || ''; }
+          } else {
+            var other2 = document.getElementById(id + '-other');
+            if (other2) other2.hidden = true;
+            _editForm.flat[f.path] = el.value;
+          }
+        }
+        else { _editForm.flat[f.path] = el.value === '' ? null : el.value; }
+        _edMarkDirty();
+        // Re-render only if a visibleWhen gate field changed (status.type),
+        // since that can hide/show status.count. Cheap since the panel
+        // innerHTML is local.
+        if (f.path === 'status.type') renderEdit();
+      };
+      el.addEventListener('input', handler);
+      el.addEventListener('change', handler);
+      if (f.allowOther) {
+        var other = document.getElementById(id + '-other');
+        if (other) other.addEventListener('input', function () {
+          _editForm.flat[f.path] = other.value || '';
+          _edMarkDirty();
+        });
+      }
+    })(ED.SECTION_FIELDS[i]);
+  }
+
+  // Meeting fields (data-meeting-idx + data-meeting-key)
+  root.querySelectorAll('[data-meeting-key]').forEach(function (el) {
+    el.addEventListener('input', function () {
+      var idx = Number(el.getAttribute('data-meeting-idx'));
+      var key = el.getAttribute('data-meeting-key');
+      _editForm.meetings[idx][key] = el.value === '' ? null : el.value;
+      _edMarkDirty();
+    });
+  });
+
+  // Day toggle buttons
+  root.querySelectorAll('.ed-day-btn').forEach(function (el) {
+    el.addEventListener('click', function (e) {
+      e.preventDefault();
+      var idx = Number(el.getAttribute('data-meeting-idx'));
+      var d = el.getAttribute('data-day');
+      var days = _editForm.meetings[idx].days || [];
+      var pos = days.indexOf(d);
+      if (pos === -1) days.push(d); else days.splice(pos, 1);
+      // keep in Mon..Sun order
+      days.sort(function (a, b) { return ED.DAY_OPTIONS.indexOf(a) - ED.DAY_OPTIONS.indexOf(b); });
+      _editForm.meetings[idx].days = days;
+      el.classList.toggle('active');
+      _edMarkDirty();
+    });
+  });
+
+  // Instructor inputs
+  root.querySelectorAll('.ed-instr-row input').forEach(function (el) {
+    el.addEventListener('input', function () {
+      var idx = Number(el.getAttribute('data-meeting-idx'));
+      var ii = Number(el.getAttribute('data-instr-idx'));
+      _editForm.meetings[idx].instructors[ii] = el.value;
+      _edMarkDirty();
+    });
+  });
+
+  // Per-field reset buttons
+  root.querySelectorAll('.ed-field-reset').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      if (btn.disabled) return;
+      var path = btn.getAttribute('data-field-path');
+      // Delete the edit at this path (value: undefined).
+      try {
+        window.HS.catalog.setEdit({
+          class_number: _editSel.class_number,
+          course_code: _editSel.scope === 'course' ? (_editSel.subject + ' ' + _editSel.catnum) : null,
+          field_path: path,
+          value: undefined,
+        });
+      } catch (e) {}
+      _editForm = null;
+      _editDirty = false;
+      renderEdit();
+    });
+  });
+}
+
+function _edMarkDirty() {
+  _editDirty = true;
+  var btn = document.querySelector('.ed-save-btn');
+  if (btn) btn.disabled = false;
+}
+
+function _edAddMeeting() {
+  _editForm.meetings.push({
+    days: [], start_time: null, end_time: null, start_date: null, end_date: null,
+    room: null, building: null, room_number: null, instructors: [],
+  });
+  _edMarkDirty();
+  renderEdit();
+}
+function _edRemoveMeeting(idx) {
+  if (!confirm('Remove this meeting?')) return;
+  _editForm.meetings.splice(idx, 1);
+  _edMarkDirty();
+  renderEdit();
+}
+function _edAddInstr(mIdx) {
+  _editForm.meetings[mIdx].instructors.push('');
+  _edMarkDirty();
+  renderEdit();
+}
+function _edRemoveInstr(mIdx, iIdx) {
+  _editForm.meetings[mIdx].instructors.splice(iIdx, 1);
+  _edMarkDirty();
+  renderEdit();
+}
+
+function _edSave() {
+  if (!_editDirty) return;
+  var ED = window.HS.edit;
+  var cat = window.HS.catalog;
+  if (_editSel.scope === 'section') {
+    // Get parsed baseline.
+    var snap = cat.toJSON ? cat.toJSON() : null;
+    var parsedSection = null;
+    if (snap && snap.parsed) {
+      outer: for (var k in snap.parsed) {
+        var po = snap.parsed[k];
+        for (var ci = 0; ci < po.courses.length; ci++) {
+          for (var si = 0; si < po.courses[ci].sections.length; si++) {
+            if (po.courses[ci].sections[si].class_number === _editSel.class_number) {
+              parsedSection = po.courses[ci].sections[si]; break outer;
+            }
+          }
+        }
+      }
+    }
+    var parsedForm = parsedSection ? ED.sectionToFormState(parsedSection) : { flat: {}, meetings: [] };
+    var calls = ED.diffSectionFormToEdits({
+      classNumber: _editSel.class_number,
+      formFlat: _editForm.flat,
+      formMeetings: _editForm.meetings,
+      parsedFlat: parsedForm.flat,
+      parsedMeetings: parsedForm.meetings,
+    });
+    var saved = 0;
+    for (var i = 0; i < calls.length; i++) {
+      try { cat.setEdit(calls[i]); saved++; }
+      catch (e) { console.error('setEdit failed for', calls[i], e); }
+    }
+    _edShowBanner('Saved ' + saved + ' field change' + (saved === 1 ? '' : 's') + '.');
+  } else {
+    // course scope
+    var courseCode = _editSel.subject + ' ' + _editSel.catnum;
+    var snap2 = cat.toJSON ? cat.toJSON() : null;
+    var parsedCourse = null;
+    if (snap2 && snap2.parsed && snap2.parsed[_editSel.subject]) {
+      parsedCourse = snap2.parsed[_editSel.subject].courses.find(function (c) { return c.code === courseCode; }) || null;
+    }
+    var parsedCForm = parsedCourse ? ED.courseToFormState(parsedCourse) : { flat: {} };
+    var cCalls = ED.diffCourseFormToEdits({
+      courseCode: courseCode,
+      formFlat: _editForm.flat,
+      parsedFlat: parsedCForm.flat,
+    });
+    var cSaved = 0;
+    for (var ci2 = 0; ci2 < cCalls.length; ci2++) {
+      try { cat.setEdit(cCalls[ci2]); cSaved++; }
+      catch (e) { console.error('course setEdit failed', cCalls[ci2], e); }
+    }
+    _edShowBanner('Saved ' + cSaved + ' course-field change' + (cSaved === 1 ? '' : 's') + '.');
+  }
+  _editDirty = false;
+  _editForm = null;
+  // Re-render to pick up cleared edits etc.
+  requestAnimationFrame(renderEdit);
+}
+
+function _edCancel() {
+  _editForm = null;
+  _editDirty = false;
+  renderEdit();
+}
+
+function _edRevertAll() {
+  if (!confirm('Revert all edits on this section? This cannot be undone.')) return;
+  var cat = window.HS.catalog;
+  if (!cat.listEdits) return;
+  var list = cat.listEdits().edits || [];
+  for (var i = 0; i < list.length; i++) {
+    var e = list[i];
+    if (_editSel.scope === 'section' && e.class_number === _editSel.class_number) {
+      try { cat.setEdit({ class_number: e.class_number, field_path: e.field_path, value: undefined }); } catch (err) {}
+    } else if (_editSel.scope === 'course' && e.course_code === (_editSel.subject + ' ' + _editSel.catnum)) {
+      try { cat.setEdit({ course_code: e.course_code, field_path: e.field_path, value: undefined }); } catch (err) {}
+    }
+  }
+  _editForm = null;
+  _editDirty = false;
+  _edShowBanner('All edits reverted.');
+  requestAnimationFrame(renderEdit);
+}
+
+function _edShowBanner(msg) {
+  var host = document.getElementById('ed-banner-host');
+  if (!host) return;
+  host.innerHTML = '<div class="ed-banner">' + _brEscape(msg) + '</div>';
+  setTimeout(function () {
+    if (host.firstChild) host.firstChild.style.opacity = '0.6';
+  }, 2000);
+}
+
+// --- Course scope form ---
+function _renderEditCourseForm(ctx) {
+  var el = document.getElementById('ed-form-panel');
+  if (!el) return;
+  var c = ctx.course;
+  var ED = window.HS.edit;
+  if (!_editForm) _editForm = ED.courseToFormState(c);
+
+  var parts = [];
+  parts.push('<div class="ed-form-panel-head">');
+  parts.push('<div class="ed-form-panel-head-title">Edit course ' + _brEscape(c.code) + '</div>');
+  parts.push('<div class="ed-scope-switch"><a class="active">Course</a></div>');
+  parts.push('</div>');
+  parts.push('<div id="ed-banner-host"></div>');
+
+  for (var i = 0; i < ED.COURSE_FIELDS.length; i++) {
+    var f = ED.COURSE_FIELDS[i];
+    parts.push(_edRenderField(f, _editForm.flat[f.path], '', null));
+  }
+  // no_sections_offered special
+  parts.push('<div class="ed-field" data-field-id="course.no_sections_offered">' +
+    '<label class="ed-field-label">No sections offered</label>' +
+    '<div class="ed-field-control"><div class="ed-checkbox-row">' +
+      '<input type="checkbox" id="ed-f-nso"' + (_editForm.flat['course.no_sections_offered'] ? ' checked' : '') + '>' +
+      '<span style="font-size:0.82rem;color:rgba(0,0,0,0.6)">Course exists but no sections this term</span>' +
+    '</div></div><span></span></div>');
+
+  parts.push('<div class="ed-footer">');
+  parts.push('<button type="button" class="ed-save-btn"' + (_editDirty ? '' : ' disabled') + ' onclick="_edSave()">Save changes</button>');
+  parts.push('<button type="button" class="ed-cancel-btn" onclick="_edCancel()">Cancel</button>');
+  parts.push('</div>');
+
+  el.innerHTML = parts.join('');
+
+  // Bind
+  for (var j = 0; j < ED.COURSE_FIELDS.length; j++) {
+    (function (f) {
+      var id = 'ed-f-' + f.id;
+      var el2 = document.getElementById(id);
+      if (!el2) return;
+      el2.addEventListener('input', function () {
+        _editForm.flat[f.path] = el2.value === '' ? null : el2.value;
+        _edMarkDirty();
+      });
+    })(ED.COURSE_FIELDS[j]);
+  }
+  var nso = document.getElementById('ed-f-nso');
+  if (nso) nso.addEventListener('change', function () {
+    _editForm.flat['course.no_sections_offered'] = !!nso.checked;
+    _edMarkDirty();
+  });
+}
+
+window.addEventListener('horarium:ready', _bootEdit);
 
 // ============ INITIAL TAB STATE ============
 // Start on Plan tab; grids will build once schedule tab is opened.

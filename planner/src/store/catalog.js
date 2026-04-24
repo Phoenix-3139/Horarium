@@ -35,6 +35,8 @@ const SECTION_PATH_RE = [
   /^meetings(\[\d+\](\.(days(\[\d+\])?|start_time|end_time|start_date|end_date|room|building|room_number|instructors(\[\d+\])?))?)?$/,
   /^linked_components(\[\d+\])?$/,
   /^notes$/,
+  /^topic$/,
+  /^display_timezone$/,
 ];
 
 // Course-level paths. Note: editing a section through a course path is not
@@ -52,6 +54,7 @@ const COURSE_PATH_RE = [
   /^course\.description_truncated$/,
   /^course\.school$/,
   /^course\.units(\.(min|max))?$/,
+  /^course\.no_sections_offered$/,
 ];
 
 function isValidSectionPath(path) {

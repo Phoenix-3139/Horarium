@@ -203,6 +203,43 @@ export const WARNING_COPY = {
   }),
 };
 
+// Human-readable copy for the Edit module's warning-anchored repair view.
+// Shown inline above the affected form field. Shorter and more directive
+// than `full` — tells the user what to do, not just what happened. Unknown
+// warning types fall back to `full` text.
+export const REPAIR_HINTS = {
+  meeting_missing_time:
+    "Parser couldn't find a meeting time in the source. Albert sometimes omits times for independent study or by-arrangement courses. If you know the actual meeting times, fill them in below.",
+  malformed_time:
+    "A meeting time in the source was unreadable. Correct the start/end times below; the rest of the meeting will stay as parsed.",
+  nonmonotonic_time:
+    "The parser saw an end time not after the start time — likely an Albert typo. Fix whichever is wrong below.",
+  malformed_meeting_dates:
+    "A meeting's date range was unreadable. Enter the correct start/end dates below.",
+  no_meeting:
+    "This section has no meeting line at all. If it should meet, add a meeting below.",
+  unknown_days:
+    "Day tokens outside Mon–Sun were dropped. Re-select the correct days below.",
+  unknown_status:
+    "Albert reported a status Horarium doesn't recognize. Select the closest match below — or leave it as 'unknown' and the section still appears in your catalog.",
+  missing_status:
+    "This section had no Class Status line. Pick a status below or leave it as 'unknown'.",
+  unknown_component:
+    "Albert used a component value Horarium's allowlist doesn't cover. Pick the closest standard match, or use 'Other (specify)' to keep the original verbatim.",
+  missing_session:
+  "This section had no Session line. Pick a session code and dates below.",
+  malformed_session:
+    "The session's date range was unreadable. Fill in the correct start/end dates below.",
+  units_mismatch:
+    "This section and its course disagreed on credit units. Fixing the course's units (not the section's) resolves the mismatch — use the 'Edit course' link below to go to course scope.",
+  units_parse_failed:
+    "The course's units value was unreadable. Set the correct units on the course (switch to course scope).",
+  missing_description:
+    "The course block had no description text. Add one below if you'd like Horarium to display it.",
+  duplicate_disagreement:
+    "Two occurrences of this section in the paste reported different values at this field. Pick whichever is correct, or type your own value.",
+};
+
 export function translateWarning(w) {
   if (!w || typeof w.type !== "string") {
     return {
@@ -212,10 +249,13 @@ export function translateWarning(w) {
     };
   }
   const entry = WARNING_COPY[w.type];
-  if (entry) return entry(w);
-  return {
-    severity: "info",
-    short: "Not yet translated",
-    full: `Not yet translated: ${w.message || w.type}`,
-  };
+  const base = entry
+    ? entry(w)
+    : {
+        severity: "info",
+        short: "Not yet translated",
+        full: `Not yet translated: ${w.message || w.type}`,
+      };
+  const repair_hint = REPAIR_HINTS[w.type] || null;
+  return { ...base, repair_hint };
 }
