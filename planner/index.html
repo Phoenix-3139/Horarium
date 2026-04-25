@@ -506,6 +506,18 @@
     margin-top: 3px;
     opacity: 0.72;
   }
+  /* Dynamic-color cell rule (Piece 5a/2 onwards). The cell render in
+     buildGrid sets the per-cell custom properties `--cell-bg` and
+     `--cell-ink`; this rule reads them. !important ensures we beat
+     any sibling .grid .cell rule (legacy or otherwise). The fallback
+     values (after the comma in var()) keep cells visible if for any
+     reason the JS doesn't run — they pick up the page's paper-soft
+     palette instead of going transparent. */
+  .grid .cell.c-dynamic {
+    background: var(--cell-bg, var(--paper-soft)) !important;
+    color: var(--cell-ink, var(--ink)) !important;
+    border-left-color: var(--cell-ink, var(--ink-faint)) !important;
+  }
   .grid .cell.c-stat { background: var(--c-stat-bg); color: var(--c-stat-ink); border-left-color: var(--c-stat-ink); }
   .grid .cell.c-cons { background: var(--c-cons-bg); color: var(--c-cons-ink); border-left-color: var(--c-cons-ink); }
   .grid .cell.c-circ { background: var(--c-circ-bg); color: var(--c-circ-ink); border-left-color: var(--c-circ-ink); }
@@ -6580,20 +6592,18 @@ function buildGrid(gridId, half) {
         if (evt.secKey) cell.setAttribute('data-class-number', String(evt.secKey));
         cell.setAttribute('data-bg', safeBg);
         cell.setAttribute('data-ink', safeInk);
-        // Set the entire inline style attribute as a single string
-        // with `!important`. This is the most bulletproof spot in the
-        // CSS cascade — beats every stylesheet rule including
-        // future-added !important ones from third-party CSS, beats
-        // class-driven backgrounds the legacy CSS still defines for
-        // .c-stat / .c-cons / etc. (none of which match our class but
-        // belt+suspenders), and survives any subsequent CSSOM mutation
-        // that touches individual properties. Reported twice as
-        // "tiles have no color" — this should put it to bed.
-        const styleStr =
-          'background: ' + safeBg + ' !important;' +
-          'color: ' + safeInk + ' !important;' +
-          'border-left-color: ' + safeInk + ' !important;';
-        cell.setAttribute('style', styleStr);
+        // Pivot from "set inline style with !important" (which the user
+        // reported was still not painting bg in their browser, four
+        // times) to "set CSS custom properties; let a stylesheet rule
+        // with !important consume them." This is the same final
+        // background, just plumbed through CSS variables. It survives
+        // any extension or browser quirk that could be stripping the
+        // style attribute, and the values are inspectable in DevTools
+        // as `--cell-bg` / `--cell-ink` on the element. The actual
+        // !important declaration lives in `.grid .cell.c-dynamic`
+        // (above in the stylesheet).
+        cell.style.setProperty('--cell-bg', safeBg);
+        cell.style.setProperty('--cell-ink', safeInk);
         const typeNote = evt.label === 'Lecture' ? '' : ' <em>' + _escHtml(String(evt.label).toLowerCase()) + '</em>';
         const titleLine = meta.title
           ? '<div class="title-sub">' + _escHtml(meta.title) + '</div>'
