@@ -4559,6 +4559,13 @@
     position: relative;
   }
   .mp-cog-btn {
+    /* inline-flex centers the gear glyph regardless of which font is
+       resolving the U+2699 + VS-15 sequence (some fonts position it
+       slightly above the baseline, which made it look off-centre in
+       the calendar cog row). */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     width: 1.85rem;
     height: 1.85rem;
     padding: 0;
@@ -10802,15 +10809,29 @@ function _bootPicker() {
   function _openCogPop(anchor) {
     _closeCogPop();
     _cogPopAnchor = anchor || cogBtn;
+    const isCalendarCog = (_cogPopAnchor === cogBtnCal);
     const rect = _cogPopAnchor.getBoundingClientRect();
     const pop = document.createElement('div');
     pop.className = 'mp-cog-pop-built';
     pop.style.position = 'fixed';
     pop.style.top = (rect.bottom + 8) + 'px';
-    // Right-align the popover with the cog so it doesn't run off the
-    // viewport on small windows. 19rem ~ 304px wide.
     pop.style.right = (window.innerWidth - rect.right - 4) + 'px';
-    pop.innerHTML =
+    // Each cog has its own concern: the picker cog shows search-only
+    // controls; the calendar cog shows display-only controls. Sharing
+    // a single mega-popover meant users had to scan past unrelated
+    // sections to find the toggle they wanted.
+    pop.innerHTML = isCalendarCog
+      ? _buildCalendarCogContent()
+      : _buildPickerCogContent();
+    document.body.appendChild(pop);
+    _cogPop = pop;
+    if (isCalendarCog) _wireCalendarCogControls(pop);
+    else _wirePickerCogControls(pop);
+    pop.addEventListener('click', function (e) { e.stopPropagation(); });
+  }
+
+  function _buildPickerCogContent() {
+    return '' +
       '<div class="mp-cog-title">Search Options</div>' +
       '<div class="mp-cog-row" id="mp-cog-fuzzy-row">' +
         '<div class="mp-toggle' + (_pkFuzzy ? ' is-on' : '') + '" id="mp-cog-fuzzy-toggle">' +
@@ -10820,21 +10841,10 @@ function _bootPicker() {
           '<div class="mp-cog-row-label">Tolerate Typos</div>' +
           '<div class="mp-cog-row-help">Match results with small spelling mistakes — about one or two wrong letters. Exact matches always show first.</div>' +
         '</div>' +
-      '</div>' +
-      '<div class="mp-cog-divider"></div>' +
-      '<div class="mp-cog-title" style="margin-top:0.4rem">Display</div>' +
-      '<div class="mp-cog-slider-row">' +
-        '<div class="mp-cog-slider-head">' +
-          '<span class="mp-cog-row-label">Tile Intensity</span>' +
-          '<span class="mp-intensity-value" id="mp-intensity-value">' + _pkTileIntensity + '%</span>' +
-        '</div>' +
-        '<input type="range" min="30" max="100" step="5" value="' + _pkTileIntensity +
-          '" class="mp-intensity-slider" id="mp-intensity-slider" />' +
-        '<div class="mp-cog-row-help">How saturated calendar tile backgrounds appear. Lower values mix the colour toward the cream paper for a softer look.</div>' +
       '</div>';
-    document.body.appendChild(pop);
-    _cogPop = pop;
-    // Clicking the entire fuzzy row flips the toggle.
+  }
+
+  function _wirePickerCogControls(pop) {
     const row = pop.querySelector('#mp-cog-fuzzy-row');
     if (row) row.addEventListener('click', function (e) {
       e.stopPropagation();
@@ -10844,30 +10854,46 @@ function _bootPicker() {
       _syncCogActiveState();
       renderPicker();
     });
-    // Intensity slider — live-updates the CSS variable, persists on
-    // commit (when the user releases the slider).
+  }
+
+  function _buildCalendarCogContent() {
+    return '' +
+      '<div class="mp-cog-title">Display</div>' +
+      '<div class="mp-cog-slider-row">' +
+        '<div class="mp-cog-slider-head">' +
+          '<span class="mp-cog-row-label">Tile Intensity</span>' +
+          '<span class="mp-intensity-value" id="mp-intensity-value">' + _pkTileIntensity + '%</span>' +
+        '</div>' +
+        '<input type="range" min="30" max="100" step="5" value="' + _pkTileIntensity +
+          '" class="mp-intensity-slider" id="mp-intensity-slider" />' +
+        '<div class="mp-cog-row-help">How saturated calendar tile backgrounds appear. Lower values mix the colour toward the cream paper for a softer look.</div>' +
+      '</div>';
+  }
+
+  function _wireCalendarCogControls(pop) {
     const slider = pop.querySelector('#mp-intensity-slider');
     const valueEl = pop.querySelector('#mp-intensity-value');
-    if (slider) {
-      slider.addEventListener('input', function (e) {
-        e.stopPropagation();
-        const v = Number(slider.value);
-        _pkTileIntensity = v;
-        if (valueEl) valueEl.textContent = v + '%';
-        document.documentElement.style.setProperty('--tile-intensity', v + '%');
-      });
-      slider.addEventListener('change', function () {
-        try { localStorage.setItem(_PK_INTENSITY_KEY, String(_pkTileIntensity)); } catch {}
-        _syncCogActiveState();
-      });
-    }
-    // Inside-popover clicks don't dismiss; outside-clicks do.
-    pop.addEventListener('click', function (e) { e.stopPropagation(); });
+    if (!slider) return;
+    slider.addEventListener('input', function (e) {
+      e.stopPropagation();
+      const v = Number(slider.value);
+      _pkTileIntensity = v;
+      if (valueEl) valueEl.textContent = v + '%';
+      document.documentElement.style.setProperty('--tile-intensity', v + '%');
+    });
+    slider.addEventListener('change', function () {
+      try { localStorage.setItem(_PK_INTENSITY_KEY, String(_pkTileIntensity)); } catch {}
+      _syncCogActiveState();
+    });
   }
   function _syncCogActiveState() {
-    const active = _pkFuzzy || _pkTileIntensity !== 70;
-    if (cogBtn) cogBtn.classList.toggle('is-active', active);
-    if (cogBtnCal) cogBtnCal.classList.toggle('is-active', active);
+    // Each cog flags only its own customised state — the picker cog
+    // dot lights up for typo tolerance; the calendar cog dot lights
+    // up for non-default tile intensity. Mixing them would mislead
+    // (clicking the calendar cog wouldn't change a fuzzy-on dot, and
+    // vice versa).
+    if (cogBtn) cogBtn.classList.toggle('is-active', _pkFuzzy);
+    if (cogBtnCal) cogBtnCal.classList.toggle('is-active', _pkTileIntensity !== 70);
   }
   _syncCogActiveState();
   function _wireCog(btn) {
