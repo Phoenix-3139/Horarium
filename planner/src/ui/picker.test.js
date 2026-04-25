@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import {
   fuzzyMatch,
   scoreCourseMatch,
+  parseStructuredQuery,
   buildInstructorIndex,
   bucketByLevel,
   sectionPassesFilters,
@@ -46,6 +47,76 @@ describe("fuzzyMatch", () => {
   it("scores earlier matches higher than later matches", () => {
     // "math" appears at index 0 in "Mathematics" but at index 21 in "Engineering Mathematics".
     expect(fuzzyMatch("math", "Mathematics")).toBeGreaterThan(fuzzyMatch("math", "Engineering Mathematics"));
+  });
+});
+
+describe("parseStructuredQuery", () => {
+  it("detects subject + catnum patterns", () => {
+    expect(parseStructuredQuery("PHYED-UH 1001")).toEqual({ subject: "PHYED-UH", catnum: "1001" });
+    expect(parseStructuredQuery("engr-uh 3120")).toEqual({ subject: "ENGR-UH", catnum: "3120" });
+    expect(parseStructuredQuery("ENGR3120")).toEqual({ subject: "ENGR", catnum: "3120" });
+    expect(parseStructuredQuery("germ-ua 9111")).toEqual({ subject: "GERM-UA", catnum: "9111" });
+  });
+  it("rejects non-structured queries", () => {
+    expect(parseStructuredQuery("hashaikeh")).toBe(null);
+    expect(parseStructuredQuery("3120")).toBe(null); // number alone — unstructured
+    expect(parseStructuredQuery("engineering")).toBe(null);
+    expect(parseStructuredQuery("")).toBe(null);
+    expect(parseStructuredQuery(null)).toBe(null);
+  });
+});
+
+describe("scoreCourseMatch — structured queries (Bug 1 fix)", () => {
+  const courses = [
+    { subject: "PHYED-UH", catalog_number: "1001", code: "PHYED-UH 1001", title: "Yoga" },
+    { subject: "PHYED-UH", catalog_number: "1057", code: "PHYED-UH 1057", title: "Volleyball" },
+    { subject: "PSYCH-UA", catalog_number: "1011", code: "PSYCH-UA 1011", title: "Cognitive Neuroscience" },
+    { subject: "ENGR-UH",  catalog_number: "1001", code: "ENGR-UH 1001", title: "Programming" },
+    { subject: "ENGR-UH",  catalog_number: "3120", code: "ENGR-UH 3120", title: "Engineering Materials" },
+    { subject: "GERM-UA",  catalog_number: "1001", code: "GERM-UA 1001", title: "Beginning German I" },
+  ];
+
+  function rankedFor(query) {
+    return courses
+      .map((c) => ({ c, s: scoreCourseMatch(c, query) }))
+      .filter((r) => r.s > 0)
+      .sort((a, b) => b.s - a.s)
+      .map((r) => r.c.code);
+  }
+
+  it("'PHYED-UH 1001' bullseye ranks first; sibling subjects rank below", () => {
+    const ranked = rankedFor("PHYED-UH 1001");
+    expect(ranked[0]).toBe("PHYED-UH 1001");
+    // Other matches should be siblings (same subject OR same catnum).
+    expect(ranked).toContain("PHYED-UH 1057"); // same subject
+    expect(ranked).toContain("ENGR-UH 1001");  // same catnum
+    expect(ranked).toContain("GERM-UA 1001");  // same catnum
+    // PSYCH-UA 1011 (Lev=1 against 1001 in old fuzzy) MUST NOT appear.
+    expect(ranked).not.toContain("PSYCH-UA 1011");
+  });
+
+  it("'PHYED-UH 1001' caps at 5-ish results — only structured tiers contribute", () => {
+    const ranked = rankedFor("PHYED-UH 1001");
+    expect(ranked.length).toBeLessThanOrEqual(5);
+  });
+
+  it("'engruh 3120' (no dash, no space) still hits ENGR-UH 3120 as bullseye", () => {
+    const ranked = rankedFor("engruh 3120");
+    expect(ranked[0]).toBe("ENGR-UH 3120");
+  });
+
+  it("unstructured number-only query '1001' falls through to fuzzy and matches everything with 1001 in code/catnum", () => {
+    // Single number without subject prefix is NOT structured — uses
+    // the fuzzy path. Expect at least the 1001 courses to surface.
+    const ranked = rankedFor("1001");
+    expect(ranked).toContain("PHYED-UH 1001");
+    expect(ranked).toContain("ENGR-UH 1001");
+    expect(ranked).toContain("GERM-UA 1001");
+  });
+
+  it("title / instructor fuzzy still works for unstructured queries", () => {
+    expect(scoreCourseMatch(courses[4], "engineering materials")).toBeGreaterThan(0);
+    expect(scoreCourseMatch(courses[3], "")).toBe(1); // empty-query sentinel
   });
 });
 

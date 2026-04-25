@@ -479,7 +479,17 @@
     overflow: hidden;
     border-left: 2px solid transparent;
     z-index: 2; /* above overlay layer */
+    /* Vertical priority: code (.name) and title (.title-sub) hold
+       their height; time (.time-sub) is the first to clip when the
+       slot is short. Flex column with .time-sub having flex-shrink:1
+       does this implicitly. */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
   }
+  .grid .cell .name { flex-shrink: 0; }
+  .grid .cell .title-sub { flex-shrink: 0; }
+  .grid .cell .time-sub { flex-shrink: 1; min-height: 0; }
 
   /* Time-column cells (first column of each row) and day-header cells
      are also in the grid flow; lift them above the overlay too so the
@@ -4727,12 +4737,19 @@
     border-radius: 3px;
   }
 
-  /* Calendar tile: course title line under code. */
+  /* Calendar tile: course title line under code. Sized in absolute
+     pixels (not em) so it doesn't depend on the inherited body
+     font-size, which was the bug — at 0.72em of a 14-16px inherited
+     base, the title was visible but barely readable. Bumped to 10.5px
+     with explicit weight + opacity so it reads as secondary text,
+     not noise. */
   .grid .cell .title-sub {
-    font-size: 0.72em;
-    line-height: 1.15;
-    margin-top: 0.05em;
-    opacity: 0.78;
+    font-family: var(--font-body);
+    font-size: 10.5px;
+    line-height: 1.2;
+    font-weight: 400;
+    margin-top: 1px;
+    opacity: 0.82;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -6063,32 +6080,41 @@ function _resolveSection(classNumber) {
 }
 
 // Project a course-code or class_number key into the {short, full, cls,
-// color} bag legacy render code expects. Replaces the static
-// `courseMeta` dict + `_courseMeta(key)` helper from before. Color is
-// derived from main_planner.js's deterministic allocator so the same
-// course gets the same hue across every render path (grid, table,
-// legend, export).
+// color, code, title} bag legacy render code expects. Replaces the
+// static `courseMeta` dict + `_courseMeta(key)` helper from before.
+// Color is derived from main_planner.js's deterministic allocator so
+// the same course gets the same hue across grid / table / legend /
+// export.
+//
+// `code` and `title` are exposed separately so cell rendering can
+// decide on its own whether to render a title line — relying on
+// `full !== short` was brittle because empty-title courses produced
+// trailing-dash strings that misled the equality check.
 function _courseMeta(key) {
-  if (!key) return { short: 'Section', full: 'Section', cls: 'c-generic', color: { bg: 'var(--paper-soft)', ink: 'inherit' } };
-  // First try as a class_number — resolves to a course code.
+  const fallbackColor = { bg: '#E5DBE9', ink: '#5F416E' };
+  if (!key) return { short: 'Section', full: 'Section', code: '', title: '', cls: 'c-dynamic', color: fallbackColor };
   let courseCode = key;
   let courseTitle = '';
   const hit = _resolveSection(String(key));
   if (hit) {
     courseCode = hit.course.code;
-    courseTitle = hit.course.title || '';
+    courseTitle = (hit.course.title || '').trim();
   } else {
-    // Maybe `key` is already a course code; look up the title.
     const eff = _effectiveCatalog();
     const c = (eff.courses || []).find(function (x) { return x.code === key; });
-    if (c) courseTitle = c.title || '';
+    if (c) {
+      courseCode = c.code || key;
+      courseTitle = (c.title || '').trim();
+    }
   }
   const color = (window.HS && window.HS.mainPlanner)
     ? window.HS.mainPlanner.colorForCourse(courseCode)
-    : { bg: 'var(--paper-soft)', ink: 'inherit' };
+    : fallbackColor;
   return {
     short: courseCode,
     full: courseTitle ? (courseCode + ' — ' + courseTitle) : courseCode,
+    code: courseCode,
+    title: courseTitle,
     cls: 'c-dynamic',
     color: color,
   };
@@ -6381,21 +6407,24 @@ function buildGrid(gridId, half) {
         const meta = _courseMeta(evt.course);
         const cell = document.createElement('div');
         cell.className = 'cell ' + meta.cls;
-        // Apply per-course color directly via inline style — replaces
-        // the legacy CSS-class-per-course approach.
-        cell.style.background = meta.color.bg;
-        cell.style.color = meta.color.ink;
-        cell.style.borderLeftColor = meta.color.ink;
+        // Force the color via setProperty('important') so any rogue
+        // legacy `.grid .cell.c-X` rule (cores-era) can't shadow it.
+        // The legacy class rules don't match `c-dynamic` today, but the
+        // belt+suspenders here is cheap and stops a future maintainer
+        // from accidentally re-introducing a class-based override that
+        // would silently lose to/from the inline style.
+        cell.style.setProperty('background', meta.color.bg, 'important');
+        cell.style.setProperty('color', meta.color.ink, 'important');
+        cell.style.setProperty('border-left-color', meta.color.ink, 'important');
         const typeNote = evt.label === 'Lecture' ? '' : ' <em>' + _escHtml(String(evt.label).toLowerCase()) + '</em>';
         // Three-line cell layout: code (always), title (drops if too
-        // short), time. The title-sub is overflow-clipped to a single
-        // line; very-short tiles hide it via CSS-driven height check.
-        // CSS handles ellipsis; JS just emits the title only when it
-        // exists in the catalog.
-        const titleLine = (meta.full && meta.full !== meta.short)
-          ? '<div class="title-sub">' + _escHtml(
-              meta.full.indexOf(' — ') !== -1 ? meta.full.split(' — ').slice(1).join(' — ') : meta.full
-            ) + '</div>'
+        // short), time. CSS-only priority: the column is flex-direction
+        // column with the time element marked flex-shrink:1 so it gets
+        // clipped first when vertical space is tight. Title is rendered
+        // unconditionally when available — the prior equality-check
+        // gate was brittle.
+        const titleLine = meta.title
+          ? '<div class="title-sub">' + _escHtml(meta.title) + '</div>'
           : '';
         cell.innerHTML =
           '<div class="name">' + _escHtml(meta.short) + typeNote + '</div>' +

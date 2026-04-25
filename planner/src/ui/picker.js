@@ -98,12 +98,52 @@ export function fuzzyMatch(query, haystack) {
   return 0;
 }
 
+// --- Structured-query detection ------------------------------------
+// A "structured course identifier" query contains BOTH a recognizable
+// subject prefix (UPPERCASE letters with optional dash + suffix) AND a
+// catalog-number-shaped digit run. When detected, the scorer skips
+// fuzzy / Levenshtein matching entirely — those tiers add noise on
+// queries the user has typed deliberately ("PHYED-UH 1001" vs Lev=1
+// match "PSYCH-UA 1011" is the kind of thing they're complaining
+// about). Only exact matches qualify.
+const _STRUCTURED_RE = /([A-Za-z]+(?:-[A-Za-z]+)?)\s*[\s-]?\s*(\d{3,4}[A-Za-z]?)/;
+export function parseStructuredQuery(query) {
+  if (typeof query !== "string") return null;
+  const trimmed = query.trim();
+  if (trimmed === "") return null;
+  const m = trimmed.match(_STRUCTURED_RE);
+  if (!m) return null;
+  const subj = m[1].toUpperCase();
+  const cat = m[2];
+  // Both pieces must be present; the regex enforces that. Reject when
+  // the subject is suspiciously short (1 char) — a stray letter next
+  // to a number isn't a real prefix. NYU prefixes are 2+ chars.
+  if (subj.length < 2) return null;
+  return { subject: subj, catnum: cat };
+}
+
 // --- Course-search scoring -----------------------------------------
 // Given a course and a search query, return the best match score
 // across the searchable fields (subject, code, title, catalog number,
 // instructors). 0 means "doesn't match — exclude."
+//
+// Structured queries (subject + catnum together) use a stricter
+// match: only exact-prefix subject matches and exact catnum matches
+// score, with the bullseye <subject> <catnum> getting the highest
+// possible score. Levenshtein/fuzzy is suppressed for these queries.
+//
+// Score ranges for structured queries:
+//   2000  — exact <subject> <catnum> bullseye (one course)
+//   1500  — same subject prefix, exact catnum (cross-suffix)
+//   1200  — same subject prefix, any catnum (sibling courses)
+//   1100  — same catnum, different subject (cross-subject sibling)
+//   0     — no match
 export function scoreCourseMatch(course, query, instructorsForCourse) {
   if (!query || !query.trim()) return 1; // sentinel: include all when no query
+  const struct = parseStructuredQuery(query);
+  if (struct) {
+    return _scoreStructured(course, struct);
+  }
   let best = 0;
   const fields = [
     course.subject || "",
@@ -115,8 +155,6 @@ export function scoreCourseMatch(course, query, instructorsForCourse) {
     const s = fuzzyMatch(query, f);
     if (s > best) best = s;
   }
-  // Instructor names are searchable too — caller passes the precomputed
-  // list per-course to avoid re-walking meetings on every keystroke.
   if (Array.isArray(instructorsForCourse)) {
     for (const name of instructorsForCourse) {
       const s = fuzzyMatch(query, name);
@@ -124,6 +162,27 @@ export function scoreCourseMatch(course, query, instructorsForCourse) {
     }
   }
   return best;
+}
+
+function _scoreStructured(course, struct) {
+  const cSubj = String(course.subject || "").toUpperCase();
+  const cCat  = String(course.catalog_number || "");
+  const qSubj = struct.subject;
+  const qCat  = struct.catnum;
+  // Subject equality: exact OR prefix-match (e.g., query "ENGR" matches
+  // ENGR-UH as a prefix). The dash-stripped form lets users type
+  // "engruh" and still hit the right subject.
+  const subjEqual =
+    cSubj === qSubj ||
+    cSubj.replace(/-/g, "") === qSubj.replace(/-/g, "") ||
+    cSubj.startsWith(qSubj) ||
+    cSubj.replace(/-/g, "").startsWith(qSubj.replace(/-/g, ""));
+  const catEqual = cCat === qCat;
+  if (subjEqual && catEqual) return 2000;
+  if (subjEqual && cCat.startsWith(qCat)) return 1500; // catnum prefix (e.g., "100" → 1001/1002)
+  if (subjEqual) return 1200;
+  if (catEqual) return 1100;
+  return 0;
 }
 
 // --- Instructor index ----------------------------------------------
