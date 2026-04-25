@@ -5604,6 +5604,25 @@
     border-color: color-mix(in srgb, var(--accent, var(--ochre)) 55%, transparent);
     color: var(--accent, var(--ochre));
   }
+  /* Link-mode source: the button you first clicked. */
+  .mp-link-btn.is-source {
+    background: var(--accent, var(--ochre));
+    color: var(--cream);
+    border-color: var(--accent, var(--ochre));
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent, var(--ochre)) 30%, transparent);
+  }
+  /* Link-mode target: every other staged section's button while
+     link-mode is active. */
+  .mp-link-btn.is-target {
+    background: color-mix(in srgb, var(--accent, var(--ochre)) 8%, transparent);
+    border-style: dashed;
+    border-color: color-mix(in srgb, var(--accent, var(--ochre)) 60%, transparent);
+    color: var(--accent, var(--ochre));
+    cursor: crosshair;
+  }
+  .mp-link-btn.is-target:hover {
+    background: color-mix(in srgb, var(--accent, var(--ochre)) 18%, transparent);
+  }
   .mp-stage:hover { background: color-mix(in srgb, var(--ink) 4%, transparent); }
   .mp-stage.is-staged {
     background: color-mix(in srgb, var(--forest) 12%, transparent);
@@ -6362,9 +6381,7 @@
   <div class="tab-pane" data-tab-id="catalog">
 
     <!-- Module: Catalog (Piece 3a — Paste submodule) -->
-    <section class="module" data-module-id="catalog">
-      <button class="module-menu-btn" onclick="openModuleMenu(event, 'catalog')" title="Move module">⋮</button>
-      <div class="section-label"><span class="num">◆</span> Catalog · <em>paste</em></div>
+    <section class="module" data-module-id="catalog">      <div class="section-label"><span class="num">◆</span> Catalog · <em>paste</em></div>
       <h2>Feed Horarium the <em>catalog</em>.</h2>
       <p class="picker-sub cat-intro">
         Open Albert's class search, filter by a subject (ENGR-UH, MATH-UH, PHYED-UH, &amp;c.), and copy the entire results page. Paste below. Horarium parses it, shows what it found, and merges it into your catalog when you approve.
@@ -6416,9 +6433,7 @@
     </section>
 
     <!-- Module: Browse (Piece 3b — read-only inspection of pasted catalog) -->
-    <section class="module" data-module-id="browse">
-      <button class="module-menu-btn" onclick="openModuleMenu(event, 'browse')" title="Move module">⋮</button>
-      <div class="section-label"><span class="num">◆</span> Catalog · <em>browse</em></div>
+    <section class="module" data-module-id="browse">      <div class="section-label"><span class="num">◆</span> Catalog · <em>browse</em></div>
       <h2>See what's <em>in your catalog</em>.</h2>
       <p class="picker-sub">Three-panel view: subjects on the left, courses in the middle, section detail on the right. Warnings surface inline where they apply.</p>
 
@@ -6450,9 +6465,7 @@
   <!-- Module: Plan strip (Piece 5a/2) — top of Main. One pill per plan,
        active visually distinguished, kebab menu per pill, "+ New plan"
        on the right. -->
-  <section class="module" data-module-id="plan">
-    <button class="module-menu-btn" onclick="openModuleMenu(event, 'plan')" title="Move module">⋮</button>
-    <div class="section-label"><span class="num">01</span> Your plans</div>
+  <section class="module" data-module-id="plan">    <div class="section-label"><span class="num">01</span> Your plans</div>
     <div class="mp-strip" id="mp-strip"></div>
     <div class="mp-detail" id="mp-detail"></div>
   </section>
@@ -6460,9 +6473,7 @@
   <!-- Module: Course picker — search + browse + stage. Reads from the
        effective catalog (parsed + edits + imports). Stage button writes
        to catalog.plans.stageSection on the active plan. -->
-  <section class="module" data-module-id="picker">
-    <button class="module-menu-btn" onclick="openModuleMenu(event, 'picker')" title="Move module">⋮</button>
-    <div class="section-label"><span class="num">02</span> Pick courses</div>
+  <section class="module" data-module-id="picker">    <div class="section-label"><span class="num">02</span> Pick courses</div>
     <h2>Stage sections into <em>your plan</em>.</h2>
     <p class="picker-sub">Search courses from your pasted catalog. Click <strong>Stage</strong> on any section to add it to the currently-viewed plan. Conflicts surface inline but don't block — you can stage tradeoffs intentionally.</p>
     <div class="mp-search-row">
@@ -6486,9 +6497,7 @@
   </section>
 
   <!-- Module: Schedule (calendar / table view) -->
-  <section class="module" data-module-id="schedule">
-    <button class="module-menu-btn" onclick="openModuleMenu(event, 'schedule')" title="Move module">⋮</button>
-    <div class="section-label"><span class="num">03</span> Weekly hours</div>
+  <section class="module" data-module-id="schedule">    <div class="section-label"><span class="num">03</span> Weekly hours</div>
 
     <div class="view-toggle-row">
       <div class="view-toggle" id="view-toggle">
@@ -6549,9 +6558,7 @@
   <div class="tab-pane" data-tab-id="compare">
 
   <!-- Module: Compare -->
-  <section class="module" data-module-id="compare">
-    <button class="module-menu-btn" onclick="openModuleMenu(event, 'compare')" title="Move module">⋮</button>
-    <div class="friend-compare" style="border-top:none; margin-top:0; padding-top:0;">
+  <section class="module" data-module-id="compare">    <div class="friend-compare" style="border-top:none; margin-top:0; padding-top:0;">
       <div class="section-label"><span class="num">04</span> Friend comparison</div>
       <h2>Compare hours with <em>a friend</em>.</h2>
       <p class="picker-sub">Have a friend export their schedule as JSON (using the Export tab). Upload it here to find shared sections, same courses in different sections, and mutual free windows when you could meet.</p>
@@ -6575,9 +6582,7 @@
   <div class="tab-pane" data-tab-id="export">
 
   <!-- Module: Export -->
-  <section class="module" data-module-id="export">
-    <button class="module-menu-btn" onclick="openModuleMenu(event, 'export')" title="Move module">⋮</button>
-    <div class="section-label"><span class="num">05</span> Export</div>
+  <section class="module" data-module-id="export">    <div class="section-label"><span class="num">05</span> Export</div>
     <h2>Download a <em>copy</em> of thy hours.</h2>
     <p class="picker-sub">Three formats. Choose whichever suits the occasion.</p>
 
@@ -6608,9 +6613,7 @@
 
   <!-- ========== TAB: Manage (Piece 3d placeholder — identity form only for now) ========== -->
   <div class="tab-pane" data-tab-id="manage">
-    <section class="module" data-module-id="manage">
-      <button class="module-menu-btn" onclick="openModuleMenu(event, 'manage')" title="Move module">⋮</button>
-      <div class="section-label"><span class="num">◆</span> Manage · <em>identity</em></div>
+    <section class="module" data-module-id="manage">      <div class="section-label"><span class="num">◆</span> Manage · <em>identity</em></div>
       <h2>Tell Horarium <em>who you are</em>.</h2>
       <p class="picker-sub">
         Display-only. Used in the header and in export files (.ics, .json, .png). Stored in this browser only when your consent is "Save always." Leave blank to keep exports anonymous.
@@ -6772,9 +6775,7 @@
 
   <!-- ========== TAB: Edit (Piece 3c — repair tool) ========== -->
   <div class="tab-pane" data-tab-id="edit">
-    <section class="module" data-module-id="edit">
-      <button class="module-menu-btn" onclick="openModuleMenu(event, 'edit')" title="Move module">⋮</button>
-      <div class="section-label"><span class="num">◆</span> Workshop · <em>repair &amp; create</em></div>
+    <section class="module" data-module-id="edit">      <div class="section-label"><span class="num">◆</span> Workshop · <em>repair &amp; create</em></div>
       <h2 data-i18n="workshop.title" data-i18n-html="true">Repair, refine, or <em>build from scratch</em>.</h2>
 
       <!-- Workshop toolbar: lives above the empty/edit panels so the
@@ -7891,7 +7892,8 @@ function _legendCommitLink(sourceCN, targetCN) {
   try { window.HS.catalog.plans.addLink(plan.id, sourceCN, targetCN); }
   catch (err) { _hsAlert((err && err.message) || String(err)); }
   _legendLinkSourceCN = null;
-  buildLegend();
+  if (typeof buildLegend === 'function') buildLegend();
+  if (typeof renderPicker === 'function') renderPicker();
 }
 
 // Escape cancels link mode.
@@ -7899,6 +7901,7 @@ window.addEventListener('keydown', function (e) {
   if (e.key === 'Escape' && _legendLinkSourceCN) {
     _legendLinkSourceCN = null;
     if (typeof buildLegend === 'function') buildLegend();
+    if (typeof renderPicker === 'function') renderPicker();
   }
 });
 
@@ -12685,18 +12688,25 @@ function _pkRenderSectionRow(s, c, stagedSet, hydratedStaged) {
   html += '</div>';
 
   if (isStaged) {
-    // Staged sections also get a chain affordance — click to enter
-    // link-mode from the picker (same flow as the legend kebab),
-    // useful when the user is staging rapid-fire and wants to pair
-    // sections without scrolling down to the legend.
+    // Two-tap link flow: click chain → others highlight as targets,
+    // click another to commit. Click same again to cancel.
     const plan = (typeof _viewedPlan === 'function') ? _viewedPlan() : null;
     const linkSet = _buildLinkSet(plan);
     const isLinked = linkSet.has(String(s.class_number));
+    const isLinkSource = _legendLinkSourceCN === String(s.class_number);
+    const isLinkTarget = !!_legendLinkSourceCN && !isLinkSource;
+    let linkClass = 'mp-link-btn';
+    if (isLinked) linkClass += ' is-linked';
+    if (isLinkSource) linkClass += ' is-source';
+    if (isLinkTarget) linkClass += ' is-target';
+    let title = isLinked ? 'Linked — click to manage'
+              : isLinkSource ? 'Click again to cancel link mode'
+              : isLinkTarget ? 'Click to link to the source section'
+              : 'Link to another staged section';
     html += '<div class="mp-section-actions">';
-    html += '<button type="button" class="mp-link-btn' + (isLinked ? ' is-linked' : '') +
+    html += '<button type="button" class="' + linkClass +
       '" data-pkaction="link" data-class-number="' + _escHtml(s.class_number) +
-      '" title="' + (isLinked ? 'Linked — click to manage' : 'Link to another staged section') +
-      '" aria-label="' + (isLinked ? 'Manage link' : 'Link to another section') + '">⛓</button>';
+      '" title="' + title + '" aria-label="' + title + '">⛓</button>';
     html += '<button type="button" class="mp-stage is-staged" data-pkaction="unstage" data-class-number="' +
       _escHtml(s.class_number) + '">Staged ✓</button>';
     html += '</div>';
@@ -12740,10 +12750,31 @@ function _pkWireAll(root) {
       const subject = btn.getAttribute('data-subject') || null;
       const confirmReason = btn.getAttribute('data-confirm') || '';
       if (action === 'link') {
-        // Reuse the legend's section-menu path so the same modal +
-        // link-mode flow runs whether the user kicks it off from the
-        // legend kebab or the picker chain button.
-        if (typeof _openLegendSectionMenu === 'function') _openLegendSectionMenu(cn);
+        // Two-tap link flow runnable entirely from the picker:
+        //   1st click on a chain button → enter link-mode (others
+        //     become targets).
+        //   2nd click on another section's chain button → commit.
+        //   Click the same one again to cancel.
+        // Already-linked sections still open the legend modal so the
+        // user can remove the link.
+        const plan = (typeof _viewedPlan === 'function') ? _viewedPlan() : null;
+        const linkSet = _buildLinkSet(plan);
+        if (linkSet.has(String(cn))) {
+          if (typeof _openLegendSectionMenu === 'function') _openLegendSectionMenu(cn);
+          return;
+        }
+        if (_legendLinkSourceCN && _legendLinkSourceCN !== cn) {
+          _legendCommitLink(_legendLinkSourceCN, cn);
+          if (typeof renderPicker === 'function') renderPicker();
+          return;
+        }
+        if (_legendLinkSourceCN === cn) {
+          _legendLinkSourceCN = null;
+        } else {
+          _legendLinkSourceCN = cn;
+        }
+        if (typeof renderPicker === 'function') renderPicker();
+        if (typeof buildLegend === 'function') buildLegend();
         return;
       }
       if (action === 'stage' && confirmReason) {
