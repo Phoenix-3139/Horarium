@@ -184,24 +184,26 @@ export function filterCoursesByQuery(courses, query) {
 // Assign deterministic palette colors to courses so the same course
 // always gets the same color across renders. Uses the course code as
 // the key so the same course in different plans renders the same hue.
-// 12-color palette tuned for clear differentiation on the cream
-// background — bg colors are SOLID (not low-alpha rgba), matching the
-// brightness of the legacy --c-stat-bg / --c-cons-bg / etc. variables
-// the cells used to read.
+//
+// Palette tuned to be UNAMBIGUOUSLY visible against the cream paper
+// background (~L:92%). The previous palette sat around L:90% — only
+// 2 units darker than the page, which read as "no color at all" on
+// most displays. New palette targets L:78–82% with substantially
+// higher chroma. Each tile is now obviously coloured at a glance.
 
 export const COURSE_PALETTE = [
-  { bg: "#EDD9CE", ink: "#6B3520" },  // warm ochre/peach
-  { bg: "#D6E3D2", ink: "#365A36" },  // sage
-  { bg: "#E0D8EA", ink: "#3F2D5A" },  // lavender
-  { bg: "#F0D5DC", ink: "#7E2F47" },  // rose
-  { bg: "#D9E1EC", ink: "#2A4466" },  // slate-blue
-  { bg: "#EFE4C0", ink: "#7D5E1E" },  // mustard
-  { bg: "#E5D9D2", ink: "#5A3D30" },  // taupe
-  { bg: "#D2E4E2", ink: "#235555" },  // teal
-  { bg: "#EFD4D0", ink: "#762D2D" },  // brick
-  { bg: "#DDE7DB", ink: "#3F6342" },  // moss
-  { bg: "#E5DBE9", ink: "#5F416E" },  // mauve
-  { bg: "#E1E4D2", ink: "#4A5333" },  // olive
+  { bg: "#E5B89A", ink: "#5C2A0F" },  // ochre / peach
+  { bg: "#B8D4AB", ink: "#284A28" },  // sage
+  { bg: "#C8B5E0", ink: "#352060" },  // lavender
+  { bg: "#E8B5C5", ink: "#6E1F39" },  // rose
+  { bg: "#A8C0DC", ink: "#1B3658" },  // slate-blue
+  { bg: "#E8D585", ink: "#5E480E" },  // mustard
+  { bg: "#D2B8A2", ink: "#4A2E1F" },  // taupe
+  { bg: "#9CCDC4", ink: "#0F4040" },  // teal
+  { bg: "#E0AAA4", ink: "#5C1F1F" },  // brick
+  { bg: "#B0CFAB", ink: "#2D4F30" },  // moss
+  { bg: "#D8B8DC", ink: "#502E5C" },  // mauve
+  { bg: "#C5C8A0", ink: "#3F4520" },  // olive
 ];
 
 function _hashCode(s) {
