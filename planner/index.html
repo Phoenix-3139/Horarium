@@ -155,15 +155,23 @@
     box-shadow: 0 0 0 1px rgba(237, 228, 211, 0.06) inset;
   }
   /* Calendar tiles in Coffee — keep the warm palette readable on
-     the dark canvas without desaturating into mud. Tile bg stays
-     vibrant (~55%) and text uses the original dark ink (which still
-     reads against the warm-tinted surface). Left rail is the full
-     saturated tile color for stronger per-course identity. */
+     the dark canvas. Tile bg respects --tile-intensity so the cog
+     popover slider works in this theme too; the blend partner is
+     var(--surface) (the warm dark) instead of transparent so lower
+     intensity reads as a deeper warm card, not a washed-out ghost. */
   :root[data-theme="coffee"] .grid .cell.c-dynamic {
-    background: color-mix(in srgb, var(--cell-bg, var(--paper-soft)) 55%, var(--surface)) !important;
+    background: color-mix(in srgb, var(--cell-bg, var(--paper-soft)) var(--tile-intensity, 70%), var(--surface)) !important;
     color: var(--cell-ink, var(--ink)) !important;
     border-left-color: var(--cell-bg, var(--accent)) !important;
     border-left-width: 3px;
+  }
+  /* USER badge in Coffee picks up the cell's own dark ink so it
+     stamps quietly on warm tiles instead of competing with the
+     honey accent everywhere else. */
+  :root[data-theme="coffee"] .grid .cell .cell-user-badge {
+    color: var(--cell-ink, var(--ink));
+    background: color-mix(in srgb, var(--cell-ink, var(--ink)) 14%, transparent);
+    border-color: color-mix(in srgb, var(--cell-ink, var(--ink)) 38%, transparent);
   }
   /* Filter flag — honey-amber instead of editorial's brick red. Sits
      better on the warm dark canvas. */
@@ -267,14 +275,12 @@
   :root[data-theme="futuristic"] .filter-tag {
     box-shadow: 0 0 0 1px rgba(94, 229, 229, 0.3), 0 0 12px rgba(94, 229, 229, 0.15);
   }
-  /* Calendar tiles in Futuristic — keep the palette colors vibrant
-     so each course actually reads as itself. Tile bg stays at full
-     intensity (no surface mix) and text uses the original dark ink
-     for max contrast — the warm hue + dark ink reads as a printed
-     card backlit on the dark canvas. A soft cyan outer glow ties
-     the tile to the phosphor-terminal aesthetic; no desaturation. */
+  /* Calendar tiles in Futuristic — vibrant tiles backlit on the
+     dark canvas. Respects --tile-intensity (default 90% so tiles
+     stay rich); blend partner is var(--surface). Soft cyan outer
+     glow + 1px ring ties them to the phosphor terminal aesthetic. */
   :root[data-theme="futuristic"] .grid .cell.c-dynamic {
-    background: var(--cell-bg, var(--paper-soft)) !important;
+    background: color-mix(in srgb, var(--cell-bg, var(--paper-soft)) var(--tile-intensity, 90%), var(--surface)) !important;
     color: var(--cell-ink, var(--ink)) !important;
     border-left-color: var(--cell-ink, var(--ink-faint)) !important;
     border-left-width: 3px;
@@ -394,11 +400,11 @@
   :root[data-theme="nature"] .mdl-btn-primary {
     box-shadow: 0 2px 8px rgba(90, 125, 74, 0.18), 0 0 0 1px rgba(90, 125, 74, 0.25);
   }
-  /* Calendar tiles in Nature — gentle blend with the sage canvas so
-     warm tiles desaturate slightly and feel like part of the
-     pale-green page rather than floating earthtone blocks. */
+  /* Calendar tiles in Nature — gentle blend with the sage canvas
+     so warm tiles desaturate slightly. Respects --tile-intensity
+     (default 80%), surface is the soft pale-green. */
   :root[data-theme="nature"] .grid .cell.c-dynamic {
-    background: color-mix(in srgb, var(--cell-bg, var(--paper-soft)) 75%, var(--surface)) !important;
+    background: color-mix(in srgb, var(--cell-bg, var(--paper-soft)) var(--tile-intensity, 80%), var(--surface)) !important;
   }
   /* Filter flag in leaf green — keeps the nature voice. */
   :root[data-theme="nature"] .drawer-flag .flag-tip {
