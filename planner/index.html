@@ -283,6 +283,27 @@
   }
   /* Filter flag becomes an illuminated cyan readout — phosphor on
      dark with a soft glow. */
+  /* USER tag in Futuristic — bright cyan against the warm tile bg
+     was jarring. Switch to the cell's own dark ink so the badge
+     reads as a subtle stamp on the tile rather than a neon blob.
+     Picker / legend / browse copies follow the same rule. */
+  :root[data-theme="futuristic"] .grid .cell .cell-user-badge,
+  :root[data-theme="futuristic"] .legend .lg-user-tag,
+  :root[data-theme="futuristic"] .mp-user-tag,
+  :root[data-theme="futuristic"] .br-chip-user {
+    color: var(--cell-ink, var(--ink));
+    background: color-mix(in srgb, var(--cell-ink, var(--ink)) 14%, transparent);
+    border-color: color-mix(in srgb, var(--cell-ink, var(--ink)) 40%, transparent);
+  }
+  /* Outside calendar tiles (legend, picker, browse), --cell-ink isn't
+     available, so fall back to --ink-soft so it sits more quietly. */
+  :root[data-theme="futuristic"] .legend .lg-user-tag,
+  :root[data-theme="futuristic"] .mp-user-tag,
+  :root[data-theme="futuristic"] .br-chip-user {
+    color: var(--ink-soft);
+    background: color-mix(in srgb, var(--ink) 10%, transparent);
+    border-color: color-mix(in srgb, var(--ink) 30%, transparent);
+  }
   :root[data-theme="futuristic"] .drawer-flag .flag-tip {
     border-color: transparent var(--accent) transparent transparent;
   }
