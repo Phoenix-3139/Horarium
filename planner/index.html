@@ -5344,8 +5344,8 @@
       <input type="search" id="mp-search" class="mp-search" placeholder="Search subject, code, title, or instructor — e.g. 'engr 2010', 'hashaikeh', 'materials'…" autocomplete="off" />
       <button type="button" class="mp-clear-btn" id="mp-clear-search" hidden>Clear</button>
       <button type="button" class="mp-fuzzy-toggle" id="mp-fuzzy-toggle" aria-pressed="false"
-              title="Off — exact substring matching only. Click to allow small typos."><span class="mp-fuzzy-label">fuzzy</span></button>
-      <button type="button" class="mp-fuzzy-info" id="mp-fuzzy-info" aria-label="What does fuzzy do?" tabindex="0">ⓘ</button>
+              title="Off — match exact text only. Click to allow small typos."><span class="mp-fuzzy-label">tolerate typos</span></button>
+      <button type="button" class="mp-fuzzy-info" id="mp-fuzzy-info" aria-label="What does this do?" tabindex="0">ⓘ</button>
       <span id="mp-search-stats" class="mp-search-stats"></span>
     </div>
     <div class="mp-filters" id="mp-filters"></div>
@@ -10649,7 +10649,7 @@ function _bootPicker() {
     fuzzyBtn.setAttribute('aria-pressed', _pkFuzzy ? 'true' : 'false');
     fuzzyBtn.title = _pkFuzzy
       ? 'On — small typos still match. Click to switch off.'
-      : 'Off — exact substring matching only. Click to allow small typos.';
+      : 'Off — match exact text only. Click to allow small typos.';
     renderPicker();
   });
   // Info icon: click toggles a popover with the explanation.
@@ -10662,11 +10662,11 @@ function _bootPicker() {
       const pop = document.createElement('div');
       pop.className = 'mp-fuzzy-info-popover';
       pop.innerHTML =
-        '<strong>Fuzzy matching</strong><br>' +
-        'When <em>off</em> (default), search matches only exact substrings — typing <code>hashaikeh</code> finds the instructor, but <code>hashikeh</code> won\'t. ' +
-        'Predictable, no false positives.<br><br>' +
-        'When <em>on</em>, queries within 1–2 character typos still match (Levenshtein distance ≤ 2). Useful when you\'re not sure of the spelling. ' +
-        'Fuzzy hits always rank below exact hits, so they never push real matches off the list.';
+        '<strong>Tolerate typos</strong><br>' +
+        'When <em>off</em> (default), search only matches text you type exactly. ' +
+        '<code>hashaikeh</code> finds the instructor; <code>hashikeh</code> (a typo) does not.<br><br>' +
+        'When <em>on</em>, search forgives small spelling mistakes — about one or two wrong letters. ' +
+        'Useful when you\'re not sure how a name or word is spelled. Exact matches always show first.';
       pop.addEventListener('click', function (ev) { ev.stopPropagation(); });
       infoBtn.appendChild(pop);
     });
