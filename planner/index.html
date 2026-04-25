@@ -4,11 +4,58 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Horarium</title>
+<script>
+  // Sync theme attribute as early as possible so the page paints in
+  // the correct theme on first frame (no flash from editorial → user
+  // theme). The full themes.js module also boots later; that path
+  // sets state in JS and fires the change event, but the visual
+  // priming has to happen here, before <style> applies.
+  (function () {
+    try {
+      var t = localStorage.getItem('horarium.theme');
+      if (t === 'dark' || t === 'futuristic' || t === 'nature' || t === 'editorial') {
+        document.documentElement.dataset.theme = t;
+      }
+    } catch (_) { /* private mode */ }
+  })();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400;1,9..144,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=JetBrains+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <style>
-  :root {
+  /* ===== THEME SYSTEM =====
+     Each theme provides:
+       (1) Canonical theme tokens (--bg, --surface, --ink, --accent,
+           --warning, --success, --error, --border, --radius-*, etc.)
+       (2) Aliases for the legacy palette tokens (--paper, --rust,
+           --forest, --ochre, --indigo, etc.) so existing CSS rules
+           continue to work without per-rule rewrites.
+     :root holds the editorial defaults; :root[data-theme="..."]
+     overrides for non-default themes. The theme attribute is set by
+     planner/src/ui/themes.js on boot.
+  */
+
+  :root, :root[data-theme="editorial"] {
+    /* Canonical (theme-spec) tokens */
+    --bg: #f5efe6;
+    --surface: #faf6ee;
+    --ink-muted: #5a5148;
+    --ink-subtle: #8a7f72;
+    --accent: #6b4423;
+    --accent-soft: #c8a882;
+    --border: #d4c8b5;
+    --border-strong: #8a7f72;
+    --warning: #b8732e;
+    --success: #5a7d4a;
+    --error: #9c3838;
+    --radius-sm: 2px;
+    --radius-md: 4px;
+    --radius-lg: 6px;
+    --border-width: 1px;
+    --shadow-sm: 0 1px 2px rgba(31, 27, 22, 0.06);
+    --shadow-md: 0 2px 6px rgba(31, 27, 22, 0.08);
+
+    /* Legacy aliases — preserved for the existing rule set */
     --paper: #F3EFE5;
     --paper-soft: #EDE7D8;
     --cream: #FBF7EC;
@@ -44,6 +91,117 @@
     --font-display: 'Fraunces', 'Iowan Old Style', Georgia, serif;
     --font-body: 'DM Sans', system-ui, sans-serif;
     --font-mono: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+    --font-heading: var(--font-display);
+  }
+
+  /* ===== Dark theme ===== */
+  :root[data-theme="dark"] {
+    --bg: #0e0e10;
+    --surface: #16161a;
+    --ink: #e8e6e3;
+    --ink-muted: #9a9591;
+    --ink-subtle: #6b6660;
+    --accent: #c4a572;
+    --accent-soft: #8a7350;
+    --border: #2a2a30;
+    --border-strong: #4a4a52;
+    --warning: #d4a056;
+    --success: #6ba368;
+    --error: #c75858;
+    --radius-sm: 2px;
+    --radius-md: 4px;
+    --radius-lg: 6px;
+    --border-width: 1px;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.5);
+
+    --paper: #0e0e10;
+    --paper-soft: #16161a;
+    --cream: #1c1c22;
+    --ink-soft: #c8c4be;
+    --ink-faint: #9a9591;
+    --ink-whisper: #6b6660;
+    --rule: rgba(232, 230, 227, 0.10);
+    --rule-soft: rgba(232, 230, 227, 0.05);
+    --rust: #c75858;
+    --forest: #6ba368;
+    --ochre: #c4a572;
+    --indigo: #6f8fc8;
+    --font-heading: var(--font-display);
+  }
+
+  /* ===== Futuristic theme ===== */
+  :root[data-theme="futuristic"] {
+    --bg: #070b14;
+    --surface: #0d1320;
+    --ink: #d4e4f7;
+    --ink-muted: #7a8ba3;
+    --ink-subtle: #4a5870;
+    --accent: #4ad9d9;
+    --accent-soft: #2a8a8a;
+    --border: #1a2434;
+    --border-strong: #2a3a52;
+    --warning: #f0b040;
+    --success: #4ae878;
+    --error: #ff5577;
+    --radius-sm: 0px;
+    --radius-md: 0px;
+    --radius-lg: 0px;
+    --border-width: 1px;
+    --shadow-sm: 0 0 0 1px rgba(74, 217, 217, 0.10);
+    --shadow-md: 0 0 12px rgba(74, 217, 217, 0.15);
+
+    --paper: #070b14;
+    --paper-soft: #0d1320;
+    --cream: #121a2a;
+    --ink-soft: #b6c8de;
+    --ink-faint: #7a8ba3;
+    --ink-whisper: #4a5870;
+    --rule: rgba(212, 228, 247, 0.10);
+    --rule-soft: rgba(212, 228, 247, 0.04);
+    --rust: #ff5577;
+    --forest: #4ae878;
+    --ochre: #4ad9d9;
+    --indigo: #4a90c8;
+    --font-heading: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+    --font-body: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+    --font-display: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+  }
+
+  /* ===== Nature theme ===== */
+  :root[data-theme="nature"] {
+    --bg: #f4f7f1;
+    --surface: #fafcf8;
+    --ink: #2a3a28;
+    --ink-muted: #5a6b58;
+    --ink-subtle: #8a9b88;
+    --accent: #5a7d4a;
+    --accent-soft: #a8c098;
+    --border: #c8d4be;
+    --border-strong: #8aa080;
+    --warning: #b8853a;
+    --success: #5a7d4a;
+    --error: #a85050;
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --border-width: 1px;
+    --shadow-sm: 0 1px 3px rgba(42, 58, 40, 0.08);
+    --shadow-md: 0 4px 12px rgba(42, 58, 40, 0.10);
+
+    --paper: #f4f7f1;
+    --paper-soft: #e8f0e2;
+    --cream: #fafcf8;
+    --ink-soft: #3d4f3b;
+    --ink-faint: #5a6b58;
+    --ink-whisper: #8a9b88;
+    --rule: rgba(42, 58, 40, 0.12);
+    --rule-soft: rgba(42, 58, 40, 0.06);
+    --rust: #a85050;
+    --forest: #2f4a2b;
+    --ochre: #b8853a;
+    --indigo: #4a6f9c;
+    --font-heading: var(--font-display);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -4448,12 +4606,12 @@
     to { opacity: 1; }
   }
   .mdl-card {
-    background: var(--paper, #fffdf9);
-    border-radius: 6px;
+    background: var(--surface, var(--paper, #fffdf9));
+    border-radius: var(--radius-lg, 6px);
     padding: 1.5rem 1.5rem 1rem 1.5rem;
-    max-width: 32rem;
+    max-width: 46rem;
     min-width: 20rem;
-    box-shadow: 0 12px 50px rgba(28, 26, 23, 0.25);
+    box-shadow: var(--shadow-md, 0 12px 50px rgba(28, 26, 23, 0.25));
     animation: mdl-rise 0.2s ease;
   }
   @keyframes mdl-rise {
@@ -4461,16 +4619,17 @@
     to { transform: translateY(0); opacity: 1; }
   }
   .mdl-title {
-    font-family: 'Fraunces', serif;
+    font-family: var(--font-heading, 'Fraunces', serif);
     font-size: 1.4rem;
     margin: 0 0 0.7rem 0;
     line-height: 1.2;
-    color: rgba(28, 26, 23, 0.92);
+    color: var(--ink);
   }
   .mdl-body {
     font-size: 0.92rem;
     line-height: 1.5;
-    color: rgba(28, 26, 23, 0.78);
+    color: var(--ink);
+    opacity: 0.85;
     margin-bottom: 0.85rem;
   }
   .mdl-body p { margin: 0 0 0.5rem 0; }
@@ -4497,34 +4656,38 @@
   }
   .mdl-footer {
     display: flex;
+    flex-wrap: wrap;
     gap: 0.5rem;
     justify-content: flex-end;
     margin-top: 0.85rem;
   }
   .mdl-btn {
     padding: 0.5rem 1rem;
-    border-radius: 3px;
+    border-radius: var(--radius-sm, 3px);
     font-family: inherit;
     font-size: 0.9rem;
     cursor: pointer;
-    border: 1px solid rgba(28, 26, 23, 0.18);
-    background: #fff;
-    color: rgba(28, 26, 23, 0.85);
+    border: var(--border-width, 1px) solid var(--border, rgba(28, 26, 23, 0.18));
+    background: var(--surface, #fff);
+    color: var(--ink, rgba(28, 26, 23, 0.85));
     transition: background 0.12s, border-color 0.12s;
+    flex: 0 0 auto;
+    min-width: 6rem;
+    white-space: nowrap;
   }
-  .mdl-btn:hover { background: rgba(28, 26, 23, 0.04); }
+  .mdl-btn:hover { background: var(--paper-soft); }
   .mdl-btn-primary {
-    background: #7c4a2e;
-    color: #fff;
-    border-color: #7c4a2e;
+    background: var(--accent, var(--ochre));
+    color: var(--cream);
+    border-color: var(--accent, var(--ochre));
   }
-  .mdl-btn-primary:hover { background: #6b3f27; border-color: #6b3f27; }
+  .mdl-btn-primary:hover { filter: brightness(0.92); }
   .mdl-btn-danger {
-    background: rgba(160, 60, 40, 0.92);
-    color: #fff;
-    border-color: rgba(160, 60, 40, 0.92);
+    background: var(--error, var(--rust));
+    color: var(--cream);
+    border-color: var(--error, var(--rust));
   }
-  .mdl-btn-danger:hover { background: rgba(140, 50, 35, 1); }
+  .mdl-btn-danger:hover { filter: brightness(0.9); }
 
   /* ====================== Picker drill-down (Piece 5a/3) ====================== */
   .mp-search {
@@ -5016,15 +5179,17 @@
 
   /* ====================== Manage module (Piece 3d) ====================== */
   .mn-section-h {
-    font-family: 'Fraunces', serif;
+    font-family: var(--font-heading, 'Fraunces', serif);
     font-size: 1.1rem;
     margin: 2rem 0 0.4rem 0;
-    color: rgba(28, 26, 23, 0.85);
-    border-top: 1px solid rgba(28, 26, 23, 0.08);
+    color: var(--ink);
+    opacity: 0.85;
+    border-top: 1px solid var(--rule-soft, rgba(28, 26, 23, 0.08));
     padding-top: 1.5rem;
   }
   .mn-section-h-warn {
-    color: rgba(160, 60, 40, 0.9);
+    color: var(--error, var(--rust));
+    opacity: 1;
   }
   .mn-section-lead {
     margin-bottom: 0.85rem;
@@ -5058,7 +5223,7 @@
   }
   .mn-opt-sub {
     font-size: 0.78rem;
-    color: rgba(28, 26, 23, 0.6);
+    color: var(--ink-faint, rgba(28, 26, 23, 0.6));
     margin-top: 0.1rem;
     line-height: 1.4;
   }
@@ -5066,6 +5231,33 @@
     font-size: 0.8rem;
     color: rgba(28, 26, 23, 0.6);
     margin-top: 0.3rem;
+  }
+
+  /* Theme picker — same grid pattern as the consent picker, two
+     columns on wide screens so the four options sit in a 2×2. */
+  .mn-theme-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .mn-theme-opt {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    padding: 0.55rem 0.7rem;
+    border: var(--border-width, 1px) solid var(--border, rgba(28, 26, 23, 0.12));
+    border-radius: var(--radius-md, 4px);
+    cursor: pointer;
+    background: var(--surface, #fffdf9);
+    color: var(--ink);
+  }
+  .mn-theme-opt:hover {
+    background: var(--paper-soft);
+  }
+  .mn-theme-opt input[type="radio"] {
+    margin-top: 0.2rem;
+    accent-color: var(--accent);
   }
 
   .mn-stats {
@@ -5395,8 +5587,8 @@
 
   <header>
     <div class="title-block">
-      <h1 id="hdr-title">Horarium<em id="hdr-title-em"></em></h1>
-      <div class="subtitle" id="hdr-subtitle">No term loaded. Go to Catalog → Paste to begin.</div>
+      <h1 id="hdr-title"><span data-i18n="app.title">Horarium</span><em id="hdr-title-em"></em></h1>
+      <div class="subtitle" id="hdr-subtitle" data-i18n="app.subtitle.empty">No term loaded. Go to Catalog → Paste to begin.</div>
     </div>
     <div class="meta">
       <span class="big">ii.</span>
@@ -5515,7 +5707,7 @@
     <h2>Stage sections into <em>your plan</em>.</h2>
     <p class="picker-sub">Search courses from your pasted catalog. Click <strong>Stage</strong> on any section to add it to the currently-viewed plan. Conflicts surface inline but don't block — you can stage tradeoffs intentionally.</p>
     <div class="mp-search-row">
-      <input type="search" id="mp-search" class="mp-search" placeholder="Search subject, code, title, or instructor — e.g. 'engr 2010', 'hashaikeh', 'materials'…" autocomplete="off" />
+      <input type="search" id="mp-search" class="mp-search" data-i18n-placeholder="picker.search.placeholder" placeholder="Search by code, title, or instructor" autocomplete="off" />
       <button type="button" class="mp-clear-btn" id="mp-clear-search" hidden>Clear</button>
       <!-- Search options. The popover content lives in JS, not the
            static HTML — built and appended to <body> on click via the
@@ -5697,7 +5889,7 @@
       </form>
 
       <!-- ===== Storage consent ===== -->
-      <h3 class="mn-section-h">Storage consent</h3>
+      <h3 class="mn-section-h" data-i18n="manage.consent.heading">Storage consent</h3>
       <p class="picker-sub mn-section-lead">
         Controls whether Horarium remembers your catalog and identity across browser sessions. Stored locally only — Horarium has no server.
       </p>
@@ -5726,6 +5918,42 @@
       </div>
       <div class="mn-last-saved" id="mn-last-saved" hidden></div>
 
+      <!-- ===== Theme ===== -->
+      <h3 class="mn-section-h" data-i18n="manage.theme.heading">Theme</h3>
+      <p class="picker-sub mn-section-lead">
+        Visual register and copy. Editorial keeps the cream-paper Shakespearean feel; Dark goes neutral on a black canvas; Futuristic is monospace + cyan; Nature is sage greens with softer corners.
+      </p>
+      <div class="mn-theme-grid" id="mn-theme-grid" role="radiogroup" aria-label="Theme">
+        <label class="mn-theme-opt">
+          <input type="radio" name="mn-theme" value="editorial">
+          <div>
+            <div class="mn-opt-title">Editorial</div>
+            <div class="mn-opt-sub">Cream paper. Warm earthtones. Default.</div>
+          </div>
+        </label>
+        <label class="mn-theme-opt">
+          <input type="radio" name="mn-theme" value="dark">
+          <div>
+            <div class="mn-opt-title">Dark</div>
+            <div class="mn-opt-sub">Near-black surfaces, neutral copy.</div>
+          </div>
+        </label>
+        <label class="mn-theme-opt">
+          <input type="radio" name="mn-theme" value="futuristic">
+          <div>
+            <div class="mn-opt-title">Futuristic</div>
+            <div class="mn-opt-sub">Monospace, cyan accents, sharp corners.</div>
+          </div>
+        </label>
+        <label class="mn-theme-opt">
+          <input type="radio" name="mn-theme" value="nature">
+          <div>
+            <div class="mn-opt-title">Nature</div>
+            <div class="mn-opt-sub">Sage greens, softer rounded corners.</div>
+          </div>
+        </label>
+      </div>
+
       <!-- ===== Storage stats ===== -->
       <h3 class="mn-section-h">Storage stats</h3>
       <div class="mn-stats" id="mn-stats"></div>
@@ -5735,7 +5963,7 @@
       <div class="mn-subjects" id="mn-subjects"></div>
 
       <!-- ===== Clear data ===== -->
-      <h3 class="mn-section-h">Clear data</h3>
+      <h3 class="mn-section-h" data-i18n="manage.clear.heading">Clear data</h3>
       <p class="picker-sub mn-section-lead">
         Three scoped clears. Picking the right one is the difference between "start over with my edits" and "wipe everything."
       </p>
@@ -5758,7 +5986,7 @@
       </div>
 
       <!-- ===== Export ===== -->
-      <h3 class="mn-section-h">Export</h3>
+      <h3 class="mn-section-h" data-i18n="manage.export.heading">Export</h3>
       <p class="picker-sub mn-section-lead">
         Two options. <strong>Edits-only</strong> is for sharing your room/instructor corrections with someone who already has the same catalog. <strong>Full pack</strong> bundles your catalog + edits + identity so a friend can browse what you have.
       </p>
@@ -5810,7 +6038,7 @@
 </div>
 <!-- end #tab-container -->
 
-  <div class="footer-mark">Final registration happens in Albert.</div>
+  <div class="footer-mark" data-i18n="footer">Final registration happens in Albert.</div>
 </div>
 
 <!-- ========== FLOATING ISLAND NAV (dynamically populated) ========== -->
@@ -5833,12 +6061,12 @@
   <div class="drawer-header">
     <div>
       <div class="drawer-tag">Personal time</div>
-      <h3>Block out <em>thy hours</em></h3>
+      <h3 data-i18n="filter.add">Block out thy hours</h3>
     </div>
     <button class="drawer-close" onclick="toggleDrawer()" aria-label="Close drawer">×</button>
   </div>
   <div class="drawer-body">
-    <p class="picker-sub">Name time blocks like lunch, gym, or prayer. They render on thy schedule with a custom colour and pattern. Courses that clash appear flagged in the Cores tab.</p>
+    <p class="picker-sub" data-i18n="filter.empty">Name time blocks like lunch, gym, or prayer.</p>
 
     <div class="filter-list" id="filter-list"></div>
 
@@ -5922,171 +6150,19 @@
   <div class="modal" id="modal-body"></div>
 </div>
 
-<!-- 1. Plan-state bootstrap. Piece 5a moved plan state into the catalog
-     store. To keep parse-time read sites in the main classic script
-     working until the redesign in 5a/2 burns the shim, we install a
-     SCHED_DATA *getter* that projects the new namespace into the legacy
-     shape on every read. Before the real catalog is ready (deferred
-     module below populates window.HS.catalog), the getter returns a
-     safe empty shape — same behavior as the old placeholder, no crashes
-     on parse-time render calls. -->
+<!-- Initialize the HS namespace so the deferred module script below can
+     attach catalog/persistence/etc. to it. -->
 <script>
-(function () {
-  function _emptyLegacyView() {
-    return {
-      options: [{ name: "Plan A", tagline: "No sections committed yet",
-        desc: "Paste subject data in the Catalog tab to populate the picker.",
-        sections: [] }],
-      sections: {},
-      cores: [],
-      conflicts: { "0": {} },
-      analysis: [{ "A71": [], "A72": [] }],
-    };
-  }
-  window._legacyPlanView = function () {
-    var cat = window.HS && window.HS.catalog;
-    if (!cat || !cat.plans) return _emptyLegacyView();
-    var plans = cat.plans.list();
-    if (plans.length === 0) return _emptyLegacyView();
-    var active = cat.plans.getActive();
-    // Order plans so the active one is at index 0 — currentOption=0
-    // historically meant "the active plan", and we preserve that.
-    var ordered = active ? [active].concat(plans.filter(function (p) { return p.id !== active.id; })) : plans;
-    // Tagline / desc projection: when a plan has no staged sections,
-    // mirror the placeholder strings exactly so the Main tab renders
-    // identically to its pre-refactor appearance. As soon as sections
-    // exist, we surface the plan's notes / kind. (Commit 5a/2 redesigns
-    // Main and replaces these projections with native plan rendering.)
-    var EMPTY_TAGLINE = "No sections committed yet";
-    var EMPTY_DESC = "Paste subject data in the Catalog tab to populate the picker, then add sections to build a plan.";
-    return {
-      options: ordered.map(function (p) {
-        var empty = !p.sections || p.sections.length === 0;
-        return {
-          id: p.id,
-          name: p.name,
-          tagline: empty ? EMPTY_TAGLINE : (p.kind === "active" ? "" : "Candidate"),
-          desc: empty ? EMPTY_DESC : (p.notes || ""),
-          // Sections array shape: legacy code uses string keys; we
-          // expose class_number as the key. Iteration bodies that
-          // resolve the key need to look it up via SCHED_DATA.sections.
-          sections: p.sections.map(function (s) { return s.class_number; }),
-        };
-      }),
-      // Lookup: class_number → effective section, projected into the
-      // shape legacy code expects (meeting tuples). Returns undefined
-      // for unknown keys, matching old SCHED_DATA.sections behavior.
-      sections: _legacySectionsView(),
-      cores: (window.HS && window.HS.adapter && window.HS.adapter.getCoresList)
-        ? window.HS.adapter.getCoresList() : [],
-      // No conflicts yet — computed by commit 5a/2 against staged
-      // sections. Every option index maps to an empty object so reads
-      // like SCHED_DATA.conflicts[i][coreId] return undefined safely.
-      conflicts: ordered.reduce(function (acc, _p, i) { acc[i] = {}; return acc; }, {}),
-      analysis: ordered.map(function () { return { A71: [], A72: [] }; }),
-    };
-  };
-
-  // Build a {classNumber: legacySection} object on demand. The legacy
-  // shape uses meeting tuples [days[], start_min, end_min, session, label]
-  // while the parser produces meeting objects. We translate.
-  function _legacySectionsView() {
-    var cat = window.HS && window.HS.catalog;
-    if (!cat || !cat.getEffective) return {};
-    var out = {};
-    try {
-      var eff = cat.getEffective();
-      for (var i = 0; i < eff.courses.length; i++) {
-        var c = eff.courses[i];
-        for (var j = 0; j < c.sections.length; j++) {
-          var s = c.sections[j];
-          if (!s.class_number) continue;
-          out[s.class_number] = _projectSectionLegacy(s, c);
-        }
-      }
-    } catch (_) {}
-    return out;
-  }
-  function _projectSectionLegacy(s, c) {
-    var meetings = (s.meetings || []).map(function (m) {
-      var days = Array.isArray(m.days) ? m.days.slice() : [];
-      var startMin = _hhmmToMin(m.start_time);
-      var endMin = _hhmmToMin(m.end_time);
-      var sess = (s.session && s.session.code) || "AD";
-      var lbl = s.component || "Lecture";
-      return [days, startMin, endMin, sess, lbl];
-    });
-    // Aggregate every distinct instructor across all meetings — legacy
-    // code expects `prof` as a single string. Take the first when there
-    // are multiple.
-    var instrSet = {};
-    var instrs = [];
-    for (var i = 0; i < (s.meetings || []).length; i++) {
-      var arr = (s.meetings[i].instructors || []);
-      for (var j = 0; j < arr.length; j++) {
-        if (!instrSet[arr[j]]) { instrSet[arr[j]] = true; instrs.push(arr[j]); }
-      }
-    }
-    return {
-      course: c.code,
-      // Singular kept for any code path still using it; plural is the
-      // shape legacy ICS / JSON / friend-comparison code expects.
-      class_num: s.class_number,
-      class_nums: s.class_number ? [s.class_number] : [],
-      sectionLabel: s.section_code || "",
-      // Aggregate instructor string. "—" when none, single name when
-      // exactly one, joined when multiple. This is what legacy code
-      // displays in ICS DESCRIPTION and JSON exports.
-      prof: instrs.length === 0 ? "—" : instrs.length === 1 ? instrs[0] : instrs.join(", "),
-      // Status / location fields legacy code occasionally reaches for.
-      status: (s.status && s.status.raw) || (s.status && s.status.type) || "—",
-      meetings: meetings,
-    };
-  }
-  function _hhmmToMin(t) {
-    if (!t) return null;
-    var m = String(t).match(/^(\d{1,2}):(\d{2})$/);
-    if (!m) return null;
-    return Number(m[1]) * 60 + Number(m[2]);
-  }
-
-  // Define SCHED_DATA as a getter so every read pulls fresh from the
-  // store. Setting it (legacy code never does, but be defensive)
-  // overwrites the descriptor with a static value.
-  Object.defineProperty(window, "SCHED_DATA", {
-    configurable: true,
-    get: function () { return window._legacyPlanView(); },
-    set: function (v) {
-      Object.defineProperty(window, "SCHED_DATA", { configurable: true, writable: true, value: v });
-    },
-  });
-})();
+window.HS = {};
 </script>
 
-<!-- 2. Stub HS.adapter so parse-time calls don't crash. The module script
-     below replaces .catalog / .persistence / .adapter with the real ones
-     once the ES-module graph has loaded. Stub methods return the same
-     empty-when-empty values the real adapter does, so the UI sees a
-     consistent "no catalog data" state either way. -->
-<script>
-window.HS = {
-  adapter: {
-    getCoresList: () => [],
-    getCoreById: () => null,
-    getRoomFor: () => ({ bldg: '—', room: '—', dates: '' }),
-    exportCatalog: () => [],
-  },
-};
-</script>
-
-<!-- 3. Real store + persistence + adapter. Deferred, so runs after the
-     main classic script has fully parsed. Swaps the stub out for the real
-     thing; subsequent user interactions (which all fire after DOM-ready)
-     see the real adapter. -->
+<!-- Real store + persistence loaded as ES modules. Deferred, so runs
+     after the main classic script has fully parsed. All subsequent user
+     interactions (which fire after DOMContentLoaded) read directly from
+     window.HS.catalog and window.HS.catalog.plans. -->
 <script type="module">
 import { createCatalog } from './src/store/catalog.js';
 import { createPersistence } from './src/store/persistence.js';
-import { createLegacyAdapter } from './src/store/legacy_adapter.js';
 import { parse } from './src/ingester/parse.js';
 import { computeOverlayBlocks } from './src/ui/filter_overlay.js';
 import { translateWarning, WARNING_COPY, REPAIR_HINTS } from './src/ui/warning_copy.js';
@@ -6163,12 +6239,22 @@ import {
   hideModal,
   isModalOpen,
 } from './src/ui/modal.js';
+import {
+  THEME_NAMES,
+  DEFAULT_THEME,
+  COPY,
+  getActiveTheme,
+  isValidTheme,
+  t,
+  setTheme,
+  boot as bootTheme,
+} from './src/ui/themes.js';
+bootTheme();
 const catalog = createCatalog();
 const persistence = createPersistence(catalog);
 persistence.load();
 window.HS.catalog = catalog;
 window.HS.persistence = persistence;
-window.HS.adapter = createLegacyAdapter(catalog);
 window.HS.parse = parse;
 window.HS.computeOverlayBlocks = computeOverlayBlocks;
 window.HS.translateWarning = translateWarning;
@@ -6228,6 +6314,15 @@ window.HS.modal = {
   hideModal,
   isModalOpen,
 };
+window.HS.themes = {
+  THEME_NAMES,
+  DEFAULT_THEME,
+  COPY,
+  getActiveTheme,
+  isValidTheme,
+  t,
+  setTheme,
+};
 window.HS.edit = {
   SECTION_FIELDS,
   COURSE_FIELDS,
@@ -6258,15 +6353,9 @@ window.dispatchEvent(new CustomEvent('horarium:ready'));
 <script>
 
 // ============ STATE ============
-// Plan state (Piece 5a) lives in the catalog store under catalog.plans.
-// The legacy global SCHED_DATA (loaded from placeholder_user_plan.js,
-// now removed) was a flatter shape with per-option arrays. To keep this
-// commit's diff localized to data plumbing — Main UI redesign happens
-// in commit 5a/2 — we provide a SCHED_DATA-shaped projection over the
-// new namespace via _legacyPlanView() below. Read sites continue to
-// access SCHED_DATA but it's now a dynamic getter that reads from the
-// store every call. Commit 5a/2 will burn this shim and replace the
-// downstream reads with direct catalog.plans.* calls.
+// All plan state lives in the catalog store under catalog.plans.* —
+// read via getActive() / get(id) / list(). No globals, no shim.
+//
 // Plan-strip view state: which plan is currently being viewed (the
 // active plan by default, but the user can click a candidate to view
 // it). Distinct from catalog.plans.getActive() which is the *promoted*
@@ -6320,15 +6409,42 @@ function _hsPrompt(msg, defaultValue, opts) {
   return Promise.resolve(null);
 }
 
-// Vestigial constants. The legacy export / table / comparison paths
-// still read `SCHED_DATA.options[currentOption]`,
-// `SCHED_DATA.conflicts[currentOption][...]`, and `selected[cat]` (the
-// old core-elective preview state) through the shim. The shim orders
-// the active plan at index 0, and `selected` is now permanently empty
-// because the Cores module is gone. Both burn in 5a/3 when those
-// paths get converted off the shim.
-let currentOption = 0;
-const selected = Object.freeze(Object.create(null));
+// ===== THEME / i18n GLUE =====
+// Returns the active-theme string for `key`, falling back through
+// editorial → key. Defensive against the deferred themes module not
+// yet loading at parse time.
+function _t(key) {
+  if (window.HS && window.HS.themes && typeof window.HS.themes.t === 'function') {
+    return window.HS.themes.t(key);
+  }
+  return key;
+}
+// Walk every [data-i18n] element and refresh its textContent from the
+// active theme. Cheap (one querySelectorAll) and idempotent. Called
+// once on horarium:ready and again on every horarium:theme-changed.
+function _applyThemeText() {
+  const nodes = document.querySelectorAll('[data-i18n]');
+  for (const el of nodes) {
+    const key = el.getAttribute('data-i18n');
+    if (!key) continue;
+    el.textContent = _t(key);
+  }
+  // Placeholder attribute (input fields). Separate attribute so the
+  // text-content walker doesn't try to use this as the key.
+  const ph = document.querySelectorAll('[data-i18n-placeholder]');
+  for (const el of ph) {
+    const key = el.getAttribute('data-i18n-placeholder');
+    if (!key) continue;
+    el.setAttribute('placeholder', _t(key));
+  }
+  // Re-render parts of the UI whose text comes from JS, not HTML
+  // attributes — the floating tab nav, header subtitle, and any open
+  // theme picker.
+  if (typeof renderNav === 'function') renderNav();
+  if (typeof renderHeader === 'function') renderHeader();
+}
+window.addEventListener('horarium:ready', _applyThemeText);
+window.addEventListener('horarium:theme-changed', _applyThemeText);
 
 function _activePlanId() {
   if (!(window.HS && window.HS.catalog && window.HS.catalog.plans)) return null;
@@ -6461,7 +6577,7 @@ function buildTabs() {
   const add = document.createElement('button');
   add.type = 'button';
   add.className = 'mp-pill-add';
-  add.textContent = '+ New plan';
+  add.textContent = '+ ' + _t('plan.new');
   add.addEventListener('click', _planAddNew);
   t.appendChild(add);
 
@@ -6504,6 +6620,10 @@ function _planOpenMenu(planId) {
   const buttons = [];
   buttons.push({ label: 'Rename',    style: 'secondary', action: function () { _planMenuRename(planId); } });
   buttons.push({ label: 'Duplicate', style: 'secondary', action: function () { _planMenuDuplicate(planId); } });
+  buttons.push({ label: 'Export ICS', style: 'secondary', action: function () {
+    try { exportAsICS(planId); }
+    catch (err) { _hsAlert((err && err.message) || String(err), 'Could not export'); }
+  }});
   if (plan.kind === 'candidate') {
     buttons.push({ label: 'Promote to active', style: 'primary', action: function () {
       try { window.HS.catalog.plans.promote(planId); render(); }
@@ -6888,8 +7008,37 @@ function _download(filename, content, mime) {
 function _todayStr() {
   return new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).replace(/ /g, '_');
 }
-function _optSlug() {
-  return SCHED_DATA.options[currentOption].name.replace(/[^a-zA-Z0-9]/g, '_');
+// Resolve a plan for export. Pass a planId to export a specific plan
+// (e.g., from the plan-strip kebab); pass nothing for the active plan.
+// Returns null if no plan exists.
+function _planForExport(planId) {
+  if (!(window.HS && window.HS.catalog && window.HS.catalog.plans)) return null;
+  if (planId) return window.HS.catalog.plans.get(planId);
+  return window.HS.catalog.plans.getActive();
+}
+// Hydrate a plan's staged section refs into full section objects with
+// course context, using the effective catalog. Sections whose
+// class_number isn't in the catalog (deleted after staging) are
+// silently dropped — same semantic as the calendar's gatherEvents.
+function _hydrateForExport(plan) {
+  if (!plan || !plan.sections || !window.HS || !window.HS.catalog) return [];
+  const eff = window.HS.catalog.getEffective();
+  const byCN = new Map();
+  for (const c of (eff.courses || [])) {
+    for (const s of (c.sections || [])) {
+      if (s.class_number) byCN.set(s.class_number, { section: s, course: c });
+    }
+  }
+  const out = [];
+  for (const ref of plan.sections) {
+    const hit = byCN.get(ref.class_number);
+    if (hit) out.push(hit);
+  }
+  return out;
+}
+function _optSlug(planId) {
+  const p = _planForExport(planId);
+  return (p ? p.name : 'plan').replace(/[^a-zA-Z0-9]/g, '_') || 'plan';
 }
 
 // ============ EXPORT: IMAGE (PNG) ============
@@ -6912,7 +7061,7 @@ function _ensureHtml2canvas() {
   return _html2canvasPromise;
 }
 
-async function exportAsImage() {
+async function exportAsImage(planId) {
   _exportCardState('ec-image', 'Rendering', '⏳');
 
   try {
@@ -6920,37 +7069,34 @@ async function exportAsImage() {
     const stage = document.createElement('div');
     stage.className = 'export-stage';
 
-    const opt = SCHED_DATA.options[currentOption];
+    const plan = _planForExport(planId);
+    const planName = plan ? plan.name : '';
+    const planTagline = (plan && plan.kind === 'active') ? '' : 'Candidate';
     const today = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 
-    // Build per-course legend (from the actual committed sections).
-    // The SpaceDip / RecGames / LinAlg keys were plan-specific to the
-    // original author; generic fallback used below when a key is missing.
-    const bgVarMap = {
-      'c-stat': '--c-stat-bg', 'c-cons': '--c-cons-bg', 'c-circ': '--c-circ-bg',
-      'c-digl': '--c-digl-bg',
-    };
-    const courseLegend = Object.values(courseMeta).map(m => {
-      const v = bgVarMap[m.cls] || '--paper';
-      return `<span class="item"><i style="background: var(${v});"></i>${m.short}</span>`;
-    }).join('');
-
-    // Optionally add staged category legend (dashed)
-    const stagedCats = Object.entries(selected).filter(([k,v]) => v).map(([k]) => k);
-    const catLegend = stagedCats.length
-      ? stagedCats.map(cat => `<span class="item"><i class="core-dash" style="background: var(--c-${cat}-bg);"></i>${cat} preview</span>`).join('')
-      : '';
+    // Per-course legend, derived from the plan's actual staged sections
+    // via the dynamic-color allocator (same hue the grid uses).
+    const hydrated = _hydrateForExport(plan);
+    const seen = new Set();
+    const courseLegend = hydrated.map(({ course }) => {
+      if (seen.has(course.code)) return '';
+      seen.add(course.code);
+      const color = window.HS && window.HS.mainPlanner
+        ? window.HS.mainPlanner.colorForCourse(course.code)
+        : { bg: '#E5DBE9' };
+      return `<span class="item"><i style="background: ${color.bg};"></i>${_escHtml(course.code)}</span>`;
+    }).filter(Boolean).join('');
 
     stage.innerHTML = `
       <div class="export-header">
         <div>
           <h1>Horarium${_userDisplay() ? ` <em>${_escHtml(_userDisplay())}.</em>` : ''}</h1>
           <div style="font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-faint); margin-top: 6px;">
-            ${[_activeTerm(), opt.name, _userIdentity().netid].filter(Boolean).map(_escHtml).join(' · ')}
+            ${[_activeTerm(), planName, _userIdentity().netid].filter(Boolean).map(_escHtml).join(' · ')}
           </div>
         </div>
         <div class="meta">
-          ${opt.tagline}<br>
+          ${_escHtml(planTagline)}<br>
           Exported ${today}
         </div>
       </div>
@@ -6961,7 +7107,6 @@ async function exportAsImage() {
       <div class="export-legend">
         <span class="lg-title">Legend</span>
         ${courseLegend}
-        ${catLegend ? '<span class="lg-title" style="margin-left: 0.5rem;">Staged</span>' + catLegend : ''}
       </div>
       <div class="footer-note">Prepared ${today}. Final registration in Albert.</div>
     `;
@@ -6983,7 +7128,7 @@ async function exportAsImage() {
     document.body.removeChild(stage);
 
     const link = document.createElement('a');
-    link.download = `${_fileStem()}_${_optSlug()}_${_todayStr()}.png`;
+    link.download = `${_fileStem()}_${_optSlug(planId)}_${_todayStr()}.png`;
     link.href = canvas.toDataURL('image/png');
     link.click();
 
@@ -7069,7 +7214,7 @@ function _buildEvent(summary, description, location, days, startMin, endMin, ses
   ].join('\r\n');
 }
 
-function exportAsICS() {
+function exportAsICS(planId) {
   _exportCardState('ec-ics', 'Building', '⏳');
 
   try {
@@ -7088,38 +7233,37 @@ function exportAsICS() {
       'END:VTIMEZONE'
     ].join('\r\n');
 
-    const opt = SCHED_DATA.options[currentOption];
+    const plan = _planForExport(planId);
+    const planName = plan ? plan.name : 'plan';
+    const hydrated = _hydrateForExport(plan);
     const events = [];
 
     // TODO (plan-state extraction): the Asia/Dubai timezone + ''-default
     // location assume NYUAD. Real plan sections should carry their own
     // campus timezone and location from the catalog, and the ICS
     // VTIMEZONE block + event LOCATION should reflect them.
+    const dayMap = { Mon: 'M', Tue: 'T', Wed: 'W', Thu: 'Th', Fri: 'F' };
     const termSlug = (_activeTerm() || '').toLowerCase().replace(/\s+/g, '');
-    for (const skey of opt.sections) {
-      const sec = SCHED_DATA.sections[skey];
-      const meta = courseMeta[sec.course];
-      const fullName = meta ? meta.full : sec.course;
-      for (let mi = 0; mi < sec.meetings.length; mi++) {
-        const [days, start, end, sess, lbl] = sec.meetings[mi];
+    for (const { section, course } of hydrated) {
+      const fullName = course.title ? (course.code + ' — ' + course.title) : course.code;
+      const sess = (section.session && section.session.code) || 'AD';
+      const meetings = section.meetings || [];
+      for (let mi = 0; mi < meetings.length; mi++) {
+        const m = meetings[mi];
+        const startMin = window.HS && window.HS.mainPlanner ? window.HS.mainPlanner.hhmmToMinutes(m.start_time) : null;
+        const endMin   = window.HS && window.HS.mainPlanner ? window.HS.mainPlanner.hhmmToMinutes(m.end_time)   : null;
+        if (startMin == null || endMin == null) continue;
+        // Days: parser uses "Mon" / "Tue" / ...; the legacy ICS helper
+        // expects M/T/W/Th/F. Translate.
+        const days = (m.days || []).map(d => dayMap[d]).filter(Boolean);
+        if (days.length === 0) continue;
+        const lbl = section.component || 'Meeting';
         const summary = fullName + (lbl !== 'Lecture' && lbl !== 'Seminar' ? ' · ' + lbl : '');
-        const desc = 'Class #' + sec.class_nums.join(' / ') + ' · Prof. ' + sec.prof + ' · Session ' + (sess === 'AD' ? 'Full semester' : sess);
-        const uid = skey + '-' + mi + '-' + (termSlug || 'term') + '@horarium.local';
-        const ev = _buildEvent(summary, desc, '', days, start, end, sess, dtstamp, uid);
-        if (ev) events.push(ev);
-      }
-    }
-
-    for (const cat of ['CADT','CDAD','CSTS','CCEA','PHYED']) {
-      if (!selected[cat]) continue;
-      const core = SCHED_DATA.cores.find(c => c.id === selected[cat]);
-      if (!core) continue;
-      for (let mi = 0; mi < core.meetings.length; mi++) {
-        const [days, start, end, sess, lbl] = core.meetings[mi];
-        const summary = core.code + ' ' + core.name + (lbl !== 'Lecture' && lbl !== 'Seminar' ? ' · ' + lbl : '');
-        const desc = 'Class #' + core.class_num + ' · ' + core.cat + ' · Prof. ' + core.prof + ' · Session ' + (sess === 'AD' ? 'Full semester' : sess);
-        const uid = core.id + '-' + mi + '-' + (termSlug || 'term') + '@horarium.local';
-        const ev = _buildEvent(summary, desc, '', days, start, end, sess, dtstamp, uid);
+        const instructors = (m.instructors || []).join(', ') || '—';
+        const desc = 'Class #' + section.class_number + ' · Prof. ' + instructors + ' · Session ' + (sess === 'AD' ? 'Full semester' : sess);
+        const room = m.room || (m.building && m.room_number ? (m.building + ' ' + m.room_number) : '');
+        const uid = section.class_number + '-' + mi + '-' + (termSlug || 'term') + '@horarium.local';
+        const ev = _buildEvent(summary, desc, room, days, startMin, endMin, sess, dtstamp, uid);
         if (ev) events.push(ev);
       }
     }
@@ -7130,7 +7274,7 @@ function exportAsICS() {
       'PRODID:-//Horarium//' + (_activeTerm() || 'Plan') + '//EN',
       'CALSCALE:GREGORIAN',
       'METHOD:PUBLISH',
-      _foldLine('X-WR-CALNAME:' + [_userDisplay(), _activeTerm(), opt.name].filter(Boolean).join(' · ')),
+      _foldLine('X-WR-CALNAME:' + [_userDisplay(), _activeTerm(), planName].filter(Boolean).join(' · ')),
       _foldLine('X-WR-TIMEZONE:Asia/Dubai'),
       vtimezone,
       ...events,
@@ -7138,7 +7282,7 @@ function exportAsICS() {
     ].join('\r\n');
 
     _download(
-      _fileStem() + '_' + _optSlug() + '_' + _todayStr() + '.ics',
+      _fileStem() + '_' + _optSlug(planId) + '_' + _todayStr() + '.ics',
       ics,
       'text/calendar;charset=utf-8'
     );
@@ -7152,87 +7296,64 @@ function exportAsICS() {
 }
 
 // ============ EXPORT: JSON ============
-function exportAsJSON() {
+function exportAsJSON(planId) {
   _exportCardState('ec-json', 'Building', '⏳');
 
   try {
-    const opt = SCHED_DATA.options[currentOption];
+    const plan = _planForExport(planId);
+    const planName = plan ? plan.name : 'plan';
+    const planKind = plan ? plan.kind : null;
+    const planNotes = (plan && plan.notes) || '';
+    const hydrated = _hydrateForExport(plan);
     const now = new Date().toISOString();
-    const hhmm = (m) => _pad(Math.floor(m/60)) + ':' + _pad(m%60);
 
-    const enrolled = opt.sections.map(skey => {
-      const sec = SCHED_DATA.sections[skey];
-      const meta = courseMeta[sec.course] || {};
-      // PE-credit detection via course key was tied to the original author's
-      // plan (PHYED-UH Recreational Games had 0 credits). Generic detection
-      // by section component label is out-of-scope until plan-state
-      // extraction; default to academic credit for now.
-      const isPE = false;
+    // Enrolled courses, native shape. `credits` reads the actual
+    // course.units from the catalog (scalar or {min,max}) — no more
+    // hardcoded 4-or-0 from the cores-era heuristic.
+    const enrolled = hydrated.map(({ section, course }) => {
+      const units = (course.units == null) ? null :
+        (typeof course.units === 'object' ? course.units.min : course.units);
+      const meetings = (section.meetings || []).map(m => ({
+        days: Array.isArray(m.days) ? m.days.slice() : [],
+        start_time: m.start_time || null,
+        end_time: m.end_time || null,
+        start_date: m.start_date || null,
+        end_date: m.end_date || null,
+        room: m.room || null,
+        building: m.building || null,
+        room_number: m.room_number || null,
+        instructors: Array.isArray(m.instructors) ? m.instructors.slice() : [],
+      }));
       return {
-        key: skey,
-        course_code_short: sec.course,
-        course_name: meta.full || sec.course,
-        short_name: meta.short || sec.course,
-        instructor: sec.prof,
-        class_numbers: sec.class_nums,
-        credits: isPE ? 0 : 4,
-        is_pe: isPE,
-        meetings: sec.meetings.map(([days, start, end, session, label]) => ({
-          days: days.slice(),
-          start_minute: start,
-          end_minute: end,
-          start_time: hhmm(start),
-          end_time: hhmm(end),
-          session: session,
-          label: label,
-        })),
+        class_number: section.class_number,
+        course_code: course.code,
+        course_title: course.title || '',
+        section_code: section.section_code || '',
+        component: section.component || '',
+        session: section.session || null,
+        status: section.status || null,
+        credits: units,
+        meetings,
       };
     });
 
-    const staged = [];
-    for (const cat of ['CADT','CDAD','CSTS','CCEA','PHYED']) {
-      if (!selected[cat]) continue;
-      const core = SCHED_DATA.cores.find(c => c.id === selected[cat]);
-      if (!core) continue;
-      staged.push({
-        category: cat,
-        course_code: core.code,
-        course_name: core.name,
-        instructor: core.prof,
-        class_number: core.class_num,
-        status: core.status,
-        credits: core.cat === 'PHYED' ? 0 : 4,
-        meetings: core.meetings.map(([days, start, end, session, label]) => ({
-          days: days.slice(), start_minute: start, end_minute: end,
-          start_time: hhmm(start), end_time: hhmm(end),
-          session, label,
-        })),
-      });
-    }
-
-    const catalog = HS.adapter.getCoresList().map(core => ({
-      id: core.id,
-      category: core.cat,
-      course_code: core.code,
-      course_name: core.name,
-      instructor: core.prof,
-      class_number: core.class_num,
-      status: core.status,
-      description: core.desc,
-      credits: core.cat === 'PHYED' ? 0 : 4,
-      fits_current_plan: ((SCHED_DATA.conflicts[currentOption] || {})[core.id] || []).length === 0,
-      conflicts_with: ((SCHED_DATA.conflicts[currentOption] || {})[core.id] || []).slice(),
-      meetings: core.meetings.map(([days, start, end, session, label]) => ({
-        days: days.slice(), start_minute: start, end_minute: end,
-        start_time: hhmm(start), end_time: hhmm(end),
-        session, label,
-      })),
-    }));
+    const allPlans = (window.HS && window.HS.catalog && window.HS.catalog.plans)
+      ? window.HS.catalog.plans.list().map(p => ({
+          id: p.id,
+          name: p.name,
+          kind: p.kind,
+          origin: p.origin,
+          section_count: (p.sections || []).length,
+          filter_count: (p.filters || []).length,
+        }))
+      : [];
 
     const userIdent = _userIdentity();
+    const totalCredits = enrolled.reduce((s, c) => s + (Number(c.credits) || 0), 0);
     const payload = {
-      schema_version: '1.0',
+      schema_version: '1.1.0',
       exported_at: now,
+      exported_plan_id: plan ? plan.id : null,
       student: {
         name: userIdent.name || null,
         netid: userIdent.netid || null,
@@ -7249,24 +7370,19 @@ function exportAsJSON() {
         },
         timezone: 'Asia/Dubai',
       },
-      active_plan: {
-        name: opt.name,
-        tagline: opt.tagline,
-        description: opt.desc,
-        total_credits: enrolled.reduce((s, c) => s + c.credits, 0),
+      plan: {
+        name: planName,
+        kind: planKind,
+        notes: planNotes,
+        total_credits: totalCredits,
+        section_count: enrolled.length,
       },
       enrolled_courses: enrolled,
-      staged_previews: staged,
-      available_catalog: catalog,
-      all_plans: SCHED_DATA.options.map(o => ({
-        name: o.name,
-        tagline: o.tagline,
-        sections: o.sections,
-      })),
+      all_plans: allPlans,
     };
 
     _download(
-      _fileStem() + '_' + _optSlug() + '_' + _todayStr() + '.json',
+      _fileStem() + '_' + _optSlug(planId) + '_' + _todayStr() + '.json',
       JSON.stringify(payload, null, 2),
       'application/json;charset=utf-8'
     );
@@ -7353,20 +7469,26 @@ function renderComparison() {
     return;
   }
 
-  // Build my enrolled course set
-  const opt = SCHED_DATA.options[currentOption];
-  const myEnrolled = opt.sections.map(skey => {
-    const sec = SCHED_DATA.sections[skey];
-    const meta = courseMeta[sec.course] || {};
-    return {
-      key: skey,
-      course_name: meta.full || sec.course,
-      short_name: meta.short || sec.course,
-      instructor: sec.prof,
-      class_numbers: sec.class_nums || [],
-      meetings: sec.meetings || [],
-    };
-  });
+  // Build my enrolled course set from the active plan + effective
+  // catalog. Each entry mirrors the friend-data JSON shape so the
+  // diffing logic below works against both sides without translation.
+  const myPlan = (window.HS && window.HS.catalog && window.HS.catalog.plans)
+    ? window.HS.catalog.plans.getActive() : null;
+  const myHydrated = _hydrateForExport(myPlan);
+  const myEnrolled = myHydrated.map(({ section, course }) => ({
+    key: section.class_number,
+    course_name: course.title ? (course.code + ' — ' + course.title) : course.code,
+    short_name: course.code,
+    instructor: ((section.meetings || [])[0] && (section.meetings[0].instructors || []).join(', ')) || '—',
+    class_numbers: section.class_number ? [section.class_number] : [],
+    meetings: (section.meetings || []).map(m => ({
+      days: m.days,
+      start_minute: window.HS.mainPlanner ? window.HS.mainPlanner.hhmmToMinutes(m.start_time) : null,
+      end_minute: window.HS.mainPlanner ? window.HS.mainPlanner.hhmmToMinutes(m.end_time) : null,
+      session: (section.session && section.session.code) || 'AD',
+      label: section.component || 'Meeting',
+    })),
+  }));
 
   // Index for matching
   const myClassNumSet = new Set();
@@ -7558,13 +7680,16 @@ const _originalGatherEvents = gatherEvents;
 gatherEvents = function(half) {
   const events = _originalGatherEvents(half);
   if (friendOverlayOn && friendData && Array.isArray(friendData.enrolled_courses)) {
-    // Collect class numbers that are already in my schedule (classmates) so we don't double-render
+    // Collect class numbers that are already in my schedule (classmates)
+    // so we don't double-render. Reads native plan refs directly.
     const myClassNums = new Set();
-    const opt = SCHED_DATA.options[currentOption];
-    opt.sections.forEach(skey => {
-      const sec = SCHED_DATA.sections[skey];
-      (sec.class_nums || []).forEach(cn => myClassNums.add(String(cn)));
-    });
+    const myPlan = (window.HS && window.HS.catalog && window.HS.catalog.plans)
+      ? window.HS.catalog.plans.getActive() : null;
+    if (myPlan && myPlan.sections) {
+      myPlan.sections.forEach(ref => {
+        if (ref.class_number) myClassNums.add(String(ref.class_number));
+      });
+    }
 
     friendData.enrolled_courses.forEach(fc => {
       const friendClassNums = (fc.class_numbers || []).map(String);
@@ -7776,8 +7901,8 @@ function _syncFiltersFromPlan() {
       id: f.id,
       name: f.name || '',
       days: Array.isArray(f.days) ? f.days.slice() : [],
-      startMin: window.HS && window.HS.mainPlanner ? window.HS.mainPlanner.hhmmToMinutes(f.start_time) : null,
-      endMin: window.HS && window.HS.mainPlanner ? window.HS.mainPlanner.hhmmToMinutes(f.end_time) : null,
+      start: window.HS && window.HS.mainPlanner ? window.HS.mainPlanner.hhmmToMinutes(f.start_time) : null,
+      end: window.HS && window.HS.mainPlanner ? window.HS.mainPlanner.hhmmToMinutes(f.end_time) : null,
       session: f.session || 'AD',
       color: f.color || '#8F2D1E',
       pattern: f.pattern || 'solid',
@@ -8139,10 +8264,10 @@ window.addEventListener('resize', () => {
 
 
 
-// ============ ROOM DATA (from Albert enrollment confirmation) ============
-// ROOM_DATA removed in Phase 2 Prep 3 — rooms now come from the catalog
-// via HS.adapter.getRoomFor(). Returns a "—" fallback when the store is
-// empty (i.e. no catalog paste yet).
+// ============ ROOM DATA ============
+// Rooms come from each meeting's `room` / `building` / `room_number`
+// fields on the section in catalog.getEffective(). No legacy ROOM_DATA
+// table; "—" is shown when the catalog has no data for a meeting.
 
 const DAY_LABELS = { M:'Mon', T:'Tue', W:'Wed', Th:'Thu', F:'Fri' };
 
@@ -8355,7 +8480,15 @@ function renderNav() {
     const btn = document.createElement('button');
     btn.className = 'fn-item' + (tab.id === currentTab ? ' active' : '');
     btn.dataset.tabId = tab.id;
-    btn.innerHTML = '<span class="fn-label">' + tab.label + '</span>';
+    // Theme dictionary supplies localized labels for the standard tabs;
+    // user-renamed tabs (where tab.label diverges from the internal id)
+    // keep their custom name. Defaults: Main / Catalog / Edit / Compare
+    // / Export / Manage.
+    const themedLabel = _t('tab.' + tab.id);
+    const isDefault = tab.label === tab.id.charAt(0).toUpperCase() + tab.id.slice(1);
+    const visualLabel = (themedLabel && themedLabel !== ('tab.' + tab.id) && isDefault)
+      ? themedLabel : tab.label;
+    btn.innerHTML = '<span class="fn-label">' + _brEscape(visualLabel) + '</span>';
     btn.onclick = () => switchTab(tab.id);
     btn.ondblclick = (e) => { e.preventDefault(); renameTab(tab.id, btn); };
     // Delete × (only if more than 1 tab)
@@ -9099,7 +9232,7 @@ function renderHeader() {
     if (u.year) bits.push(u.year);
     sub.textContent = bits.join(' · ');
   } else {
-    sub.textContent = 'No term loaded. Go to Catalog → Paste to begin.';
+    sub.textContent = _t('app.subtitle.empty');
   }
 }
 
@@ -10417,11 +10550,31 @@ function _bindManageEvents() {
 function renderManage() {
   if (!window.HS || !window.HS.catalog || !window.HS.persistence || !window.HS.manage) return;
   _renderManageConsent();
+  _renderManageTheme();
   _renderManageStats();
   _renderManageSubjects();
   _renderManageClearButtons();
   _renderManageWarnings();
   if (typeof _renderManageImports === 'function') _renderManageImports();
+}
+
+// Theme picker. Sync radio selection to the active theme and wire the
+// change handler — switching the radio applies the theme instantly and
+// persists to localStorage. Idempotent: re-running just resyncs.
+function _renderManageTheme() {
+  if (!(window.HS && window.HS.themes)) return;
+  var active = window.HS.themes.getActiveTheme();
+  var radios = document.querySelectorAll('input[name="mn-theme"]');
+  for (var i = 0; i < radios.length; i++) {
+    var r = radios[i];
+    r.checked = (r.value === active);
+    if (!r.dataset.bound) {
+      r.addEventListener('change', function (e) {
+        if (e.target.checked) window.HS.themes.setTheme(e.target.value);
+      });
+      r.dataset.bound = '1';
+    }
+  }
 }
 
 function _renderManageConsent() {
