@@ -9440,8 +9440,13 @@ window.addEventListener('horarium:ready', _bootManage);
 // parseAndValidatePack collects all errors before returning; the user
 // sees one consolidated message. After validation passes, every render
 // path uses textContent (via _brEscape, which renders into innerHTML
-// after escaping) so a course title of "<script>alert(1)</script>"
+// after escaping) so a course title carrying script-tag-shaped text
 // renders as literal text.
+// (NOTE: avoid embedding a literal close-script tag in this file — even
+// inside a JS comment, the HTML parser terminates the surrounding
+// <script> block when it sees the close-tag bytes, leaving the rest of
+// this script as visible page text. Same reason XSS sinks worry about
+// it in user content; same reason it bites authors here.)
 //
 // Browse pack-selection state. null = "My catalog" (default); any pack
 // id selects an imported pack. Lives outside _browseSel so switching
