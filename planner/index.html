@@ -662,18 +662,19 @@
     background: var(--ink);
   }
   .grid .head.corner .tag {
-    font-family: var(--font-mono);
-    font-size: 9px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--ochre);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 18px;
+    color: var(--cream);
+    letter-spacing: 0;
+    line-height: 1;
   }
   .grid .head.corner .label {
     font-family: var(--font-display);
     font-style: italic;
     font-size: 14px;
     color: var(--cream);
-    margin-top: 2px;
+    margin-top: 4px;
   }
   .grid .time {
     background: var(--paper-soft);
@@ -4425,7 +4426,7 @@
   .br-course-edit:hover {
     background: color-mix(in srgb, var(--ochre) 10%, transparent);
     border-color: color-mix(in srgb, var(--ochre) 45%, transparent);
-    color: rgba(120, 70, 30, 0.95);
+    color: color-mix(in srgb, var(--ochre) 95%, transparent);
   }
 
   /* ====================== Main planner (Piece 5a/2) ====================== */
@@ -4472,7 +4473,7 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: rgba(120,70,30,0.85);
+    color: color-mix(in srgb, var(--ochre) 85%, transparent);
   }
   .mp-pill-name { font-size: 0.92rem; font-weight: 600; }
   .mp-pill-stats { font-size: 0.74rem; color: color-mix(in srgb, var(--ink) 55%, transparent); }
@@ -4589,7 +4590,7 @@
   .mp-course-code {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.78rem;
-    color: rgba(120,70,30,0.85);
+    color: color-mix(in srgb, var(--ochre) 85%, transparent);
   }
   .mp-course-title { font-size: 0.95rem; font-weight: 600; }
   .mp-course-meta {
@@ -4623,7 +4624,7 @@
   .mp-section-cn { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: color-mix(in srgb, var(--ink) 55%, transparent); }
   .mp-section-status { font-size: 0.74rem; padding: 0.05rem 0.4rem; border-radius: 2px; }
   .mp-status-open { background: color-mix(in srgb, var(--forest) 15%, transparent); color: color-mix(in srgb, var(--forest) 95%, transparent); }
-  .mp-status-waitlist { background: color-mix(in srgb, var(--ochre) 18%, transparent); color: rgba(120,70,30,0.95); }
+  .mp-status-waitlist { background: color-mix(in srgb, var(--ochre) 18%, transparent); color: color-mix(in srgb, var(--ochre) 95%, transparent); }
   .mp-status-closed { background: color-mix(in srgb, var(--ink) 7%, transparent); color: color-mix(in srgb, var(--ink) 60%, transparent); }
   .mp-status-cancelled { background: color-mix(in srgb, var(--rust) 12%, transparent); color: color-mix(in srgb, var(--rust) 85%, transparent); }
   .mp-stage-btn {
@@ -4652,7 +4653,7 @@
     padding: 0.35rem 0.55rem;
     background: color-mix(in srgb, var(--ochre) 15%, transparent);
     border-left: 3px solid color-mix(in srgb, var(--ochre) 60%, transparent);
-    color: rgba(120,70,30,0.95);
+    color: color-mix(in srgb, var(--ochre) 95%, transparent);
     font-size: 0.78rem;
     border-radius: 2px;
   }
@@ -4864,7 +4865,7 @@
   .mp-cog-btn[aria-expanded="true"] {
     background: color-mix(in srgb, var(--ochre) 14%, transparent);
     border-color: color-mix(in srgb, var(--ochre) 50%, transparent);
-    color: rgba(120, 70, 30, 0.95);
+    color: color-mix(in srgb, var(--ochre) 95%, transparent);
     transform: rotate(30deg);
   }
   /* When the toggle inside the popover is ON, give the cog a small
@@ -4989,7 +4990,7 @@
   .mp-intensity-value {
     font-family: var(--font-mono);
     font-size: 0.78rem;
-    color: rgba(120, 70, 30, 0.85);
+    color: color-mix(in srgb, var(--ochre) 85%, transparent);
     min-width: 2.6rem;
     text-align: right;
   }
@@ -5063,13 +5064,13 @@
   .mp-filter-chip.is-active {
     background: color-mix(in srgb, var(--ochre) 18%, transparent);
     border-color: color-mix(in srgb, var(--ochre) 50%, transparent);
-    color: rgba(120, 70, 30, 0.95);
+    color: color-mix(in srgb, var(--ochre) 95%, transparent);
   }
   .mp-clear-filters {
     margin-left: auto;
     background: none;
     border: 0;
-    color: rgba(120, 70, 30, 0.8);
+    color: color-mix(in srgb, var(--ochre) 80%, transparent);
     text-decoration: underline dotted;
     cursor: pointer;
     font-size: 0.78rem;
@@ -5117,7 +5118,7 @@
     font-size: 0.85rem;
   }
   .mp-subject.is-open .mp-chevron,
-  .mp-course.is-open .mp-chevron { transform: rotate(90deg); color: rgba(120, 70, 30, 0.85); }
+  .mp-course.is-open .mp-chevron { transform: rotate(90deg); color: color-mix(in srgb, var(--ochre) 85%, transparent); }
 
   /* Level header inside an expanded subject (visual divider, not collapsible). */
   .mp-level-head {
@@ -5158,7 +5159,7 @@
   .mp-course-code-small {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.78rem;
-    color: rgba(120, 70, 30, 0.85);
+    color: color-mix(in srgb, var(--ochre) 85%, transparent);
   }
   .mp-course-title-small { font-size: 0.92rem; font-weight: 500; color: color-mix(in srgb, var(--ink) 85%, transparent); }
   .mp-course-meta-small { font-size: 0.75rem; color: color-mix(in srgb, var(--ink) 50%, transparent); white-space: nowrap; }
@@ -5206,7 +5207,7 @@
   .mp-section-info-line { display: block; }
   .mp-section-info .scode {
     font-family: 'JetBrains Mono', monospace;
-    color: rgba(120, 70, 30, 0.85);
+    color: color-mix(in srgb, var(--ochre) 85%, transparent);
     margin-right: 0.35rem;
   }
   .mp-section-info .meet { color: color-mix(in srgb, var(--ink) 78%, transparent); }
@@ -5215,7 +5216,7 @@
   .mp-section-conflict {
     display: block;
     font-size: 0.74rem;
-    color: rgba(120, 70, 30, 0.95);
+    color: color-mix(in srgb, var(--ochre) 95%, transparent);
     margin-top: 0.15rem;
   }
   .mp-stage {
@@ -5237,7 +5238,7 @@
   }
   .mp-stage.is-warn {
     border-color: color-mix(in srgb, var(--ochre) 50%, transparent);
-    color: rgba(120, 70, 30, 0.92);
+    color: color-mix(in srgb, var(--ochre) 92%, transparent);
   }
 
   /* Search-results mode: subjects collapse to a flat course list. */
@@ -5410,7 +5411,7 @@
     margin-left: 0.4rem;
     padding: 0.05rem 0.35rem;
     background: color-mix(in srgb, var(--ochre) 18%, transparent);
-    color: rgba(120, 70, 30, 0.95);
+    color: color-mix(in srgb, var(--ochre) 95%, transparent);
     border-radius: 2px;
     font-size: 0.7rem;
     font-weight: 600;
@@ -11844,7 +11845,7 @@ function _renderBrowsePackBar() {
     '<label for="br-pack-select">Viewing</label>' +
     '<select id="br-pack-select">' + opts + '</select>' +
     (_browseActivePackId
-      ? '<span style="color:rgba(120,70,30,0.85);font-size:0.8rem">Read-only — copy a section to bring it into your catalog</span>'
+      ? '<span style="color:color-mix(in srgb, var(--ochre) 85%, transparent);font-size:0.8rem">Read-only — copy a section to bring it into your catalog</span>'
       : '');
   var sel = document.getElementById('br-pack-select');
   if (sel) sel.addEventListener('change', function () {
