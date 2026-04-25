@@ -506,12 +506,13 @@
     margin-top: 3px;
     opacity: 0.72;
   }
-  /* Dynamic-color cell. JS sets --cell-bg / --cell-ink per cell; the
-     !important keeps us above the legacy .c-stat / .c-cons / etc.
-     class-driven rules below. Fallbacks keep cells visible if the JS
-     custom-property assignment ever misses. */
+  /* Dynamic-color cell. JS sets --cell-bg / --cell-ink per cell.
+     --tile-intensity (page-level, default 70%) controls how saturated
+     the tile bg is — 100% = full palette colour, lower values mix
+     toward transparent so the cream paper shows through. The user
+     adjusts via the slider in the search-options cog popover. */
   .grid .cell.c-dynamic {
-    background: var(--cell-bg, var(--paper-soft)) !important;
+    background: color-mix(in srgb, var(--cell-bg, var(--paper-soft)) var(--tile-intensity, 70%), transparent) !important;
     color: var(--cell-ink, var(--ink)) !important;
     border-left-color: var(--cell-ink, var(--ink-faint)) !important;
   }
@@ -4667,6 +4668,69 @@
   }
   .mp-toggle.is-on .mp-toggle-track .mp-toggle-thumb {
     left: 0.98rem;
+  }
+
+  /* Visual divider between cog popover sections (Search vs Display). */
+  .mp-cog-divider {
+    height: 1px;
+    background: rgba(28, 26, 23, 0.08);
+    margin: 0.85rem -0.4rem 0.2rem;
+  }
+
+  /* Tile-intensity slider row — distinct from the toggle row because
+     it's a continuous control, not a binary. Stacked: header (label +
+     value), then the slider, then the help text. */
+  .mp-cog-slider-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .mp-cog-slider-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+  .mp-intensity-value {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: rgba(120, 70, 30, 0.85);
+    min-width: 2.6rem;
+    text-align: right;
+  }
+  .mp-intensity-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 0.4rem;
+    background: rgba(28, 26, 23, 0.12);
+    border-radius: 999px;
+    outline: none;
+    cursor: pointer;
+  }
+  .mp-intensity-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 1rem;
+    height: 1rem;
+    background: rgb(183, 129, 63);
+    border-radius: 50%;
+    border: 2px solid #fffdf9;
+    box-shadow: 0 1px 3px rgba(28, 26, 23, 0.25);
+    cursor: pointer;
+    transition: transform 0.12s;
+  }
+  .mp-intensity-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
+  }
+  .mp-intensity-slider::-moz-range-thumb {
+    width: 1rem;
+    height: 1rem;
+    background: rgb(183, 129, 63);
+    border-radius: 50%;
+    border: 2px solid #fffdf9;
+    box-shadow: 0 1px 3px rgba(28, 26, 23, 0.25);
+    cursor: pointer;
   }
 
   .mp-filters {
@@ -10660,6 +10724,19 @@ let _pkInstructorIndexDirty = true;
 // fast and predictable. User opts in via the chip beside the search
 // input.
 let _pkFuzzy = false;
+// Tile intensity (calendar tile background opacity). 30–100. Persists
+// in localStorage independent of the catalog-consent gate — it's a
+// purely visual preference, no user data. Read-and-apply runs once on
+// boot below so the page renders at the user's preferred intensity
+// even before the cog popover is opened.
+const _PK_INTENSITY_KEY = 'horarium.tileIntensity';
+let _pkTileIntensity = (function () {
+  try {
+    const v = parseInt(localStorage.getItem(_PK_INTENSITY_KEY) || '70', 10);
+    return (v >= 30 && v <= 100) ? v : 70;
+  } catch { return 70; }
+})();
+document.documentElement.style.setProperty('--tile-intensity', _pkTileIntensity + '%');
 
 function _bootPicker() {
   const inp = document.getElementById('mp-search');
@@ -10722,19 +10799,47 @@ function _bootPicker() {
           '<div class="mp-cog-row-label">Tolerate Typos</div>' +
           '<div class="mp-cog-row-help">Match results with small spelling mistakes — about one or two wrong letters. Exact matches always show first.</div>' +
         '</div>' +
+      '</div>' +
+      '<div class="mp-cog-divider"></div>' +
+      '<div class="mp-cog-title" style="margin-top:0.4rem">Display</div>' +
+      '<div class="mp-cog-slider-row">' +
+        '<div class="mp-cog-slider-head">' +
+          '<span class="mp-cog-row-label">Tile Intensity</span>' +
+          '<span class="mp-intensity-value" id="mp-intensity-value">' + _pkTileIntensity + '%</span>' +
+        '</div>' +
+        '<input type="range" min="30" max="100" step="5" value="' + _pkTileIntensity +
+          '" class="mp-intensity-slider" id="mp-intensity-slider" />' +
+        '<div class="mp-cog-row-help">How saturated calendar tile backgrounds appear. Lower values mix the colour toward the cream paper for a softer look.</div>' +
       '</div>';
     document.body.appendChild(pop);
     _cogPop = pop;
-    // Clicking the entire row flips the toggle.
+    // Clicking the entire fuzzy row flips the toggle.
     const row = pop.querySelector('#mp-cog-fuzzy-row');
     if (row) row.addEventListener('click', function (e) {
       e.stopPropagation();
       _pkFuzzy = !_pkFuzzy;
       const toggleEl = pop.querySelector('#mp-cog-fuzzy-toggle');
       if (toggleEl) toggleEl.classList.toggle('is-on', _pkFuzzy);
-      if (cogBtn) cogBtn.classList.toggle('is-active', _pkFuzzy);
+      if (cogBtn) cogBtn.classList.toggle('is-active', _pkFuzzy || _pkTileIntensity !== 70);
       renderPicker();
     });
+    // Intensity slider — live-updates the CSS variable, persists on
+    // commit (when the user releases the slider).
+    const slider = pop.querySelector('#mp-intensity-slider');
+    const valueEl = pop.querySelector('#mp-intensity-value');
+    if (slider) {
+      slider.addEventListener('input', function (e) {
+        e.stopPropagation();
+        const v = Number(slider.value);
+        _pkTileIntensity = v;
+        if (valueEl) valueEl.textContent = v + '%';
+        document.documentElement.style.setProperty('--tile-intensity', v + '%');
+      });
+      slider.addEventListener('change', function () {
+        try { localStorage.setItem(_PK_INTENSITY_KEY, String(_pkTileIntensity)); } catch {}
+        if (cogBtn) cogBtn.classList.toggle('is-active', _pkFuzzy || _pkTileIntensity !== 70);
+      });
+    }
     // Inside-popover clicks don't dismiss; outside-clicks do.
     pop.addEventListener('click', function (e) { e.stopPropagation(); });
   }
