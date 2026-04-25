@@ -5370,10 +5370,30 @@
       var lbl = s.component || "Lecture";
       return [days, startMin, endMin, sess, lbl];
     });
+    // Aggregate every distinct instructor across all meetings — legacy
+    // code expects `prof` as a single string. Take the first when there
+    // are multiple.
+    var instrSet = {};
+    var instrs = [];
+    for (var i = 0; i < (s.meetings || []).length; i++) {
+      var arr = (s.meetings[i].instructors || []);
+      for (var j = 0; j < arr.length; j++) {
+        if (!instrSet[arr[j]]) { instrSet[arr[j]] = true; instrs.push(arr[j]); }
+      }
+    }
     return {
       course: c.code,
+      // Singular kept for any code path still using it; plural is the
+      // shape legacy ICS / JSON / friend-comparison code expects.
       class_num: s.class_number,
+      class_nums: s.class_number ? [s.class_number] : [],
       sectionLabel: s.section_code || "",
+      // Aggregate instructor string. "—" when none, single name when
+      // exactly one, joined when multiple. This is what legacy code
+      // displays in ICS DESCRIPTION and JSON exports.
+      prof: instrs.length === 0 ? "—" : instrs.length === 1 ? instrs[0] : instrs.join(", "),
+      // Status / location fields legacy code occasionally reaches for.
+      status: (s.status && s.status.raw) || (s.status && s.status.type) || "—",
       meetings: meetings,
     };
   }
