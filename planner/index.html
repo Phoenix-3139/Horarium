@@ -993,19 +993,21 @@
     border-right: 1px dashed color-mix(in srgb, var(--accent, var(--ochre)) 55%, transparent);
     border-bottom: 1px dashed color-mix(in srgb, var(--accent, var(--ochre)) 55%, transparent);
   }
+  /* Inline above the course name so it never collides with the
+     title text. */
   .grid .cell .cell-user-badge {
-    position: absolute;
-    top: 3px;
-    left: 5px;
+    display: inline-block;
+    margin-bottom: 3px;
     font-family: var(--font-mono);
     font-size: 8px;
     font-weight: 600;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.14em;
     color: var(--accent, var(--ochre));
-    background: color-mix(in srgb, var(--accent, var(--ochre)) 12%, transparent);
-    padding: 1px 4px;
+    background: color-mix(in srgb, var(--accent, var(--ochre)) 14%, transparent);
+    padding: 1px 5px;
     border-radius: 2px;
-    line-height: 1.2;
+    line-height: 1.3;
+    border: 1px dashed color-mix(in srgb, var(--accent, var(--ochre)) 35%, transparent);
   }
   /* Link-mode highlight: targetable rows pulse a soft accent border;
      the source row gets a stronger ring so the user knows what's
@@ -4893,6 +4895,24 @@
     background: var(--cream);
   }
   .mp-course.is-open { border-color: color-mix(in srgb, var(--ochre) 40%, transparent); }
+  /* USER tag in the picker — same look as the calendar/legend so the
+     three surfaces read as one family. */
+  .mp-user-tag {
+    margin-left: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 8.5px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    color: var(--accent, var(--ochre));
+    background: color-mix(in srgb, var(--accent, var(--ochre)) 14%, transparent);
+    padding: 1px 5px;
+    border-radius: 2px;
+    border: 1px dashed color-mix(in srgb, var(--accent, var(--ochre)) 35%, transparent);
+    vertical-align: 1px;
+  }
+  .mp-course.is-user-authored {
+    border-left: 2px dashed color-mix(in srgb, var(--accent, var(--ochre)) 50%, transparent);
+  }
   .mp-course-head {
     width: 100%;
     display: flex;
@@ -12567,10 +12587,11 @@ function _pkRenderCourseRow(c, sections, stagedSet, hydratedStaged) {
     ? '<span class="mp-course-staged-dot" style="background:' +
       _escHtml(window.HS.mainPlanner.colorForCourse(c.code).bg) + '"></span>'
     : '';
-  let html = '<div class="mp-course' + (isExpanded ? ' is-open' : '') + '" data-course-code="' + _escHtml(c.code) + '">';
+  const userBadge = c._user_authored ? '<span class="mp-user-tag">USER</span>' : '';
+  let html = '<div class="mp-course' + (isExpanded ? ' is-open' : '') + (c._user_authored ? ' is-user-authored' : '') + '" data-course-code="' + _escHtml(c.code) + '">';
   html += '<button type="button" class="mp-course-head" data-pkcourse="' + _escHtml(c.code) + '">';
   html += '<span class="mp-course-head-text">';
-  html += '<span class="mp-course-code-small">' + stagedDot + _escHtml(c.code) + '</span>';
+  html += '<span class="mp-course-code-small">' + stagedDot + _escHtml(c.code) + userBadge + '</span>';
   html += '<span class="mp-course-title-small">' + _escHtml(c.title || '(untitled)') + '</span>';
   html += '</span>';
   html += '<span class="mp-course-meta-small">' +
