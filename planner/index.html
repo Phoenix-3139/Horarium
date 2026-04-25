@@ -4541,16 +4541,36 @@
     color: rgba(28, 26, 23, 0.65);
   }
   .mp-clear-btn:hover { background: rgba(28, 26, 23, 0.04); }
-  /* Layout helper: view-toggle pill + cog sit on a single row. */
+  /* Layout helper: view-toggle pill + cog sit on a single row. The
+     view-toggle has its own asymmetric margins (`0.5rem 0 1.5rem`)
+     for stand-alone use. Inside the row those margins would pull the
+     toggle's centre off-axis with respect to the cog (flex
+     align-items:center centres the margin box, not the border box).
+     Override to zero so both items share the same vertical centre,
+     and apply the toggle's old bottom-margin to the row instead. */
   .view-toggle-row {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
-    margin-bottom: 0.5rem;
+    gap: 0.65rem;
+    margin: 0.5rem 0 1.5rem;
   }
-  /* Calendar-area cog inherits the picker cog's styling for visual
-     consistency. Same hover/expanded/active states. */
-  .mp-cog-btn-cal { flex-shrink: 0; }
+  .view-toggle-row .view-toggle {
+    margin: 0;
+  }
+  /* Calendar-area cog: visually larger than the picker cog so it's
+     proportionate to the toggle pill it sits next to (~40px). The
+     picker cog stays 1.85rem to match its narrower search-input row.
+     Selector uses BOTH classes to outspecify the generic .mp-cog-btn
+     dimensions which appear later in the stylesheet. */
+  .mp-cog-btn.mp-cog-btn-cal {
+    flex-shrink: 0;
+    width: 2.4rem;
+    height: 2.4rem;
+    margin: 0;
+  }
+  .mp-cog-btn-cal svg {
+    display: block;
+  }
 
   /* Search-options cog: tucked-away access point for advanced search
      toggles. Subtle gear icon at idle; lights up when its popover is
@@ -5529,11 +5549,14 @@
           <span class="vt-icon">≡</span> <span>Table</span>
         </button>
       </div>
-      <!-- Second instance of the search/display cog. Opens the same
-           popover as the picker's cog — sharing state means a slider
-           change here shows up in both. Anchored next to the view
-           toggle so it's reachable while looking at the calendar. -->
-      <button type="button" class="mp-cog-btn mp-cog-btn-cal" id="mp-cog-btn-cal" title="Display options">⚙&#xFE0E;</button>
+      <!-- Display-options cog — opens the calendar-specific popover
+           (Tile Intensity slider). Sized to match the height of the
+           Calendar/Table toggle pill next to it so they read as a
+           visual pair. Inline SVG (not the U+2699 glyph) so the icon
+           is pixel-centered regardless of which font resolves it. -->
+      <button type="button" class="mp-cog-btn mp-cog-btn-cal" id="mp-cog-btn-cal" title="Display options" aria-label="Display options">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+      </button>
     </div>
 
     <div class="view-pane" id="view-calendar">
