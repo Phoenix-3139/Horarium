@@ -5562,6 +5562,14 @@ window.dispatchEvent(new CustomEvent('horarium:ready'));
 // plan — viewing a candidate doesn't promote it.
 let currentViewPlanId = null;
 
+// Vestigial constant. The legacy export / table / comparison paths
+// still read `SCHED_DATA.options[currentOption]` and
+// `SCHED_DATA.conflicts[currentOption][...]` through the shim. The shim
+// orders the active plan at index 0, so `currentOption = 0` keeps
+// those reads pointing at the active plan. Burns when those paths get
+// converted off the shim in 5a/3.
+let currentOption = 0;
+
 function _activePlanId() {
   if (!(window.HS && window.HS.catalog && window.HS.catalog.plans)) return null;
   const a = window.HS.catalog.plans.getActive();
