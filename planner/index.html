@@ -5491,16 +5491,24 @@
   }
   .mp-search-group:last-child { margin-bottom: 0; }
   .mp-search-group-head {
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0.5rem 0.95rem;
     background: color-mix(in srgb, var(--ink) 4%, transparent);
+    border: 0;
     border-bottom: 1px solid var(--rule);
     font-family: var(--font-mono);
     font-size: 0.72rem;
     text-transform: uppercase;
     letter-spacing: 0.14em;
+    cursor: pointer;
+    color: inherit;
+    text-align: left;
+  }
+  .mp-search-group-head:hover {
+    background: color-mix(in srgb, var(--ink) 7%, transparent);
   }
   .mp-search-group-code {
     color: var(--ink);
@@ -5508,10 +5516,26 @@
   }
   .mp-search-group-meta {
     color: var(--ink-faint);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
   }
-  /* When a group is rendered, its inner course rows lose the outer
-     border + first-child top border — the group already provides
-     visual containment. */
+  /* Reuse .mp-chevron from the existing rules; rotate when expanded. */
+  .mp-search-group-head .mp-chevron {
+    transition: transform 0.15s;
+    transform: rotate(90deg);
+  }
+  .mp-search-group.is-collapsed .mp-search-group-head .mp-chevron {
+    transform: rotate(0);
+  }
+  .mp-search-group.is-collapsed .mp-search-group-head {
+    border-bottom-color: transparent;
+  }
+  .mp-search-group.is-collapsed .mp-search-group-body {
+    display: none;
+  }
+  /* Inner course rows lose the outer border + first-child top border
+     — the group already provides visual containment. */
   .mp-search-group-body .mp-course:first-child { border-top: 0; }
   .mp-search-group-body .mp-course:last-child { border-bottom: 0; }
 
@@ -12272,6 +12296,7 @@ let _pkSearchQuery = '';
 let _pkSearchTimer = null;
 let _pkExpandedSubjects = new Set();   // subject codes currently expanded in directory mode
 let _pkExpandedCourse = null;          // course code currently expanded
+let _pkCollapsedSearchGroups = new Set(); // subject groups collapsed in search mode (default = expanded)
 let _pkFilters = { status: 'all', components: null, days: null, start_after_min: null, end_before_min: null };
 let _pkInstructorIndex = { byInstructor: new Map(), byCourseCode: new Map() };
 let _pkInstructorIndexDirty = true;
@@ -12727,11 +12752,16 @@ function _pkRenderSearchResults(el, allCourses, idx, stagedSet, hydratedStaged, 
   }
   let html = '';
   for (const [subj, courseRows] of grouped) {
-    html += '<div class="mp-search-group" data-subject="' + _escHtml(subj) + '">';
-    html += '<div class="mp-search-group-head">' +
+    // Default: expanded. Once the user clicks the head to collapse,
+    // _pkCollapsedSearchGroups records the subject and we render the
+    // group with .is-collapsed (body hidden, chevron rotated).
+    const isCollapsed = _pkCollapsedSearchGroups.has(subj);
+    html += '<div class="mp-search-group' + (isCollapsed ? ' is-collapsed' : '') + '" data-subject="' + _escHtml(subj) + '">';
+    html += '<button type="button" class="mp-search-group-head" data-pksearchgroup="' + _escHtml(subj) + '" aria-expanded="' + (isCollapsed ? 'false' : 'true') + '">' +
       '<span class="mp-search-group-code">' + _escHtml(subj) + '</span>' +
       '<span class="mp-search-group-meta">' + courseRows.length + ' result' +
-      (courseRows.length === 1 ? '' : 's') + '</span></div>';
+      (courseRows.length === 1 ? '' : 's') +
+      '<span class="mp-chevron">›</span></span></button>';
     html += '<div class="mp-search-group-body">' + courseRows.join('') + '</div>';
     html += '</div>';
   }
@@ -12854,12 +12884,21 @@ function _pkRenderSectionRow(s, c, stagedSet, hydratedStaged) {
 // --- click wiring (event delegation) ---
 
 function _pkWireAll(root) {
-  // Subject expand/collapse.
+  // Subject expand/collapse (directory mode).
   root.querySelectorAll('[data-pksubj]').forEach(function (btn) {
     btn.addEventListener('click', function () {
       const subj = btn.getAttribute('data-pksubj');
       if (_pkExpandedSubjects.has(subj)) _pkExpandedSubjects.delete(subj);
       else _pkExpandedSubjects.add(subj);
+      renderPicker();
+    });
+  });
+  // Search-result group collapse/expand (default = expanded).
+  root.querySelectorAll('[data-pksearchgroup]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      const subj = btn.getAttribute('data-pksearchgroup');
+      if (_pkCollapsedSearchGroups.has(subj)) _pkCollapsedSearchGroups.delete(subj);
+      else _pkCollapsedSearchGroups.add(subj);
       renderPicker();
     });
   });
