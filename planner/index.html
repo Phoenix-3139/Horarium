@@ -858,6 +858,9 @@
     border: 1px solid var(--rule);
     border-left: 3px solid var(--ink);
   }
+  /* Empty legend (no sections staged) renders as an empty cream box;
+     hide it entirely so it doesn't bleed below the empty-grid panel. */
+  .legend:empty { display: none; }
   .legend .lg-label {
     font-family: var(--font-mono);
     font-size: 9.5px;
@@ -4236,6 +4239,11 @@
     gap: 1.5rem;
     align-items: start;
   }
+  /* The HTML [hidden] attribute should hide the element, but a
+     specific .ed-layout { display: grid } rule overrides it. Restore
+     the intended hide behavior so the empty context + form-panel
+     boxes don't bleed through when no section is selected. */
+  .ed-layout[hidden] { display: none; }
   @media (max-width: 900px) {
     .ed-layout { grid-template-columns: 1fr; }
   }
@@ -4250,6 +4258,9 @@
     position: sticky;
     top: 1rem;
   }
+  /* Belt + suspenders: even if .ed-layout's [hidden] gets stripped,
+     the inner panels stay invisible when they have no content. */
+  .ed-context:empty, .ed-form-panel:empty { display: none; }
   .ed-breadcrumb {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.76rem;
