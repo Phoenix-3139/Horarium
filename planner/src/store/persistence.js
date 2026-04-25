@@ -250,6 +250,8 @@ export function createPersistence(catalog, options = {}) {
       "create", "delete", "promote", "rename", "duplicate",
       "stageSection", "unstageSection",
       "addFilter", "updateFilter", "removeFilter",
+      "setDismissedComponentHash",
+      "addLink", "removeLink", "clearLinksForSection",
       "clearByOrigin",
     ];
     for (const name of PLAN_MUTATORS) {

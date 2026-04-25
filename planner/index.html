@@ -889,6 +889,57 @@
     background-image: repeating-linear-gradient(135deg, transparent, transparent 3px, rgba(0,0,0,0.08) 3px, rgba(0,0,0,0.08) 4px);
     border-left-style: dashed;
   }
+  /* Section row pairs item + kebab so they can highlight together
+     when in link-mode. */
+  .legend .lg-section-wrap {
+    display: inline-flex;
+    align-items: stretch;
+    border-radius: var(--radius-sm, 2px);
+    transition: background 0.15s, box-shadow 0.15s;
+  }
+  .legend .lg-section-menu {
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    padding: 0 0.4rem;
+    font-size: 1.1rem;
+    line-height: 1;
+    color: var(--ink-faint);
+    border-radius: var(--radius-sm, 2px);
+  }
+  .legend .lg-section-menu:hover {
+    background: color-mix(in srgb, var(--ink) 6%, transparent);
+    color: var(--ink);
+  }
+  .legend .lg-link-icon {
+    margin-left: 0.4rem;
+    color: var(--accent, var(--ochre));
+    font-size: 0.85em;
+    opacity: 0.85;
+  }
+  /* Same chain glyph on the calendar tile — top-right corner so it
+     never collides with the time / title content. */
+  .grid .cell .cell-link-icon {
+    position: absolute;
+    top: 4px;
+    right: 5px;
+    font-size: 11px;
+    line-height: 1;
+    opacity: 0.75;
+  }
+  .grid .cell { position: relative; }
+  /* Link-mode highlight: targetable rows pulse a soft accent border;
+     the source row gets a stronger ring so the user knows what's
+     being linked from. */
+  .legend .lg-section-wrap.lg-link-target {
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent, var(--ochre)) 60%, transparent);
+    background: color-mix(in srgb, var(--accent, var(--ochre)) 8%, transparent);
+    cursor: crosshair;
+  }
+  .legend .lg-section-wrap.lg-link-source {
+    box-shadow: 0 0 0 2px var(--accent, var(--ochre));
+    background: color-mix(in srgb, var(--accent, var(--ochre)) 14%, transparent);
+  }
 
   /* ============ SELECTED ============ */
   .selected-row {
@@ -5546,6 +5597,136 @@
     accent-color: var(--accent);
   }
 
+  /* ===== Component-warning floating notification (Piece 5b) =====
+     Top-right card that surfaces when a multi-component course has
+     uncovered components. Theme-aware via standard tokens; the
+     accent stripe + icon use --warning so it reads as advisory, not
+     destructive. Slides in from the right; fades on dismiss. */
+  .comp-notif {
+    position: fixed;
+    top: 86px; /* clears the floating tab dock */
+    right: 16px;
+    width: 360px;
+    max-width: calc(100vw - 32px);
+    z-index: 95;
+    background: var(--surface, var(--paper-soft));
+    color: var(--ink);
+    border: var(--border-width, 1px) solid var(--border, var(--rule));
+    border-left: 3px solid var(--warning, var(--ochre));
+    border-radius: var(--radius-md, 6px);
+    box-shadow: var(--shadow-md, 0 8px 28px rgba(0, 0, 0, 0.15));
+    padding: 0.85rem 1rem 0.7rem;
+    font-family: var(--font-body);
+    transform: translateX(0);
+    opacity: 1;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s;
+  }
+  .comp-notif[hidden] {
+    display: block;        /* override default display:none */
+    transform: translateX(120%);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .comp-notif-head {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-size: 0.92rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+  }
+  .comp-notif-icon {
+    color: var(--warning, var(--ochre));
+    font-size: 1.1rem;
+    line-height: 1;
+  }
+  .comp-notif-title { flex: 1; }
+  .comp-notif-close {
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    color: var(--ink-faint);
+    font-size: 1.1rem;
+    line-height: 1;
+    padding: 0.1rem 0.35rem;
+    border-radius: var(--radius-sm, 2px);
+  }
+  .comp-notif-close:hover {
+    background: color-mix(in srgb, var(--ink) 6%, transparent);
+    color: var(--ink);
+  }
+  .comp-notif-body {
+    font-size: 0.86rem;
+    color: var(--ink-soft);
+    line-height: 1.45;
+    margin-bottom: 0.55rem;
+  }
+  .comp-notif-actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+  .comp-notif-link {
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    color: var(--accent, var(--ochre));
+    font-family: inherit;
+    font-size: 0.84rem;
+    text-decoration: underline dotted;
+    padding: 0;
+  }
+  .comp-notif-link:hover { text-decoration: underline; }
+  @media (max-width: 700px) {
+    .comp-notif { right: 8px; width: calc(100vw - 16px); }
+  }
+
+  /* "Incomplete components" detail modal — list of incomplete
+     courses with check/cross indicators per component. */
+  .comp-detail-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 0.5rem 0 0.25rem;
+  }
+  .comp-detail-course {
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--warning, var(--ochre));
+    border-radius: var(--radius-sm, 2px);
+    padding: 0.65rem 0.85rem;
+    background: var(--paper-soft);
+  }
+  .comp-detail-code {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 0.15rem;
+  }
+  .comp-detail-title {
+    font-size: 0.82rem;
+    color: var(--ink-faint);
+    margin-bottom: 0.5rem;
+  }
+  .comp-detail-comp {
+    display: flex;
+    align-items: baseline;
+    gap: 0.55rem;
+    font-size: 0.86rem;
+    padding: 0.15rem 0;
+  }
+  .comp-detail-mark {
+    width: 1.1rem;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-weight: 600;
+  }
+  .comp-detail-mark.is-staged { color: var(--success, var(--forest)); }
+  .comp-detail-mark.is-missing { color: var(--warning, var(--ochre)); }
+  .comp-detail-comp-name { flex: 1; }
+  .comp-detail-comp-avail {
+    font-size: 0.78rem;
+    color: var(--ink-faint);
+  }
+
   /* ===== Empty-state utility =====
      For surfaces that LOOK like they should have content but don't —
      stats with no data yet, the empty schedule grid, browse panes
@@ -6607,6 +6788,20 @@
   <div class="modal" id="modal-body"></div>
 </div>
 
+<!-- Floating component-warning notification (Piece 5b). Hidden by
+     default; populated and toggled by _renderComponentNotification(). -->
+<aside id="component-notif" class="comp-notif" role="status" aria-live="polite" hidden>
+  <div class="comp-notif-head">
+    <span class="comp-notif-icon" aria-hidden="true">⚠</span>
+    <span class="comp-notif-title">Incomplete components</span>
+    <button type="button" class="comp-notif-close" onclick="_dismissComponentNotif()" title="Dismiss" aria-label="Dismiss">×</button>
+  </div>
+  <div class="comp-notif-body" id="comp-notif-body"></div>
+  <div class="comp-notif-actions">
+    <button type="button" class="comp-notif-link" onclick="_openComponentDetailsModal()">View details</button>
+  </div>
+</aside>
+
 <!-- Initialize the HS namespace so the deferred module script below can
      attach catalog/persistence/etc. to it. -->
 <script>
@@ -6716,6 +6911,12 @@ import {
   deleteAuthoredSection,
   SESSION_DATE_DEFAULTS,
 } from './src/ui/author.js';
+import {
+  detectIncompleteComponents,
+  hashIncompleteState,
+  shouldShowNotification,
+  summarizeIncomplete,
+} from './src/ui/components.js';
 bootTheme();
 const catalog = createCatalog();
 const persistence = createPersistence(catalog);
@@ -6798,6 +6999,12 @@ window.HS.author = {
   deleteAuthoredCourse,
   deleteAuthoredSection,
   SESSION_DATE_DEFAULTS,
+};
+window.HS.components = {
+  detectIncompleteComponents,
+  hashIncompleteState,
+  shouldShowNotification,
+  summarizeIncomplete,
 };
 // Replay any persisted user-authored courses so they appear in the
 // catalog right away — before the first horarium:ready listener fires
@@ -6932,6 +7139,98 @@ function _applyThemeText() {
 }
 window.addEventListener('horarium:ready', _applyThemeText);
 window.addEventListener('horarium:theme-changed', _applyThemeText);
+
+// ===== COMPONENT NOTIFICATION (Piece 5b) =====
+// Surfaces a top-right card when a multi-component course has uncovered
+// components in the active plan. Stays visible until dismissed; dismissal
+// is hashed and stored on the plan so equivalent states stay quiet but
+// new incomplete states re-surface.
+function _renderComponentNotification() {
+  const el = document.getElementById('component-notif');
+  if (!el) return;
+  if (!(window.HS && window.HS.catalog && window.HS.components)) return;
+  const plan = (typeof _viewedPlan === 'function') ? _viewedPlan() : null;
+  const eff = window.HS.catalog.getEffective();
+  const show = window.HS.components.shouldShowNotification(plan, eff);
+  if (!show) {
+    el.setAttribute('hidden', '');
+    return;
+  }
+  const summary = window.HS.components.summarizeIncomplete(plan, eff);
+  const body = document.getElementById('comp-notif-body');
+  if (body) body.textContent = summary.line;
+  el.removeAttribute('hidden');
+}
+function _dismissComponentNotif() {
+  if (!(window.HS && window.HS.catalog && window.HS.components)) return;
+  const plan = (typeof _viewedPlan === 'function') ? _viewedPlan() : null;
+  if (!plan) return;
+  const eff = window.HS.catalog.getEffective();
+  const incomplete = window.HS.components.detectIncompleteComponents(plan, eff);
+  const hash = window.HS.components.hashIncompleteState(incomplete);
+  try {
+    window.HS.catalog.plans.setDismissedComponentHash(plan.id, hash);
+  } catch (e) { console.error('Could not persist dismissal:', e); }
+  const el = document.getElementById('component-notif');
+  if (el) el.setAttribute('hidden', '');
+}
+function _openComponentDetailsModal() {
+  if (!(window.HS && window.HS.modal && window.HS.components)) return;
+  const plan = (typeof _viewedPlan === 'function') ? _viewedPlan() : null;
+  if (!plan) return;
+  const eff = window.HS.catalog.getEffective();
+  const incomplete = window.HS.components.detectIncompleteComponents(plan, eff);
+  if (incomplete.size === 0) return;
+  const items = Array.from(incomplete.values()).sort((a, b) =>
+    a.course_code < b.course_code ? -1 : 1,
+  );
+  let html = '<div class="comp-detail-list">';
+  for (const item of items) {
+    html += '<div class="comp-detail-course">';
+    html += '<div class="comp-detail-code">' + _brEscape(item.course_code) + '</div>';
+    if (item.course_title) {
+      html += '<div class="comp-detail-title">' + _brEscape(item.course_title) + '</div>';
+    }
+    for (const c of item.staged) {
+      html += '<div class="comp-detail-comp">';
+      html += '<span class="comp-detail-mark is-staged">✓</span>';
+      html += '<span class="comp-detail-comp-name">' + _brEscape(c) + '</span>';
+      html += '</div>';
+    }
+    for (const c of item.missing) {
+      const n = item.missing_section_counts[c] || 0;
+      html += '<div class="comp-detail-comp">';
+      html += '<span class="comp-detail-mark is-missing">⨯</span>';
+      html += '<span class="comp-detail-comp-name">' + _brEscape(c) + '</span>';
+      html += '<span class="comp-detail-comp-avail">' + n + ' section' + (n === 1 ? '' : 's') + ' available</span>';
+      html += '</div>';
+    }
+    html += '</div>';
+  }
+  html += '</div>';
+  window.HS.modal.showModal({
+    title: 'Incomplete components',
+    body: { html: '<p>The following courses have components you haven\'t staged:</p>' + html },
+    buttons: [{ label: 'Close', style: 'secondary', action: function () {} }],
+  });
+}
+window.addEventListener('horarium:ready', function () {
+  if (!(window.HS && window.HS.catalog && window.HS.catalog.subscribe)) return;
+  _renderComponentNotification();
+  window.HS.catalog.subscribe(function (e) {
+    // Any plan mutation (stage, unstage, switch active, dismiss) might
+    // change the notification state; recompute and re-render.
+    if (e && (e.reason === 'plan_mutation' || e.reason === 'mutation')) {
+      _renderComponentNotification();
+    }
+  });
+});
+// Re-render on plan strip click (currentViewPlanId changes outside the
+// catalog subscription). The plan strip render path calls into
+// _renderComponentNotification implicitly via render() — but render()
+// isn't always called on every internal state change, so subscribe to
+// our own custom event.
+window.addEventListener('horarium:plan-view-changed', _renderComponentNotification);
 
 function _activePlanId() {
   if (!(window.HS && window.HS.catalog && window.HS.catalog.plans)) return null;
@@ -7073,6 +7372,7 @@ function buildTabs() {
   t.querySelectorAll('.mp-pill-main').forEach(function (btn) {
     btn.addEventListener('click', function () {
       currentViewPlanId = btn.getAttribute('data-plan-id');
+      window.dispatchEvent(new CustomEvent('horarium:plan-view-changed'));
       render();
     });
   });
@@ -7338,13 +7638,20 @@ function buildLegend() {
   if (rows.sections.length > 0) {
     if (html) html += '<span class="lg-label" style="margin-left:0.5rem;">Sections</span>';
     else html += '<span class="lg-label">Staged sections</span>';
+    const linkSet = _buildLinkSet(plan);
     for (const s of rows.sections) {
       const swatch = '<i style="background:' + _escHtml(s.color.bg) + ';"></i>';
+      const isLinked = linkSet.has(String(s.class_number));
+      const isLinkTarget = _legendLinkSourceCN && _legendLinkSourceCN !== String(s.class_number);
+      html += '<span class="lg-section-wrap' + (isLinkTarget ? ' lg-link-target' : '') + (_legendLinkSourceCN === String(s.class_number) ? ' lg-link-source' : '') + '">';
       html += '<button type="button" class="item lg-section-item" data-class-number="' + _escHtml(s.class_number) + '" title="' +
         _escHtml(s.course_title) + ' — ' + _escHtml(s.meeting_summary || 'no meetings') + '">' +
         swatch + _escHtml(s.course_code) +
         (s.section_code ? ' <span style="opacity:0.5">' + _escHtml(s.section_code) + '</span>' : '') +
+        (isLinked ? ' <span class="lg-link-icon" title="Linked to another section">⛓</span>' : '') +
         '</button>';
+      html += '<button type="button" class="lg-section-menu" data-class-number="' + _escHtml(s.class_number) + '" title="Section options" aria-label="Section options">⋮</button>';
+      html += '</span>';
     }
   }
   if (html === '') html = '<span class="lg-empty">Empty plan. Stage sections in the picker above.</span>';
@@ -7360,16 +7667,106 @@ function buildLegend() {
       window.HS.catalog.plans.updateFilter(p.id, fid, { visible: !f.visible });
     });
   });
-  // Wire staged-section clicks (scroll grid to section's first meeting).
+  // Wire staged-section clicks. In normal mode → scroll to the
+  // section's first meeting in the grid. In link-mode → clicking
+  // another section creates the link.
   l.querySelectorAll('.lg-section-item').forEach(function (btn) {
     btn.addEventListener('click', function () {
       const cn = btn.getAttribute('data-class-number');
+      if (_legendLinkSourceCN && _legendLinkSourceCN !== cn) {
+        _legendCommitLink(_legendLinkSourceCN, cn);
+        return;
+      }
       const target = document.querySelector('[data-section-key="' + cn + '"]');
       if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
       else document.getElementById('grid-a71').scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   });
+  // Kebab menu per staged section row.
+  l.querySelectorAll('.lg-section-menu').forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      const cn = btn.getAttribute('data-class-number');
+      _openLegendSectionMenu(cn);
+    });
+  });
 }
+
+// ===== Section linking (Piece 5b) =====
+// Module-level link-mode state. When set to a class_number, the legend
+// renders other section rows with a highlight, and clicking one of them
+// commits the link.
+let _legendLinkSourceCN = null;
+
+// Produce a set of every class_number that participates in any link
+// on the given plan — used to decide whether to render the chain icon.
+function _buildLinkSet(plan) {
+  const out = new Set();
+  if (!plan || !plan.linked_sections) return out;
+  for (const l of plan.linked_sections) {
+    if (l && l.a) out.add(String(l.a));
+    if (l && l.b) out.add(String(l.b));
+  }
+  return out;
+}
+
+function _openLegendSectionMenu(classNumber) {
+  if (!(window.HS && window.HS.modal)) return;
+  const plan = _viewedPlan();
+  if (!plan) return;
+  const cn = String(classNumber);
+  const linkSet = _buildLinkSet(plan);
+  const isLinked = linkSet.has(cn);
+  const buttons = [];
+  if (isLinked) {
+    // Currently linked — offer to unlink.
+    const partners = (plan.linked_sections || []).filter(function (l) {
+      return l.a === cn || l.b === cn;
+    });
+    buttons.push({ label: 'Remove link' + (partners.length > 1 ? 's' : ''), style: 'secondary', action: function () {
+      for (const l of partners) {
+        try { window.HS.catalog.plans.removeLink(plan.id, l.a, l.b); } catch (_) {}
+      }
+    } });
+  } else {
+    buttons.push({ label: 'Link to another section…', style: 'primary', action: function () {
+      _legendLinkSourceCN = cn;
+      buildLegend();
+    } });
+  }
+  buttons.push({ label: 'Cancel', style: 'secondary', action: function () {} });
+  // Resolve the section for a friendlier title.
+  const eff = _effectiveCatalog();
+  let title = 'Section ' + cn;
+  for (const c of (eff.courses || [])) {
+    const s = (c.sections || []).find(function (x) { return String(x.class_number) === cn; });
+    if (s) { title = c.code + ' · ' + (s.section_code || ''); break; }
+  }
+  window.HS.modal.showModal({
+    title: title,
+    body: isLinked ? 'This section is linked. Removing the link won\'t unstage anything.'
+                   : 'Pick another staged section to pair with this one. Linked sections offer to unstage together.',
+    buttons: buttons,
+    onCancel: function () {},
+  });
+}
+
+function _legendCommitLink(sourceCN, targetCN) {
+  const plan = _viewedPlan();
+  if (!plan) return;
+  try { window.HS.catalog.plans.addLink(plan.id, sourceCN, targetCN); }
+  catch (err) { _hsAlert((err && err.message) || String(err)); }
+  _legendLinkSourceCN = null;
+  buildLegend();
+}
+
+// Escape cancels link mode.
+window.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape' && _legendLinkSourceCN) {
+    _legendLinkSourceCN = null;
+    if (typeof buildLegend === 'function') buildLegend();
+  }
+});
 
 // ============ MODAL ============
 // Section detail modal — reads the section + its course from the
@@ -7425,9 +7822,10 @@ function _planStageInActive(classNumber, subject) {
 function _planUnstageFromActive(classNumber) {
   const id = _activePlanId();
   if (!id) return;
-  window.HS.catalog.plans.unstageSection(id, classNumber);
   closeModal();
-  render();
+  // Route through the link-aware unstage flow so the prompt fires if
+  // the section has a linked partner (Piece 5b).
+  _unstageWithLinkPrompt(id, classNumber);
 }
 
 function closeModal() {
@@ -8237,7 +8635,13 @@ function _buildOwnCell(evt, extraClass) {
   cell.style.setProperty('--cell-ink', meta.color.ink);
   const typeNote = evt.label === 'Lecture' ? '' : ' <em>' + _escHtml(String(evt.label || '').toLowerCase()) + '</em>';
   const titleLine = meta.title ? '<div class="title-sub">' + _escHtml(meta.title) + '</div>' : '';
+  // Chain icon when the section is linked to another (Piece 5b).
+  const plan = (typeof _viewedPlan === 'function') ? _viewedPlan() : null;
+  const linkSet = _buildLinkSet(plan);
+  const linkBadge = (evt.secKey && linkSet.has(String(evt.secKey)))
+    ? '<span class="cell-link-icon" title="Linked to another section">⛓</span>' : '';
   cell.innerHTML =
+    linkBadge +
     '<div class="name">' + _escHtml(meta.short || evt.course || '') + typeNote + '</div>' +
     titleLine +
     '<div class="time-sub">' + fmtShort(evt.start) + '–' + fmtShort(evt.end) + '</div>';
@@ -12169,18 +12573,91 @@ function _pkConfirmStage(classNumber, subject, reason) {
 function _pkExecStage(action, classNumber, subject) {
   const planId = _viewedPlanId();
   if (!planId) { window.HS.modal.showModalAlert({ title: 'No plan', body: 'There\'s no plan to stage into.' }); return; }
-  try {
-    if (action === 'stage') {
+  if (action === 'stage') {
+    try {
       window.HS.catalog.plans.stageSection(planId, { class_number: classNumber, subject: subject });
-    } else {
-      window.HS.catalog.plans.unstageSection(planId, classNumber);
+    } catch (err) {
+      window.HS.modal.showModalAlert({ title: 'Could not stage', body: (err && err.message) ? err.message : String(err) });
     }
-  } catch (err) {
-    window.HS.modal.showModalAlert({
-      title: 'Could not ' + action,
-      body: (err && err.message) ? err.message : String(err),
-    });
+    return;
   }
+  // Unstage: if the section is linked to another, prompt the user
+  // about also dropping its partner. Yes / No / Cancel.
+  _unstageWithLinkPrompt(planId, classNumber);
+}
+
+// Piece 5b: unstage flow that respects user-defined section links.
+// If the staged section has any linked partners, the user picks one of
+// three outcomes:
+//   Yes → unstage both, drop the link
+//   No  → unstage only the clicked section, drop the link
+//   Cancel → no-op
+function _unstageWithLinkPrompt(planId, classNumber) {
+  const plan = window.HS.catalog.plans.get(planId);
+  if (!plan) return;
+  const cn = String(classNumber);
+  const links = (plan.linked_sections || []).filter(function (l) {
+    return l.a === cn || l.b === cn;
+  });
+  if (links.length === 0) {
+    // No links — straight unstage.
+    try { window.HS.catalog.plans.unstageSection(planId, classNumber); }
+    catch (err) {
+      window.HS.modal.showModalAlert({ title: 'Could not unstage', body: (err && err.message) ? err.message : String(err) });
+    }
+    return;
+  }
+  // Build a friendly partner description: course code + section code.
+  const eff = window.HS.catalog.getEffective();
+  const byCN = new Map();
+  for (const c of (eff.courses || [])) {
+    for (const s of (c.sections || [])) {
+      if (s.class_number) byCN.set(String(s.class_number), { course: c, section: s });
+    }
+  }
+  const partners = links.map(function (l) {
+    return l.a === cn ? l.b : l.a;
+  });
+  const labels = partners.map(function (pcn) {
+    const hit = byCN.get(pcn);
+    return hit ? (hit.course.code + ' · ' + (hit.section.section_code || '')) : pcn;
+  });
+  const partnerText = labels.length === 1
+    ? labels[0]
+    : labels.slice(0, -1).join(', ') + ' and ' + labels[labels.length - 1];
+  window.HS.modal.showModal({
+    title: 'Linked sections',
+    body: 'You linked this section to ' + partnerText + '. Also unstage ' +
+          (labels.length === 1 ? 'that section' : 'those sections') + '?',
+    buttons: [
+      { label: 'Cancel', style: 'secondary', action: function () {} },
+      { label: 'No, just this one', style: 'secondary', action: function () {
+        try {
+          for (const pcn of partners) {
+            window.HS.catalog.plans.removeLink(planId, cn, pcn);
+          }
+          window.HS.catalog.plans.unstageSection(planId, classNumber);
+        } catch (err) {
+          window.HS.modal.showModalAlert({ title: 'Could not unstage', body: (err && err.message) ? err.message : String(err) });
+        }
+      } },
+      { label: 'Yes, both', style: 'danger', action: function () {
+        try {
+          window.HS.catalog.plans.unstageSection(planId, classNumber);
+          for (const pcn of partners) {
+            window.HS.catalog.plans.unstageSection(planId, pcn);
+          }
+          // Removing both sections triggers clearLinksForSection
+          // automatically only if we add it; explicit cleanup:
+          for (const pcn of partners) {
+            window.HS.catalog.plans.removeLink(planId, cn, pcn);
+          }
+        } catch (err) {
+          window.HS.modal.showModalAlert({ title: 'Could not unstage', body: (err && err.message) ? err.message : String(err) });
+        }
+      } },
+    ],
+  });
 }
 
 // --- export ---

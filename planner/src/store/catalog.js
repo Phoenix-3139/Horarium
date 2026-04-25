@@ -575,6 +575,16 @@ export function createCatalog() {
       sections: [],
       filters: [],
       notes: "",
+      // Piece 5b: a stable hash of the current incomplete-components
+      // state at the time the user last dismissed the floating
+      // notification. Banner reappears whenever the actual incomplete
+      // state hashes to something different.
+      dismissed_component_warning_hash: null,
+      // Piece 5b: user-defined section links — pairs the user has
+      // explicitly tied together (e.g. lecture + a particular lab).
+      // Stored once per pair, undirected. Both unstage modal and the
+      // chain icon read from this list.
+      linked_sections: [],
     };
     state.plans.byId.set(id, plan);
     if (isActive) state.plans.active = id;
@@ -629,6 +639,10 @@ export function createCatalog() {
       sections: src.sections.map((s) => ({ class_number: s.class_number, subject: s.subject || null })),
       filters: src.filters.map((f) => Object.assign({}, f)),
       notes: src.notes || "",
+      // Reset the dismissed-warning hash for the copy: the duplicate
+      // has its own incomplete-components story to tell.
+      dismissed_component_warning_hash: null,
+      linked_sections: (src.linked_sections || []).map((l) => ({ a: l.a, b: l.b })),
     });
     _planNotify("duplicate", id, { source_plan_id: planId });
     return id;
@@ -652,6 +666,14 @@ export function createCatalog() {
     const before = plan.sections.length;
     plan.sections = plan.sections.filter((s) => s.class_number !== classNumber);
     if (plan.sections.length === before) return false;
+    // Drop any links involving this section so the link list never
+    // references absent sections (Piece 5b).
+    if (Array.isArray(plan.linked_sections) && plan.linked_sections.length > 0) {
+      const cn = String(classNumber);
+      plan.linked_sections = plan.linked_sections.filter(
+        (l) => l.a !== cn && l.b !== cn,
+      );
+    }
     plan.modified_at = _nowISO();
     _planNotify("unstage_section", planId, { class_number: classNumber });
     return true;
@@ -691,6 +713,68 @@ export function createCatalog() {
     plan.modified_at = _nowISO();
     _planNotify("remove_filter", planId, { filter_id: filterId });
     return true;
+  }
+  // Piece 5b: dismissal hash setter for the floating component-warning
+  // notification. Stored on the plan so dismissal is per-plan.
+  function _planSetDismissedComponentHash(planId, hash) {
+    const plan = state.plans.byId.get(planId);
+    if (!plan) throw new Error(`Unknown plan ${planId}`);
+    plan.dismissed_component_warning_hash = hash == null ? null : String(hash);
+    plan.modified_at = _nowISO();
+    _planNotify("set_dismissed_component_hash", planId);
+  }
+  // Piece 5b: section-link plumbing. Pairs are stored once per plan,
+  // undirected — adding {a, b} when {b, a} already exists is a no-op,
+  // removing either direction wipes the pair. Self-links are rejected.
+  function _planAddLink(planId, classA, classB) {
+    const plan = state.plans.byId.get(planId);
+    if (!plan) throw new Error(`Unknown plan ${planId}`);
+    const a = String(classA);
+    const b = String(classB);
+    if (!a || !b) throw new Error("addLink requires two class numbers");
+    if (a === b) throw new Error("Cannot link a section to itself");
+    plan.linked_sections = plan.linked_sections || [];
+    const exists = plan.linked_sections.some(
+      (l) => (l.a === a && l.b === b) || (l.a === b && l.b === a),
+    );
+    if (exists) return false;
+    plan.linked_sections.push({ a, b });
+    plan.modified_at = _nowISO();
+    _planNotify("add_link", planId, { a, b });
+    return true;
+  }
+  function _planRemoveLink(planId, classA, classB) {
+    const plan = state.plans.byId.get(planId);
+    if (!plan) throw new Error(`Unknown plan ${planId}`);
+    const a = String(classA);
+    const b = String(classB);
+    plan.linked_sections = plan.linked_sections || [];
+    const before = plan.linked_sections.length;
+    plan.linked_sections = plan.linked_sections.filter(
+      (l) => !((l.a === a && l.b === b) || (l.a === b && l.b === a)),
+    );
+    if (plan.linked_sections.length === before) return false;
+    plan.modified_at = _nowISO();
+    _planNotify("remove_link", planId, { a, b });
+    return true;
+  }
+  // Drop every link involving `classNum`. Used after unstaging so the
+  // plan's link list never references absent sections.
+  function _planClearLinksForSection(planId, classNum) {
+    const plan = state.plans.byId.get(planId);
+    if (!plan) return 0;
+    const cn = String(classNum);
+    plan.linked_sections = plan.linked_sections || [];
+    const before = plan.linked_sections.length;
+    plan.linked_sections = plan.linked_sections.filter(
+      (l) => l.a !== cn && l.b !== cn,
+    );
+    const removed = before - plan.linked_sections.length;
+    if (removed > 0) {
+      plan.modified_at = _nowISO();
+      _planNotify("clear_links_for_section", planId, { class_number: cn });
+    }
+    return removed;
   }
   function _planClearByOrigin(origin) {
     let removed = 0;
@@ -804,6 +888,15 @@ export function createCatalog() {
             sections: Array.isArray(plan.sections) ? plan.sections : [],
             filters: Array.isArray(plan.filters) ? plan.filters : [],
             notes: typeof plan.notes === "string" ? plan.notes : "",
+            dismissed_component_warning_hash:
+              typeof plan.dismissed_component_warning_hash === "string"
+                ? plan.dismissed_component_warning_hash
+                : null,
+            linked_sections: Array.isArray(plan.linked_sections)
+              ? plan.linked_sections
+                  .filter((l) => l && l.a && l.b && l.a !== l.b)
+                  .map((l) => ({ a: String(l.a), b: String(l.b) }))
+              : [],
           });
         }
       }
@@ -887,6 +980,10 @@ export function createCatalog() {
       addFilter: _planAddFilter,
       updateFilter: _planUpdateFilter,
       removeFilter: _planRemoveFilter,
+      setDismissedComponentHash: _planSetDismissedComponentHash,
+      addLink: _planAddLink,
+      removeLink: _planRemoveLink,
+      clearLinksForSection: _planClearLinksForSection,
       clearByOrigin: _planClearByOrigin,
     },
     toJSON,
