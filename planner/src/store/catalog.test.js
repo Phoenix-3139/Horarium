@@ -688,6 +688,178 @@ describe("createCatalog — metadata", () => {
   });
 });
 
+describe("createCatalog — plans namespace (Piece 5a)", () => {
+  it("seeds a default active plan on construction", () => {
+    const cat = createCatalog();
+    const plans = cat.plans.list();
+    expect(plans).toHaveLength(1);
+    expect(plans[0].kind).toBe("active");
+    expect(plans[0].name).toBe("My Plan");
+    expect(plans[0].sections).toEqual([]);
+    expect(plans[0].filters).toEqual([]);
+    expect(plans[0].origin).toBe("user");
+    expect(cat.plans.getActive().id).toBe(plans[0].id);
+  });
+
+  it("create + list + get by id", () => {
+    const cat = createCatalog();
+    const id = cat.plans.create({ name: "Backup plan", kind: "candidate" });
+    expect(cat.plans.list()).toHaveLength(2);
+    expect(cat.plans.get(id).name).toBe("Backup plan");
+    expect(cat.plans.get(id).kind).toBe("candidate");
+    expect(cat.plans.get("no-such")).toBe(null);
+  });
+
+  it("creating an active plan demotes the previous active", () => {
+    const cat = createCatalog();
+    const prevActive = cat.plans.getActive();
+    const id = cat.plans.create({ name: "New active", kind: "active" });
+    expect(cat.plans.getActive().id).toBe(id);
+    expect(cat.plans.get(prevActive.id).kind).toBe("candidate");
+  });
+
+  it("promote demotes the previous active and elevates the target", () => {
+    const cat = createCatalog();
+    const prevActive = cat.plans.getActive();
+    const candId = cat.plans.create({ name: "Cand" });
+    cat.plans.promote(candId);
+    expect(cat.plans.getActive().id).toBe(candId);
+    expect(cat.plans.get(prevActive.id).kind).toBe("candidate");
+  });
+
+  it("delete refuses the active plan; succeeds on candidates", () => {
+    const cat = createCatalog();
+    const active = cat.plans.getActive();
+    expect(() => cat.plans.delete(active.id)).toThrow(/Cannot delete the active plan/);
+    const candId = cat.plans.create({});
+    expect(cat.plans.delete(candId)).toBe(true);
+    expect(cat.plans.get(candId)).toBe(null);
+  });
+
+  it("rename sets a new name and bumps modified_at", () => {
+    const cat = createCatalog();
+    const active = cat.plans.getActive();
+    const before = active.modified_at;
+    // Tick time so modified_at moves forward.
+    return new Promise((resolve) => setTimeout(() => {
+      cat.plans.rename(active.id, "Fall A schedule");
+      const after = cat.plans.get(active.id);
+      expect(after.name).toBe("Fall A schedule");
+      expect(after.modified_at >= before).toBe(true);
+      expect(() => cat.plans.rename(active.id, "")).toThrow();
+      resolve();
+    }, 10));
+  });
+
+  it("duplicate creates a candidate copy with same sections/filters", () => {
+    const cat = createCatalog();
+    const active = cat.plans.getActive();
+    cat.plans.stageSection(active.id, { class_number: "20631", subject: "ENGR-UH" });
+    cat.plans.addFilter(active.id, { name: "Lunch", days: ["Mon", "Wed"], start_time: "12:00", end_time: "13:00" });
+    const dupId = cat.plans.duplicate(active.id);
+    const dup = cat.plans.get(dupId);
+    expect(dup.kind).toBe("candidate");
+    expect(dup.sections).toEqual([{ class_number: "20631", subject: "ENGR-UH" }]);
+    expect(dup.filters).toHaveLength(1);
+    // Modifying the dup doesn't mutate the source.
+    dup.sections.push({ class_number: "99999" });
+    expect(cat.plans.get(active.id).sections).toHaveLength(1);
+  });
+
+  it("stage / unstage sections (idempotent stage)", () => {
+    const cat = createCatalog();
+    const active = cat.plans.getActive();
+    cat.plans.stageSection(active.id, { class_number: "20631", subject: "ENGR-UH" });
+    cat.plans.stageSection(active.id, { class_number: "20631", subject: "ENGR-UH" }); // dup, no-op
+    cat.plans.stageSection(active.id, { class_number: "20632", subject: "ENGR-UH" });
+    expect(cat.plans.getActive().sections).toHaveLength(2);
+    cat.plans.unstageSection(active.id, "20631");
+    expect(cat.plans.getActive().sections).toEqual([{ class_number: "20632", subject: "ENGR-UH" }]);
+    expect(cat.plans.unstageSection(active.id, "no-such")).toBe(false);
+  });
+
+  it("add / update / remove filters", () => {
+    const cat = createCatalog();
+    const active = cat.plans.getActive();
+    const fid = cat.plans.addFilter(active.id, { name: "Gym", days: ["Tue"], visible: true });
+    expect(cat.plans.getActive().filters).toHaveLength(1);
+    cat.plans.updateFilter(active.id, fid, { name: "Gym & swim", visible: false });
+    const f = cat.plans.getActive().filters[0];
+    expect(f.name).toBe("Gym & swim");
+    expect(f.visible).toBe(false);
+    expect(f.id).toBe(fid); // id never reassigned
+    cat.plans.removeFilter(active.id, fid);
+    expect(cat.plans.getActive().filters).toEqual([]);
+  });
+
+  it("clearByOrigin removes only matching plans", () => {
+    const cat = createCatalog();
+    const userActive = cat.plans.getActive();
+    const userCand = cat.plans.create({ name: "Cand", origin: "user" });
+    const autoCand = cat.plans.create({ name: "Auto", origin: "auto-scheduler" });
+    const removed = cat.plans.clearByOrigin("auto-scheduler");
+    expect(removed).toBe(1);
+    expect(cat.plans.get(autoCand)).toBe(null);
+    expect(cat.plans.get(userCand)).not.toBe(null);
+    expect(cat.plans.getActive().id).toBe(userActive.id);
+  });
+
+  it("clearByOrigin removing the active plan re-promotes a survivor", () => {
+    const cat = createCatalog();
+    // Create an auto-scheduler plan as active.
+    const autoActive = cat.plans.create({ name: "Auto", kind: "active", origin: "auto-scheduler" });
+    cat.plans.clearByOrigin("auto-scheduler");
+    // The user's seed plan should be re-promoted.
+    const newActive = cat.plans.getActive();
+    expect(newActive).not.toBe(null);
+    expect(newActive.origin).toBe("user");
+  });
+
+  it("plans survive toJSON → fromJSON round-trip", () => {
+    const cat1 = createCatalog();
+    const active = cat1.plans.getActive();
+    cat1.plans.rename(active.id, "Round-trip plan");
+    cat1.plans.stageSection(active.id, { class_number: "20631", subject: "ENGR-UH" });
+    cat1.plans.addFilter(active.id, { name: "Lunch", days: ["Mon"] });
+    const candId = cat1.plans.create({ name: "Cand" });
+    const snap = JSON.parse(JSON.stringify(cat1.toJSON()));
+
+    const cat2 = createCatalog();
+    cat2.fromJSON(snap);
+    expect(cat2.plans.list()).toHaveLength(2);
+    const restored = cat2.plans.getActive();
+    expect(restored.name).toBe("Round-trip plan");
+    expect(restored.sections).toEqual([{ class_number: "20631", subject: "ENGR-UH" }]);
+    expect(restored.filters).toHaveLength(1);
+    expect(cat2.plans.get(candId).name).toBe("Cand");
+  });
+
+  it("subscriber receives plan_mutation events", () => {
+    const cat = createCatalog();
+    const active = cat.plans.getActive();
+    const events = [];
+    cat.subscribe((e) => events.push(e));
+    cat.plans.stageSection(active.id, { class_number: "20631" });
+    cat.plans.rename(active.id, "Renamed");
+    const planEvents = events.filter((e) => e.reason === "plan_mutation");
+    expect(planEvents.length).toBeGreaterThanOrEqual(2);
+    expect(planEvents[0].plan_event).toBe("stage_section");
+    expect(planEvents[1].plan_event).toBe("rename");
+  });
+
+  it("clear({plans:true}) wipes plans and re-seeds the default", () => {
+    const cat = createCatalog();
+    cat.plans.create({ name: "Cand1" });
+    cat.plans.create({ name: "Cand2" });
+    expect(cat.plans.list()).toHaveLength(3);
+    cat.clear({ plans: true });
+    const after = cat.plans.list();
+    expect(after).toHaveLength(1);
+    expect(after[0].name).toBe("My Plan");
+    expect(after[0].kind).toBe("active");
+  });
+});
+
 describe("createCatalog — imports namespace (Piece 4)", () => {
   it("addImport stores a pack and surfaces it via listImports", () => {
     const cat = createCatalog();

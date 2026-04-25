@@ -5023,11 +5023,126 @@
   <div class="modal" id="modal-body"></div>
 </div>
 
-<!-- 1. Placeholder plan data (classic, sets window.SCHED_DATA synchronously).
-     Loaded before the main classic script so SCHED_DATA is a global by the
-     time buildScheduleTable(), buildCourseList(), render(), etc. run at
-     parse-time in the main script. -->
-<script src="./src/store/placeholder_user_plan.js"></script>
+<!-- 1. Plan-state bootstrap. Piece 5a moved plan state into the catalog
+     store. To keep parse-time read sites in the main classic script
+     working until the redesign in 5a/2 burns the shim, we install a
+     SCHED_DATA *getter* that projects the new namespace into the legacy
+     shape on every read. Before the real catalog is ready (deferred
+     module below populates window.HS.catalog), the getter returns a
+     safe empty shape — same behavior as the old placeholder, no crashes
+     on parse-time render calls. -->
+<script>
+(function () {
+  function _emptyLegacyView() {
+    return {
+      options: [{ name: "Plan A", tagline: "No sections committed yet",
+        desc: "Paste subject data in the Catalog tab to populate the picker.",
+        sections: [] }],
+      sections: {},
+      cores: [],
+      conflicts: { "0": {} },
+      analysis: [{ "A71": [], "A72": [] }],
+    };
+  }
+  window._legacyPlanView = function () {
+    var cat = window.HS && window.HS.catalog;
+    if (!cat || !cat.plans) return _emptyLegacyView();
+    var plans = cat.plans.list();
+    if (plans.length === 0) return _emptyLegacyView();
+    var active = cat.plans.getActive();
+    // Order plans so the active one is at index 0 — currentOption=0
+    // historically meant "the active plan", and we preserve that.
+    var ordered = active ? [active].concat(plans.filter(function (p) { return p.id !== active.id; })) : plans;
+    // Tagline / desc projection: when a plan has no staged sections,
+    // mirror the placeholder strings exactly so the Main tab renders
+    // identically to its pre-refactor appearance. As soon as sections
+    // exist, we surface the plan's notes / kind. (Commit 5a/2 redesigns
+    // Main and replaces these projections with native plan rendering.)
+    var EMPTY_TAGLINE = "No sections committed yet";
+    var EMPTY_DESC = "Paste subject data in the Catalog tab to populate the picker, then add sections to build a plan.";
+    return {
+      options: ordered.map(function (p) {
+        var empty = !p.sections || p.sections.length === 0;
+        return {
+          id: p.id,
+          name: p.name,
+          tagline: empty ? EMPTY_TAGLINE : (p.kind === "active" ? "" : "Candidate"),
+          desc: empty ? EMPTY_DESC : (p.notes || ""),
+          // Sections array shape: legacy code uses string keys; we
+          // expose class_number as the key. Iteration bodies that
+          // resolve the key need to look it up via SCHED_DATA.sections.
+          sections: p.sections.map(function (s) { return s.class_number; }),
+        };
+      }),
+      // Lookup: class_number → effective section, projected into the
+      // shape legacy code expects (meeting tuples). Returns undefined
+      // for unknown keys, matching old SCHED_DATA.sections behavior.
+      sections: _legacySectionsView(),
+      cores: (window.HS && window.HS.adapter && window.HS.adapter.getCoresList)
+        ? window.HS.adapter.getCoresList() : [],
+      // No conflicts yet — computed by commit 5a/2 against staged
+      // sections. Every option index maps to an empty object so reads
+      // like SCHED_DATA.conflicts[i][coreId] return undefined safely.
+      conflicts: ordered.reduce(function (acc, _p, i) { acc[i] = {}; return acc; }, {}),
+      analysis: ordered.map(function () { return { A71: [], A72: [] }; }),
+    };
+  };
+
+  // Build a {classNumber: legacySection} object on demand. The legacy
+  // shape uses meeting tuples [days[], start_min, end_min, session, label]
+  // while the parser produces meeting objects. We translate.
+  function _legacySectionsView() {
+    var cat = window.HS && window.HS.catalog;
+    if (!cat || !cat.getEffective) return {};
+    var out = {};
+    try {
+      var eff = cat.getEffective();
+      for (var i = 0; i < eff.courses.length; i++) {
+        var c = eff.courses[i];
+        for (var j = 0; j < c.sections.length; j++) {
+          var s = c.sections[j];
+          if (!s.class_number) continue;
+          out[s.class_number] = _projectSectionLegacy(s, c);
+        }
+      }
+    } catch (_) {}
+    return out;
+  }
+  function _projectSectionLegacy(s, c) {
+    var meetings = (s.meetings || []).map(function (m) {
+      var days = Array.isArray(m.days) ? m.days.slice() : [];
+      var startMin = _hhmmToMin(m.start_time);
+      var endMin = _hhmmToMin(m.end_time);
+      var sess = (s.session && s.session.code) || "AD";
+      var lbl = s.component || "Lecture";
+      return [days, startMin, endMin, sess, lbl];
+    });
+    return {
+      course: c.code,
+      class_num: s.class_number,
+      sectionLabel: s.section_code || "",
+      meetings: meetings,
+    };
+  }
+  function _hhmmToMin(t) {
+    if (!t) return null;
+    var m = String(t).match(/^(\d{1,2}):(\d{2})$/);
+    if (!m) return null;
+    return Number(m[1]) * 60 + Number(m[2]);
+  }
+
+  // Define SCHED_DATA as a getter so every read pulls fresh from the
+  // store. Setting it (legacy code never does, but be defensive)
+  // overwrites the descriptor with a static value.
+  Object.defineProperty(window, "SCHED_DATA", {
+    configurable: true,
+    get: function () { return window._legacyPlanView(); },
+    set: function (v) {
+      Object.defineProperty(window, "SCHED_DATA", { configurable: true, writable: true, value: v });
+    },
+  });
+})();
+</script>
 
 <!-- 2. Stub HS.adapter so parse-time calls don't crash. The module script
      below replaces .catalog / .persistence / .adapter with the real ones
@@ -5160,6 +5275,15 @@ window.dispatchEvent(new CustomEvent('horarium:ready'));
 <script>
 
 // ============ STATE ============
+// Plan state (Piece 5a) lives in the catalog store under catalog.plans.
+// The legacy global SCHED_DATA (loaded from placeholder_user_plan.js,
+// now removed) was a flatter shape with per-option arrays. To keep this
+// commit's diff localized to data plumbing — Main UI redesign happens
+// in commit 5a/2 — we provide a SCHED_DATA-shaped projection over the
+// new namespace via _legacyPlanView() below. Read sites continue to
+// access SCHED_DATA but it's now a dynamic getter that reads from the
+// store every call. Commit 5a/2 will burn this shim and replace the
+// downstream reads with direct catalog.plans.* calls.
 let currentOption = 0;
 let currentCat = 'PHYED';
 let selected = { CADT: null, CDAD: null, CSTS: null, CCEA: null, PHYED: null };

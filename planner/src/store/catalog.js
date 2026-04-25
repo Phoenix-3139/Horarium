@@ -149,7 +149,26 @@ export function createCatalog() {
     // mutates from. Use copySectionFromImport to materialize a section
     // from an import as an edit in the user's primary overlay.
     imports: new Map(),
+    // Plans namespace (Piece 5a). One plan is `kind:'active'` at any
+    // time; the rest are candidates. Each plan carries staged section
+    // refs and personal-time filters. The `origin` field exists for the
+    // disposable principle: scheduler-generated plans can be cleared
+    // without affecting user-created ones via clearPlansByOrigin.
+    plans: {
+      active: null,                  // plan id of the active plan, or null
+      byId: new Map(),               // plan_id -> plan object
+    },
   };
+
+  // Tiny id helpers — collision-resistant enough for the local-only
+  // use case without pulling a uuid dependency.
+  function _newPlanId() {
+    return "plan_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 8);
+  }
+  function _newFilterId() {
+    return "filter_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 8);
+  }
+  function _nowISO() { return new Date().toISOString(); }
 
   // Pub/sub for mutation events. Subscribers get an event object of the
   // form { type: 'mutation', reason: 'ingest'|'setEdit'|'delete'|'undelete'
@@ -490,6 +509,218 @@ export function createCatalog() {
     return n;
   }
 
+  // --- Plans namespace (Piece 5a) ------------------------------------
+  // All plans API methods live on the returned object's `plans` field,
+  // grouped to keep the catalog API surface readable. Mutations fire
+  // _notify with reason: 'plan_mutation' so subscribers can filter for
+  // plan-only events vs catalog ingest events.
+
+  function _planNotify(reason, planId, extra) {
+    _notify(Object.assign({
+      type: "mutation",
+      reason: "plan_mutation",
+      plan_event: reason,
+      plan_id: planId || null,
+    }, extra || {}));
+  }
+
+  function _ensureInitialPlan() {
+    if (state.plans.byId.size > 0 && state.plans.active) return;
+    // Seed an empty active plan so the planner UI always has something
+    // to render against. Idempotent — safe to call after fromJSON in
+    // case the loaded state had no plans (older snapshots).
+    const id = "plan_default";
+    state.plans.byId.set(id, {
+      id,
+      name: "My Plan",
+      kind: "active",
+      created_at: _nowISO(),
+      modified_at: _nowISO(),
+      origin: "user",
+      sections: [],
+      filters: [],
+      notes: "",
+    });
+    state.plans.active = id;
+  }
+
+  function _planList() {
+    return Array.from(state.plans.byId.values());
+  }
+  function _planGet(planId) {
+    return state.plans.byId.get(planId) || null;
+  }
+  function _planGetActive() {
+    if (!state.plans.active) return null;
+    return state.plans.byId.get(state.plans.active) || null;
+  }
+  function _planCreate({ name, kind, origin } = {}) {
+    const id = _newPlanId();
+    const isActive = kind === "active";
+    if (isActive && state.plans.active) {
+      // Demote previous active to candidate.
+      const prev = state.plans.byId.get(state.plans.active);
+      if (prev) {
+        prev.kind = "candidate";
+        prev.modified_at = _nowISO();
+      }
+    }
+    const plan = {
+      id,
+      name: typeof name === "string" && name.trim() ? name.trim() : "New plan",
+      kind: isActive ? "active" : "candidate",
+      created_at: _nowISO(),
+      modified_at: _nowISO(),
+      origin: origin === "auto-scheduler" ? "auto-scheduler" : "user",
+      sections: [],
+      filters: [],
+      notes: "",
+    };
+    state.plans.byId.set(id, plan);
+    if (isActive) state.plans.active = id;
+    _planNotify("create", id);
+    return id;
+  }
+  function _planDelete(planId) {
+    const plan = state.plans.byId.get(planId);
+    if (!plan) return false;
+    if (plan.kind === "active") {
+      throw new Error("Cannot delete the active plan. Promote another plan first.");
+    }
+    state.plans.byId.delete(planId);
+    _planNotify("delete", planId);
+    return true;
+  }
+  function _planPromote(planId) {
+    const plan = state.plans.byId.get(planId);
+    if (!plan) throw new Error(`Unknown plan ${planId}`);
+    if (plan.kind === "active") return; // no-op
+    const prev = state.plans.byId.get(state.plans.active);
+    if (prev && prev.id !== planId) {
+      prev.kind = "candidate";
+      prev.modified_at = _nowISO();
+    }
+    plan.kind = "active";
+    plan.modified_at = _nowISO();
+    state.plans.active = planId;
+    _planNotify("promote", planId);
+  }
+  function _planRename(planId, newName) {
+    const plan = state.plans.byId.get(planId);
+    if (!plan) throw new Error(`Unknown plan ${planId}`);
+    if (typeof newName !== "string" || !newName.trim()) {
+      throw new Error("Plan name must be a non-empty string.");
+    }
+    plan.name = newName.trim();
+    plan.modified_at = _nowISO();
+    _planNotify("rename", planId);
+  }
+  function _planDuplicate(planId, newName) {
+    const src = state.plans.byId.get(planId);
+    if (!src) throw new Error(`Unknown plan ${planId}`);
+    const id = _newPlanId();
+    state.plans.byId.set(id, {
+      id,
+      name: typeof newName === "string" && newName.trim() ? newName.trim() : `${src.name} (copy)`,
+      kind: "candidate",
+      created_at: _nowISO(),
+      modified_at: _nowISO(),
+      origin: src.origin,
+      sections: src.sections.map((s) => ({ class_number: s.class_number, subject: s.subject || null })),
+      filters: src.filters.map((f) => Object.assign({}, f)),
+      notes: src.notes || "",
+    });
+    _planNotify("duplicate", id, { source_plan_id: planId });
+    return id;
+  }
+  function _planStageSection(planId, ref) {
+    const plan = state.plans.byId.get(planId);
+    if (!plan) throw new Error(`Unknown plan ${planId}`);
+    if (!ref || !ref.class_number) throw new Error("stageSection requires {class_number, subject?}");
+    // Idempotent: if already staged, no-op.
+    if (plan.sections.some((s) => s.class_number === ref.class_number)) return;
+    plan.sections.push({
+      class_number: ref.class_number,
+      subject: ref.subject || null,
+    });
+    plan.modified_at = _nowISO();
+    _planNotify("stage_section", planId, { class_number: ref.class_number });
+  }
+  function _planUnstageSection(planId, classNumber) {
+    const plan = state.plans.byId.get(planId);
+    if (!plan) throw new Error(`Unknown plan ${planId}`);
+    const before = plan.sections.length;
+    plan.sections = plan.sections.filter((s) => s.class_number !== classNumber);
+    if (plan.sections.length === before) return false;
+    plan.modified_at = _nowISO();
+    _planNotify("unstage_section", planId, { class_number: classNumber });
+    return true;
+  }
+  function _planAddFilter(planId, filterDef) {
+    const plan = state.plans.byId.get(planId);
+    if (!plan) throw new Error(`Unknown plan ${planId}`);
+    const id = _newFilterId();
+    const filter = Object.assign(
+      { id, name: "", days: [], start_time: null, end_time: null, color: null, pattern: "solid", visible: true },
+      filterDef || {},
+      { id }, // never let caller override id
+    );
+    plan.filters.push(filter);
+    plan.modified_at = _nowISO();
+    _planNotify("add_filter", planId, { filter_id: id });
+    return id;
+  }
+  function _planUpdateFilter(planId, filterId, changes) {
+    const plan = state.plans.byId.get(planId);
+    if (!plan) throw new Error(`Unknown plan ${planId}`);
+    const f = plan.filters.find((x) => x.id === filterId);
+    if (!f) throw new Error(`Unknown filter ${filterId} in plan ${planId}`);
+    for (const k of Object.keys(changes || {})) {
+      if (k === "id") continue; // never reassign
+      f[k] = changes[k];
+    }
+    plan.modified_at = _nowISO();
+    _planNotify("update_filter", planId, { filter_id: filterId });
+  }
+  function _planRemoveFilter(planId, filterId) {
+    const plan = state.plans.byId.get(planId);
+    if (!plan) throw new Error(`Unknown plan ${planId}`);
+    const before = plan.filters.length;
+    plan.filters = plan.filters.filter((x) => x.id !== filterId);
+    if (plan.filters.length === before) return false;
+    plan.modified_at = _nowISO();
+    _planNotify("remove_filter", planId, { filter_id: filterId });
+    return true;
+  }
+  function _planClearByOrigin(origin) {
+    let removed = 0;
+    let activeRemoved = false;
+    for (const [id, plan] of Array.from(state.plans.byId.entries())) {
+      if (plan.origin !== origin) continue;
+      state.plans.byId.delete(id);
+      removed++;
+      if (state.plans.active === id) {
+        state.plans.active = null;
+        activeRemoved = true;
+      }
+    }
+    if (activeRemoved) {
+      // Re-promote the most-recently-modified user plan if any survived.
+      const candidates = _planList()
+        .filter((p) => p.kind !== "active")
+        .sort((a, b) => (b.modified_at || "").localeCompare(a.modified_at || ""));
+      if (candidates.length > 0) {
+        candidates[0].kind = "active";
+        state.plans.active = candidates[0].id;
+      } else {
+        // Nothing left — re-seed the default active plan.
+        _ensureInitialPlan();
+      }
+    }
+    if (removed > 0) _planNotify("clear_by_origin", null, { origin, removed });
+    return removed;
+  }
+
   // Convenience for the Manage tab's "Clear edits only" button. Wipes
   // every edit in the overlay (including soft-deletes) but leaves parsed
   // data and metadata intact. Fires one notify, not one per edit, so the
@@ -500,7 +731,7 @@ export function createCatalog() {
     _notify({ type: "mutation", reason: "clear", parsed: false, edits: true });
   }
 
-  function clear({ parsed, edits, imports }) {
+  function clear({ parsed, edits, imports, plans }) {
     if (parsed) {
       state.parsed.clear();
       state.subjectMetadata.clear();
@@ -513,12 +744,18 @@ export function createCatalog() {
     if (imports) {
       state.imports.clear();
     }
+    if (plans) {
+      state.plans.byId.clear();
+      state.plans.active = null;
+      _ensureInitialPlan();
+    }
     _notify({
       type: "mutation",
       reason: "clear",
       parsed: !!parsed,
       edits: !!edits,
       imports: !!imports,
+      plans: !!plans,
     });
   }
 
@@ -526,6 +763,10 @@ export function createCatalog() {
     const importsObj = {};
     for (const [id, entry] of state.imports.entries()) {
       importsObj[id] = entry;
+    }
+    const plansById = {};
+    for (const [id, plan] of state.plans.byId.entries()) {
+      plansById[id] = plan;
     }
     return {
       schema_version: SCHEMA_VERSION,
@@ -535,6 +776,7 @@ export function createCatalog() {
       migration_warnings: [...state.migrationWarnings],
       subject_metadata: Object.fromEntries(state.subjectMetadata),
       imports: importsObj,
+      plans: { active: state.plans.active, byId: plansById },
     };
   }
 
@@ -545,6 +787,34 @@ export function createCatalog() {
     state.migrationWarnings.length = 0;
     state.subjectMetadata.clear();
     state.imports.clear();
+    state.plans.byId.clear();
+    state.plans.active = null;
+    if (data.plans && data.plans.byId) {
+      for (const [id, plan] of Object.entries(data.plans.byId)) {
+        // Defensive: only restore well-shaped plans. Unknown shapes are
+        // silently dropped rather than crashing the load path.
+        if (plan && typeof plan === "object" && typeof plan.id === "string") {
+          state.plans.byId.set(id, {
+            id: plan.id,
+            name: typeof plan.name === "string" ? plan.name : "Unnamed plan",
+            kind: plan.kind === "active" ? "active" : "candidate",
+            created_at: plan.created_at || _nowISO(),
+            modified_at: plan.modified_at || _nowISO(),
+            origin: plan.origin === "auto-scheduler" ? "auto-scheduler" : "user",
+            sections: Array.isArray(plan.sections) ? plan.sections : [],
+            filters: Array.isArray(plan.filters) ? plan.filters : [],
+            notes: typeof plan.notes === "string" ? plan.notes : "",
+          });
+        }
+      }
+      if (typeof data.plans.active === "string" && state.plans.byId.has(data.plans.active)) {
+        state.plans.active = data.plans.active;
+      }
+    }
+    // After restore, ensure the invariants: at most one active plan,
+    // and if no plan was loaded, seed a default. ensureInitialPlan is
+    // idempotent.
+    _ensureInitialPlan();
 
     for (const [id, entry] of Object.entries(data.imports || {})) {
       // Defensive: only restore well-shaped entries. We don't re-run the
@@ -584,6 +854,10 @@ export function createCatalog() {
     return Object.fromEntries(state.subjectMetadata);
   }
 
+  // Seed the default plan on construction. fromJSON / clear({plans})
+  // re-establish this invariant if the namespace ever ends up empty.
+  _ensureInitialPlan();
+
   return {
     ingestSubject,
     getEffective,
@@ -599,6 +873,22 @@ export function createCatalog() {
     listImports,
     getImport,
     copySectionFromImport,
+    plans: {
+      list: _planList,
+      get: _planGet,
+      getActive: _planGetActive,
+      create: _planCreate,
+      delete: _planDelete,
+      promote: _planPromote,
+      rename: _planRename,
+      duplicate: _planDuplicate,
+      stageSection: _planStageSection,
+      unstageSection: _planUnstageSection,
+      addFilter: _planAddFilter,
+      updateFilter: _planUpdateFilter,
+      removeFilter: _planRemoveFilter,
+      clearByOrigin: _planClearByOrigin,
+    },
     toJSON,
     fromJSON,
     getSubjectMetadata,

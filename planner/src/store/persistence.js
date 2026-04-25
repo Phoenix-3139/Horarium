@@ -242,6 +242,26 @@ export function createPersistence(catalog, options = {}) {
       return r;
     };
   }
+  // Plans namespace (Piece 5a): every mutator on catalog.plans.* should
+  // also schedule a save. Read-only methods (list, get, getActive) skip
+  // wrapping so they don't fire spurious saves on render passes.
+  if (catalog.plans) {
+    const PLAN_MUTATORS = [
+      "create", "delete", "promote", "rename", "duplicate",
+      "stageSection", "unstageSection",
+      "addFilter", "updateFilter", "removeFilter",
+      "clearByOrigin",
+    ];
+    for (const name of PLAN_MUTATORS) {
+      if (typeof catalog.plans[name] !== "function") continue;
+      const orig = catalog.plans[name].bind(catalog.plans);
+      catalog.plans[name] = (...args) => {
+        const r = orig(...args);
+        scheduleSave();
+        return r;
+      };
+    }
+  }
 
   return {
     getConsent,
