@@ -5556,25 +5556,28 @@
   .grid-empty {
     position: relative;
   }
+  .grid-empty {
+    min-height: 14rem; /* give the overlay room even when no rows */
+  }
   .grid-empty::before {
     content: "";
     position: absolute;
     left: 0;
     right: 0;
-    top: 4.2rem; /* clears the day-header row */
+    top: 4.2rem;
     bottom: 0;
     z-index: 4;
     background-image: repeating-linear-gradient(
       -45deg,
-      color-mix(in srgb, var(--ink) 6%, transparent) 0,
-      color-mix(in srgb, var(--ink) 6%, transparent) 6px,
-      transparent 6px,
-      transparent 14px
+      color-mix(in srgb, var(--ink) 9%, transparent) 0,
+      color-mix(in srgb, var(--ink) 9%, transparent) 9px,
+      transparent 9px,
+      transparent 20px
     );
     pointer-events: none;
   }
   .grid-empty::after {
-    content: "no classes scheduled yet";
+    content: "no classes scheduled yet · stage sections to fill the grid";
     position: absolute;
     left: 0;
     right: 0;
@@ -5585,12 +5588,21 @@
     align-items: center;
     justify-content: center;
     font-family: var(--font-mono);
-    font-size: 0.78rem;
+    font-size: 0.95rem;
+    font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.18em;
-    color: var(--ink-faint);
-    background: color-mix(in srgb, var(--paper-soft) 65%, transparent);
+    letter-spacing: 0.22em;
+    color: var(--ink);
+    opacity: 0.65;
+    background: color-mix(in srgb, var(--paper-soft) 55%, transparent);
     pointer-events: none;
+    text-align: center;
+    padding: 0 1rem;
+  }
+  /* Inner card framing the message so the long line reads as a
+     deliberate block rather than centered text floating on hatch. */
+  .grid-empty::after {
+    text-shadow: 0 0 8px var(--paper-soft);
   }
 
   /* Inline variant — for a single stat cell where the label sits
@@ -5626,30 +5638,41 @@
     border: var(--border-width, 1px) solid var(--rule, color-mix(in srgb, var(--ink) 8%, transparent));
     border-radius: var(--radius-md, 4px);
   }
-  /* When a stat has no real data, replace its value with the inline
-     "no data yet" pill — visually distinct from a meaningful zero. */
+  /* When a stat has no real data, the entire card becomes a hatched
+     "no data yet" panel — visually distinct from a meaningful zero
+     and impossible to mistake for "still loading." */
+  .mn-stat.is-empty {
+    position: relative;
+    min-height: 4.5rem;
+    background-image: repeating-linear-gradient(
+      -45deg,
+      color-mix(in srgb, var(--ink) 10%, transparent) 0,
+      color-mix(in srgb, var(--ink) 10%, transparent) 7px,
+      transparent 7px,
+      transparent 16px
+    );
+    border-style: dashed;
+    border-color: color-mix(in srgb, var(--ink) 22%, transparent);
+  }
   .mn-stat.is-empty .mn-stat-value {
     display: none;
   }
-  .mn-stat.is-empty::before {
-    content: "no data yet";
-    display: inline-block;
-    min-width: 5rem;
-    padding: 0.15rem 0.6rem;
-    margin-top: 0.2rem;
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
+  .mn-stat.is-empty .mn-stat-label {
     color: var(--ink-faint);
-    background-image: repeating-linear-gradient(
-      -45deg,
-      color-mix(in srgb, var(--ink) 8%, transparent) 0,
-      color-mix(in srgb, var(--ink) 8%, transparent) 5px,
-      transparent 5px,
-      transparent 12px
-    );
-    border: 1px dashed color-mix(in srgb, var(--ink) 18%, transparent);
+    margin-bottom: 0.45rem;
+  }
+  .mn-stat.is-empty::after {
+    content: "no data yet";
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--ink);
+    opacity: 0.55;
+    background: color-mix(in srgb, var(--paper-soft) 78%, transparent);
+    padding: 0.35rem 0.4rem;
+    text-align: center;
     border-radius: var(--radius-sm, 2px);
   }
   .mn-stat-label {
