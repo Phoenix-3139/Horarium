@@ -1649,6 +1649,65 @@
     float: right;
     line-height: 2;
   }
+  /* Tabular-list image style — same export stage, table body
+     instead of two grids. */
+  .export-stage .export-table-wrap {
+    margin-top: 0.75rem;
+  }
+  .export-stage .export-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-body);
+    font-size: 11px;
+    color: var(--ink);
+  }
+  .export-stage .export-table thead th {
+    text-align: left;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    padding: 8px 10px 6px;
+    border-bottom: 1px solid var(--ink);
+    background: var(--paper-soft);
+    font-weight: 500;
+  }
+  .export-stage .export-table tbody td {
+    padding: 7px 10px;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+  }
+  .export-stage .export-table tbody tr:last-child td {
+    border-bottom: 1px solid var(--ink);
+  }
+  .export-stage .export-table tbody tr:nth-child(even) td {
+    background: color-mix(in srgb, var(--paper-soft) 60%, transparent);
+  }
+  .export-stage .export-table-swatch {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin-right: 6px;
+    vertical-align: -1px;
+    border-left: 2px solid rgba(0, 0, 0, 0.25);
+  }
+  .export-stage .export-table-foot {
+    text-align: right;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    padding: 8px 10px;
+  }
+  .export-stage .export-table-empty {
+    padding: 2rem 0;
+    text-align: center;
+    font-style: italic;
+    color: var(--ink-faint);
+  }
+
   .export-stage .export-legend {
     background: var(--paper-soft);
     border: 1px solid var(--rule);
@@ -2865,11 +2924,60 @@
   /* =========================================================
      EXPORT TAB (replaces the dropdown)
      ========================================================= */
+  .export-options {
+    margin-top: 1.25rem;
+    padding: 0.85rem 1rem;
+    background: var(--paper-soft);
+    border: var(--border-width, 1px) solid var(--rule);
+    border-left: 3px solid var(--accent, var(--ochre));
+    border-radius: var(--radius-md, 4px);
+  }
+  .export-options-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 0.3rem 0;
+  }
+  .export-options-row + .export-options-row {
+    border-top: 1px dashed var(--rule);
+    padding-top: 0.65rem;
+    margin-top: 0.25rem;
+  }
+  .export-options-label {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--ink-faint);
+    min-width: 11rem;
+  }
+  .export-opt {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.88rem;
+    color: var(--ink);
+    cursor: pointer;
+    user-select: none;
+  }
+  .export-opt input {
+    margin: 0;
+    accent-color: var(--accent, var(--ochre));
+    cursor: pointer;
+  }
+  .export-options-help {
+    font-size: 0.78rem;
+    color: var(--ink-faint);
+    margin-top: 0.5rem;
+    line-height: 1.45;
+  }
+
   .export-panel {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 1.25rem;
-    margin-top: 2rem;
+    margin-top: 1.5rem;
   }
   .export-card {
     background: var(--paper-soft);
@@ -6771,11 +6879,30 @@
     <h2>Download a <em>copy</em> of thy hours.</h2>
     <p class="picker-sub">Three formats. Choose whichever suits the occasion.</p>
 
+    <!-- Privacy + view toggles. Apply primarily to PNG/JSON exports;
+         ICS uses your name as the calendar title regardless. -->
+    <div class="export-options" id="export-options">
+      <div class="export-options-row">
+        <span class="export-options-label">Include in exports</span>
+        <label class="export-opt"><input type="checkbox" id="ex-incl-name" checked><span>Name</span></label>
+        <label class="export-opt"><input type="checkbox" id="ex-incl-netid" checked><span>NetID</span></label>
+        <label class="export-opt"><input type="checkbox" id="ex-incl-program" checked><span>Program &amp; year</span></label>
+      </div>
+      <div class="export-options-row">
+        <span class="export-options-label">Image style</span>
+        <label class="export-opt"><input type="radio" name="ex-view" value="calendar" checked><span>Calendar grid</span></label>
+        <label class="export-opt"><input type="radio" name="ex-view" value="table"><span>Tabular list</span></label>
+      </div>
+      <p class="export-options-help">
+        Privacy toggles apply to the PNG and JSON exports' header lines. The .ics calendar always uses your display name as the calendar's own title.
+      </p>
+    </div>
+
     <div class="export-panel">
       <button class="export-card" id="ec-image" onclick="exportAsImage()">
         <div class="ec-icon">⎙</div>
         <h3>Image<em>PNG snapshot</em></h3>
-        <p>Rendered picture of thy two-half grid, ready to share or print. Includes a legend of course colours.</p>
+        <p>Rendered picture of thy schedule — calendar grid or tabular list. Includes a legend of course colours.</p>
         <span class="ec-go">Download <span>→</span></span>
       </button>
       <button class="export-card" id="ec-ics" onclick="exportAsICS()">
@@ -8286,6 +8413,100 @@ function _ensureHtml2canvas() {
   return _html2canvasPromise;
 }
 
+// Read the privacy + view-mode toggles from the export-options panel.
+// Defaults are everything-on / calendar so an export that skips the
+// panel still works the way it always did.
+function _exportImageOptions() {
+  function read(id, def) {
+    const el = document.getElementById(id);
+    if (!el) return def;
+    return el.checked;
+  }
+  let view = 'calendar';
+  const picked = document.querySelector('input[name="ex-view"]:checked');
+  if (picked) view = picked.value;
+  return {
+    includeName: read('ex-incl-name', true),
+    includeNetId: read('ex-incl-netid', true),
+    includeProgram: read('ex-incl-program', true),
+    view: view,
+  };
+}
+
+// Render hydrated staged sections as a table HTML string the image
+// renderer drops into the export stage. Self-contained — doesn't
+// depend on the live #schedule-table being present, so the export
+// works from any tab.
+function _exportRenderTableHtml(hydrated) {
+  if (!hydrated || hydrated.length === 0) {
+    return '<div class="export-table-empty">No sections staged in this plan.</div>';
+  }
+  const rows = [];
+  let totalCredits = 0;
+  for (const { course, section } of hydrated) {
+    const units = (course.units == null) ? 0 :
+      (typeof course.units === 'object' ? Number(course.units.min) : Number(course.units));
+    if (Number.isFinite(units)) totalCredits += units;
+    const meetings = (section.meetings || []);
+    if (meetings.length === 0) {
+      rows.push({
+        code: course.code,
+        title: course.title || '',
+        comp: section.component || '',
+        sect: section.section_code || '',
+        days: '—',
+        time: '—',
+        room: '—',
+        instr: '—',
+        sess: section.session && section.session.code,
+        cn: section.class_number,
+      });
+    } else {
+      for (const m of meetings) {
+        rows.push({
+          code: course.code,
+          title: course.title || '',
+          comp: section.component || '',
+          sect: section.section_code || '',
+          days: (m.days || []).join('/'),
+          time: (m.start_time && m.end_time) ? (m.start_time + ' – ' + m.end_time) : '—',
+          room: m.room || '—',
+          instr: (m.instructors || []).join(', ') || '—',
+          sess: section.session && section.session.code,
+          cn: section.class_number,
+        });
+      }
+    }
+  }
+  const courseColor = (code) => {
+    const c = window.HS && window.HS.mainPlanner ? window.HS.mainPlanner.colorForCourse(code) : { bg: '#E5DBE9' };
+    return c.bg;
+  };
+  let html = '<table class="export-table"><thead><tr>' +
+    '<th>Course</th><th>Title</th><th>Type</th><th>Sect</th><th>Days</th>' +
+    '<th>Time</th><th>Room</th><th>Instructor</th><th>Sess</th><th>#</th>' +
+    '</tr></thead><tbody>';
+  for (const r of rows) {
+    html += '<tr>' +
+      '<td><span class="export-table-swatch" style="background:' + courseColor(r.code) + '"></span>' + _escHtml(r.code) + '</td>' +
+      '<td>' + _escHtml(r.title) + '</td>' +
+      '<td>' + _escHtml(r.comp) + '</td>' +
+      '<td>' + _escHtml(r.sect) + '</td>' +
+      '<td>' + _escHtml(r.days) + '</td>' +
+      '<td>' + _escHtml(r.time) + '</td>' +
+      '<td>' + _escHtml(r.room) + '</td>' +
+      '<td>' + _escHtml(r.instr) + '</td>' +
+      '<td>' + _escHtml(r.sess || '') + '</td>' +
+      '<td>' + _escHtml(r.cn) + '</td>' +
+      '</tr>';
+  }
+  html += '</tbody><tfoot><tr><td colspan="10" class="export-table-foot">' +
+    rows.length + ' meeting row' + (rows.length === 1 ? '' : 's') +
+    ' · ' + totalCredits + ' credits total' +
+    '</td></tr></tfoot></table>';
+  return html;
+}
+
 async function exportAsImage(planId) {
   _exportCardState('ec-image', 'Rendering', '⏳');
 
@@ -8298,6 +8519,19 @@ async function exportAsImage(planId) {
     const planName = plan ? plan.name : '';
     const planTagline = (plan && plan.kind === 'active') ? '' : 'Candidate';
     const today = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+
+    // Privacy toggles + view-mode pulled from the export-options panel
+    // each render so users can flip flags between exports without
+    // re-saving anywhere.
+    const opts = _exportImageOptions();
+    const u = _userIdentity();
+    const headerName = opts.includeName ? _userDisplay() : '';
+    const headerSubBits = [_activeTerm(), planName];
+    if (opts.includeNetId && u.netid) headerSubBits.push(u.netid);
+    if (opts.includeProgram) {
+      if (u.program) headerSubBits.push(u.program);
+      if (u.year) headerSubBits.push(u.year);
+    }
 
     // Per-course legend, derived from the plan's actual staged sections
     // via the dynamic-color allocator (same hue the grid uses).
@@ -8312,12 +8546,28 @@ async function exportAsImage(planId) {
       return `<span class="item"><i style="background: ${color.bg};"></i>${_escHtml(course.code)}</span>`;
     }).filter(Boolean).join('');
 
+    // Body block — calendar (two halves) or tabular list, depending
+    // on the user's chosen image style. The table path renders the
+    // same data buildScheduleTable produces; falls back to the
+    // calendar if no table is currently rendered.
+    let bodyHtml;
+    if (opts.view === 'table') {
+      const tblHtml = _exportRenderTableHtml(hydrated);
+      bodyHtml = `<div class="export-table-wrap">${tblHtml}</div>`;
+    } else {
+      bodyHtml = `
+        <div class="export-half">First half <span class="dates">31 Aug – 16 Oct · A71</span></div>
+        <div id="stage-a71"></div>
+        <div class="export-half">Second half <span class="dates">26 Oct – 14 Dec · A72</span></div>
+        <div id="stage-a72"></div>`;
+    }
+
     stage.innerHTML = `
       <div class="export-header">
         <div>
-          <h1>Horarium${_userDisplay() ? ` <em>${_escHtml(_userDisplay())}.</em>` : ''}</h1>
+          <h1>Horarium${headerName ? ` <em>${_escHtml(headerName)}.</em>` : ''}</h1>
           <div style="font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-faint); margin-top: 6px;">
-            ${[_activeTerm(), planName, _userIdentity().netid].filter(Boolean).map(_escHtml).join(' · ')}
+            ${headerSubBits.filter(Boolean).map(_escHtml).join(' · ')}
           </div>
         </div>
         <div class="meta">
@@ -8325,10 +8575,7 @@ async function exportAsImage(planId) {
           Exported ${today}
         </div>
       </div>
-      <div class="export-half">First half <span class="dates">31 Aug – 16 Oct · A71</span></div>
-      <div id="stage-a71"></div>
-      <div class="export-half">Second half <span class="dates">26 Oct – 14 Dec · A72</span></div>
-      <div id="stage-a72"></div>
+      ${bodyHtml}
       <div class="export-legend">
         <span class="lg-title">Legend</span>
         ${courseLegend}
@@ -8338,10 +8585,12 @@ async function exportAsImage(planId) {
 
     document.body.appendChild(stage);
 
-    const a71Clone = document.querySelector('#grid-a71').parentElement.cloneNode(true);
-    const a72Clone = document.querySelector('#grid-a72').parentElement.cloneNode(true);
-    stage.querySelector('#stage-a71').appendChild(a71Clone);
-    stage.querySelector('#stage-a72').appendChild(a72Clone);
+    if (opts.view !== 'table') {
+      const a71Clone = document.querySelector('#grid-a71').parentElement.cloneNode(true);
+      const a72Clone = document.querySelector('#grid-a72').parentElement.cloneNode(true);
+      stage.querySelector('#stage-a71').appendChild(a71Clone);
+      stage.querySelector('#stage-a72').appendChild(a72Clone);
+    }
 
     await new Promise(r => requestAnimationFrame(r));
     await new Promise(r => setTimeout(r, 120));
@@ -8574,17 +8823,22 @@ function exportAsJSON(planId) {
       : [];
 
     const userIdent = _userIdentity();
+    // Honor the export-options privacy toggles so the user can hand
+    // over a JSON pack without identifying themselves if they want.
+    const opts = (typeof _exportImageOptions === 'function') ? _exportImageOptions() : {
+      includeName: true, includeNetId: true, includeProgram: true,
+    };
     const totalCredits = enrolled.reduce((s, c) => s + (Number(c.credits) || 0), 0);
     const payload = {
       schema_version: '1.1.0',
       exported_at: now,
       exported_plan_id: plan ? plan.id : null,
       student: {
-        name: userIdent.name || null,
-        netid: userIdent.netid || null,
-        n_number: userIdent.n_number || null,
-        program: userIdent.program || null,
-        year: userIdent.year || null,
+        name: opts.includeName ? (userIdent.name || null) : null,
+        netid: opts.includeNetId ? (userIdent.netid || null) : null,
+        n_number: opts.includeNetId ? (userIdent.n_number || null) : null,
+        program: opts.includeProgram ? (userIdent.program || null) : null,
+        year: opts.includeProgram ? (userIdent.year || null) : null,
       },
       term: {
         name: _activeTerm() || null,
