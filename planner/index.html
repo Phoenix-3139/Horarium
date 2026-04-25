@@ -5853,6 +5853,7 @@ import {
   sectionPassesFilters,
   isFilterActive,
   DEFAULT_FILTERS,
+  distinctComponents,
   statusDot,
   stageActionLabel,
 } from './src/ui/picker.js';
@@ -5916,6 +5917,7 @@ window.HS.picker = {
   sectionPassesFilters,
   isFilterActive,
   DEFAULT_FILTERS,
+  distinctComponents,
   statusDot,
   stageActionLabel,
 };
@@ -10478,7 +10480,7 @@ let _pkSearchQuery = '';
 let _pkSearchTimer = null;
 let _pkExpandedSubjects = new Set();   // subject codes currently expanded in directory mode
 let _pkExpandedCourse = null;          // course code currently expanded
-let _pkFilters = Object.assign({}, window.HS && window.HS.picker ? window.HS.picker.DEFAULT_FILTERS : { status: 'all', components: null, days: null, time: 'all' });
+let _pkFilters = { status: 'all', components: null, days: null, start_after_min: null, end_before_min: null };
 let _pkInstructorIndex = { byInstructor: new Map(), byCourseCode: new Map() };
 let _pkInstructorIndexDirty = true;
 
@@ -10490,7 +10492,8 @@ function _bootPicker() {
     status: 'all',
     components: null,
     days: null,
-    time: 'all',
+    start_after_min: null,
+    end_before_min: null,
   };
   inp.addEventListener('input', function () {
     if (_pkSearchTimer) clearTimeout(_pkSearchTimer);
@@ -10584,6 +10587,7 @@ function renderPicker() {
 
 function _pkRenderFilters(f) {
   const isActive = window.HS.picker.isFilterActive(f);
+  const eff = _effectiveCatalog();
   let html = '';
   // Status group.
   html += '<span class="mp-filter-group"><span class="mp-filter-label">Status</span>';
@@ -10596,15 +10600,24 @@ function _pkRenderFilters(f) {
       '" data-pkf="status" data-pkv="' + _escHtml(opt.v) + '">' + _escHtml(opt.label) + '</button>';
   }
   html += '</span>';
-  // Component group.
-  html += '<span class="mp-filter-group"><span class="mp-filter-label">Type</span>';
-  const compOpts = ['Lecture', 'Laboratory', 'Recitation', 'Seminar'];
-  for (const opt of compOpts) {
-    const on = !!(f.components && f.components.has(opt));
-    html += '<button type="button" class="mp-filter-chip' + (on ? ' is-active' : '') +
-      '" data-pkf="components" data-pkv="' + _escHtml(opt) + '">' + _escHtml(opt) + '</button>';
+  // Type / component group — derived from the catalog so user-edited
+  // and NYU-introduced component values appear automatically. Sorted
+  // by frequency descending. Only renders when there are components
+  // present (empty catalog → no component chips at all, not "Lecture
+  // / Laboratory / …" forever-defaults the user's catalog won't have).
+  const components = window.HS.picker.distinctComponents(eff);
+  if (components.length > 0) {
+    html += '<span class="mp-filter-group"><span class="mp-filter-label">Type</span>';
+    for (const c of components) {
+      const on = !!(f.components && f.components.has(c.value));
+      const label = c.value + ' (' + c.count + ')';
+      html += '<button type="button" class="mp-filter-chip' + (on ? ' is-active' : '') +
+        '" data-pkf="components" data-pkv="' + _escHtml(c.value) +
+        '" title="' + _escHtml(c.value) + ' — ' + c.count + ' section' + (c.count === 1 ? '' : 's') + ' in catalog">' +
+        _escHtml(label) + '</button>';
+    }
+    html += '</span>';
   }
-  html += '</span>';
   // Days group.
   html += '<span class="mp-filter-group"><span class="mp-filter-label">Days</span>';
   for (const d of ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']) {
@@ -10613,17 +10626,22 @@ function _pkRenderFilters(f) {
       '" data-pkf="days" data-pkv="' + _escHtml(d) + '">' + _escHtml(d) + '</button>';
   }
   html += '</span>';
-  // Time group.
+  // Time group — concrete time anchors instead of the previous
+  // "morning / afternoon / evening" buckets, which baked subjective
+  // boundaries into the UI ("evening" starts when?). Each chip says
+  // exactly what it filters. Defaults: 09:00 = "no early classes",
+  // 18:00 = "free evenings". Future work: editable cutoffs.
+  const startCut = 9 * 60;   // 09:00
+  const endCut   = 18 * 60;  // 18:00
+  const startOn = f.start_after_min === startCut;
+  const endOn   = f.end_before_min === endCut;
   html += '<span class="mp-filter-group"><span class="mp-filter-label">Time</span>';
-  for (const opt of [
-    { v: 'all', label: 'Any' },
-    { v: 'morning', label: 'AM' },
-    { v: 'afternoon', label: 'PM' },
-    { v: 'evening', label: 'Evening' },
-  ]) {
-    html += '<button type="button" class="mp-filter-chip' + (f.time === opt.v ? ' is-active' : '') +
-      '" data-pkf="time" data-pkv="' + _escHtml(opt.v) + '">' + _escHtml(opt.label) + '</button>';
-  }
+  html += '<button type="button" class="mp-filter-chip' + (startOn ? ' is-active' : '') +
+    '" data-pkf="start_after" data-pkv="' + startCut +
+    '" title="Hide sections with any meeting that starts before 09:00">Starts ≥ 09:00</button>';
+  html += '<button type="button" class="mp-filter-chip' + (endOn ? ' is-active' : '') +
+    '" data-pkf="end_before" data-pkv="' + endCut +
+    '" title="Hide sections with any meeting that ends after 18:00">Ends ≤ 18:00</button>';
   html += '</span>';
   if (isActive) {
     html += '<button type="button" class="mp-clear-filters" id="mp-clear-filters">Clear filters</button>';
@@ -10640,8 +10658,13 @@ function _pkWireFilters() {
       const v = chip.getAttribute('data-pkv');
       if (k === 'status') {
         _pkFilters.status = v;
-      } else if (k === 'time') {
-        _pkFilters.time = v;
+      } else if (k === 'start_after') {
+        // Toggle the cutoff on/off.
+        const target = Number(v);
+        _pkFilters.start_after_min = (_pkFilters.start_after_min === target) ? null : target;
+      } else if (k === 'end_before') {
+        const target = Number(v);
+        _pkFilters.end_before_min = (_pkFilters.end_before_min === target) ? null : target;
       } else if (k === 'components') {
         if (!_pkFilters.components) _pkFilters.components = new Set();
         if (_pkFilters.components.has(v)) _pkFilters.components.delete(v);
@@ -10658,7 +10681,7 @@ function _pkWireFilters() {
   });
   const clr = document.getElementById('mp-clear-filters');
   if (clr) clr.addEventListener('click', function () {
-    _pkFilters = { status: 'all', components: null, days: null, time: 'all' };
+    _pkFilters = { status: 'all', components: null, days: null, start_after_min: null, end_before_min: null };
     renderPicker();
   });
 }

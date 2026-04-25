@@ -7,6 +7,7 @@ import {
   sectionPassesFilters,
   isFilterActive,
   DEFAULT_FILTERS,
+  distinctComponents,
   statusDot,
   stageActionLabel,
   colorForCourse,
@@ -180,28 +181,85 @@ describe("sectionPassesFilters / isFilterActive", () => {
     expect(sectionPassesFilters(sec(), f)).toBe(false);
     expect(sectionPassesFilters(sec({ meetings: [{ days: ["Fri"], start_time: "09:00", end_time: "10:00" }] }), f)).toBe(true);
   });
-  it("filters by time bucket", () => {
-    const morn = sec({ meetings: [{ days: ["Mon"], start_time: "09:00", end_time: "10:00" }] });
-    const aft = sec({ meetings: [{ days: ["Mon"], start_time: "14:00", end_time: "15:00" }] });
-    const eve = sec({ meetings: [{ days: ["Mon"], start_time: "18:00", end_time: "19:00" }] });
-    const fM = { ...DEFAULT_FILTERS, time: "morning" };
-    const fA = { ...DEFAULT_FILTERS, time: "afternoon" };
-    const fE = { ...DEFAULT_FILTERS, time: "evening" };
-    expect(sectionPassesFilters(morn, fM)).toBe(true);
-    expect(sectionPassesFilters(aft, fM)).toBe(false);
-    expect(sectionPassesFilters(aft, fA)).toBe(true);
-    expect(sectionPassesFilters(eve, fE)).toBe(true);
+  it("filters by start_after_min — excludes sections starting earlier", () => {
+    const cutoff = 9 * 60; // 09:00
+    const early = sec({ meetings: [{ days: ["Mon"], start_time: "08:00", end_time: "09:00" }] });
+    const later = sec({ meetings: [{ days: ["Mon"], start_time: "09:30", end_time: "10:30" }] });
+    const exact = sec({ meetings: [{ days: ["Mon"], start_time: "09:00", end_time: "10:00" }] });
+    const f = { ...DEFAULT_FILTERS, start_after_min: cutoff };
+    expect(sectionPassesFilters(early, f)).toBe(false);
+    expect(sectionPassesFilters(later, f)).toBe(true);
+    // Boundary: starting AT exactly the cutoff passes (>= cutoff).
+    expect(sectionPassesFilters(exact, f)).toBe(true);
   });
-  it("composes status + component + days + time (AND)", () => {
+  it("filters by end_before_min — excludes sections ending later", () => {
+    const cutoff = 18 * 60; // 18:00
+    const late = sec({ meetings: [{ days: ["Mon"], start_time: "17:00", end_time: "19:00" }] });
+    const ok = sec({ meetings: [{ days: ["Mon"], start_time: "16:00", end_time: "17:30" }] });
+    const exact = sec({ meetings: [{ days: ["Mon"], start_time: "16:30", end_time: "18:00" }] });
+    const f = { ...DEFAULT_FILTERS, end_before_min: cutoff };
+    expect(sectionPassesFilters(late, f)).toBe(false);
+    expect(sectionPassesFilters(ok, f)).toBe(true);
+    expect(sectionPassesFilters(exact, f)).toBe(true);
+  });
+  it("any single meeting outside the bound disqualifies the whole section", () => {
+    const mixed = sec({ meetings: [
+      { days: ["Mon"], start_time: "10:00", end_time: "11:00" },
+      { days: ["Wed"], start_time: "08:00", end_time: "09:00" }, // < 09:00
+    ]});
+    const f = { ...DEFAULT_FILTERS, start_after_min: 9 * 60 };
+    expect(sectionPassesFilters(mixed, f)).toBe(false);
+  });
+  it("composes status + component + days + start/end bounds (AND)", () => {
     const f = {
       status: "open",
       components: new Set(["Lecture"]),
       days: new Set(["Mon"]),
-      time: "afternoon",
+      start_after_min: 12 * 60,
+      end_before_min: 18 * 60,
     };
-    expect(sectionPassesFilters(sec(), f)).toBe(true);
+    expect(sectionPassesFilters(sec(), f)).toBe(true); // 14:00–15:30 fits
     expect(sectionPassesFilters(sec({ status: { type: "closed" } }), f)).toBe(false);
     expect(sectionPassesFilters(sec({ component: "Laboratory" }), f)).toBe(false);
+    expect(sectionPassesFilters(
+      sec({ meetings: [{ days: ["Mon"], start_time: "10:00", end_time: "11:00" }] }), f
+    )).toBe(false); // before 12:00 cutoff
+  });
+});
+
+describe("distinctComponents", () => {
+  it("collects + counts distinct components from the effective catalog", () => {
+    const eff = {
+      courses: [
+        {
+          sections: [
+            { component: "Lecture" },
+            { component: "Lecture" },
+            { component: "Laboratory" },
+          ],
+        },
+        {
+          sections: [
+            { component: "Lecture" },
+            { component: "Studio" },
+            { component: "" }, // empty skipped
+            { component: undefined }, // missing skipped
+          ],
+        },
+      ],
+    };
+    const out = distinctComponents(eff);
+    expect(out).toEqual([
+      { value: "Lecture", count: 3 },
+      { value: "Laboratory", count: 1 },
+      { value: "Studio", count: 1 },
+    ]);
+  });
+  it("skips _user_created courses and tolerates empty input", () => {
+    expect(distinctComponents({ courses: [{ _user_created: true, sections: [{ component: "Lecture" }] }] }))
+      .toEqual([]);
+    expect(distinctComponents(null)).toEqual([]);
+    expect(distinctComponents({})).toEqual([]);
   });
 });
 

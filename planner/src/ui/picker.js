@@ -218,16 +218,24 @@ export function bucketByLevel(courses) {
 // Filter shape:
 //   {
 //     status: 'all' | 'open' | 'open_or_waitlist',
-//     components: Set<string> | null,  // null = all
+//     components: Set<string> | null,  // null = any; otherwise membership in set
 //     days: Set<string> | null,        // null = any; set = require at least one match
-//     time: 'all' | 'morning' | 'afternoon' | 'evening',
+//     // Time bounds are concrete cutoffs, not subjective buckets like
+//     // "morning"/"evening". start_after_min: every meeting on the
+//     // section must start at or after this minute-of-day. end_before_min:
+//     // every meeting must end at or before. null on either = no bound.
+//     // Default thresholds (09:00 / 18:00) are exposed as the canonical
+//     // chip presets in the UI; future work can let users edit them.
+//     start_after_min: number | null,
+//     end_before_min: number | null,
 //   }
 
 export const DEFAULT_FILTERS = Object.freeze({
   status: "all",
   components: null,
   days: null,
-  time: "all",
+  start_after_min: null,
+  end_before_min: null,
 });
 
 export function isFilterActive(f) {
@@ -235,18 +243,36 @@ export function isFilterActive(f) {
   if (f.status && f.status !== "all") return true;
   if (f.components && f.components.size > 0) return true;
   if (f.days && f.days.size > 0) return true;
-  if (f.time && f.time !== "all") return true;
+  if (f.start_after_min != null) return true;
+  if (f.end_before_min != null) return true;
   return false;
 }
 
-function _timeBucket(hhmm) {
-  if (typeof hhmm !== "string") return null;
-  const m = hhmm.match(/^(\d{1,2}):/);
+// Discover the set of component values actually used in the catalog.
+// Returns an array of { value, count } sorted by count descending.
+// The picker uses this to render component chips dynamically — handles
+// new vocabulary added by NYU and user-edited overrides automatically.
+export function distinctComponents(effective) {
+  const counts = new Map();
+  if (!effective || !Array.isArray(effective.courses)) return [];
+  for (const c of effective.courses) {
+    if (c._user_created) continue;
+    for (const s of (c.sections || [])) {
+      const v = (s.component || "").trim();
+      if (!v) continue;
+      counts.set(v, (counts.get(v) || 0) + 1);
+    }
+  }
+  const out = Array.from(counts.entries()).map(([value, count]) => ({ value, count }));
+  out.sort((a, b) => b.count - a.count || a.value.localeCompare(b.value));
+  return out;
+}
+
+function _hhmmToMin(s) {
+  if (typeof s !== "string") return null;
+  const m = s.match(/^(\d{1,2}):(\d{2})$/);
   if (!m) return null;
-  const h = Number(m[1]);
-  if (h < 12) return "morning";
-  if (h < 17) return "afternoon";
-  return "evening";
+  return Number(m[1]) * 60 + Number(m[2]);
 }
 
 export function sectionPassesFilters(section, filters) {
@@ -268,14 +294,23 @@ export function sectionPassesFilters(section, filters) {
     for (const d of filters.days) if (allDays.has(d)) { hit = true; break; }
     if (!hit) return false;
   }
-  // Time bucket — any meeting must fall in the selected bucket.
-  if (filters.time && filters.time !== "all") {
-    const meetings = section.meetings || [];
-    let hit = false;
+  // Concrete time bounds — applied to every meeting on the section
+  // (not "any" / "some"). If even one meeting starts before
+  // start_after_min, the section is excluded. Same for end_before_min.
+  // Sections with no meetings pass (vacuously true) — they're filtered
+  // by other criteria like status if the user wants to exclude them.
+  const meetings = section.meetings || [];
+  if (filters.start_after_min != null) {
     for (const m of meetings) {
-      if (_timeBucket(m.start_time) === filters.time) { hit = true; break; }
+      const sm = _hhmmToMin(m.start_time);
+      if (sm != null && sm < filters.start_after_min) return false;
     }
-    if (!hit) return false;
+  }
+  if (filters.end_before_min != null) {
+    for (const m of meetings) {
+      const em = _hhmmToMin(m.end_time);
+      if (em != null && em > filters.end_before_min) return false;
+    }
   }
   return true;
 }
