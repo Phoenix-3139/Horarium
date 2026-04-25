@@ -506,13 +506,10 @@
     margin-top: 3px;
     opacity: 0.72;
   }
-  /* Dynamic-color cell rule (Piece 5a/2 onwards). The cell render in
-     buildGrid sets the per-cell custom properties `--cell-bg` and
-     `--cell-ink`; this rule reads them. !important ensures we beat
-     any sibling .grid .cell rule (legacy or otherwise). The fallback
-     values (after the comma in var()) keep cells visible if for any
-     reason the JS doesn't run — they pick up the page's paper-soft
-     palette instead of going transparent. */
+  /* Dynamic-color cell. JS sets --cell-bg / --cell-ink per cell; the
+     !important keeps us above the legacy .c-stat / .c-cons / etc.
+     class-driven rules below. Fallbacks keep cells visible if the JS
+     custom-property assignment ever misses. */
   .grid .cell.c-dynamic {
     background: var(--cell-bg, var(--paper-soft)) !important;
     color: var(--cell-ink, var(--ink)) !important;
@@ -6252,17 +6249,10 @@ function _resolveSection(classNumber) {
   return null;
 }
 
-// Project a course-code or class_number key into the {short, full, cls,
-// color, code, title} bag legacy render code expects. Replaces the
-// static `courseMeta` dict + `_courseMeta(key)` helper from before.
-// Color is derived from main_planner.js's deterministic allocator so
-// the same course gets the same hue across grid / table / legend /
-// export.
-//
-// `code` and `title` are exposed separately so cell rendering can
-// decide on its own whether to render a title line — relying on
-// `full !== short` was brittle because empty-title courses produced
-// trailing-dash strings that misled the equality check.
+// Resolve a course code or class_number into the bag of fields the
+// renderers consume — separate `code` and `title` (so the cell render
+// can decide independently whether to draw a title line) plus the
+// deterministic palette color from main_planner.colorForCourse.
 function _courseMeta(key) {
   const fallbackColor = { bg: '#E5DBE9', ink: '#5F416E' };
   if (!key) return { short: 'Section', full: 'Section', code: '', title: '', cls: 'c-dynamic', color: fallbackColor };
@@ -6292,10 +6282,8 @@ function _courseMeta(key) {
     color: color,
   };
 }
-// Legacy dict reads compile cleanly against an empty Map. Anything
-// reaching for courseMeta[key] gets undefined; call sites should use
-// _courseMeta(key) instead. We keep the symbol exported so any
-// straggler reference in legacy export paths fails soft.
+// Empty stub for any straggler legacy code path that still does
+// `courseMeta[key]` — returns undefined cleanly, no crash.
 const courseMeta = {};
 
 const dayList = ['M','T','W','Th','F'];
@@ -6583,38 +6571,7 @@ function buildGrid(gridId, half) {
       const evt = events.find(e => e.day === d && e.start === slot.start && e.end === slot.end);
       const cellSlot = document.createElement('div');
       cellSlot.className = 'cell-slot' + (evt ? '' : ' empty');
-      if (evt) {
-        const meta = _courseMeta(evt.course);
-        const safeBg  = (meta.color && meta.color.bg)  || '#E5DBE9';
-        const safeInk = (meta.color && meta.color.ink) || '#5F416E';
-        const cell = document.createElement('div');
-        cell.className = 'cell ' + (meta.cls || 'c-dynamic');
-        if (evt.secKey) cell.setAttribute('data-class-number', String(evt.secKey));
-        cell.setAttribute('data-bg', safeBg);
-        cell.setAttribute('data-ink', safeInk);
-        // Pivot from "set inline style with !important" (which the user
-        // reported was still not painting bg in their browser, four
-        // times) to "set CSS custom properties; let a stylesheet rule
-        // with !important consume them." This is the same final
-        // background, just plumbed through CSS variables. It survives
-        // any extension or browser quirk that could be stripping the
-        // style attribute, and the values are inspectable in DevTools
-        // as `--cell-bg` / `--cell-ink` on the element. The actual
-        // !important declaration lives in `.grid .cell.c-dynamic`
-        // (above in the stylesheet).
-        cell.style.setProperty('--cell-bg', safeBg);
-        cell.style.setProperty('--cell-ink', safeInk);
-        const typeNote = evt.label === 'Lecture' ? '' : ' <em>' + _escHtml(String(evt.label).toLowerCase()) + '</em>';
-        const titleLine = meta.title
-          ? '<div class="title-sub">' + _escHtml(meta.title) + '</div>'
-          : '';
-        cell.innerHTML =
-          '<div class="name">' + _escHtml(meta.short || '') + typeNote + '</div>' +
-          titleLine +
-          '<div class="time-sub">' + fmtShort(evt.start) + '–' + fmtShort(evt.end) + '</div>';
-        cell.addEventListener('click', () => showSectionModal(evt.secKey));
-        cellSlot.appendChild(cell);
-      }
+      if (evt) cellSlot.appendChild(_buildOwnCell(evt));
       grid.appendChild(cellSlot);
     });
   });
@@ -7526,23 +7483,16 @@ gatherEvents = function(half) {
   return events;
 };
 
-// Build a "your own class" cell with the canonical dynamic-color
-// styling. Used by both the primary buildGrid render and the friend-
-// overlay buildGrid wrapper below — without this shared helper, the
-// wrapper's reimplementation silently used the legacy empty
-// `courseMeta` dict and rendered tiles without the class / custom
-// properties that the .grid .cell.c-dynamic CSS rule reads.
+// Single source of truth for "your own class" tile rendering. Called
+// from the primary buildGrid AND the friend-overlay wrapper below;
+// extracting the helper is what keeps both code paths in sync.
 function _buildOwnCell(evt, extraClass) {
   const meta = _courseMeta(evt.course);
-  const safeBg  = (meta.color && meta.color.bg)  || '#E5DBE9';
-  const safeInk = (meta.color && meta.color.ink) || '#5F416E';
   const cell = document.createElement('div');
-  cell.className = 'cell ' + (meta.cls || 'c-dynamic') + (extraClass ? ' ' + extraClass : '');
+  cell.className = 'cell ' + meta.cls + (extraClass ? ' ' + extraClass : '');
   if (evt.secKey) cell.setAttribute('data-class-number', String(evt.secKey));
-  cell.setAttribute('data-bg', safeBg);
-  cell.setAttribute('data-ink', safeInk);
-  cell.style.setProperty('--cell-bg', safeBg);
-  cell.style.setProperty('--cell-ink', safeInk);
+  cell.style.setProperty('--cell-bg', meta.color.bg);
+  cell.style.setProperty('--cell-ink', meta.color.ink);
   const typeNote = evt.label === 'Lecture' ? '' : ' <em>' + _escHtml(String(evt.label || '').toLowerCase()) + '</em>';
   const titleLine = meta.title ? '<div class="title-sub">' + _escHtml(meta.title) + '</div>' : '';
   cell.innerHTML =
