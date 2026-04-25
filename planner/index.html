@@ -4136,6 +4136,261 @@
     cursor: pointer;
   }
 
+  /* ====================== Main planner (Piece 5a/2) ====================== */
+  .mp-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0.5rem 0;
+  }
+  .mp-strip-empty {
+    color: rgba(28,26,23,0.5);
+    font-size: 0.85rem;
+    font-style: italic;
+  }
+  .mp-pill {
+    display: inline-flex;
+    align-items: stretch;
+    border: 1px solid rgba(28,26,23,0.18);
+    border-radius: 4px;
+    background: #fffdf9;
+    overflow: hidden;
+  }
+  .mp-pill.is-active {
+    border-color: rgba(183,129,63,0.6);
+    background: rgba(255,248,236,0.95);
+    box-shadow: 0 1px 3px rgba(183,129,63,0.15);
+  }
+  .mp-pill.is-viewed { outline: 2px solid rgba(183,129,63,0.4); outline-offset: 1px; }
+  .mp-pill-main {
+    padding: 0.45rem 0.75rem;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    font-family: inherit;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    color: inherit;
+  }
+  .mp-pill-main:hover { background: rgba(28,26,23,0.04); }
+  .mp-active-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: rgba(120,70,30,0.85);
+  }
+  .mp-pill-name { font-size: 0.92rem; font-weight: 600; }
+  .mp-pill-stats { font-size: 0.74rem; color: rgba(28,26,23,0.55); }
+  .mp-pill-menu {
+    padding: 0 0.55rem;
+    background: transparent;
+    border: 0;
+    border-left: 1px solid rgba(28,26,23,0.1);
+    cursor: pointer;
+    font-size: 1.1rem;
+    color: rgba(28,26,23,0.55);
+    font-family: inherit;
+  }
+  .mp-pill-menu:hover { background: rgba(28,26,23,0.04); color: rgba(28,26,23,0.85); }
+  .mp-pill-add {
+    padding: 0.45rem 0.85rem;
+    border: 1px dashed rgba(28,26,23,0.3);
+    border-radius: 4px;
+    background: transparent;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.85rem;
+    color: rgba(28,26,23,0.65);
+  }
+  .mp-pill-add:hover { background: rgba(28,26,23,0.04); }
+
+  .mp-detail {
+    margin: 0.5rem 0 0 0;
+    font-size: 0.85rem;
+    color: rgba(28,26,23,0.7);
+  }
+  .mp-detail-empty { font-style: italic; color: rgba(28,26,23,0.5); }
+  .mp-detail-notes { white-space: pre-wrap; }
+  .mp-promote-btn {
+    padding: 0.35rem 0.85rem;
+    background: #7c4a2e;
+    color: #fff;
+    border: 0;
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .mp-search-row {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    margin: 0.6rem 0;
+  }
+  .mp-search {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid rgba(28,26,23,0.2);
+    border-radius: 3px;
+    font-family: inherit;
+    font-size: 0.92rem;
+    background: #fff;
+  }
+  .mp-search:focus {
+    outline: none;
+    border-color: rgba(183,129,63,0.6);
+    box-shadow: 0 0 0 2px rgba(183,129,63,0.15);
+  }
+  .mp-search-stats {
+    font-size: 0.78rem;
+    color: rgba(28,26,23,0.55);
+    white-space: nowrap;
+  }
+  .mp-results { display: flex; flex-direction: column; gap: 0.3rem; }
+  .mp-empty {
+    padding: 1rem;
+    color: rgba(28,26,23,0.55);
+    font-size: 0.9rem;
+    text-align: center;
+    background: rgba(28,26,23,0.02);
+    border-radius: 3px;
+  }
+  .mp-empty a, .mp-empty code {
+    color: #7c4a2e;
+    cursor: pointer;
+  }
+  .mp-more-note {
+    padding: 0.5rem;
+    font-size: 0.78rem;
+    color: rgba(28,26,23,0.55);
+    text-align: center;
+    font-style: italic;
+  }
+  .mp-course {
+    border: 1px solid rgba(28,26,23,0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    background: #fffdf9;
+  }
+  .mp-course.is-open { border-color: rgba(183,129,63,0.4); }
+  .mp-course-head {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.6rem 0.85rem;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    font-family: inherit;
+    color: inherit;
+    text-align: left;
+  }
+  .mp-course-head:hover { background: rgba(28,26,23,0.03); }
+  .mp-course-head-text { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
+  .mp-course-code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: rgba(120,70,30,0.85);
+  }
+  .mp-course-title { font-size: 0.95rem; font-weight: 600; }
+  .mp-course-meta {
+    font-size: 0.78rem;
+    color: rgba(28,26,23,0.55);
+    white-space: nowrap;
+  }
+  .mp-sections {
+    border-top: 1px solid rgba(28,26,23,0.08);
+    background: rgba(28,26,23,0.02);
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .mp-section {
+    background: #fff;
+    border: 1px solid rgba(28,26,23,0.08);
+    border-radius: 3px;
+    padding: 0.5rem 0.7rem;
+  }
+  .mp-section.is-staged { border-color: rgba(80,140,90,0.4); background: rgba(240,250,242,0.5); }
+  .mp-section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+  }
+  .mp-section-ident { font-size: 0.85rem; color: rgba(28,26,23,0.85); }
+  .mp-section-cn { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: rgba(28,26,23,0.55); }
+  .mp-section-status { font-size: 0.74rem; padding: 0.05rem 0.4rem; border-radius: 2px; }
+  .mp-status-open { background: rgba(80,140,90,0.15); color: rgba(45,80,50,0.95); }
+  .mp-status-waitlist { background: rgba(183,129,63,0.18); color: rgba(120,70,30,0.95); }
+  .mp-status-closed { background: rgba(28,26,23,0.07); color: rgba(28,26,23,0.6); }
+  .mp-status-cancelled { background: rgba(160,60,40,0.12); color: rgba(160,60,40,0.85); }
+  .mp-stage-btn {
+    padding: 0.3rem 0.75rem;
+    background: #fff;
+    border: 1px solid rgba(28,26,23,0.2);
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.78rem;
+  }
+  .mp-stage-btn:hover { background: rgba(28,26,23,0.04); }
+  .mp-stage-btn.is-staged {
+    background: rgba(80,140,90,0.12);
+    border-color: rgba(80,140,90,0.5);
+    color: rgba(45,80,50,0.95);
+  }
+  .mp-section-body {
+    margin-top: 0.4rem;
+    font-size: 0.82rem;
+    color: rgba(28,26,23,0.7);
+  }
+  .mp-mtg { margin: 0.1rem 0; }
+  .mp-conflict-note {
+    margin-top: 0.35rem;
+    padding: 0.35rem 0.55rem;
+    background: rgba(183,129,63,0.15);
+    border-left: 3px solid rgba(183,129,63,0.6);
+    color: rgba(120,70,30,0.95);
+    font-size: 0.78rem;
+    border-radius: 2px;
+  }
+
+  .lg-filter-swatch {
+    display: inline-block;
+    width: 0.7rem;
+    height: 0.7rem;
+    margin-right: 0.35rem;
+    border-radius: 1px;
+    vertical-align: middle;
+  }
+  .lg-filter-item, .lg-section-item {
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    font-family: inherit;
+    color: inherit;
+  }
+  .lg-empty {
+    color: rgba(28,26,23,0.5);
+    font-style: italic;
+    font-size: 0.85rem;
+  }
+  .m-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+  }
+
   /* ====================== Manage module (Piece 3d) ====================== */
   .mn-section-h {
     font-family: 'Fraunces', serif;
@@ -4615,22 +4870,35 @@
   <!-- ========== DEFAULT TAB: MAIN (Plan+Schedule+Cores together) ========== -->
   <div class="tab-pane active" data-tab-id="main">
 
-  <!-- Module: Plan -->
+  <!-- Module: Plan strip (Piece 5a/2) — top of Main. One pill per plan,
+       active visually distinguished, kebab menu per pill, "+ New plan"
+       on the right. -->
   <section class="module" data-module-id="plan">
     <button class="module-menu-btn" onclick="openModuleMenu(event, 'plan')" title="Move module">⋮</button>
-    <div class="section-label"><span class="num">01</span> Your plan</div>
-    <div class="options-row" id="tabs"></div>
-
-    <div class="option-detail" id="option-detail">
-      <div class="desc" id="option-desc"></div>
-      <div class="metrics" id="metrics"></div>
-    </div>
+    <div class="section-label"><span class="num">01</span> Your plans</div>
+    <div class="mp-strip" id="mp-strip"></div>
+    <div class="mp-detail" id="mp-detail"></div>
   </section>
 
-  <!-- Module: Schedule -->
+  <!-- Module: Course picker — search + browse + stage. Reads from the
+       effective catalog (parsed + edits + imports). Stage button writes
+       to catalog.plans.stageSection on the active plan. -->
+  <section class="module" data-module-id="picker">
+    <button class="module-menu-btn" onclick="openModuleMenu(event, 'picker')" title="Move module">⋮</button>
+    <div class="section-label"><span class="num">02</span> Pick courses</div>
+    <h2>Stage sections into <em>your plan</em>.</h2>
+    <p class="picker-sub">Search courses from your pasted catalog. Click <strong>Stage</strong> on any section to add it to the currently-viewed plan. Conflicts surface inline but don't block — you can stage tradeoffs intentionally.</p>
+    <div class="mp-search-row">
+      <input type="search" id="mp-search" class="mp-search" placeholder="Search by subject, code, or title — e.g. 'engr 2010', 'yoga'…" autocomplete="off" />
+      <span id="mp-search-stats" class="mp-search-stats"></span>
+    </div>
+    <div id="mp-results" class="mp-results"></div>
+  </section>
+
+  <!-- Module: Schedule (calendar / table view) -->
   <section class="module" data-module-id="schedule">
     <button class="module-menu-btn" onclick="openModuleMenu(event, 'schedule')" title="Move module">⋮</button>
-    <div class="section-label"><span class="num">02</span> Weekly hours</div>
+    <div class="section-label"><span class="num">03</span> Weekly hours</div>
 
     <div class="view-toggle" id="view-toggle">
       <div class="vt-slider" id="vt-slider"></div>
@@ -4671,24 +4939,6 @@
     <div class="view-pane" id="view-table" style="display:none;">
       <div class="table-summary" id="table-summary"></div>
       <div class="schedule-table" id="schedule-table"></div>
-    </div>
-  </section>
-
-  <!-- Module: Cores -->
-  <section class="module" data-module-id="cores">
-    <button class="module-menu-btn" onclick="openModuleMenu(event, 'cores')" title="Move module">⋮</button>
-    <div class="picker">
-      <div class="section-label"><span class="num">03</span> Cores &amp; PE alternatives</div>
-      <h2>The <em>core</em> catalog.</h2>
-      <p class="picker-sub">Browse elective cores and physical-education offerings from the catalog. Click a row to preview it in your plan. Waitlist and closed courses are shown with their current status. (Populates once you paste subject data in the Catalog tab.)</p>
-
-      <div class="selected-row">
-        <div class="s-label">Previewing</div>
-        <div id="selected" style="display: contents;"></div>
-      </div>
-
-      <div class="cat-tabs" id="cat-tabs"></div>
-      <div class="course-list" id="course-list"></div>
     </div>
   </section>
 
@@ -5212,6 +5462,17 @@ import {
   packId,
   PACK_MAX_BYTES,
 } from './src/store/pack.js';
+import {
+  hhmmToMinutes,
+  minutesToHhmm,
+  resolveStagedSections,
+  meetingsConflict,
+  detectPlanConflicts,
+  conflictsWithStaged,
+  filterCoursesByQuery,
+  colorForCourse,
+  buildLegendRows,
+} from './src/ui/main_planner.js';
 const catalog = createCatalog();
 const persistence = createPersistence(catalog);
 persistence.load();
@@ -5244,6 +5505,17 @@ window.HS.pack = {
   parseAndValidatePack,
   packId,
   PACK_MAX_BYTES,
+};
+window.HS.mainPlanner = {
+  hhmmToMinutes,
+  minutesToHhmm,
+  resolveStagedSections,
+  meetingsConflict,
+  detectPlanConflicts,
+  conflictsWithStaged,
+  filterCoursesByQuery,
+  colorForCourse,
+  buildLegendRows,
 };
 window.HS.edit = {
   SECTION_FIELDS,
@@ -5284,41 +5556,79 @@ window.dispatchEvent(new CustomEvent('horarium:ready'));
 // access SCHED_DATA but it's now a dynamic getter that reads from the
 // store every call. Commit 5a/2 will burn this shim and replace the
 // downstream reads with direct catalog.plans.* calls.
-let currentOption = 0;
-let currentCat = 'PHYED';
-let selected = { CADT: null, CDAD: null, CSTS: null, CCEA: null, PHYED: null };
+// Plan-strip view state: which plan is currently being viewed (the
+// active plan by default, but the user can click a candidate to view
+// it). Distinct from catalog.plans.getActive() which is the *promoted*
+// plan — viewing a candidate doesn't promote it.
+let currentViewPlanId = null;
 
-// Locking by specific core id was tied to the original author's committed
-// plan (CSTS-UH 1094 Space Diplomacy, PHYED-UH 1056 Recreational Games).
-// With depersonalized placeholder plan data, nothing is locked by default.
-// Lock state will come from user-plan state after the plan-state extraction
-// phase.
-function isLocked(_core) {
-  return false;
+function _activePlanId() {
+  if (!(window.HS && window.HS.catalog && window.HS.catalog.plans)) return null;
+  const a = window.HS.catalog.plans.getActive();
+  return a ? a.id : null;
+}
+function _viewedPlan() {
+  if (!(window.HS && window.HS.catalog && window.HS.catalog.plans)) return null;
+  if (currentViewPlanId) {
+    const p = window.HS.catalog.plans.get(currentViewPlanId);
+    if (p) return p;
+  }
+  return window.HS.catalog.plans.getActive();
+}
+function _viewedPlanId() {
+  const p = _viewedPlan();
+  return p ? p.id : null;
+}
+function _effectiveCatalog() {
+  if (!(window.HS && window.HS.catalog)) return { courses: [] };
+  return window.HS.catalog.getEffective();
+}
+function _resolveSection(classNumber) {
+  const eff = _effectiveCatalog();
+  for (const c of eff.courses) {
+    for (const s of c.sections) {
+      if (s.class_number === classNumber) return { section: s, course: c };
+    }
+  }
+  return null;
 }
 
-// Course-short-name → display metadata. Legacy plans used short keys like
-// 'LinAlg'/'Statics'/'SpaceDip' to tag their sections; the depersonalized
-// placeholder has no sections, so this dict starts empty. The plan-state
-// extraction phase will hydrate it per-user.
-// Call sites that look up courseMeta[sec.course] should guard for undefined
-// (added below via _courseMeta(key) helper).
-const courseMeta = {};
+// Project a course-code or class_number key into the {short, full, cls,
+// color} bag legacy render code expects. Replaces the static
+// `courseMeta` dict + `_courseMeta(key)` helper from before. Color is
+// derived from main_planner.js's deterministic allocator so the same
+// course gets the same hue across every render path (grid, table,
+// legend, export).
 function _courseMeta(key) {
-  return courseMeta[key] || {
-    short: String(key || 'Section'),
-    cls: 'c-generic',
-    full: String(key || 'Section'),
+  if (!key) return { short: 'Section', full: 'Section', cls: 'c-generic', color: { bg: 'var(--paper-soft)', ink: 'inherit' } };
+  // First try as a class_number — resolves to a course code.
+  let courseCode = key;
+  let courseTitle = '';
+  const hit = _resolveSection(String(key));
+  if (hit) {
+    courseCode = hit.course.code;
+    courseTitle = hit.course.title || '';
+  } else {
+    // Maybe `key` is already a course code; look up the title.
+    const eff = _effectiveCatalog();
+    const c = (eff.courses || []).find(function (x) { return x.code === key; });
+    if (c) courseTitle = c.title || '';
+  }
+  const color = (window.HS && window.HS.mainPlanner)
+    ? window.HS.mainPlanner.colorForCourse(courseCode)
+    : { bg: 'var(--paper-soft)', ink: 'inherit' };
+  return {
+    short: courseCode,
+    full: courseTitle ? (courseCode + ' — ' + courseTitle) : courseCode,
+    cls: 'c-dynamic',
+    color: color,
   };
 }
-
-const catMeta = {
-  'CADT':  { full: 'Arts, Design, Technology' },
-  'CDAD':  { full: 'Data and Discovery' },
-  'CSTS':  { full: 'Structures of Thought & Society' },
-  'CCEA':  { full: 'Cultural Exploration & Analysis' },
-  'PHYED': { full: 'Physical Education' },
-};
+// Legacy dict reads compile cleanly against an empty Map. Anything
+// reaching for courseMeta[key] gets undefined; call sites should use
+// _courseMeta(key) instead. We keep the symbol exported so any
+// straggler reference in legacy export paths fails soft.
+const courseMeta = {};
 
 const dayList = ['M','T','W','Th','F'];
 const dayFull = { M:'Monday', T:'Tuesday', W:'Wednesday', Th:'Thursday', F:'Friday' };
@@ -5340,105 +5650,184 @@ function romanize(n) {
   return map[n] || String(n);
 }
 
-// ============ TABS ============
+// ============ PLAN STRIP (Piece 5a/2) ============
+// One pill per plan from catalog.plans.list(). Active plan first +
+// visually emphasized; candidates after; "+ New plan" at the end.
+// Per-pill kebab opens a small menu (rename, duplicate, promote,
+// delete) — kept inline with confirm() prompts to avoid a custom modal.
 function buildTabs() {
-  const t = document.getElementById('tabs');
+  const t = document.getElementById('mp-strip');
+  if (!t) return;
   t.innerHTML = '';
-  SCHED_DATA.options.forEach((opt, i) => {
-    const b = document.createElement('button');
-    b.className = 'opt-tab' + (i === currentOption ? ' active' : '');
-    b.innerHTML = `
-      <div class="num">${romanize(i)}</div>
-      <div class="label">Option ${i + 1}</div>
-      <div class="tagline">${opt.tagline}</div>
-    `;
-    b.addEventListener('click', () => {
-      currentOption = i;
-      // drop cores that now conflict
-      for (const cat of ['CADT','CDAD','CSTS','CCEA','PHYED']) {
-        if (selected[cat]) {
-          const conflicts = SCHED_DATA.conflicts[i][selected[cat]];
-          if (conflicts && conflicts.length > 0) selected[cat] = null;
-        }
-      }
+  const plans = (window.HS && window.HS.catalog && window.HS.catalog.plans)
+    ? window.HS.catalog.plans.list() : [];
+  if (plans.length === 0) {
+    t.innerHTML = '<div class="mp-strip-empty">No plans. Reload to seed the default.</div>';
+    return;
+  }
+  const activeId = _activePlanId();
+  const viewedId = _viewedPlanId();
+  // Active first, then others in created order.
+  const ordered = plans.slice().sort((a, b) => {
+    if (a.kind === b.kind) return (a.created_at || '').localeCompare(b.created_at || '');
+    return a.kind === 'active' ? -1 : 1;
+  });
+  for (const p of ordered) {
+    const isActive = p.id === activeId;
+    const isViewed = p.id === viewedId;
+    const pill = document.createElement('div');
+    pill.className = 'mp-pill' + (isActive ? ' is-active' : '') + (isViewed ? ' is-viewed' : '');
+    pill.innerHTML =
+      '<button type="button" class="mp-pill-main" data-plan-id="' + _escHtml(p.id) + '">' +
+        (isActive ? '<span class="mp-active-badge">Active</span>' : '') +
+        '<span class="mp-pill-name">' + _escHtml(p.name) + '</span>' +
+        '<span class="mp-pill-stats">' +
+          (p.sections.length || 0) + ' section' + ((p.sections.length || 0) === 1 ? '' : 's') +
+          (p.filters && p.filters.length ? ' · ' + p.filters.length + ' filter' + (p.filters.length === 1 ? '' : 's') : '') +
+        '</span>' +
+      '</button>' +
+      '<button type="button" class="mp-pill-menu" data-plan-id="' + _escHtml(p.id) + '" title="Plan options">⋮</button>';
+    t.appendChild(pill);
+  }
+  // "+ New plan" tail button
+  const add = document.createElement('button');
+  add.type = 'button';
+  add.className = 'mp-pill-add';
+  add.textContent = '+ New plan';
+  add.addEventListener('click', _planAddNew);
+  t.appendChild(add);
+
+  // Wire pill clicks — main button views the plan, menu button opens
+  // the inline menu (event delegation cleaner than per-pill).
+  t.querySelectorAll('.mp-pill-main').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      currentViewPlanId = btn.getAttribute('data-plan-id');
       render();
     });
-    t.appendChild(b);
+  });
+  t.querySelectorAll('.mp-pill-menu').forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      _planOpenMenu(btn.getAttribute('data-plan-id'), btn);
+    });
   });
 }
 
-// ============ OPTION DETAIL ============
-function buildOptionDetail() {
-  const opt = SCHED_DATA.options[currentOption];
-  document.getElementById('option-desc').innerHTML = opt.desc;
+function _planAddNew() {
+  const name = prompt('Name for the new plan:', 'New candidate');
+  if (name == null) return;
+  const trimmed = String(name).trim();
+  if (!trimmed) return;
+  const id = window.HS.catalog.plans.create({ name: trimmed, kind: 'candidate' });
+  currentViewPlanId = id;
+  render();
+}
 
-  const analysis = SCHED_DATA.analysis[currentOption];
-  let tightDays = [];
-  let lateDays = [];
-  for (const half of ['A71','A72']) {
-    for (const d of analysis[half]) {
-      if (!d.lunch) tightDays.push(`${dayAbbr[d.day]} ${half}`);
-      if (d.end - d.start >= 7*60) lateDays.push(`${dayAbbr[d.day]} ${half}`);
+function _planOpenMenu(planId, anchorEl) {
+  const plan = window.HS.catalog.plans.get(planId);
+  if (!plan) return;
+  // Tiny inline menu via prompt/confirm — keeps the implementation
+  // small. A polished modal can come later.
+  const choice = prompt(
+    'Plan: ' + plan.name + ' (' + plan.kind + ')\n\n' +
+    'Type a letter to choose:\n' +
+    '  R — rename\n' +
+    '  D — duplicate\n' +
+    (plan.kind === 'candidate' ? '  P — promote to active\n' : '') +
+    (plan.kind !== 'active' ? '  X — delete\n' : '  X — delete (refused while active)\n') +
+    '  cancel — close menu'
+  );
+  if (!choice) return;
+  const c = String(choice).trim().toLowerCase();
+  try {
+    if (c === 'r') {
+      const newName = prompt('New name:', plan.name);
+      if (newName != null && String(newName).trim()) {
+        window.HS.catalog.plans.rename(planId, String(newName).trim());
+      }
+    } else if (c === 'd') {
+      const newName = prompt('Name for the duplicate:', plan.name + ' (copy)');
+      if (newName != null && String(newName).trim()) {
+        const newId = window.HS.catalog.plans.duplicate(planId, String(newName).trim());
+        currentViewPlanId = newId;
+      }
+    } else if (c === 'p') {
+      window.HS.catalog.plans.promote(planId);
+    } else if (c === 'x') {
+      if (!confirm('Delete plan "' + plan.name + '"?\nIts staged sections and filters will be lost. The catalog itself is untouched.')) return;
+      const wasViewed = _viewedPlanId() === planId;
+      window.HS.catalog.plans.delete(planId);
+      if (wasViewed) currentViewPlanId = null;
     }
+    render();
+  } catch (err) {
+    alert('Could not complete: ' + (err && err.message ? err.message : String(err)));
   }
-  const fridays = analysis.A71.find(d => d.day === 'F');
-  let friInfo = '—';
-  if (fridays) friInfo = `${fmtShort(fridays.start)} – ${fmtShort(fridays.end)}`;
+}
 
-  const countAvail = HS.adapter.getCoresList().filter(c => (SCHED_DATA.conflicts[currentOption]?.[c.id] ?? []).length === 0).length;
-  const total = HS.adapter.getCoresList().length;
+// ============ PLAN DETAIL (replaces buildOptionDetail) ============
+// Slim detail strip below the plan pills: shows the viewed plan's
+// notes and a "Promote to active" button when viewing a candidate.
+// Metrics that used to live here (lunch squeeze / long days / Friday
+// window / core availability) were tied to placeholder analysis data
+// and a fixed CSTS-elective requirement. Removed — they'll come back
+// (computed from real data) once the auto-scheduler has metric APIs.
+function buildOptionDetail() {
+  const el = document.getElementById('mp-detail');
+  if (!el) return;
+  const p = _viewedPlan();
+  if (!p) { el.innerHTML = ''; return; }
+  let html = '';
+  if (p.kind !== 'active') {
+    html += '<button type="button" class="mp-promote-btn" onclick="_planPromoteViewed()">Promote to active</button>';
+  }
+  if (p.notes) {
+    html += '<div class="mp-detail-notes">' + _escHtml(p.notes) + '</div>';
+  } else if (p.sections.length === 0) {
+    html += '<div class="mp-detail-empty">No sections staged. Use the picker below to add some.</div>';
+  }
+  el.innerHTML = html;
+}
 
-  document.getElementById('metrics').innerHTML = `
-    <div class="metric">
-      <div class="label">Lunch squeeze</div>
-      <div class="value ${tightDays.length ? 'warn' : 'good'}">${tightDays.length ? tightDays.join(' · ') : 'None'}</div>
-      <div class="unit">days with tight midday window</div>
-    </div>
-    <div class="metric">
-      <div class="label">Long days <span style="font-style:italic;">(7h+)</span></div>
-      <div class="value ${lateDays.length > 2 ? 'warn' : ''}">${lateDays.length ? lateDays.slice(0,3).join(' · ') : 'None'}</div>
-      <div class="unit">first event to last event</div>
-    </div>
-    <div class="metric">
-      <div class="label">Friday</div>
-      <div class="value">${friInfo}</div>
-      <div class="unit">Friday time window</div>
-    </div>
-    <div class="metric">
-      <div class="label">Core availability</div>
-      <div class="value good">${countAvail} <span style="color:var(--ink-whisper);font-style:italic;">of ${total}</span></div>
-      <div class="unit">core courses with no conflict</div>
-    </div>
-  `;
+function _planPromoteViewed() {
+  const id = _viewedPlanId();
+  if (!id) return;
+  try { window.HS.catalog.plans.promote(id); } catch (e) { alert(e && e.message); return; }
+  render();
 }
 
 // ============ GRID ============
+// Reads from catalog.plans (the viewed plan) + catalog.getEffective().
+// Output event shape unchanged so buildGrid / buildScheduleTable work
+// without modification: { day, start, end, course, label, ghost, secKey }.
 function gatherEvents(half) {
   const events = [];
-  const opt = SCHED_DATA.options[currentOption];
-  if (!opt) return events;
-  for (const skey of opt.sections) {
-    const sec = SCHED_DATA.sections[skey];
-    if (!sec) continue;
-    for (const m of sec.meetings) {
-      const [days, start, end, sess, lbl] = m;
-      if (sess === 'AD' || sess === half) {
-        for (const d of days) {
-          events.push({ day: d, start, end, course: sec.course, label: lbl, ghost: false, secKey: skey });
-        }
-      }
-    }
-  }
-  for (const cat of ['CADT','CDAD','CSTS','CCEA','PHYED']) {
-    if (!selected[cat]) continue;
-    const core = SCHED_DATA.cores.find(c => c.id === selected[cat]);
-    if (!core) continue;
-    for (const m of core.meetings) {
-      const [days, start, end, sess, lbl] = m;
-      if (sess === 'AD' || sess === half) {
-        for (const d of days) {
-          events.push({ day: d, start, end, course: core.cat, label: lbl, ghost: true, coreId: core.id, name: core.name, code: core.code });
-        }
+  const plan = _viewedPlan();
+  if (!plan || !plan.sections || plan.sections.length === 0) return events;
+  // Day token translation: parser uses "Mon"/"Tue"/...; legacy grid
+  // uses M/T/W/Th/F. Map only weekdays the grid renders.
+  const dayMap = { Mon: 'M', Tue: 'T', Wed: 'W', Thu: 'Th', Fri: 'F' };
+  for (const ref of plan.sections) {
+    const hit = _resolveSection(ref.class_number);
+    if (!hit) continue;
+    const sess = (hit.section.session && hit.section.session.code) || 'AD';
+    if (sess !== 'AD' && sess !== half) continue;
+    for (const m of (hit.section.meetings || [])) {
+      const startMin = window.HS.mainPlanner.hhmmToMinutes(m.start_time);
+      const endMin = window.HS.mainPlanner.hhmmToMinutes(m.end_time);
+      if (startMin == null || endMin == null) continue;
+      for (const d of (m.days || [])) {
+        const code = dayMap[d];
+        if (!code) continue; // weekend / unknown — grid only shows Mon-Fri
+        events.push({
+          day: code,
+          start: startMin,
+          end: endMin,
+          course: hit.course.code,
+          label: hit.section.component || 'Lecture',
+          ghost: false,
+          secKey: ref.class_number,
+        });
       }
     }
   }
@@ -5485,25 +5874,18 @@ function buildGrid(gridId, half) {
       const cellSlot = document.createElement('div');
       cellSlot.className = 'cell-slot' + (evt ? '' : ' empty');
       if (evt) {
-        const meta = courseMeta[evt.course];
+        const meta = _courseMeta(evt.course);
         const cell = document.createElement('div');
-        if (evt.ghost) {
-          cell.className = `cell c-${evt.course} ghost`;
-          const shortName = evt.name.length > 22 ? evt.name.slice(0,20)+'…' : evt.name;
-          cell.innerHTML = `
-            <div class="name">${shortName}</div>
-            <div class="time-sub">${evt.code} · ${fmtShort(evt.start)}–${fmtShort(evt.end)}</div>
-          `;
-          cell.addEventListener('click', () => showCoreModal(evt.coreId));
-        } else {
-          cell.className = `cell ${meta.cls}`;
-          const typeNote = evt.label === 'Lecture' ? '' : ` <em>${evt.label.toLowerCase()}</em>`;
-          cell.innerHTML = `
-            <div class="name">${meta.short}${typeNote}</div>
-            <div class="time-sub">${fmtShort(evt.start)}–${fmtShort(evt.end)}</div>
-          `;
-          cell.addEventListener('click', () => showSectionModal(evt.secKey));
-        }
+        cell.className = 'cell ' + meta.cls;
+        // Apply per-course color directly via inline style — replaces
+        // the legacy CSS-class-per-course approach.
+        cell.style.background = meta.color.bg;
+        cell.style.color = meta.color.ink;
+        const typeNote = evt.label === 'Lecture' ? '' : ' <em>' + _escHtml(String(evt.label).toLowerCase()) + '</em>';
+        cell.innerHTML =
+          '<div class="name">' + _escHtml(meta.short) + typeNote + '</div>' +
+          '<div class="time-sub">' + fmtShort(evt.start) + '–' + fmtShort(evt.end) + '</div>';
+        cell.addEventListener('click', () => showSectionModal(evt.secKey));
         cellSlot.appendChild(cell);
       }
       grid.appendChild(cellSlot);
@@ -5511,266 +5893,120 @@ function buildGrid(gridId, half) {
   });
 }
 
-// ============ LEGEND ============
+// ============ LEGEND (dynamic; reads viewed plan) ============
+// Two sections: filters on top (with visibility toggle), staged sections
+// on bottom (clicking scrolls to that section's first meeting in the
+// grid). Driven entirely by the new plan + effective-catalog model.
 function buildLegend() {
   const l = document.getElementById('legend');
   if (!l) return;
-  // Previously hardcoded the original author's five committed cores + two
-  // picks. Now it's derived from whatever's actually in the active plan,
-  // using _courseMeta() so unknown keys fall back to the generic chip.
-  const opt = SCHED_DATA.options[currentOption];
-  const committed = (opt && opt.sections) ? opt.sections : [];
-  const coreCategories = Object.keys(catMeta || {});
-  const catColors = coreCategories.reduce((m, k) => {
-    m[k] = '--c-' + k + '-bg';
-    return m;
-  }, {});
-
+  const plan = _viewedPlan();
+  const eff = _effectiveCatalog();
+  if (!plan) { l.innerHTML = ''; return; }
+  const rows = window.HS.mainPlanner.buildLegendRows(plan, eff);
   let html = '';
-  if (committed.length > 0) {
-    html += '<span class="lg-label">Legend</span>';
-    const seen = new Set();
-    for (const skey of committed) {
-      const meta = _courseMeta(skey);
-      if (seen.has(meta.short)) continue;
-      seen.add(meta.short);
-      // Map class name to its --bg variable. Fall back to --paper-soft.
-      const bgVar = meta.cls ? '--' + meta.cls.replace(/^c-/, 'c-') + '-bg' : '';
-      const bgDecl = bgVar && meta.cls !== 'c-generic' ? bgVar : '--paper-soft';
-      html += '<span class="item"><i style="background: var(' + bgDecl + ');"></i>' + _escHtml(meta.short) + '</span>';
+  if (rows.filters.length > 0) {
+    html += '<span class="lg-label">Filters</span>';
+    for (const f of rows.filters) {
+      const swatch = '<i class="lg-filter-swatch" style="background:' +
+        _escHtml(f.color || 'var(--ochre)') + ';opacity:' + (f.visible === false ? '0.3' : '1') + '"></i>';
+      html += '<button type="button" class="item lg-filter-item" data-filter-id="' + _escHtml(f.id) +
+        '" title="Click to toggle visibility">' + swatch + _escHtml(f.name || '(unnamed filter)') + '</button>';
     }
   }
-  if (coreCategories.length > 0) {
-    if (html) html += '<span class="lg-label" style="margin-left:0.5rem;">Core preview</span>';
-    else html += '<span class="lg-label">Core preview</span>';
-    for (const [n, v] of Object.entries(catColors)) {
-      html += '<span class="item"><i class="core-dash" style="background: var(' + v + ');"></i>' + _escHtml(n) + '</span>';
+  if (rows.sections.length > 0) {
+    if (html) html += '<span class="lg-label" style="margin-left:0.5rem;">Sections</span>';
+    else html += '<span class="lg-label">Staged sections</span>';
+    for (const s of rows.sections) {
+      const swatch = '<i style="background:' + _escHtml(s.color.bg) + ';"></i>';
+      html += '<button type="button" class="item lg-section-item" data-class-number="' + _escHtml(s.class_number) + '" title="' +
+        _escHtml(s.course_title) + ' — ' + _escHtml(s.meeting_summary || 'no meetings') + '">' +
+        swatch + _escHtml(s.course_code) +
+        (s.section_code ? ' <span style="opacity:0.5">' + _escHtml(s.section_code) + '</span>' : '') +
+        '</button>';
     }
   }
+  if (html === '') html = '<span class="lg-empty">Empty plan. Stage sections in the picker above.</span>';
   l.innerHTML = html;
-}
-
-// ============ SELECTED ============
-function buildSelected() {
-  const el = document.getElementById('selected');
-  let html = '';
-  let any = false;
-  for (const cat of ['CADT','CDAD','CSTS','CCEA','PHYED']) {
-    if (!selected[cat]) continue;
-    any = true;
-    const core = SCHED_DATA.cores.find(c => c.id === selected[cat]);
-    let swapNote = '';
-    if (cat === 'PHYED' && core.id !== 'PHYED-1056-A72') {
-      const isA72 = core.meetings.some(m => m[3] === 'A72');
-      swapNote = isA72 ? ' <span style="font-style:italic;color:var(--ink-faint);font-size:10.5px;">(swap for Rec Games)</span>' : ' <span style="font-style:italic;color:var(--ink-faint);font-size:10.5px;">(A71 addition)</span>';
-    }
-    html += `<div class="chip">
-      <span class="chip-cat">${cat}</span>
-      <span class="chip-label">
-        <span class="chip-code">${core.code}</span>
-        <span class="chip-name">${core.name}${swapNote}</span>
-      </span>
-      <button class="x-btn" data-remove="${cat}" title="Remove">×</button>
-    </div>`;
-  }
-  if (!any) {
-    html = '<div class="selected-empty">— No courses staged. Select below to preview.</div>';
-  }
-  el.innerHTML = html;
-  el.querySelectorAll('[data-remove]').forEach(b => {
-    b.addEventListener('click', e => {
-      e.stopPropagation();
-      selected[b.dataset.remove] = null;
-      render();
+  // Wire filter-toggle clicks (per-filter visibility).
+  l.querySelectorAll('.lg-filter-item').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      const fid = btn.getAttribute('data-filter-id');
+      const p = _viewedPlan();
+      if (!p) return;
+      const f = p.filters.find(function (x) { return x.id === fid; });
+      if (!f) return;
+      window.HS.catalog.plans.updateFilter(p.id, fid, { visible: !f.visible });
+    });
+  });
+  // Wire staged-section clicks (scroll grid to section's first meeting).
+  l.querySelectorAll('.lg-section-item').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      const cn = btn.getAttribute('data-class-number');
+      const target = document.querySelector('[data-section-key="' + cn + '"]');
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      else document.getElementById('grid-a71').scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   });
 }
 
-// ============ CAT TABS ============
-function buildCatTabs() {
-  const el = document.getElementById('cat-tabs');
-  el.innerHTML = '';
-  ['CADT','CDAD','CSTS','CCEA','PHYED'].forEach(cat => {
-    const avail = HS.adapter.getCoresList().filter(c => c.cat === cat && (SCHED_DATA.conflicts[currentOption]?.[c.id] ?? []).length === 0).length;
-    const total = HS.adapter.getCoresList().filter(c => c.cat === cat).length;
-    const btn = document.createElement('button');
-    btn.className = 'cat-tab' + (currentCat === cat ? ' active' : '');
-    btn.innerHTML = `
-      <div class="cat-code">${cat}</div>
-      <div class="cat-full">${catMeta[cat].full}</div>
-      <div class="cat-count"><span class="avail">${avail}</span> available · ${total} total</div>
-    `;
-    btn.addEventListener('click', () => { currentCat = cat; buildCourseList(); buildCatTabs(); });
-    el.appendChild(btn);
-  });
-}
-
-// ============ COURSE LIST ============
-function buildCourseList() {
-  const list = document.getElementById('course-list');
-  if (!list) return; // Cores module not in the current layout — nothing to do.
-  list.innerHTML = '';
-  // Defensive lookup: SCHED_DATA.conflicts[currentOption] is populated only
-  // for class numbers the user has committed to a plan. When the catalog is
-  // freshly pasted, getCoresList() returns ids that aren't yet in the
-  // conflicts map (the placeholder plan has {} for option 0). Fall back to
-  // an empty array so missing entries don't crash .length access.
-  const _conflictsFor = (id) => {
-    const opt = SCHED_DATA.conflicts && SCHED_DATA.conflicts[currentOption];
-    if (!opt) return [];
-    const v = opt[id];
-    return Array.isArray(v) ? v : [];
-  };
-  const courses = HS.adapter.getCoresList().filter(c => c.cat === currentCat);
-  courses.sort((a,b) => {
-    const aLocked = isLocked(a) ? -3 : 0;
-    const bLocked = isLocked(b) ? -3 : 0;
-    if (aLocked !== bLocked) return aLocked - bLocked;
-    const ac = _conflictsFor(a.id).length;
-    const bc = _conflictsFor(b.id).length;
-    if (ac !== bc) return ac - bc;
-    const statusOrder = { 'Open': 0, 'Waitlist': 1, 'Closed': 2 };
-    const as = statusOrder[a.status] ?? 3;
-    const bs = statusOrder[b.status] ?? 3;
-    if (as !== bs) return as - bs;
-    return a.code.localeCompare(b.code);
-  });
-
-  courses.forEach(c => {
-    const conflicts = _conflictsFor(c.id);
-    const hasConflict = conflicts.length > 0;
-    const isSelected = selected[c.cat] === c.id;
-
-    const timeStr = c.meetings.map(m => {
-      const [days, start, end, sess, lbl] = m;
-      const dayS = days.map(d => dayAbbr[d]).join('/');
-      const sessNote = sess === 'A72' ? '<span class="sess"> · A72 only</span>' : sess === 'A71' ? '<span class="sess"> · A71 only</span>' : '';
-      const lblNote = lbl !== 'Seminar' && lbl !== 'Lecture' ? ` <span class="sess">${lbl.toLowerCase()}</span>` : '';
-      return `${dayS} ${fmtShort(start)}–${fmtShort(end)}${sessNote}${lblNote}`;
-    }).join('<br>');
-
-    let conflictHint = '';
-    if (hasConflict) {
-      const names = [...new Set(conflicts.map(k => courseMeta[SCHED_DATA.sections[k].course].short))];
-      conflictHint = `<div class="c-conflict-hint">⟂ Conflicts: ${names.join(' · ')}</div>`;
-    }
-
-    const locked = isLocked(c);
-    const isClosed = c.status === 'Closed';
-    let statusTag;
-    let actionText = '';
-    if (locked) {
-      statusTag = `<span class="s-tag locked-tag">In your plan</span>`;
-      actionText = 'committed · click for details';
-    } else if (isSelected) {
-      statusTag = `<span class="s-tag selected">Previewing</span>`;
-      actionText = 'click to deselect';
-    } else if (hasConflict) {
-      statusTag = `<span class="s-tag conf">Unavailable</span>`;
-    } else if (isClosed) {
-      statusTag = `<span class="s-tag closed-tag">Closed</span>`;
-      actionText = 'class is full';
-    } else if (c.status === 'Waitlist') {
-      statusTag = `<span class="s-tag wait">Waitlist</span>`;
-      actionText = 'click to preview';
-    } else {
-      statusTag = `<span class="s-tag avail">Open</span>`;
-      if (c.cat === 'PHYED') {
-        const isA72 = c.meetings.some(m => m[3] === 'A72');
-        actionText = isA72 ? 'preview as swap for Rec Games' : 'preview as A71 addition';
-      } else {
-        actionText = 'click to preview';
-      }
-    }
-
-    const row = document.createElement('div');
-    row.className = 'course-row' + (locked ? ' locked' : '') + ((hasConflict || isClosed) && !locked ? ' conflict' : '') + (isSelected ? ' selected' : '');
-    row.innerHTML = `
-      <div>
-        <div class="c-code">${c.code}</div>
-        <div class="c-prof">${c.prof}</div>
-      </div>
-      <div>
-        <div class="c-title">${c.name}</div>
-        <div class="c-desc">${c.desc}</div>
-        ${conflictHint}
-      </div>
-      <div class="c-meetings">${timeStr}</div>
-      <div class="c-status">
-        ${statusTag}
-        <span class="action">${actionText}</span>
-      </div>
-    `;
-    if (locked) {
-      row.addEventListener('click', (e) => {
-        if (e.target.tagName === 'BUTTON') return;
-        showCoreModal(c.id);
-      });
-    } else if (!hasConflict && !isClosed) {
-      row.addEventListener('click', (e) => {
-        if (e.target.tagName === 'BUTTON') return;
-        selected[c.cat] = isSelected ? null : c.id;
-        render();
-        if (!isSelected) {
-          document.getElementById('grid-a71').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      });
-    }
-    list.appendChild(row);
-  });
-}
-
 // ============ MODAL ============
-function showCoreModal(coreId) {
-  const c = HS.adapter.getCoreById(coreId);
+// Section detail modal — reads the section + its course from the
+// effective catalog. Stage / unstage button surfaced inline so the user
+// can act without leaving the modal.
+function showSectionModal(secKey) {
+  const hit = _resolveSection(secKey);
+  if (!hit) return;
+  const s = hit.section;
+  const c = hit.course;
   const body = document.getElementById('modal-body');
-  let mtgs = c.meetings.map(m => {
-    const [days, start, end, sess, lbl] = m;
-    return `<div class="m-block">
-      <div class="t">${lbl}</div>
-      <div class="when">${days.map(d=>dayFull[d]).join(' / ')} · ${fmt(start)} – ${fmt(end)}</div>
-      <div class="where">Session ${sess === 'AD' ? 'Full semester' : sess}</div>
-    </div>`;
+  const dayFullMap = { Mon: 'Monday', Tue: 'Tuesday', Wed: 'Wednesday', Thu: 'Thursday', Fri: 'Friday', Sat: 'Saturday', Sun: 'Sunday' };
+  const mtgs = (s.meetings || []).map(function (m) {
+    const days = (m.days || []).map(function (d) { return dayFullMap[d] || d; }).join(' / ');
+    const start = m.start_time || '—';
+    const end = m.end_time || '—';
+    const sess = (s.session && s.session.code) || '—';
+    const lbl = s.component || 'Meeting';
+    const room = m.room || '';
+    return '<div class="m-block">' +
+      '<div class="t">' + _escHtml(lbl) + '</div>' +
+      '<div class="when">' + _escHtml(days) + ' · ' + _escHtml(start) + ' – ' + _escHtml(end) + '</div>' +
+      '<div class="where">Session ' + _escHtml(sess === 'AD' ? 'Full semester' : sess) + (room ? ' · ' + _escHtml(room) : '') + '</div>' +
+    '</div>';
   }).join('');
-  const titleParts = c.name.split(':');
-  const titleHtml = titleParts.length > 1 ? `${titleParts[0]}<em>:${titleParts.slice(1).join(':')}</em>` : c.name;
-  body.innerHTML = `
-    <div class="m-tag">${c.cat} · ${c.cat === 'PHYED' ? 'Physical Education' : 'Core Competency'}</div>
-    <h2>${titleHtml}</h2>
-    <div class="m-meta">${c.code} · Class #${c.class_num} · ${c.cat === 'PHYED' ? '0' : '4'} credits · Prof. ${c.prof} · ${c.status}</div>
-    <p class="m-desc">${c.desc}</p>
-    <div class="m-meetings">
-      <h3>Meetings</h3>
-      ${mtgs}
-    </div>
-    <button class="close-btn" onclick="closeModal()">Close</button>
-  `;
+  // Is this section staged in the active plan?
+  const activeId = _activePlanId();
+  const active = activeId ? window.HS.catalog.plans.get(activeId) : null;
+  const staged = !!(active && active.sections.some(function (x) { return x.class_number === s.class_number; }));
+  const stageBtn = staged
+    ? '<button class="close-btn" onclick="_planUnstageFromActive(\'' + _escHtml(s.class_number) + '\')">Unstage from active plan</button>'
+    : '<button class="close-btn" onclick="_planStageInActive(\'' + _escHtml(s.class_number) + '\',\'' + _escHtml(c.subject || '') + '\')">Stage in active plan</button>';
+  body.innerHTML =
+    '<div class="m-tag">' + _escHtml(c.code) + (c.title ? ' · ' + _escHtml(c.title) : '') + '</div>' +
+    '<h2>Section ' + _escHtml(s.section_code || '—') + '</h2>' +
+    '<div class="m-meta">Class #' + _escHtml(s.class_number || '—') + ' · ' +
+    _escHtml(s.component || '—') + ' · ' + _escHtml((s.status && s.status.raw) || '—') + '</div>' +
+    '<div class="m-meetings"><h3>Meetings</h3>' + (mtgs || '<em>No meetings.</em>') + '</div>' +
+    '<div class="m-actions">' + stageBtn +
+    ' <button class="close-btn" onclick="closeModal()">Close</button></div>';
   document.getElementById('modal-bg').classList.add('open');
 }
 
-function showSectionModal(secKey) {
-  const sec = SCHED_DATA.sections[secKey];
-  const meta = courseMeta[sec.course];
-  const body = document.getElementById('modal-body');
-  let mtgs = sec.meetings.map(m => {
-    const [days, start, end, sess, lbl] = m;
-    return `<div class="m-block">
-      <div class="t">${lbl}</div>
-      <div class="when">${days.map(d=>dayFull[d]).join(' / ')} · ${fmt(start)} – ${fmt(end)}</div>
-      <div class="where">Session ${sess === 'AD' ? 'Full semester' : sess}</div>
-    </div>`;
-  }).join('');
-  body.innerHTML = `
-    <div class="m-tag">Engineering / Mathematics</div>
-    <h2>${meta.full.replace(/^(\S+\s\S+)\s/, '<em>$1</em> ')}</h2>
-    <div class="m-meta">Class #${sec.class_nums.join(' / ')} · Prof. ${sec.prof}</div>
-    <div class="m-meetings">
-      <h3>Meetings</h3>
-      ${mtgs}
-    </div>
-    <button class="close-btn" onclick="closeModal()">Close</button>
-  `;
-  document.getElementById('modal-bg').classList.add('open');
+function _planStageInActive(classNumber, subject) {
+  const id = _activePlanId();
+  if (!id) return;
+  try {
+    window.HS.catalog.plans.stageSection(id, { class_number: classNumber, subject: subject || null });
+  } catch (e) { alert(e && e.message); return; }
+  closeModal();
+  render();
+}
+function _planUnstageFromActive(classNumber) {
+  const id = _activePlanId();
+  if (!id) return;
+  window.HS.catalog.plans.unstageSection(id, classNumber);
+  closeModal();
+  render();
 }
 
 function closeModal() {
@@ -5788,9 +6024,8 @@ function render() {
   buildGrid('grid-a71', 'A71');
   buildGrid('grid-a72', 'A72');
   buildLegend();
-  buildSelected();
-  buildCatTabs();
-  buildCourseList();
+  if (typeof renderPicker === 'function') renderPicker();
+  if (typeof buildScheduleTable === 'function' && currentView === 'table') buildScheduleTable();
 }
 
 render();
@@ -6698,9 +6933,54 @@ renderComparison();
 
 
 // ============ PERSONAL TIME FILTERS ============
+// Per Piece 5a/2: filters live on the plan, not globally. We keep the
+// `filters[]` global as a hot view of the viewed plan's filter set —
+// every render call resyncs it. Form save / delete also writes through
+// to catalog.plans.{addFilter,updateFilter,removeFilter} so the plan
+// is the source of truth and reload restores the per-plan state.
 let filters = [];
 let editingFilterId = null;
 let filterIdCounter = 0;
+
+function _syncFiltersFromPlan() {
+  const p = _viewedPlan();
+  if (!p || !Array.isArray(p.filters)) { filters = []; return; }
+  // Project plan filters into the legacy shape the existing form / list
+  // / overlay code reads. Plan filters carry the canonical id; keep it.
+  filters = p.filters.map(function (f) {
+    return {
+      id: f.id,
+      name: f.name || '',
+      days: Array.isArray(f.days) ? f.days.slice() : [],
+      startMin: window.HS && window.HS.mainPlanner ? window.HS.mainPlanner.hhmmToMinutes(f.start_time) : null,
+      endMin: window.HS && window.HS.mainPlanner ? window.HS.mainPlanner.hhmmToMinutes(f.end_time) : null,
+      session: f.session || 'AD',
+      color: f.color || '#8F2D1E',
+      pattern: f.pattern || 'solid',
+      visible: f.visible !== false,
+      // Original plan-shape fields preserved so writes can round-trip.
+      _start_time: f.start_time,
+      _end_time: f.end_time,
+    };
+  });
+}
+// Keep filters in sync with plan state. Subscribe once when the
+// catalog is ready; every plan_mutation refreshes filters[] and
+// re-renders the bits that read it.
+window.addEventListener('horarium:ready', function () {
+  if (!(window.HS && window.HS.catalog && window.HS.catalog.subscribe)) return;
+  _syncFiltersFromPlan();
+  if (typeof renderFilterList === 'function') renderFilterList();
+  window.HS.catalog.subscribe(function (e) {
+    if (e && e.reason === 'plan_mutation') {
+      _syncFiltersFromPlan();
+      if (typeof renderFilterList === 'function') renderFilterList();
+      // Filter overlay re-renders via the catalog subscriber that
+      // already calls render() / buildGrid in Main; nothing extra
+      // needed here.
+    }
+  });
+});
 
 // State in the form (doesn't touch filters[] until Save)
 let ffDaysSelected = new Set();
@@ -6836,42 +7116,58 @@ function saveFilter() {
   if (ffDaysSelected.size === 0) { alert('Select at least one day.'); return; }
 
   const days = ['M','T','W','Th','F'].filter(d => ffDaysSelected.has(d));
-  const payload = { name, days, start, end, session: ffSession, color: ffColor, pattern: ffPattern, visible: true };
-
+  const planFilterDef = {
+    name: name,
+    days: days,
+    start_time: window.HS.mainPlanner.minutesToHhmm(start),
+    end_time: window.HS.mainPlanner.minutesToHhmm(end),
+    session: ffSession,
+    color: ffColor,
+    pattern: ffPattern,
+    visible: true,
+  };
+  const planId = _viewedPlanId();
+  if (!planId) { alert('No plan selected.'); return; }
   if (editingFilterId) {
-    const f = filters.find(x => x.id === editingFilterId);
-    if (f) Object.assign(f, payload);
+    window.HS.catalog.plans.updateFilter(planId, editingFilterId, planFilterDef);
   } else {
-    filters.push(Object.assign({ id: ++filterIdCounter }, payload));
+    window.HS.catalog.plans.addFilter(planId, planFilterDef);
   }
-
+  // Sync handlers wired in horarium:ready will refresh filters[] +
+  // legend + overlay; we still rebuild the grid here for synchronous
+  // visual feedback.
   closeFilterForm();
+  _syncFiltersFromPlan();
   renderFilterList();
   buildGrid('grid-a71', 'A71');
   buildGrid('grid-a72', 'A72');
-  buildCourseList();
+  buildLegend();
 }
 
 function deleteFilter(id) {
   const f = filters.find(x => x.id === id);
   if (!f) return;
   if (!confirm('Delete filter "' + f.name + '"?')) return;
-  filters = filters.filter(x => x.id !== id);
+  const planId = _viewedPlanId();
+  if (planId) window.HS.catalog.plans.removeFilter(planId, id);
   if (editingFilterId === id) closeFilterForm();
+  _syncFiltersFromPlan();
   renderFilterList();
   buildGrid('grid-a71', 'A71');
   buildGrid('grid-a72', 'A72');
-  buildCourseList();
+  buildLegend();
 }
 
 function toggleFilterVisible(id) {
   const f = filters.find(x => x.id === id);
   if (!f) return;
-  f.visible = !f.visible;
+  const planId = _viewedPlanId();
+  if (planId) window.HS.catalog.plans.updateFilter(planId, id, { visible: !f.visible });
+  _syncFiltersFromPlan();
   renderFilterList();
   buildGrid('grid-a71', 'A71');
   buildGrid('grid-a72', 'A72');
-  buildCourseList();
+  buildLegend();
 }
 
 function renderFilterList() {
@@ -7006,65 +7302,10 @@ window.addEventListener('resize', () => {
   if (document.getElementById('grid-a72')) _renderFilterOverlay('grid-a72', 'A72');
 });
 
-// When rendering the course picker, inject a filter-clash hint if any meeting
-// overlaps an active filter.
-const _buildCourseListBeforeFilters = buildCourseList;
-buildCourseList = function() {
-  _buildCourseListBeforeFilters();
-  if (filters.length === 0) return;
-  // Walk the rendered course rows and annotate
-  const list = document.getElementById('course-list');
-  if (!list) return;
-  const rows = list.querySelectorAll('.course-row');
-  const _conflictsFor = (id) => {
-    const opt = SCHED_DATA.conflicts && SCHED_DATA.conflicts[currentOption];
-    const v = opt ? opt[id] : null;
-    return Array.isArray(v) ? v : [];
-  };
-  const courses = HS.adapter.getCoresList().filter(c => c.cat === currentCat);
-  // Match order used by _buildCourseListBeforeFilters
-  courses.sort((a,b) => {
-    const aLocked = isLocked(a) ? -3 : 0;
-    const bLocked = isLocked(b) ? -3 : 0;
-    if (aLocked !== bLocked) return aLocked - bLocked;
-    const ac = _conflictsFor(a.id).length;
-    const bc = _conflictsFor(b.id).length;
-    if (ac !== bc) return ac - bc;
-    const statusOrder = { 'Open': 0, 'Waitlist': 1, 'Closed': 2 };
-    const as = statusOrder[a.status] ?? 3;
-    const bs = statusOrder[b.status] ?? 3;
-    if (as !== bs) return as - bs;
-    return a.code.localeCompare(b.code);
-  });
+// (buildCourseList wrapper removed in 5a/2 — Cores module deleted, the
+// new picker handles its own filter-clash hints natively via
+// conflictsWithStaged.)
 
-  rows.forEach((row, i) => {
-    const c = courses[i];
-    if (!c) return;
-    const clashes = new Set();
-    c.meetings.forEach(m => {
-      const [mDays, mStart, mEnd, mSess] = m;
-      filters.forEach(f => {
-        if (!f.visible) return;
-        if (f.session !== 'AD' && mSess !== 'AD' && f.session !== mSess) return;
-        const anyDay = mDays.some(d => f.days.includes(d));
-        if (!anyDay) return;
-        if (mStart < f.end && mEnd > f.start) clashes.add(f.name);
-      });
-    });
-    if (clashes.size > 0) {
-      const existing = row.querySelector('.c-filter-clash');
-      if (existing) existing.remove();
-      const descCol = row.children[1];
-      const hint = document.createElement('div');
-      hint.className = 'c-filter-clash';
-      hint.innerHTML = '⌧ clashes with ' + Array.from(clashes).join(' · ');
-      descCol.appendChild(hint);
-    }
-  });
-};
-
-// Initial render of filter chips + picker (to pick up the new buildCourseList wrapper)
-buildCourseList();
 
 
 
@@ -7241,8 +7482,8 @@ const MODULE_DEFS = {
   catalog:  { label: 'Catalog' },
   browse:   { label: 'Browse' },
   plan:     { label: 'Plan' },
+  picker:   { label: 'Picker' },
   schedule: { label: 'Schedule' },
-  cores:    { label: 'Cores' },
   compare:  { label: 'Compare' },
   export:   { label: 'Export' },
   manage:   { label: 'Manage' },
@@ -7250,7 +7491,7 @@ const MODULE_DEFS = {
 };
 
 let userTabs = [
-  { id: 'main',    label: 'Main',    moduleIds: ['plan', 'schedule'] },
+  { id: 'main',    label: 'Main',    moduleIds: ['plan', 'picker', 'schedule'] },
   { id: 'catalog', label: 'Catalog', moduleIds: ['catalog', 'browse'] },
   { id: 'edit',    label: 'Edit',    moduleIds: ['edit'] },
   { id: 'compare', label: 'Compare', moduleIds: ['compare'] },
@@ -7346,7 +7587,7 @@ function switchTab(tabId) {
       if (currentView === 'table') buildScheduleTable();
       if (typeof _positionSlider === 'function') _positionSlider();
     }
-    if (tab.moduleIds.includes('cores')) buildCourseList();
+    if (tab.moduleIds.includes('picker') && typeof renderPicker === 'function') renderPicker();
     if (tab.moduleIds.includes('compare') && typeof renderComparison === 'function') renderComparison();
     if (tab.moduleIds.includes('manage')) {
       if (typeof _renderIdentityForm === 'function') _renderIdentityForm();
@@ -7764,7 +8005,7 @@ function configResetDefault() {
 
   // Set state
   const defaults = [
-    { id: 'main',    label: 'Main',    moduleIds: ['plan', 'schedule'] },
+    { id: 'main',    label: 'Main',    moduleIds: ['plan', 'picker', 'schedule'] },
     { id: 'compare', label: 'Compare', moduleIds: ['compare'] },
     { id: 'export',  label: 'Export',  moduleIds: ['export'] },
   ];
@@ -9605,6 +9846,171 @@ function _bootPack() {
   }
 }
 window.addEventListener('horarium:ready', _bootPack);
+
+// ============ MAIN-TAB PICKER (Piece 5a/2) ============
+// Course-staging surface. Reads from catalog.getEffective() (parsed +
+// edits + imports overlay). Search filters across subject / code /
+// title. Each course expands inline to show its sections; each section
+// has a Stage button that calls catalog.plans.stageSection on the
+// VIEWED plan (not necessarily the active plan — viewing a candidate
+// stages into that candidate). Conflict warnings against existing
+// staged sections render inline.
+let _pkSearchQuery = '';
+let _pkExpandedCourse = null; // course code currently expanded
+
+function _bootPicker() {
+  const inp = document.getElementById('mp-search');
+  if (!inp) return;
+  inp.addEventListener('input', function () {
+    _pkSearchQuery = inp.value || '';
+    renderPicker();
+  });
+  // Re-render on catalog mutations so newly-pasted subjects appear
+  // immediately, and so stage/unstage updates the staged badges.
+  if (window.HS && window.HS.catalog && window.HS.catalog.subscribe) {
+    window.HS.catalog.subscribe(function () {
+      // Only re-render Main when it's visible — cheap to compute, but
+      // even cheaper to skip when off-screen.
+      if (currentTab === 'main') {
+        render();
+      }
+    });
+  }
+}
+window.addEventListener('horarium:ready', _bootPicker);
+
+function renderPicker() {
+  const el = document.getElementById('mp-results');
+  if (!el) return;
+  if (!(window.HS && window.HS.catalog && window.HS.mainPlanner)) {
+    el.innerHTML = '<div class="mp-empty">Loading…</div>';
+    return;
+  }
+  const eff = _effectiveCatalog();
+  const allCourses = (eff.courses || []).filter(function (c) { return !c._user_created; });
+  const filtered = window.HS.mainPlanner.filterCoursesByQuery(allCourses, _pkSearchQuery);
+  const stats = document.getElementById('mp-search-stats');
+  if (stats) {
+    if (allCourses.length === 0) stats.textContent = 'Catalog is empty. Paste a subject in Catalog → Paste.';
+    else stats.textContent = filtered.length + ' of ' + allCourses.length + ' course' + (allCourses.length === 1 ? '' : 's');
+  }
+  if (allCourses.length === 0) {
+    el.innerHTML = '<div class="mp-empty">No courses in your catalog yet. Paste a subject\'s search-results page in <a onclick="switchTab(\'catalog\');return false;">Catalog → Paste</a> and they\'ll appear here.</div>';
+    return;
+  }
+  if (filtered.length === 0) {
+    el.innerHTML = '<div class="mp-empty">No matches for <code>' + _escHtml(_pkSearchQuery) + '</code>.</div>';
+    return;
+  }
+  // Cap how many we render at once — long subject lists (ENGR-UH has
+  // ~50 courses) are fine, but unfiltered "show all" across multiple
+  // subjects can hit hundreds. Hint to refine the search.
+  const HARD_CAP = 60;
+  const rendered = filtered.slice(0, HARD_CAP);
+  const moreNote = filtered.length > HARD_CAP
+    ? '<div class="mp-more-note">Showing first ' + HARD_CAP + ' of ' + filtered.length + '. Refine the search to narrow.</div>'
+    : '';
+  // Pre-resolve the viewed plan's staged-section refs for quick
+  // is-staged checks AND conflict computation.
+  const plan = _viewedPlan();
+  const stagedRefs = (plan && plan.sections) ? plan.sections.slice() : [];
+  const stagedSet = new Set(stagedRefs.map(function (r) { return r.class_number; }));
+  const hydratedStaged = window.HS.mainPlanner.resolveStagedSections(plan, eff);
+
+  let html = '';
+  for (const c of rendered) {
+    const isExpanded = c.code === _pkExpandedCourse;
+    const unitsStr = (c.units == null) ? '—' :
+      (typeof c.units === 'object' ? c.units.min + '–' + c.units.max : c.units);
+    const stagedCount = (c.sections || []).filter(function (s) { return stagedSet.has(s.class_number); }).length;
+    html += '<div class="mp-course' + (isExpanded ? ' is-open' : '') + '" data-course-code="' + _escHtml(c.code) + '">';
+    html += '<button type="button" class="mp-course-head" data-course-code="' + _escHtml(c.code) + '">';
+    html += '<span class="mp-course-head-text">';
+    html += '<span class="mp-course-code">' + _escHtml(c.code) + '</span>';
+    html += '<span class="mp-course-title">' + _escHtml(c.title || '(untitled)') + '</span>';
+    html += '</span>';
+    html += '<span class="mp-course-meta">' +
+      (c.sections || []).length + ' section' + ((c.sections || []).length === 1 ? '' : 's') +
+      ' · ' + _escHtml(String(unitsStr)) + ' unit' + (unitsStr === 1 ? '' : 's') +
+      (stagedCount > 0 ? ' · <strong>' + stagedCount + ' staged</strong>' : '') +
+      '</span>';
+    html += '</button>';
+    if (isExpanded) {
+      html += '<div class="mp-sections">';
+      for (const s of (c.sections || [])) {
+        const isStaged = stagedSet.has(s.class_number);
+        const conflicts = isStaged ? [] : window.HS.mainPlanner.conflictsWithStaged(s, hydratedStaged);
+        const meetingLines = (s.meetings || []).map(function (m) {
+          const days = (m.days || []).join(',');
+          const t = (m.start_time && m.end_time) ? (m.start_time + '–' + m.end_time) : '—';
+          const room = m.room ? ' · ' + m.room : '';
+          const instr = (m.instructors && m.instructors.length) ? ' · ' + m.instructors.join('; ') : '';
+          return '<div class="mp-mtg">' + _escHtml(days) + ' ' + _escHtml(t) + _escHtml(room) + _escHtml(instr) + '</div>';
+        }).join('') || '<div class="mp-mtg"><em>No meetings.</em></div>';
+        const statusType = (s.status && s.status.type) || 'unknown';
+        const statusLabel = (s.status && s.status.raw) || statusType;
+        const sess = (s.session && s.session.code) || '—';
+        let conflictNote = '';
+        if (conflicts.length > 0) {
+          conflictNote = '<div class="mp-conflict-note">⚠ Conflicts with: ' +
+            conflicts.map(function (x) { return _escHtml(x.course_code + (x.section_code ? ' (' + x.section_code + ')' : '')); }).join(', ') +
+            '. You can stage anyway.</div>';
+        }
+        html += '<div class="mp-section' + (isStaged ? ' is-staged' : '') + '" data-class-number="' + _escHtml(s.class_number) + '">';
+        html += '<div class="mp-section-head">';
+        html += '<div class="mp-section-ident">';
+        html += '<span class="mp-section-code">' + _escHtml(s.section_code || '—') + '</span>';
+        html += ' · <span class="mp-section-comp">' + _escHtml(s.component || '—') + '</span>';
+        html += ' · <span class="mp-section-cn">#' + _escHtml(s.class_number || '—') + '</span>';
+        html += ' · <span class="mp-section-sess">' + _escHtml(sess) + '</span>';
+        html += ' · <span class="mp-section-status mp-status-' + _escHtml(statusType) + '">' + _escHtml(statusLabel) + '</span>';
+        html += '</div>';
+        if (isStaged) {
+          html += '<button type="button" class="mp-stage-btn is-staged" data-action="unstage" data-class-number="' + _escHtml(s.class_number) + '">Staged ✓ · click to unstage</button>';
+        } else {
+          html += '<button type="button" class="mp-stage-btn" data-action="stage" data-class-number="' + _escHtml(s.class_number) + '" data-subject="' + _escHtml(s.subject || c.subject || '') + '">Stage</button>';
+        }
+        html += '</div>';
+        html += '<div class="mp-section-body">' + meetingLines + conflictNote + '</div>';
+        html += '</div>';
+      }
+      html += '</div>';
+    }
+    html += '</div>';
+  }
+  html += moreNote;
+  el.innerHTML = html;
+
+  // Wire course-head clicks (toggle expand).
+  el.querySelectorAll('.mp-course-head').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      const code = btn.getAttribute('data-course-code');
+      _pkExpandedCourse = (_pkExpandedCourse === code) ? null : code;
+      renderPicker();
+    });
+  });
+  // Wire stage / unstage clicks.
+  el.querySelectorAll('.mp-stage-btn').forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      const action = btn.getAttribute('data-action');
+      const cn = btn.getAttribute('data-class-number');
+      const subject = btn.getAttribute('data-subject') || null;
+      const planId = _viewedPlanId();
+      if (!planId) { alert('No plan to stage into.'); return; }
+      try {
+        if (action === 'stage') {
+          window.HS.catalog.plans.stageSection(planId, { class_number: cn, subject: subject });
+        } else {
+          window.HS.catalog.plans.unstageSection(planId, cn);
+        }
+      } catch (err) {
+        alert('Could not ' + action + ': ' + (err && err.message ? err.message : String(err)));
+      }
+      // The catalog subscriber re-renders Main globally.
+    });
+  });
+}
 
 // --- export ---
 function _packExportFull() {
