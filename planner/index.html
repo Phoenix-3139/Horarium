@@ -8581,15 +8581,8 @@ function renderNav() {
     btn.innerHTML = '<span class="fn-label">' + _brEscape(tab.label) + '</span>';
     btn.onclick = () => switchTab(tab.id);
     btn.ondblclick = (e) => { e.preventDefault(); renameTab(tab.id, btn); };
-    // Delete × (only if more than 1 tab)
-    if (userTabs.length > 1) {
-      const del = document.createElement('span');
-      del.className = 'fn-del';
-      del.textContent = '×';
-      del.title = 'Delete tab (modules move to first remaining tab)';
-      del.onclick = (e) => { e.stopPropagation(); deleteTab(tab.id); };
-      btn.appendChild(del);
-    }
+    // Tab deletion now lives in the gear-button config modal — keeps
+    // the dock chrome quiet. Double-click still renames in place.
     nav.appendChild(btn);
   });
   // Gear button → opens visual config modal
