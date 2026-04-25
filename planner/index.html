@@ -5501,6 +5501,120 @@
     accent-color: var(--accent);
   }
 
+  /* ===== Empty-state utility =====
+     For surfaces that LOOK like they should have content but don't —
+     stats with no data yet, the empty schedule grid, browse panes
+     before a selection. A hatched stripe pattern + a soft "no data
+     yet" label so blanks read as deliberate rather than broken.
+     Two variants: .no-data (block, full-cover) and .no-data--inline
+     (a small cell-sized pill for individual stat values, etc.). */
+  .no-data {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .no-data::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background-image: repeating-linear-gradient(
+      -45deg,
+      color-mix(in srgb, var(--ink) 6%, transparent) 0,
+      color-mix(in srgb, var(--ink) 6%, transparent) 6px,
+      transparent 6px,
+      transparent 14px
+    );
+    opacity: 0.85;
+    pointer-events: none;
+  }
+  .no-data::after {
+    content: attr(data-empty-label, "No data yet");
+    content: var(--no-data-label, "No data yet");
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--ink-faint);
+    background: color-mix(in srgb, var(--paper-soft) 70%, transparent);
+    pointer-events: none;
+    text-align: center;
+    padding: 0.25rem 0.5rem;
+  }
+  .no-data > * { position: relative; z-index: 0; opacity: 0.35; }
+
+  /* Empty schedule grid: hatched overlay + "no classes scheduled yet"
+     label so the half-grid reads as deliberately empty rather than
+     unfinished. The grid itself stays rendered (headers visible) and
+     the overlay sits over the row area. */
+  .grid-empty {
+    position: relative;
+  }
+  .grid-empty::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 4.2rem; /* clears the day-header row */
+    bottom: 0;
+    z-index: 4;
+    background-image: repeating-linear-gradient(
+      -45deg,
+      color-mix(in srgb, var(--ink) 6%, transparent) 0,
+      color-mix(in srgb, var(--ink) 6%, transparent) 6px,
+      transparent 6px,
+      transparent 14px
+    );
+    pointer-events: none;
+  }
+  .grid-empty::after {
+    content: "no classes scheduled yet";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 4.2rem;
+    bottom: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--ink-faint);
+    background: color-mix(in srgb, var(--paper-soft) 65%, transparent);
+    pointer-events: none;
+  }
+
+  /* Inline variant — for a single stat cell where the label sits
+     above and only the value area should show "no data yet". */
+  .no-data--inline {
+    display: inline-block;
+    min-width: 5rem;
+    padding: 0.15rem 0.6rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--ink-faint);
+    background-image: repeating-linear-gradient(
+      -45deg,
+      color-mix(in srgb, var(--ink) 8%, transparent) 0,
+      color-mix(in srgb, var(--ink) 8%, transparent) 5px,
+      transparent 5px,
+      transparent 12px
+    );
+    border: 1px dashed color-mix(in srgb, var(--ink) 18%, transparent);
+    border-radius: var(--radius-sm, 2px);
+  }
+
   .mn-stats {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
@@ -5511,6 +5625,32 @@
     background: var(--paper-soft);
     border: var(--border-width, 1px) solid var(--rule, color-mix(in srgb, var(--ink) 8%, transparent));
     border-radius: var(--radius-md, 4px);
+  }
+  /* When a stat has no real data, replace its value with the inline
+     "no data yet" pill — visually distinct from a meaningful zero. */
+  .mn-stat.is-empty .mn-stat-value {
+    display: none;
+  }
+  .mn-stat.is-empty::before {
+    content: "no data yet";
+    display: inline-block;
+    min-width: 5rem;
+    padding: 0.15rem 0.6rem;
+    margin-top: 0.2rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--ink-faint);
+    background-image: repeating-linear-gradient(
+      -45deg,
+      color-mix(in srgb, var(--ink) 8%, transparent) 0,
+      color-mix(in srgb, var(--ink) 8%, transparent) 5px,
+      transparent 5px,
+      transparent 12px
+    );
+    border: 1px dashed color-mix(in srgb, var(--ink) 18%, transparent);
+    border-radius: var(--radius-sm, 2px);
   }
   .mn-stat-label {
     font-size: 0.72rem;
@@ -5577,11 +5717,19 @@
   }
   .mn-repaste-link:hover { background: color-mix(in srgb, var(--ink) 4%, transparent); }
   .mn-subjects-empty {
-    padding: 0.7rem;
+    padding: 1.1rem 1rem;
     font-size: 0.85rem;
-    color: color-mix(in srgb, var(--ink) 55%, transparent);
-    background: color-mix(in srgb, var(--ink) 2%, transparent);
-    border-radius: 4px;
+    color: var(--ink-faint);
+    background-image: repeating-linear-gradient(
+      -45deg,
+      color-mix(in srgb, var(--ink) 6%, transparent) 0,
+      color-mix(in srgb, var(--ink) 6%, transparent) 6px,
+      transparent 6px,
+      transparent 14px
+    );
+    border: 1px dashed color-mix(in srgb, var(--ink) 18%, transparent);
+    border-radius: var(--radius-md, 4px);
+    text-align: center;
   }
 
   .mn-clear-grid {
@@ -7050,6 +7198,13 @@ function buildGrid(gridId, half) {
   const grid = document.getElementById(gridId);
   grid.innerHTML = '';
   const events = gatherEvents(half);
+  // Toggle the no-data overlay class on the grid's parent container so
+  // the hatched "no classes scheduled yet" treatment kicks in only
+  // when there are zero events for this half.
+  const wrap = grid.parentElement;
+  if (wrap) {
+    wrap.classList.toggle('grid-empty', events.length === 0);
+  }
   const slotSet = new Set();
   events.forEach(e => slotSet.add(`${e.start}-${e.end}`));
   const slots = Array.from(slotSet)
@@ -11051,7 +11206,9 @@ function _renderManageStats() {
     try { lastAbs = new Date(rolled.last_saved_at).toLocaleString(); } catch (e) {}
   }
   function stat(label, val, title) {
-    return '<div class="mn-stat"' + (title ? ' title="' + _brEscape(title) + '"' : '') + '>' +
+    var sval = String(val);
+    var isEmpty = sval === '0' || sval === '0 B' || sval === '—' || sval === 'never' || sval === '';
+    return '<div class="mn-stat' + (isEmpty ? ' is-empty' : '') + '"' + (title ? ' title="' + _brEscape(title) + '"' : '') + '>' +
       '<div class="mn-stat-label">' + _brEscape(label) + '</div>' +
       '<div class="mn-stat-value">' + _brEscape(val) + '</div>' +
       '</div>';
