@@ -6025,7 +6025,10 @@ function render() {
   buildGrid('grid-a72', 'A72');
   buildLegend();
   if (typeof renderPicker === 'function') renderPicker();
-  if (typeof buildScheduleTable === 'function' && currentView === 'table') buildScheduleTable();
+  // NOTE: don't reference `currentView` here. It's declared with `let`
+  // ~1600 lines below and we'd hit TDZ on the parse-time render() call.
+  // The schedule-table wrapper later in the script (after currentView's
+  // declaration) re-binds render() so the table refresh happens there.
 }
 
 render();
