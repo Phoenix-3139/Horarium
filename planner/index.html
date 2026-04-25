@@ -4762,7 +4762,10 @@
   }
   .br-section-copy:hover { background: rgba(80, 140, 90, 0.08); }
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<!-- html2canvas is lazy-loaded on first PNG export — see _ensureHtml2canvas
+     in the export module. Loading at boot fires an `enable-background`
+     SVG-1.2-deprecation warning from inside the lib's vendored CSS, and
+     we don't need it until the user actually clicks "Export PNG." -->
 </head>
 <body>
 <div class="container">
@@ -6105,10 +6108,30 @@ function _optSlug() {
 }
 
 // ============ EXPORT: IMAGE (PNG) ============
+// Lazy-load html2canvas on first PNG export. Cached in a module-scoped
+// promise so concurrent exports share the load. Removes the boot-time
+// SVG `enable-background` warning the lib fires when its embedded
+// stylesheet parses.
+let _html2canvasPromise = null;
+function _ensureHtml2canvas() {
+  if (typeof html2canvas !== 'undefined') return Promise.resolve(html2canvas);
+  if (_html2canvasPromise) return _html2canvasPromise;
+  _html2canvasPromise = new Promise(function (resolve, reject) {
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+    s.async = true;
+    s.onload = function () { resolve(window.html2canvas); };
+    s.onerror = function () { reject(new Error('Failed to load html2canvas from CDN')); };
+    document.head.appendChild(s);
+  });
+  return _html2canvasPromise;
+}
+
 async function exportAsImage() {
   _exportCardState('ec-image', 'Rendering', '⏳');
 
   try {
+    await _ensureHtml2canvas();
     const stage = document.createElement('div');
     stage.className = 'export-stage';
 
@@ -7341,49 +7364,59 @@ function buildScheduleTable() {
   const tableEl = document.getElementById('schedule-table');
   const summaryEl = document.getElementById('table-summary');
   if (!tableEl || !summaryEl) return;
-  const opt = SCHED_DATA.options[currentOption];
+  // Burn the shim for this read-path specifically — pre-emption of the
+  // 5a/3 shim cleanup. Reads catalog.plans (the viewed plan) +
+  // catalog.getEffective() directly, so no `class_nums`/`prof`/etc.
+  // legacy-shape mismatches.
+  const plan = (typeof _viewedPlan === 'function') ? _viewedPlan() : null;
+  if (!plan || !plan.sections || plan.sections.length === 0) {
+    tableEl.innerHTML = '<div class="ts-empty">No sections staged in this plan. Use the picker above.</div>';
+    summaryEl.innerHTML = '';
+    return;
+  }
 
   let totalCredits = 0;
   let totalMeetings = 0;
-  let peCount = 0;
-
   let html = '';
-  opt.sections.forEach(skey => {
-    const sec = SCHED_DATA.sections[skey];
-    const meta = courseMeta[sec.course] || {};
-    const fullName = meta.full || sec.course;
-    const parts = fullName.match(/^(\S+-\S+\s+\S+)\s+(.+)$/);
-    const code = parts ? parts[1] : fullName;
-    const name = parts ? parts[2] : '';
-    // Per-course credit values were tied to the original author's plan
-    // (LinAlg/SpaceDip=4, RecGames/Boxing=0, rest=2). In the depersonalized
-    // shell, default to 2 credits; plan-state extraction will read real
-    // `units` from the catalog store.
-    const isPE = false;
-    const credits = 2;
-    totalCredits += credits;
+  let halfA71Count = 0;
+  let halfA72Count = 0;
 
-    // tg-accent color from the course's CSS class. Personal plan keys
-    // (LinAlg/SpaceDip/RecGames) removed — fallback is --ink.
-    const cls = meta.cls || '';
-    const colorMap = {
-      'c-stat': 'var(--c-stat-ink)',
-      'c-cons': 'var(--c-cons-ink)',
-      'c-circ': 'var(--c-circ-ink)',
-      'c-digl': 'var(--c-digl-ink)',
-    };
-    const accent = colorMap[cls] || 'var(--ink)';
+  for (const ref of plan.sections) {
+    const hit = (typeof _resolveSection === 'function') ? _resolveSection(ref.class_number) : null;
+    if (!hit) continue;
+    const c = hit.course;
+    const s = hit.section;
+    const code = c.code || '';
+    const name = c.title || '';
+    const units = (c.units == null) ? 0 :
+      (typeof c.units === 'object' ? (c.units.min + c.units.max) / 2 : c.units);
+    totalCredits += Number(units) || 0;
+
+    // Color via main_planner.colorForCourse — same palette as the grid.
+    const accent = (window.HS && window.HS.mainPlanner)
+      ? window.HS.mainPlanner.colorForCourse(code).ink
+      : 'var(--ink)';
+
+    const sess = (s.session && s.session.code) || 'AD';
+    if (sess === 'A71' || sess === 'AD') halfA71Count++;
+    if (sess === 'A72' || sess === 'AD') halfA72Count++;
+
+    const instructors = new Set();
+    for (const m of (s.meetings || [])) {
+      for (const i of (m.instructors || [])) instructors.add(i);
+    }
+    const profStr = instructors.size > 0 ? Array.from(instructors).join(', ') : '—';
 
     html += '<div class="tg-card" style="--tg-accent: ' + accent + ';">';
     html += '<div class="tg-header">';
     html += '<div class="tg-title-block">';
-    html += '<span class="tg-code">' + code + '</span>';
-    html += '<span class="tg-name">' + name + '</span>';
+    html += '<span class="tg-code">' + _escHtml(code) + '</span>';
+    html += '<span class="tg-name">' + _escHtml(name) + '</span>';
     html += '</div>';
     html += '<div class="tg-meta">';
-    html += '<div><span class="tg-credits">' + credits + '</span> ' + (isPE ? 'PE credits' : 'credits') + '</div>';
-    html += '<div class="tg-instructor">' + sec.prof + '</div>';
-    html += '<div>' + sec.class_nums.map(n => '#' + n).join(' / ') + '</div>';
+    html += '<div><span class="tg-credits">' + _escHtml(String(units)) + '</span> credits</div>';
+    html += '<div class="tg-instructor">' + _escHtml(profStr) + '</div>';
+    html += '<div>#' + _escHtml(s.class_number || '—') + '</div>';
     html += '</div>';
     html += '</div>';
 
@@ -7391,38 +7424,37 @@ function buildScheduleTable() {
     html += '<th>Type</th><th>Section</th><th>Days</th><th>Time</th><th>Dates</th><th>Room</th><th>Class</th>';
     html += '</tr></thead><tbody>';
 
-    sec.meetings.forEach((m, idx) => {
+    const meetings = s.meetings || [];
+    if (meetings.length === 0) {
+      html += '<tr><td colspan="7" style="font-style:italic;opacity:0.6">No meetings listed.</td></tr>';
+    }
+    for (const m of meetings) {
       totalMeetings++;
-      const [days, start, end, sess, label] = m;
-      const roomInfo = HS.adapter.getRoomFor(sec.course, label) || { bldg: '—', room: '—', dates: sess === 'A71' ? 'Aug 31 – Oct 16' : sess === 'A72' ? 'Oct 26 – Dec 14' : 'Aug 31 – Dec 14' };
-      const sectionLabel = sec.class_nums[idx] || '—';
-
+      const days = (m.days || []).join('/');
+      const time = (m.start_time && m.end_time) ? (m.start_time + ' – ' + m.end_time) : '—';
+      const dates = (m.start_date && m.end_date) ? (_brFmtDate(m.start_date) + ' – ' + _brFmtDate(m.end_date)) :
+        (sess === 'A71' ? 'Aug 31 – Oct 16' : sess === 'A72' ? 'Oct 26 – Dec 14' : 'Aug 31 – Dec 14');
+      const roomLabel = m.room || (m.building && m.room_number ? (m.building + ' ' + m.room_number) : '—');
       html += '<tr>';
-      html += '<td class="td-type">' + label + '</td>';
-      html += '<td class="td-section">' + (label === 'Lecture' || label === 'Seminar' ? '001' : (label === 'Recitation' ? 'REC1' : label)) + '</td>';
-      html += '<td class="td-days">' + _dayStr(days) + '</td>';
-      html += '<td class="td-time">' + _fmt12(start) + ' – ' + _fmt12(end) + '</td>';
-      html += '<td class="td-dates">' + roomInfo.dates + '</td>';
-      html += '<td class="td-room"><span class="room-bldg">' + roomInfo.bldg + '</span> · ' + roomInfo.room + '</td>';
-      html += '<td class="td-class">' + sectionLabel + '</td>';
+      html += '<td class="td-type">' + _escHtml(s.component || 'Meeting') + '</td>';
+      html += '<td class="td-section">' + _escHtml(s.section_code || '—') + '</td>';
+      html += '<td class="td-days">' + _escHtml(days || '—') + '</td>';
+      html += '<td class="td-time">' + _escHtml(time) + '</td>';
+      html += '<td class="td-dates">' + _escHtml(dates) + '</td>';
+      html += '<td class="td-room">' + _escHtml(roomLabel) + '</td>';
+      html += '<td class="td-class">#' + _escHtml(s.class_number || '—') + '</td>';
       html += '</tr>';
-    });
-
-    // Add any staged cores
-    // (not included in main table since they're previews)
+    }
 
     html += '</tbody></table>';
     html += '</div>';
-  });
+  }
   tableEl.innerHTML = html;
 
-  // Summary strip
-  const halfA71Count = opt.sections.filter(k => SCHED_DATA.sections[k].meetings.some(m => m[3] === 'A71' || m[3] === 'AD')).length;
-  const halfA72Count = opt.sections.filter(k => SCHED_DATA.sections[k].meetings.some(m => m[3] === 'A72' || m[3] === 'AD')).length;
-
+  // Summary strip — counts derived from the loop above.
   summaryEl.innerHTML =
-    '<div class="ts-stat"><div class="ts-label">Total credits</div><div class="ts-value"><em>' + totalCredits + '</em></div><div class="ts-detail">academic, excluding PE</div></div>' +
-    '<div class="ts-stat"><div class="ts-label">Courses</div><div class="ts-value">' + opt.sections.length + '</div><div class="ts-detail">' + (opt.sections.length - peCount) + ' academic + ' + peCount + ' PE</div></div>' +
+    '<div class="ts-stat"><div class="ts-label">Total credits</div><div class="ts-value"><em>' + totalCredits + '</em></div><div class="ts-detail">summed from course units</div></div>' +
+    '<div class="ts-stat"><div class="ts-label">Courses</div><div class="ts-value">' + plan.sections.length + '</div><div class="ts-detail">staged sections</div></div>' +
     '<div class="ts-stat"><div class="ts-label">Meetings / week</div><div class="ts-value">' + totalMeetings + '</div><div class="ts-detail">lectures, labs, recitations</div></div>' +
     '<div class="ts-stat"><div class="ts-label">First half · A71</div><div class="ts-value">' + halfA71Count + '</div><div class="ts-detail">Aug 31 – Oct 16</div></div>' +
     '<div class="ts-stat"><div class="ts-label">Second half · A72</div><div class="ts-value">' + halfA72Count + '</div><div class="ts-detail">Oct 26 – Dec 14</div></div>';
