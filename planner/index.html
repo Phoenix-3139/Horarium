@@ -479,17 +479,7 @@
     overflow: hidden;
     border-left: 2px solid transparent;
     z-index: 2; /* above overlay layer */
-    /* Vertical priority: code (.name) and title (.title-sub) hold
-       their height; time (.time-sub) is the first to clip when the
-       slot is short. Flex column with .time-sub having flex-shrink:1
-       does this implicitly. */
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
   }
-  .grid .cell .name { flex-shrink: 0; }
-  .grid .cell .title-sub { flex-shrink: 0; }
-  .grid .cell .time-sub { flex-shrink: 1; min-height: 0; }
 
   /* Time-column cells (first column of each row) and day-header cells
      are also in the grid flow; lift them above the overlay too so the
@@ -3432,12 +3422,20 @@
     flex-wrap: wrap;
   }
   .br-row-chip {
+    /* Inline-flex with explicit line-height keeps the chip on the
+       text baseline of whatever line it sits in, instead of
+       stretching the line. Smaller font + tighter padding so it
+       reads as a label, not a button. */
+    display: inline-flex;
+    align-items: center;
     font-family: var(--font-mono);
-    font-size: 0.62rem;
-    padding: 0.08rem 0.4rem;
-    border-radius: 10px;
-    letter-spacing: 0.04em;
+    font-size: 0.6rem;
+    line-height: 1;
+    padding: 0.18rem 0.45rem;
+    border-radius: 2px;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
+    vertical-align: 1px;
   }
   .br-chip-info      { background: rgba(28,26,23,0.06); color: var(--ink-soft); }
   .br-chip-flag      { background: rgba(197,139,58,0.16); color: #8A5E1B; }
@@ -3487,7 +3485,9 @@
     color: var(--ink-soft);
     letter-spacing: 0.02em;
   }
-  .br-course-meta > * { padding: 0.12rem 0; }
+  /* (Removed: `.br-course-meta > * { padding: 0.12rem 0 }` — it
+     stretched chip rows oddly without adding spacing the parent's
+     gap rule didn't already handle.) */
   .br-course-desc {
     font-family: var(--font-body);
     font-size: 0.88rem;
@@ -4139,11 +4139,31 @@
   }
   .br-section-edit:hover { background: rgba(28, 26, 23, 0.04); }
   .br-course-edit {
-    font-size: 0.76rem;
-    margin-left: 0.5rem;
-    color: #7c4a2e;
-    text-decoration: underline dotted;
+    /* Reset everything inherited from .br-course-code (uppercase,
+       monospace, letter-spacing) and render as a normal-case inline
+       button. Sits on the same row as the course code but visually
+       reads as an action, not as part of the identifier. */
+    display: inline-block;
+    margin-left: 0.6rem;
+    padding: 0.18rem 0.55rem;
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: normal;
+    color: rgba(28, 26, 23, 0.7);
+    background: rgba(28, 26, 23, 0.04);
+    border: 1px solid rgba(28, 26, 23, 0.12);
+    border-radius: 3px;
     cursor: pointer;
+    text-decoration: none;
+    vertical-align: 1px;
+    transition: background 0.12s, border-color 0.12s, color 0.12s;
+  }
+  .br-course-edit:hover {
+    background: rgba(183, 129, 63, 0.1);
+    border-color: rgba(183, 129, 63, 0.45);
+    color: rgba(120, 70, 30, 0.95);
   }
 
   /* ====================== Main planner (Piece 5a/2) ====================== */
@@ -5865,6 +5885,7 @@ import {
 import {
   fuzzyMatch,
   scoreCourseMatch,
+  parseStructuredQuery,
   buildInstructorIndex,
   bucketByLevel,
   sectionPassesFilters,
@@ -5929,6 +5950,7 @@ window.HS.mainPlanner = {
 window.HS.picker = {
   fuzzyMatch,
   scoreCourseMatch,
+  parseStructuredQuery,
   buildInstructorIndex,
   bucketByLevel,
   sectionPassesFilters,
@@ -10774,9 +10796,16 @@ function _pkRenderSearchResults(el, allCourses, idx, stagedSet, hydratedStaged, 
     if (b.score !== a.score) return b.score - a.score;
     return String(a.c.code || '').localeCompare(String(b.c.code || ''));
   });
-  // Cap to keep the DOM bounded — 80 hits is plenty; refining the
-  // search narrows further.
-  const HARD_CAP = 80;
+  // Cap policy:
+  //   * Structured queries (subject + catnum like "PHYED-UH 1001"): cap
+  //     hard at 5 — the user has typed something specific, return only
+  //     the bullseye + closest neighbors. Cross-subject same-catnum
+  //     suggestions get pruned out.
+  //   * Unstructured queries (instructor names, title fragments,
+  //     number-only): cap at 80 — same as before. The fuzzy tier
+  //     legitimately surfaces broader matches.
+  const isStructured = !!window.HS.picker.parseStructuredQuery(query);
+  const HARD_CAP = isStructured ? 5 : 80;
   const rows = [];
   let kept = 0;
   for (const item of scored) {
