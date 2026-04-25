@@ -18,8 +18,12 @@ import {
 const EDITORIAL_KEYS = Object.keys(COPY.editorial);
 
 describe("THEME_NAMES — the four registers", () => {
-  it("exports exactly editorial / dark / futuristic / nature", () => {
-    expect(THEME_NAMES).toEqual(["editorial", "dark", "futuristic", "nature"]);
+  it("exports exactly editorial / coffee / futuristic / nature", () => {
+    expect(THEME_NAMES).toEqual(["editorial", "coffee", "futuristic", "nature"]);
+  });
+  it("accepts the legacy 'dark' alias for backward compat", () => {
+    setTheme("dark");
+    expect(getActiveTheme()).toBe("coffee");
   });
   it("DEFAULT_THEME is editorial", () => {
     expect(DEFAULT_THEME).toBe("editorial");
@@ -27,7 +31,7 @@ describe("THEME_NAMES — the four registers", () => {
 });
 
 describe("COPY — every theme has entries for every editorial key", () => {
-  for (const themeName of ["editorial", "dark", "futuristic", "nature"]) {
+  for (const themeName of ["editorial", "coffee", "futuristic", "nature"]) {
     it(`${themeName} dictionary has all ${EDITORIAL_KEYS.length} keys`, () => {
       const dict = COPY[themeName];
       expect(dict).toBeTruthy();
@@ -56,7 +60,7 @@ describe("t(key) — returns the active theme's value", () => {
 });
 
 describe("t(key) — fallback chain", () => {
-  beforeEach(() => _setActiveThemeForTest("dark"));
+  beforeEach(() => _setActiveThemeForTest("coffee"));
 
   it("falls back to editorial when the active theme is missing the key", () => {
     // We don't have a real missing key in production dictionaries, so
@@ -110,9 +114,9 @@ describe("setTheme — persistence + event", () => {
       origAdd.call(this, type, h);
     };
 
-    setTheme("dark");
-    expect(getActiveTheme()).toBe("dark");
-    expect(globalThis.localStorage.getItem("horarium.theme")).toBe("dark");
+    setTheme("coffee");
+    expect(getActiveTheme()).toBe("coffee");
+    expect(globalThis.localStorage.getItem("horarium.theme")).toBe("coffee");
     // Event firing: setTheme calls window.dispatchEvent(CustomEvent(...));
     // jsdom-less test envs may have a stub — at least confirm no throw.
   });
@@ -124,7 +128,7 @@ describe("setTheme — persistence + event", () => {
 
   it("isValidTheme matches the THEME_NAMES list", () => {
     expect(isValidTheme("editorial")).toBe(true);
-    expect(isValidTheme("dark")).toBe(true);
+    expect(isValidTheme("coffee")).toBe(true);
     expect(isValidTheme("futuristic")).toBe(true);
     expect(isValidTheme("nature")).toBe(true);
     expect(isValidTheme("zebra")).toBe(false);

@@ -199,7 +199,10 @@ export const COURSE_PALETTE = [
   { bg: "#A8C0DC", ink: "#1B3658" },  // slate-blue
   { bg: "#E8D585", ink: "#5E480E" },  // mustard
   { bg: "#D2B8A2", ink: "#4A2E1F" },  // taupe
-  { bg: "#9CCDC4", ink: "#0F4040" },  // teal
+  // Was a muted teal (#9CCDC4) — read too close to the slate-blue at
+  // small tile sizes. Pushed toward green-pigmented seafoam so it
+  // reads as its own hue against the cool blue.
+  { bg: "#7DC4A8", ink: "#163E2E" },  // seafoam
   { bg: "#E0AAA4", ink: "#5C1F1F" },  // brick
   { bg: "#B0CFAB", ink: "#2D4F30" },  // moss
   { bg: "#D8B8DC", ink: "#502E5C" },  // mauve

@@ -11,7 +11,11 @@
 // Boot: see boot() at the bottom; it reads localStorage and applies
 // the saved theme (or 'editorial' by default) before any UI runs.
 
-export const THEME_NAMES = ["editorial", "dark", "futuristic", "nature"];
+export const THEME_NAMES = ["editorial", "coffee", "futuristic", "nature"];
+
+// Backward-compat: the original ship called this theme "dark". If a
+// pre-rename localStorage value comes back, accept it and silently map.
+const THEME_ALIAS = { dark: "coffee" };
 
 export const DEFAULT_THEME = "editorial";
 
@@ -48,7 +52,7 @@ export const COPY = {
     "manage.theme.heading": "Theme",
     "footer": "Final registration happens in Albert.",
   },
-  dark: {
+  coffee: {
     "app.title": "Horarium",
     "app.subtitle.empty": "No term loaded. Add catalog data to begin.",
     "tab.main": "Schedule",
@@ -143,6 +147,7 @@ export function t(key) {
 // in without polling.
 export function setTheme(name, opts) {
   opts = opts || {};
+  if (THEME_ALIAS[name]) name = THEME_ALIAS[name];
   if (!isValidTheme(name)) name = DEFAULT_THEME;
   _activeTheme = name;
   if (typeof document !== "undefined" && document.documentElement) {
@@ -163,7 +168,8 @@ export function boot() {
   let saved = DEFAULT_THEME;
   if (typeof localStorage !== "undefined") {
     try {
-      const v = localStorage.getItem(STORAGE_KEY);
+      let v = localStorage.getItem(STORAGE_KEY);
+      if (v && THEME_ALIAS[v]) v = THEME_ALIAS[v];
       if (v && isValidTheme(v)) saved = v;
     } catch (_) { /* private mode */ }
   }
