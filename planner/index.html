@@ -4035,6 +4035,120 @@
     transform: translateX(-50%) translateY(0);
   }
 
+  /* ====================== Workshop toolbar ============================ */
+  .wk-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin: 1rem 0 1.5rem;
+    padding: 0.85rem 1rem;
+    background: var(--paper-soft);
+    border: var(--border-width, 1px) solid var(--rule, color-mix(in srgb, var(--ink) 12%, transparent));
+    border-radius: var(--radius-md, 4px);
+  }
+  .wk-create-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 1rem;
+    background: var(--ink);
+    color: var(--cream);
+    border: var(--border-width, 1px) solid var(--ink);
+    border-radius: var(--radius-sm, 2px);
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .wk-create-btn:hover { opacity: 0.85; }
+  .wk-create-btn .icon { font-size: 1.1rem; line-height: 1; }
+  .wk-toolbar-help {
+    font-size: 0.82rem;
+    color: var(--ink-faint);
+    flex: 1 1 16rem;
+  }
+
+  /* Author form (modal contents) */
+  .au-form {
+    display: grid;
+    gap: 0.85rem;
+    margin-top: 0.5rem;
+  }
+  .au-row {
+    display: grid;
+    grid-template-columns: 8.5rem 1fr;
+    gap: 0.6rem;
+    align-items: start;
+  }
+  .au-row > label { font-size: 0.85rem; padding-top: 0.35rem; color: var(--ink-soft); }
+  .au-row input[type="text"],
+  .au-row input[type="number"],
+  .au-row input[type="time"],
+  .au-row select {
+    width: 100%;
+    padding: 0.45rem 0.6rem;
+    background: var(--cream);
+    color: var(--ink);
+    border: var(--border-width, 1px) solid var(--rule, color-mix(in srgb, var(--ink) 18%, transparent));
+    border-radius: var(--radius-sm, 2px);
+    font-family: inherit;
+    font-size: 0.88rem;
+  }
+  .au-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+  .au-days {
+    display: inline-flex;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+  }
+  .au-day {
+    padding: 0.3rem 0.55rem;
+    border: var(--border-width, 1px) solid var(--rule, color-mix(in srgb, var(--ink) 18%, transparent));
+    border-radius: var(--radius-sm, 2px);
+    background: var(--cream);
+    color: var(--ink);
+    cursor: pointer;
+    font-size: 0.8rem;
+    user-select: none;
+  }
+  .au-day.active {
+    background: var(--accent);
+    color: var(--cream);
+    border-color: var(--accent);
+  }
+  .au-section-card {
+    padding: 0.85rem;
+    background: var(--paper-soft);
+    border: var(--border-width, 1px) solid var(--rule, color-mix(in srgb, var(--ink) 10%, transparent));
+    border-radius: var(--radius-md, 4px);
+  }
+  .au-section-card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-faint);
+  }
+  .au-section-card-head em { font-style: normal; color: var(--accent); }
+  .au-error {
+    color: var(--error, var(--rust));
+    font-size: 0.82rem;
+    padding: 0.5rem 0;
+  }
+  .au-help {
+    font-size: 0.78rem;
+    color: var(--ink-faint);
+    padding-top: 0.2rem;
+  }
+
   /* ====================== Edit module (Piece 3c) ====================== */
   .ed-empty {
     padding: 2rem 0;
@@ -6142,8 +6256,19 @@
   <div class="tab-pane" data-tab-id="edit">
     <section class="module" data-module-id="edit">
       <button class="module-menu-btn" onclick="openModuleMenu(event, 'edit')" title="Move module">⋮</button>
-      <div class="section-label"><span class="num">◆</span> Edit · <em>repair tool</em></div>
-      <h2>Fix what the parser <em>couldn't figure out</em>.</h2>
+      <div class="section-label"><span class="num">◆</span> Workshop · <em>repair &amp; create</em></div>
+      <h2 data-i18n="workshop.title" data-i18n-html="true">Repair, refine, or <em>build from scratch</em>.</h2>
+
+      <!-- Workshop toolbar: lives above the empty/edit panels so the
+           "create" affordance is always reachable, regardless of
+           whether you're already mid-repair. -->
+      <div class="wk-toolbar">
+        <button type="button" class="wk-create-btn" onclick="openAuthorForm()">
+          <span class="icon">＋</span>
+          <span data-i18n="workshop.create">Create a new course</span>
+        </button>
+        <span class="wk-toolbar-help" data-i18n="workshop.help">For courses Albert hasn't published yet, or hypotheticals.</span>
+      </div>
 
       <!-- Empty state: shown when no section/course is selected -->
       <div class="ed-empty" id="ed-empty">
@@ -6376,6 +6501,16 @@ import {
   setTheme,
   boot as bootTheme,
 } from './src/ui/themes.js';
+import {
+  loadUserCourses,
+  bootAuthored,
+  buildSection,
+  authorCourse,
+  nextClassNumber,
+  deleteAuthoredCourse,
+  deleteAuthoredSection,
+  SESSION_DATE_DEFAULTS,
+} from './src/ui/author.js';
 bootTheme();
 const catalog = createCatalog();
 const persistence = createPersistence(catalog);
@@ -6450,6 +6585,19 @@ window.HS.themes = {
   t,
   setTheme,
 };
+window.HS.author = {
+  loadUserCourses,
+  buildSection,
+  authorCourse,
+  nextClassNumber,
+  deleteAuthoredCourse,
+  deleteAuthoredSection,
+  SESSION_DATE_DEFAULTS,
+};
+// Replay any persisted user-authored courses so they appear in the
+// catalog right away — before the first horarium:ready listener fires
+// and renders Browse.
+bootAuthored(catalog);
 window.HS.edit = {
   SECTION_FIELDS,
   COURSE_FIELDS,
@@ -6554,7 +6702,14 @@ function _applyThemeText() {
   for (const el of nodes) {
     const key = el.getAttribute('data-i18n');
     if (!key) continue;
-    el.textContent = _t(key);
+    // data-i18n-html='true' opts into innerHTML (for strings that need
+    // <em> styling, etc.). Source strings come from our own dictionary,
+    // not user input — no XSS surface.
+    if (el.getAttribute('data-i18n-html') === 'true') {
+      el.innerHTML = _t(key);
+    } else {
+      el.textContent = _t(key);
+    }
   }
   // Placeholder attribute (input fields). Separate attribute so the
   // text-content walker doesn't try to use this as the key.
@@ -8391,6 +8546,149 @@ window.addEventListener('resize', () => {
 
 
 
+// ============ AUTHOR FORM (Workshop tab) ============
+// Modal-driven form that lets the user create a course + section from
+// scratch. Persists through window.HS.author (see src/ui/author.js)
+// and re-ingests into the catalog so the course appears in Browse,
+// the picker, and exports immediately. Used when Albert hasn't
+// published a section yet, for hypotheticals, or for cross-listed
+// courses outside the main catalog.
+
+let _auState = null; // Form state, cleared each open.
+
+function openAuthorForm() {
+  if (!(window.HS && window.HS.modal && window.HS.author)) {
+    _hsAlert('Author module not loaded yet — try again in a moment.');
+    return;
+  }
+  _auState = {
+    days: new Set(),
+    component: 'Lecture',
+    session_code: 'AD',
+    status_type: 'open',
+  };
+  const suggestedClass = window.HS.author.nextClassNumber(window.HS.catalog);
+  const body = { html: _auFormHtml(suggestedClass) };
+  window.HS.modal.showModal({
+    title: 'Create a course',
+    body: body,
+    buttons: [
+      { label: 'Cancel', style: 'secondary', action: function () {} },
+      { label: 'Save course', style: 'primary', action: _auSubmit },
+    ],
+  });
+  // Wire the day toggles + react to session changes for date display.
+  setTimeout(_auWireForm, 0);
+}
+
+function _auFormHtml(suggestedClass) {
+  const componentOpts = ['Lecture','Laboratory','Recitation','Seminar','Studio','Workshop','Independent Study','Project','Research']
+    .map(c => `<option value="${_brEscape(c)}">${_brEscape(c)}</option>`).join('');
+  const sessionOpts = ['AD','A71','A72']
+    .map(s => `<option value="${s}"${s==='AD'?' selected':''}>${s === 'AD' ? 'Full semester (AD)' : (s === 'A71' ? 'First half (A71)' : 'Second half (A72)')}</option>`).join('');
+  const statusOpts = ['open','closed','waitlist','cancelled','unknown']
+    .map(s => `<option value="${s}"${s==='open'?' selected':''}>${s.charAt(0).toUpperCase()+s.slice(1)}</option>`).join('');
+  const dayBtns = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']
+    .map(d => `<button type="button" class="au-day" data-day="${d}">${d}</button>`).join('');
+  return [
+    '<div class="au-form">',
+    '  <div class="au-row"><label>Subject</label><input type="text" id="au-subject" placeholder="e.g. MATH-UH" autocomplete="off"></div>',
+    '  <div class="au-row"><label>Catalog #</label><input type="text" id="au-catnum" placeholder="e.g. 9999" autocomplete="off"></div>',
+    '  <div class="au-row"><label>Title</label><input type="text" id="au-title" placeholder="e.g. Introduction to My Course" autocomplete="off"></div>',
+    '  <div class="au-row"><label>Units</label><input type="number" id="au-units" placeholder="4" min="0" max="20" step="0.5"></div>',
+    '  <div class="au-section-card">',
+    '    <div class="au-section-card-head">Section <em>· first meeting</em></div>',
+    '    <div class="au-form">',
+    '      <div class="au-row"><label>Class number</label><input type="text" id="au-classnum" value="' + _brEscape(suggestedClass) + '" autocomplete="off"></div>',
+    '      <div class="au-row"><label>Section code</label><input type="text" id="au-section" value="001" autocomplete="off"></div>',
+    '      <div class="au-row"><label>Component</label><select id="au-component">' + componentOpts + '</select></div>',
+    '      <div class="au-row"><label>Session</label><select id="au-session">' + sessionOpts + '</select></div>',
+    '      <div class="au-row"><label>Status</label><select id="au-status">' + statusOpts + '</select></div>',
+    '      <div class="au-row"><label>Days</label><div class="au-days" id="au-days">' + dayBtns + '</div></div>',
+    '      <div class="au-row"><label>Time</label><div class="au-grid-2"><input type="time" id="au-start" placeholder="Start"><input type="time" id="au-end" placeholder="End"></div></div>',
+    '      <div class="au-row"><label>Building</label><input type="text" id="au-building" placeholder="e.g. East Admin Bldg" autocomplete="off"></div>',
+    '      <div class="au-row"><label>Room #</label><input type="text" id="au-room" placeholder="e.g. 003" autocomplete="off"></div>',
+    '      <div class="au-row"><label>Instructor</label><input type="text" id="au-instr" placeholder="e.g. Lastname, Firstname" autocomplete="off"></div>',
+    '    </div>',
+    '  </div>',
+    '  <div class="au-help">All fields except subject, catalog #, and title are optional. Days + times can be left blank for an "online / TBA" section.</div>',
+    '  <div class="au-error" id="au-error" hidden></div>',
+    '</div>'
+  ].join('\n');
+}
+
+function _auWireForm() {
+  const daysWrap = document.getElementById('au-days');
+  if (daysWrap) {
+    daysWrap.querySelectorAll('.au-day').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        const d = btn.getAttribute('data-day');
+        if (_auState.days.has(d)) { _auState.days.delete(d); btn.classList.remove('active'); }
+        else { _auState.days.add(d); btn.classList.add('active'); }
+      });
+    });
+  }
+  // Focus the first input
+  const f = document.getElementById('au-subject');
+  if (f) f.focus();
+}
+
+function _auSubmit() {
+  const errEl = document.getElementById('au-error');
+  function fail(msg) {
+    if (errEl) { errEl.textContent = msg; errEl.hidden = false; }
+    return false;
+  }
+  const subject = (document.getElementById('au-subject').value || '').trim().toUpperCase();
+  const catalog_number = (document.getElementById('au-catnum').value || '').trim();
+  const title = (document.getElementById('au-title').value || '').trim();
+  const unitsRaw = (document.getElementById('au-units').value || '').trim();
+  if (!subject) return fail('Subject is required (e.g. MATH-UH).');
+  if (!catalog_number) return fail('Catalog number is required.');
+  if (!title) return fail('Title is required.');
+  const units = unitsRaw === '' ? null : Number(unitsRaw);
+  if (units != null && !Number.isFinite(units)) return fail('Units must be a number or left blank.');
+
+  const class_number = (document.getElementById('au-classnum').value || '').trim();
+  if (!class_number) return fail('Class number is required.');
+  const section_code = (document.getElementById('au-section').value || '').trim() || '001';
+  const component = document.getElementById('au-component').value;
+  const session_code = document.getElementById('au-session').value;
+  const status_type = document.getElementById('au-status').value;
+  const start_time = document.getElementById('au-start').value || null;
+  const end_time = document.getElementById('au-end').value || null;
+  const building = (document.getElementById('au-building').value || '').trim() || null;
+  const room_number = (document.getElementById('au-room').value || '').trim() || null;
+  const instructors = (document.getElementById('au-instr').value || '').trim();
+
+  const days = Array.from(_auState.days);
+  if ((start_time && !end_time) || (end_time && !start_time)) {
+    return fail('Provide both start and end times — or leave both blank.');
+  }
+  if (start_time && end_time && start_time >= end_time) {
+    return fail('End time must be after start time.');
+  }
+
+  const section = window.HS.author.buildSection({
+    class_number, section_code, component, session_code, status_type,
+    days, start_time, end_time, building, room_number, instructors,
+  });
+  try {
+    window.HS.author.authorCourse(window.HS.catalog, {
+      subject, catalog_number, title, units, section,
+    });
+  } catch (err) {
+    return fail(String((err && err.message) || err));
+  }
+  // Fully success — let the caller's onClose chain do its thing.
+  // Surface the result via toast / modal alert so the user sees
+  // confirmation; rendering happens via catalog subscription.
+  setTimeout(function () {
+    _hsAlert('Created ' + subject + ' ' + catalog_number + ' · ' + title + '.\nFind it in Catalog → Browse.', 'Saved');
+  }, 50);
+  return true;
+}
+
 // ============ ROOM DATA ============
 // Rooms come from each meeting's `room` / `building` / `room_number`
 // fields on the section in catalog.getEffective(). No legacy ROOM_DATA
@@ -8584,7 +8882,7 @@ const MODULE_DEFS = {
 let userTabs = [
   { id: 'main',    label: 'Main',    moduleIds: ['plan', 'picker', 'schedule'] },
   { id: 'catalog', label: 'Catalog', moduleIds: ['catalog', 'browse'] },
-  { id: 'edit',    label: 'Edit',    moduleIds: ['edit'] },
+  { id: 'edit',    label: 'Workshop', moduleIds: ['edit'] },
   { id: 'compare', label: 'Compare', moduleIds: ['compare'] },
   { id: 'export',  label: 'Export',  moduleIds: ['export'] },
   { id: 'manage',  label: 'Manage',  moduleIds: ['manage'] },

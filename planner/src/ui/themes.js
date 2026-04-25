@@ -52,6 +52,9 @@ export const COPY = {
     "manage.theme.heading": "Theme",
     "config.title": "Organise thy modules",
     "config.tag": "Layout configuration",
+    "workshop.title": "Repair, refine, or <em>build from scratch</em>.",
+    "workshop.create": "Create a new course",
+    "workshop.help": "For courses Albert hasn't published yet, or hypotheticals.",
     "footer": "Final registration happens in Albert.",
   },
   coffee: {
@@ -76,6 +79,9 @@ export const COPY = {
     "manage.theme.heading": "Theme",
     "config.title": "Organize modules",
     "config.tag": "Layout configuration",
+    "workshop.title": "Repair or create a course.",
+    "workshop.create": "Create a new course",
+    "workshop.help": "For courses not yet published, or hypotheticals.",
     "footer": "Register in Albert.",
   },
   futuristic: {
@@ -100,6 +106,9 @@ export const COPY = {
     "manage.theme.heading": "THEME",
     "config.title": "MODULE LAYOUT",
     "config.tag": "LAYOUT CONFIGURATION",
+    "workshop.title": "REPAIR / SYNTHESIZE",
+    "workshop.create": "+ NEW COURSE",
+    "workshop.help": "MANUAL ENTRY FOR UNPUBLISHED OR HYPOTHETICAL DATA.",
     "footer": "FINALIZE IN ALBERT.",
   },
   nature: {
@@ -124,6 +133,9 @@ export const COPY = {
     "manage.theme.heading": "Theme",
     "config.title": "Organize your modules",
     "config.tag": "Layout configuration",
+    "workshop.title": "Repair or grow your catalog.",
+    "workshop.create": "Add a course manually",
+    "workshop.help": "For courses you'd like to track that aren't in the catalog yet.",
     "footer": "Finalize your registration in Albert.",
   },
 };
