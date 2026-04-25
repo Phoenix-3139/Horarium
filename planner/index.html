@@ -4391,6 +4391,353 @@
     margin-top: 0.75rem;
   }
 
+  /* ====================== Custom modal (Piece 5a/3) ====================== */
+  .mdl-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(28, 26, 23, 0.45);
+    z-index: 9000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: mdl-fade-in 0.18s ease;
+  }
+  .mdl-backdrop[hidden] { display: none; }
+  @keyframes mdl-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .mdl-card {
+    background: var(--paper, #fffdf9);
+    border-radius: 6px;
+    padding: 1.5rem 1.5rem 1rem 1.5rem;
+    max-width: 32rem;
+    min-width: 20rem;
+    box-shadow: 0 12px 50px rgba(28, 26, 23, 0.25);
+    animation: mdl-rise 0.2s ease;
+  }
+  @keyframes mdl-rise {
+    from { transform: translateY(8px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .mdl-title {
+    font-family: 'Fraunces', serif;
+    font-size: 1.4rem;
+    margin: 0 0 0.7rem 0;
+    line-height: 1.2;
+    color: rgba(28, 26, 23, 0.92);
+  }
+  .mdl-body {
+    font-size: 0.92rem;
+    line-height: 1.5;
+    color: rgba(28, 26, 23, 0.78);
+    margin-bottom: 0.85rem;
+  }
+  .mdl-body p { margin: 0 0 0.5rem 0; }
+  .mdl-body p:last-child { margin-bottom: 0; }
+  .mdl-input-row { margin: 0.6rem 0; }
+  .mdl-input {
+    width: 100%;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid rgba(28, 26, 23, 0.2);
+    border-radius: 3px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    background: #fff;
+  }
+  .mdl-input:focus {
+    outline: none;
+    border-color: rgba(183, 129, 63, 0.6);
+    box-shadow: 0 0 0 2px rgba(183, 129, 63, 0.15);
+  }
+  .mdl-error {
+    color: rgba(160, 60, 40, 0.95);
+    font-size: 0.82rem;
+    margin-top: 0.35rem;
+  }
+  .mdl-footer {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    margin-top: 0.85rem;
+  }
+  .mdl-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 3px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border: 1px solid rgba(28, 26, 23, 0.18);
+    background: #fff;
+    color: rgba(28, 26, 23, 0.85);
+    transition: background 0.12s, border-color 0.12s;
+  }
+  .mdl-btn:hover { background: rgba(28, 26, 23, 0.04); }
+  .mdl-btn-primary {
+    background: #7c4a2e;
+    color: #fff;
+    border-color: #7c4a2e;
+  }
+  .mdl-btn-primary:hover { background: #6b3f27; border-color: #6b3f27; }
+  .mdl-btn-danger {
+    background: rgba(160, 60, 40, 0.92);
+    color: #fff;
+    border-color: rgba(160, 60, 40, 0.92);
+  }
+  .mdl-btn-danger:hover { background: rgba(140, 50, 35, 1); }
+
+  /* ====================== Picker drill-down (Piece 5a/3) ====================== */
+  .mp-search {
+    flex: 1;
+  }
+  .mp-clear-btn {
+    padding: 0.45rem 0.7rem;
+    border: 1px solid rgba(28, 26, 23, 0.18);
+    background: #fff;
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.85rem;
+    color: rgba(28, 26, 23, 0.65);
+  }
+  .mp-clear-btn:hover { background: rgba(28, 26, 23, 0.04); }
+
+  .mp-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0.4rem 0 0.7rem 0;
+    align-items: center;
+    font-size: 0.82rem;
+    color: rgba(28, 26, 23, 0.65);
+  }
+  .mp-filter-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  .mp-filter-label {
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: rgba(28, 26, 23, 0.5);
+    margin-right: 0.2rem;
+  }
+  .mp-filter-chip {
+    padding: 0.2rem 0.55rem;
+    border: 1px solid rgba(28, 26, 23, 0.15);
+    background: #fff;
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.78rem;
+    color: rgba(28, 26, 23, 0.75);
+  }
+  .mp-filter-chip:hover { background: rgba(28, 26, 23, 0.04); }
+  .mp-filter-chip.is-active {
+    background: rgba(183, 129, 63, 0.18);
+    border-color: rgba(183, 129, 63, 0.5);
+    color: rgba(120, 70, 30, 0.95);
+  }
+  .mp-clear-filters {
+    margin-left: auto;
+    background: none;
+    border: 0;
+    color: rgba(120, 70, 30, 0.8);
+    text-decoration: underline dotted;
+    cursor: pointer;
+    font-size: 0.78rem;
+    font-family: inherit;
+  }
+
+  /* Subject row in directory mode (closed). */
+  .mp-subject {
+    border: 1px solid rgba(28, 26, 23, 0.1);
+    border-radius: 4px;
+    margin-bottom: 0.35rem;
+    background: #fffdf9;
+    overflow: hidden;
+  }
+  .mp-subject.is-open { border-color: rgba(183, 129, 63, 0.4); }
+  .mp-subject-head {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.65rem 0.95rem;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    font-family: inherit;
+    text-align: left;
+    color: inherit;
+  }
+  .mp-subject-head:hover { background: rgba(28, 26, 23, 0.03); }
+  .mp-subject-code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: rgba(28, 26, 23, 0.9);
+  }
+  .mp-subject-meta {
+    font-size: 0.82rem;
+    color: rgba(28, 26, 23, 0.55);
+  }
+  .mp-chevron {
+    display: inline-block;
+    margin-left: 0.4rem;
+    color: rgba(28, 26, 23, 0.45);
+    transition: transform 0.15s;
+    font-size: 0.85rem;
+  }
+  .mp-subject.is-open .mp-chevron,
+  .mp-course.is-open .mp-chevron { transform: rotate(90deg); color: rgba(120, 70, 30, 0.85); }
+
+  /* Level header inside an expanded subject (visual divider, not collapsible). */
+  .mp-level-head {
+    padding: 0.6rem 0.95rem 0.3rem 0.95rem;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(28, 26, 23, 0.5);
+    background: rgba(28, 26, 23, 0.03);
+    border-top: 1px solid rgba(28, 26, 23, 0.06);
+  }
+  .mp-level-head:first-child { border-top: 0; }
+
+  /* Course row (inside subject, or flat in search mode). */
+  .mp-course {
+    background: rgba(255, 252, 248, 0.5);
+    border-top: 1px solid rgba(28, 26, 23, 0.05);
+  }
+  .mp-course.is-open {
+    background: rgba(255, 250, 240, 0.85);
+  }
+  .mp-course-head {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.7rem;
+    align-items: center;
+    padding: 0.5rem 0.95rem 0.5rem 1.4rem;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    font-family: inherit;
+    text-align: left;
+    color: inherit;
+  }
+  .mp-course-head:hover { background: rgba(28, 26, 23, 0.03); }
+  .mp-course-head-text { display: flex; flex-direction: column; gap: 0.05rem; min-width: 0; }
+  .mp-course-code-small {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: rgba(120, 70, 30, 0.85);
+  }
+  .mp-course-title-small { font-size: 0.92rem; font-weight: 500; color: rgba(28, 26, 23, 0.85); }
+  .mp-course-meta-small { font-size: 0.75rem; color: rgba(28, 26, 23, 0.5); white-space: nowrap; }
+  .mp-course-staged-dot {
+    display: inline-block;
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 50%;
+    margin-right: 0.3rem;
+    vertical-align: middle;
+  }
+
+  /* Section row (within an expanded course). */
+  .mp-section {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 0.7rem;
+    align-items: center;
+    padding: 0.5rem 0.95rem 0.5rem 2rem;
+    border-top: 1px solid rgba(28, 26, 23, 0.04);
+  }
+  .mp-section.is-staged {
+    background: rgba(80, 140, 90, 0.05);
+  }
+  .mp-section-status-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.78rem;
+    color: rgba(28, 26, 23, 0.7);
+    white-space: nowrap;
+  }
+  .mp-status-dot {
+    display: inline-block;
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 50%;
+  }
+  .mp-section-info {
+    font-size: 0.82rem;
+    color: rgba(28, 26, 23, 0.75);
+    line-height: 1.45;
+    min-width: 0;
+  }
+  .mp-section-info-line { display: block; }
+  .mp-section-info .scode {
+    font-family: 'JetBrains Mono', monospace;
+    color: rgba(120, 70, 30, 0.85);
+    margin-right: 0.35rem;
+  }
+  .mp-section-info .meet { color: rgba(28, 26, 23, 0.78); }
+  .mp-section-info .room { color: rgba(28, 26, 23, 0.55); }
+  .mp-section-info .instr { color: rgba(28, 26, 23, 0.55); font-style: italic; }
+  .mp-section-conflict {
+    display: block;
+    font-size: 0.74rem;
+    color: rgba(120, 70, 30, 0.95);
+    margin-top: 0.15rem;
+  }
+  .mp-stage {
+    padding: 0.32rem 0.7rem;
+    border: 1px solid rgba(28, 26, 23, 0.18);
+    background: #fff;
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.78rem;
+    color: rgba(28, 26, 23, 0.78);
+    white-space: nowrap;
+  }
+  .mp-stage:hover { background: rgba(28, 26, 23, 0.04); }
+  .mp-stage.is-staged {
+    background: rgba(80, 140, 90, 0.12);
+    border-color: rgba(80, 140, 90, 0.5);
+    color: rgba(45, 80, 50, 0.95);
+  }
+  .mp-stage.is-warn {
+    border-color: rgba(183, 129, 63, 0.5);
+    color: rgba(120, 70, 30, 0.92);
+  }
+
+  /* Search-results mode: subjects collapse to a flat course list. */
+  .mp-results-flat .mp-course { border-radius: 4px; margin-bottom: 0.3rem; border: 1px solid rgba(28, 26, 23, 0.08); }
+  .mp-results-flat .mp-course-head { padding-left: 0.95rem; }
+  .mp-results-flat .mp-section { padding-left: 1.4rem; }
+  .mp-no-results {
+    padding: 1rem;
+    color: rgba(28, 26, 23, 0.55);
+    font-size: 0.9rem;
+    text-align: center;
+    background: rgba(28, 26, 23, 0.02);
+    border-radius: 3px;
+  }
+
+  /* Calendar tile: course title line under code. */
+  .grid .cell .title-sub {
+    font-size: 0.72em;
+    line-height: 1.15;
+    margin-top: 0.05em;
+    opacity: 0.78;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   /* ====================== Manage module (Piece 3d) ====================== */
   .mn-section-h {
     font-family: 'Fraunces', serif;
@@ -4892,9 +5239,11 @@
     <h2>Stage sections into <em>your plan</em>.</h2>
     <p class="picker-sub">Search courses from your pasted catalog. Click <strong>Stage</strong> on any section to add it to the currently-viewed plan. Conflicts surface inline but don't block — you can stage tradeoffs intentionally.</p>
     <div class="mp-search-row">
-      <input type="search" id="mp-search" class="mp-search" placeholder="Search by subject, code, or title — e.g. 'engr 2010', 'yoga'…" autocomplete="off" />
+      <input type="search" id="mp-search" class="mp-search" placeholder="Search subject, code, title, or instructor — e.g. 'engr 2010', 'hashaikeh', 'materials'…" autocomplete="off" />
+      <button type="button" class="mp-clear-btn" id="mp-clear-search" hidden>Clear</button>
       <span id="mp-search-stats" class="mp-search-stats"></span>
     </div>
+    <div class="mp-filters" id="mp-filters"></div>
     <div id="mp-results" class="mp-results"></div>
   </section>
 
@@ -5496,6 +5845,25 @@ import {
   colorForCourse,
   buildLegendRows,
 } from './src/ui/main_planner.js';
+import {
+  fuzzyMatch,
+  scoreCourseMatch,
+  buildInstructorIndex,
+  bucketByLevel,
+  sectionPassesFilters,
+  isFilterActive,
+  DEFAULT_FILTERS,
+  statusDot,
+  stageActionLabel,
+} from './src/ui/picker.js';
+import {
+  showModal,
+  showModalAlert,
+  showModalConfirm,
+  showModalPrompt,
+  hideModal,
+  isModalOpen,
+} from './src/ui/modal.js';
 const catalog = createCatalog();
 const persistence = createPersistence(catalog);
 persistence.load();
@@ -5539,6 +5907,25 @@ window.HS.mainPlanner = {
   filterCoursesByQuery,
   colorForCourse,
   buildLegendRows,
+};
+window.HS.picker = {
+  fuzzyMatch,
+  scoreCourseMatch,
+  buildInstructorIndex,
+  bucketByLevel,
+  sectionPassesFilters,
+  isFilterActive,
+  DEFAULT_FILTERS,
+  statusDot,
+  stageActionLabel,
+};
+window.HS.modal = {
+  showModal,
+  showModalAlert,
+  showModalConfirm,
+  showModalPrompt,
+  hideModal,
+  isModalOpen,
 };
 window.HS.edit = {
   SECTION_FIELDS,
@@ -5584,6 +5971,53 @@ window.dispatchEvent(new CustomEvent('horarium:ready'));
 // it). Distinct from catalog.plans.getActive() which is the *promoted*
 // plan — viewing a candidate doesn't promote it.
 let currentViewPlanId = null;
+
+// Native-dialog replacements (Piece 5a/3 polish). All native confirm /
+// alert / prompt have been rewritten to use the custom modal. These
+// thin helpers exist so the call-site rewrites stay terse and so the
+// modal lookup is defensive against early-fire calls before the
+// deferred module has populated window.HS.modal.
+function _hsAlert(msg, title) {
+  if (window.HS && window.HS.modal) {
+    return window.HS.modal.showModalAlert({ title: title || '', body: String(msg) });
+  }
+  // Should never fire after horarium:ready; keep a safe fallback so
+  // an early-boot edge case doesn't silently swallow the message.
+  return Promise.resolve();
+}
+function _hsConfirm(msg, opts) {
+  opts = opts || {};
+  if (window.HS && window.HS.modal) {
+    return window.HS.modal.showModalConfirm({
+      title: opts.title || 'Confirm',
+      body: String(msg),
+      confirmLabel: opts.confirmLabel,
+      cancelLabel: opts.cancelLabel,
+      danger: !!opts.danger,
+    });
+  }
+  return Promise.resolve(false);
+}
+function _hsPrompt(msg, defaultValue, opts) {
+  opts = opts || {};
+  if (window.HS && window.HS.modal) {
+    // Body accepts either a string or {html: '...'} for inline markup
+    // (used by the "Clear everything" type-to-confirm flow).
+    var body;
+    if (msg == null || msg === '') body = '';
+    else if (typeof msg === 'object' && typeof msg.html === 'string') body = msg;
+    else body = String(msg);
+    return window.HS.modal.showModalPrompt({
+      title: opts.title || '',
+      body: body,
+      defaultValue: defaultValue || '',
+      placeholder: opts.placeholder || '',
+      confirmLabel: opts.confirmLabel,
+      cancelLabel: opts.cancelLabel,
+    });
+  }
+  return Promise.resolve(null);
+}
 
 // Vestigial constants. The legacy export / table / comparison paths
 // still read `SCHED_DATA.options[currentOption]`,
@@ -5687,7 +6121,7 @@ function romanize(n) {
 // One pill per plan from catalog.plans.list(). Active plan first +
 // visually emphasized; candidates after; "+ New plan" at the end.
 // Per-pill kebab opens a small menu (rename, duplicate, promote,
-// delete) — kept inline with confirm() prompts to avoid a custom modal.
+// delete) — kept inline with _hsConfirm() prompts to avoid a custom modal.
 function buildTabs() {
   const t = document.getElementById('mp-strip');
   if (!t) return;
@@ -5747,55 +6181,90 @@ function buildTabs() {
 }
 
 function _planAddNew() {
-  const name = prompt('Name for the new plan:', 'New candidate');
-  if (name == null) return;
-  const trimmed = String(name).trim();
-  if (!trimmed) return;
-  const id = window.HS.catalog.plans.create({ name: trimmed, kind: 'candidate' });
-  currentViewPlanId = id;
-  render();
+  _hsPrompt('', 'New candidate', {
+    title: 'Name your new plan',
+    placeholder: 'e.g. Spring lighter load',
+    confirmLabel: 'Create',
+  }).then(function (name) {
+    if (name == null) return;
+    const trimmed = String(name).trim();
+    if (!trimmed) return;
+    const id = window.HS.catalog.plans.create({ name: trimmed, kind: 'candidate' });
+    currentViewPlanId = id;
+    render();
+  });
 }
 
-function _planOpenMenu(planId, anchorEl) {
+// Modal-driven plan menu. Buttons render inline (rename / duplicate /
+// promote / delete) — far better UX than the prior "type R" prompt.
+function _planOpenMenu(planId) {
   const plan = window.HS.catalog.plans.get(planId);
   if (!plan) return;
-  // Tiny inline menu via prompt/confirm — keeps the implementation
-  // small. A polished modal can come later.
-  const choice = prompt(
-    'Plan: ' + plan.name + ' (' + plan.kind + ')\n\n' +
-    'Type a letter to choose:\n' +
-    '  R — rename\n' +
-    '  D — duplicate\n' +
-    (plan.kind === 'candidate' ? '  P — promote to active\n' : '') +
-    (plan.kind !== 'active' ? '  X — delete\n' : '  X — delete (refused while active)\n') +
-    '  cancel — close menu'
-  );
-  if (!choice) return;
-  const c = String(choice).trim().toLowerCase();
-  try {
-    if (c === 'r') {
-      const newName = prompt('New name:', plan.name);
-      if (newName != null && String(newName).trim()) {
-        window.HS.catalog.plans.rename(planId, String(newName).trim());
-      }
-    } else if (c === 'd') {
-      const newName = prompt('Name for the duplicate:', plan.name + ' (copy)');
-      if (newName != null && String(newName).trim()) {
-        const newId = window.HS.catalog.plans.duplicate(planId, String(newName).trim());
-        currentViewPlanId = newId;
-      }
-    } else if (c === 'p') {
-      window.HS.catalog.plans.promote(planId);
-    } else if (c === 'x') {
-      if (!confirm('Delete plan "' + plan.name + '"?\nIts staged sections and filters will be lost. The catalog itself is untouched.')) return;
+  const buttons = [];
+  buttons.push({ label: 'Rename',    style: 'secondary', action: function () { _planMenuRename(planId); } });
+  buttons.push({ label: 'Duplicate', style: 'secondary', action: function () { _planMenuDuplicate(planId); } });
+  if (plan.kind === 'candidate') {
+    buttons.push({ label: 'Promote to active', style: 'primary', action: function () {
+      try { window.HS.catalog.plans.promote(planId); render(); }
+      catch (err) { _hsAlert((err && err.message) || String(err), 'Could not promote'); }
+    }});
+  }
+  if (plan.kind !== 'active') {
+    buttons.push({ label: 'Delete', style: 'danger', action: function () { _planMenuDelete(planId); } });
+  }
+  buttons.push({ label: 'Close', style: 'secondary', action: function () {} });
+  window.HS.modal.showModal({
+    title: plan.name,
+    body: plan.kind === 'active' ? 'Currently the active plan.' : 'Candidate plan.',
+    buttons: buttons,
+  });
+}
+function _planMenuRename(planId) {
+  const plan = window.HS.catalog.plans.get(planId);
+  if (!plan) return;
+  _hsPrompt('', plan.name, {
+    title: 'Rename plan',
+    confirmLabel: 'Rename',
+  }).then(function (newName) {
+    if (newName == null) return;
+    const trimmed = String(newName).trim();
+    if (!trimmed) return;
+    try { window.HS.catalog.plans.rename(planId, trimmed); render(); }
+    catch (err) { _hsAlert((err && err.message) || String(err), 'Could not rename'); }
+  });
+}
+function _planMenuDuplicate(planId) {
+  const plan = window.HS.catalog.plans.get(planId);
+  if (!plan) return;
+  _hsPrompt('', plan.name + ' (copy)', {
+    title: 'Duplicate plan',
+    confirmLabel: 'Duplicate',
+  }).then(function (newName) {
+    if (newName == null) return;
+    const trimmed = String(newName).trim();
+    if (!trimmed) return;
+    try {
+      const newId = window.HS.catalog.plans.duplicate(planId, trimmed);
+      currentViewPlanId = newId;
+      render();
+    } catch (err) { _hsAlert((err && err.message) || String(err), 'Could not duplicate'); }
+  });
+}
+function _planMenuDelete(planId) {
+  const plan = window.HS.catalog.plans.get(planId);
+  if (!plan) return;
+  _hsConfirm(
+    'Its staged sections and filters will be lost. The catalog itself is untouched.',
+    { title: 'Delete plan "' + plan.name + '"?', confirmLabel: 'Delete', danger: true }
+  ).then(function (ok) {
+    if (!ok) return;
+    try {
       const wasViewed = _viewedPlanId() === planId;
       window.HS.catalog.plans.delete(planId);
       if (wasViewed) currentViewPlanId = null;
-    }
-    render();
-  } catch (err) {
-    alert('Could not complete: ' + (err && err.message ? err.message : String(err)));
-  }
+      render();
+    } catch (err) { _hsAlert((err && err.message) || String(err), 'Could not delete'); }
+  });
 }
 
 // ============ PLAN DETAIL (replaces buildOptionDetail) ============
@@ -5825,7 +6294,7 @@ function buildOptionDetail() {
 function _planPromoteViewed() {
   const id = _viewedPlanId();
   if (!id) return;
-  try { window.HS.catalog.plans.promote(id); } catch (e) { alert(e && e.message); return; }
+  try { window.HS.catalog.plans.promote(id); } catch (e) { _hsAlert(e && e.message); return; }
   render();
 }
 
@@ -5916,8 +6385,19 @@ function buildGrid(gridId, half) {
         cell.style.color = meta.color.ink;
         cell.style.borderLeftColor = meta.color.ink;
         const typeNote = evt.label === 'Lecture' ? '' : ' <em>' + _escHtml(String(evt.label).toLowerCase()) + '</em>';
+        // Three-line cell layout: code (always), title (drops if too
+        // short), time. The title-sub is overflow-clipped to a single
+        // line; very-short tiles hide it via CSS-driven height check.
+        // CSS handles ellipsis; JS just emits the title only when it
+        // exists in the catalog.
+        const titleLine = (meta.full && meta.full !== meta.short)
+          ? '<div class="title-sub">' + _escHtml(
+              meta.full.indexOf(' — ') !== -1 ? meta.full.split(' — ').slice(1).join(' — ') : meta.full
+            ) + '</div>'
+          : '';
         cell.innerHTML =
           '<div class="name">' + _escHtml(meta.short) + typeNote + '</div>' +
+          titleLine +
           '<div class="time-sub">' + fmtShort(evt.start) + '–' + fmtShort(evt.end) + '</div>';
         cell.addEventListener('click', () => showSectionModal(evt.secKey));
         cellSlot.appendChild(cell);
@@ -6031,7 +6511,7 @@ function _planStageInActive(classNumber, subject) {
   if (!id) return;
   try {
     window.HS.catalog.plans.stageSection(id, { class_number: classNumber, subject: subject || null });
-  } catch (e) { alert(e && e.message); return; }
+  } catch (e) { _hsAlert(e && e.message); return; }
   closeModal();
   render();
 }
@@ -7166,11 +7646,11 @@ _initFilterForm();
 
 function saveFilter() {
   const name = document.getElementById('f-name').value.trim();
-  if (!name) { alert('Please give your filter a name.'); return; }
+  if (!name) { _hsAlert('Please give your filter a name.'); return; }
   const start = _parseHHMM(document.getElementById('f-start').value);
   const end = _parseHHMM(document.getElementById('f-end').value);
-  if (end <= start) { alert('End time must be after start time.'); return; }
-  if (ffDaysSelected.size === 0) { alert('Select at least one day.'); return; }
+  if (end <= start) { _hsAlert('End time must be after start time.'); return; }
+  if (ffDaysSelected.size === 0) { _hsAlert('Select at least one day.'); return; }
 
   const days = ['M','T','W','Th','F'].filter(d => ffDaysSelected.has(d));
   const planFilterDef = {
@@ -7184,7 +7664,7 @@ function saveFilter() {
     visible: true,
   };
   const planId = _viewedPlanId();
-  if (!planId) { alert('No plan selected.'); return; }
+  if (!planId) { _hsAlert('No plan selected.'); return; }
   if (editingFilterId) {
     window.HS.catalog.plans.updateFilter(planId, editingFilterId, planFilterDef);
   } else {
@@ -7204,15 +7684,21 @@ function saveFilter() {
 function deleteFilter(id) {
   const f = filters.find(x => x.id === id);
   if (!f) return;
-  if (!confirm('Delete filter "' + f.name + '"?')) return;
-  const planId = _viewedPlanId();
-  if (planId) window.HS.catalog.plans.removeFilter(planId, id);
-  if (editingFilterId === id) closeFilterForm();
-  _syncFiltersFromPlan();
-  renderFilterList();
-  buildGrid('grid-a71', 'A71');
-  buildGrid('grid-a72', 'A72');
-  buildLegend();
+  _hsConfirm('Remove this personal-time filter?', {
+    title: 'Delete filter "' + f.name + '"?',
+    confirmLabel: 'Delete',
+    danger: true,
+  }).then(function (ok) {
+    if (!ok) return;
+    const planId = _viewedPlanId();
+    if (planId) window.HS.catalog.plans.removeFilter(planId, id);
+    if (editingFilterId === id) closeFilterForm();
+    _syncFiltersFromPlan();
+    renderFilterList();
+    buildGrid('grid-a71', 'A71');
+    buildGrid('grid-a72', 'A72');
+    buildLegend();
+  });
 }
 
 function toggleFilterVisible(id) {
@@ -7714,15 +8200,22 @@ function applyAllTabOrders() {
 }
 
 function addNewTab(autoOpen) {
-  const name = prompt('Name for the new tab:', 'Tab ' + (userTabs.length + 1));
-  if (!name || !name.trim()) return null;
-  const id = 'tab_' + Date.now();
-  userTabs.push({ id, label: name.trim().slice(0, 20), moduleIds: [] });
-  ensureTabPane(id);
-  renderNav();
-  updateEmptyStates();
-  if (autoOpen !== false) switchTab(id);
-  return id;
+  // Returns nothing synchronously now (modal is async). Callers that
+  // need the new tab id should chain via .then on the promise; current
+  // call sites all just trigger the action and don't read the return.
+  _hsPrompt('', 'Tab ' + (userTabs.length + 1), {
+    title: 'New tab',
+    confirmLabel: 'Create',
+  }).then(function (name) {
+    if (!name || !name.trim()) return;
+    const id = 'tab_' + Date.now();
+    userTabs.push({ id, label: name.trim().slice(0, 20), moduleIds: [] });
+    ensureTabPane(id);
+    renderNav();
+    updateEmptyStates();
+    if (autoOpen !== false) switchTab(id);
+  });
+  return null;
 }
 
 function deleteTab(tabId) {
@@ -7730,16 +8223,25 @@ function deleteTab(tabId) {
   if (!tab) return;
   const remaining = userTabs.filter(t => t.id !== tabId);
   if (remaining.length === 0) {
-    alert('You must keep at least one tab.');
+    _hsAlert('You must keep at least one tab.');
     return;
   }
   const targetLabel = remaining[0].label;
   const hasModules = tab.moduleIds.length > 0;
   const msg = hasModules
-    ? 'Delete tab "' + tab.label + '"? Its ' + tab.moduleIds.length + ' module(s) will move to "' + targetLabel + '".'
-    : 'Delete empty tab "' + tab.label + '"?';
-  if (!confirm(msg)) return;
+    ? 'Its ' + tab.moduleIds.length + ' module(s) will move to "' + targetLabel + '".'
+    : 'This tab has no modules.';
+  _hsConfirm(msg, {
+    title: 'Delete tab "' + tab.label + '"?',
+    confirmLabel: 'Delete',
+    danger: true,
+  }).then(function (ok) {
+    if (!ok) return;
+    _deleteTabConfirmed(tab, remaining);
+  });
+}
 
+function _deleteTabConfirmed(tab, remaining) {
   // Move modules to first remaining tab
   const target = remaining[0];
   tab.moduleIds.forEach(modId => {
@@ -7751,10 +8253,10 @@ function deleteTab(tabId) {
 
   // Remove from state
   userTabs = remaining;
-  if (currentTab === tabId) currentTab = target.id;
+  if (currentTab === tab.id) currentTab = target.id;
 
   // Remove the pane div
-  const pane = document.querySelector('[data-tab-id="' + tabId + '"]');
+  const pane = document.querySelector('[data-tab-id="' + tab.id + '"]');
   if (pane) pane.remove();
 
   renderNav();
@@ -8050,14 +8552,18 @@ function _configRenameInline(tabId, nameEl) {
 }
 
 function configAddTab() {
-  const name = prompt('Name for the new tab:', 'Tab ' + (userTabs.length + 1));
-  if (!name || !name.trim()) return;
-  const id = 'tab_' + Date.now();
-  userTabs.push({ id, label: name.trim().slice(0, 20), moduleIds: [] });
-  ensureTabPane(id);
-  renderNav();
-  updateEmptyStates();
-  renderConfigBoard();
+  _hsPrompt('', 'Tab ' + (userTabs.length + 1), {
+    title: 'New tab',
+    confirmLabel: 'Create',
+  }).then(function (name) {
+    if (!name || !name.trim()) return;
+    const id = 'tab_' + Date.now();
+    userTabs.push({ id, label: name.trim().slice(0, 20), moduleIds: [] });
+    ensureTabPane(id);
+    renderNav();
+    updateEmptyStates();
+    renderConfigBoard();
+  });
 }
 
 function configDeleteTab(tabId) {
@@ -8067,40 +8573,36 @@ function configDeleteTab(tabId) {
 }
 
 function configResetDefault() {
-  if (!confirm('Reset to the default 3-tab layout? Main will contain Plan + Schedule.')) return;
-
-  // Set state
-  const defaults = [
-    { id: 'main',    label: 'Main',    moduleIds: ['plan', 'picker', 'schedule'] },
-    { id: 'compare', label: 'Compare', moduleIds: ['compare'] },
-    { id: 'export',  label: 'Export',  moduleIds: ['export'] },
-  ];
-
-  // Remove any existing tab-panes not in defaults
-  const existingPanes = Array.from(document.querySelectorAll('[data-tab-id]'));
-  existingPanes.forEach(pane => {
-    const tid = pane.dataset.tabId;
-    if (!defaults.find(d => d.id === tid)) pane.remove();
-  });
-
-  userTabs = defaults;
-  currentTab = 'main';
-
-  // Re-home each module in its default pane
-  defaults.forEach(tab => {
-    const pane = ensureTabPane(tab.id);
-    tab.moduleIds.forEach(mid => {
-      const el = document.querySelector('[data-module-id="' + mid + '"]');
-      if (el && pane) pane.appendChild(el);
+  _hsConfirm('Main will contain Plan + Picker + Schedule.', {
+    title: 'Reset layout?',
+    confirmLabel: 'Reset',
+  }).then(function (ok) {
+    if (!ok) return;
+    const defaults = [
+      { id: 'main',    label: 'Main',    moduleIds: ['plan', 'picker', 'schedule'] },
+      { id: 'compare', label: 'Compare', moduleIds: ['compare'] },
+      { id: 'export',  label: 'Export',  moduleIds: ['export'] },
+    ];
+    const existingPanes = Array.from(document.querySelectorAll('[data-tab-id]'));
+    existingPanes.forEach(pane => {
+      const tid = pane.dataset.tabId;
+      if (!defaults.find(d => d.id === tid)) pane.remove();
     });
+    userTabs = defaults;
+    currentTab = 'main';
+    defaults.forEach(tab => {
+      const pane = ensureTabPane(tab.id);
+      tab.moduleIds.forEach(mid => {
+        const el = document.querySelector('[data-module-id="' + mid + '"]');
+        if (el && pane) pane.appendChild(el);
+      });
+    });
+    renderNav();
+    updateEmptyStates();
+    renderConfigBoard();
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.toggle('active', p.dataset.tabId === 'main'));
+    document.querySelectorAll('.fn-item').forEach(el => el.classList.toggle('active', el.dataset.tabId === 'main'));
   });
-
-  renderNav();
-  updateEmptyStates();
-  renderConfigBoard();
-  // Make main tab visible
-  document.querySelectorAll('.tab-pane').forEach(p => p.classList.toggle('active', p.dataset.tabId === 'main'));
-  document.querySelectorAll('.fn-item').forEach(el => el.classList.toggle('active', el.dataset.tabId === 'main'));
 }
 
 // Close modal on Escape (alongside module menu close)
@@ -8281,12 +8783,18 @@ function saveIdentity(e) {
 }
 
 function clearIdentity() {
-  if (!confirm('Clear your identity fields? Exports will become anonymous.')) return;
-  window.HS.user = { ..._emptyIdentity() };
-  _clearIdentityFromStorage();
-  _renderIdentityForm();
-  renderHeader();
-  catalogShowToast('Identity cleared.');
+  _hsConfirm('Exports will become anonymous.', {
+    title: 'Clear your identity fields?',
+    confirmLabel: 'Clear',
+    danger: true,
+  }).then(function (ok) {
+    if (!ok) return;
+    window.HS.user = { ..._emptyIdentity() };
+    _clearIdentityFromStorage();
+    _renderIdentityForm();
+    renderHeader();
+    catalogShowToast('Identity cleared.');
+  });
 }
 
 // Header renderer — called on boot, on identity change, on catalog change.
@@ -8852,13 +9360,18 @@ function _edOnGlobalClick(e) {
     e.preventDefault();
     var cn = copyBtn.getAttribute('data-pack-section-cn');
     if (!cn || !_browseActivePackId) return;
-    if (!confirm('Copy this section\'s fields into your own catalog as edits?\n\nThis writes to your primary overlay. The imported pack stays untouched. If your own catalog has the same class_number (' + cn + ') with edits, they will be overwritten.')) return;
-    var n = window.HS.catalog.copySectionFromImport(_browseActivePackId, cn);
-    if (n > 0) {
-      alert('Copied ' + n + ' field' + (n === 1 ? '' : 's') + ' into your catalog. Switch back to "My catalog" to see them.');
-    } else {
-      alert('Nothing was copied — the section may not exist in the imported pack, or no editable fields were found.');
-    }
+    _hsConfirm(
+      'This writes to your primary overlay. The imported pack stays untouched. If your own catalog has the same class number (#' + cn + ') with existing edits, they will be overwritten.',
+      { title: 'Copy section into your catalog?', confirmLabel: 'Copy' }
+    ).then(function (ok) {
+      if (!ok) return;
+      var n = window.HS.catalog.copySectionFromImport(_browseActivePackId, cn);
+      if (n > 0) {
+        _hsAlert('Copied ' + n + ' field' + (n === 1 ? '' : 's') + ' into your catalog. Switch back to "My catalog" to see them.');
+      } else {
+        _hsAlert('Nothing was copied — the section may not exist in the imported pack, or no editable fields were found.');
+      }
+    });
     return;
   }
   var t = e.target.closest ? e.target.closest('[data-edit-hash]') : null;
@@ -9390,10 +9903,16 @@ function _edAddMeeting() {
   renderEdit();
 }
 function _edRemoveMeeting(idx) {
-  if (!confirm('Remove this meeting?')) return;
-  _editForm.meetings.splice(idx, 1);
-  _edMarkDirty();
-  renderEdit();
+  _hsConfirm('This meeting will be removed from this section\'s edit overlay.', {
+    title: 'Remove meeting?',
+    confirmLabel: 'Remove',
+    danger: true,
+  }).then(function (ok) {
+    if (!ok) return;
+    _editForm.meetings.splice(idx, 1);
+    _edMarkDirty();
+    renderEdit();
+  });
 }
 function _edAddInstr(mIdx) {
   _editForm.meetings[mIdx].instructors.push('');
@@ -9474,22 +9993,27 @@ function _edCancel() {
 }
 
 function _edRevertAll() {
-  if (!confirm('Revert all edits on this section? This cannot be undone.')) return;
-  var cat = window.HS.catalog;
-  if (!cat.listEdits) return;
-  var list = cat.listEdits().edits || [];
-  for (var i = 0; i < list.length; i++) {
-    var e = list[i];
-    if (_editSel.scope === 'section' && e.class_number === _editSel.class_number) {
-      try { cat.setEdit({ class_number: e.class_number, field_path: e.field_path, value: undefined }); } catch (err) {}
-    } else if (_editSel.scope === 'course' && e.course_code === (_editSel.subject + ' ' + _editSel.catnum)) {
-      try { cat.setEdit({ course_code: e.course_code, field_path: e.field_path, value: undefined }); } catch (err) {}
+  _hsConfirm('Every overlaid value on this ' + (_editSel.scope || 'item') +
+    ' will revert to what the parser produced. The parsed catalog itself is untouched.',
+    { title: 'Revert all edits?', confirmLabel: 'Revert all', danger: true }
+  ).then(function (ok) {
+    if (!ok) return;
+    var cat = window.HS.catalog;
+    if (!cat.listEdits) return;
+    var list = cat.listEdits().edits || [];
+    for (var i = 0; i < list.length; i++) {
+      var e = list[i];
+      if (_editSel.scope === 'section' && e.class_number === _editSel.class_number) {
+        try { cat.setEdit({ class_number: e.class_number, field_path: e.field_path, value: undefined }); } catch (err) {}
+      } else if (_editSel.scope === 'course' && e.course_code === (_editSel.subject + ' ' + _editSel.catnum)) {
+        try { cat.setEdit({ course_code: e.course_code, field_path: e.field_path, value: undefined }); } catch (err) {}
+      }
     }
-  }
-  _editForm = null;
-  _editDirty = false;
-  _edShowBanner('All edits reverted.');
-  requestAnimationFrame(renderEdit);
+    _editForm = null;
+    _editDirty = false;
+    _edShowBanner('All edits reverted.');
+    requestAnimationFrame(renderEdit);
+  });
 }
 
 function _edShowBanner(msg) {
@@ -9650,7 +10174,7 @@ function _onManageConsentChange(e) {
     window.HS.persistence.setConsent(v);
   } catch (err) {
     console.error('setConsent failed:', err);
-    alert('Failed to update consent: ' + (err.message || err));
+    _hsAlert('Failed to update consent: ' + (err.message || err));
     return;
   }
   // Consent downgrade may have wiped identity / catalog — refresh views.
@@ -9763,57 +10287,71 @@ function _manageClearEdits() {
   var snap = window.HS.catalog.toJSON();
   var n = (snap.edits || []).length;
   if (n === 0) return;
-  if (!confirm('Clear ' + n + ' edit' + (n === 1 ? '' : 's') + '?\n\nYour pasted catalog stays. Sections and courses will revert to their parsed values.')) return;
-  // catalog.clearEdits is wrapped by persistence — the save schedules
-  // automatically.
-  window.HS.catalog.clearEdits();
-  renderManage();
+  _hsConfirm('Your pasted catalog stays. Sections and courses will revert to their parsed values.', {
+    title: 'Clear ' + n + ' edit' + (n === 1 ? '' : 's') + '?',
+    confirmLabel: 'Clear edits',
+    danger: true,
+  }).then(function (ok) {
+    if (!ok) return;
+    window.HS.catalog.clearEdits();
+    renderManage();
+  });
 }
 
 function _manageClearParsed() {
   var snap = window.HS.catalog.toJSON();
   var subs = Object.keys(snap.parsed || {});
   if (subs.length === 0) return;
-  if (!confirm('Clear ' + subs.length + ' subject' + (subs.length === 1 ? '' : 's') +
-    ' from the catalog?\n\nWARNING: Your edits stay, but they won\'t apply to anything until you re-paste matching subjects.')) return;
-  // catalog.clear is wrapped by persistence — save schedules automatically.
-  window.HS.catalog.clear({ parsed: true });
-  renderManage();
+  _hsConfirm('Your edits stay, but they won\'t apply to anything until you re-paste matching subjects.', {
+    title: 'Clear ' + subs.length + ' subject' + (subs.length === 1 ? '' : 's') + '?',
+    confirmLabel: 'Clear catalog',
+    danger: true,
+  }).then(function (ok) {
+    if (!ok) return;
+    window.HS.catalog.clear({ parsed: true });
+    renderManage();
+  });
 }
 
 function _manageClearAll() {
-  // Strong-confirmation pattern: type "delete" to confirm. Native
-  // prompt() is intentional — modal dialogs need work to do well in
-  // CSS-only style, and prompt's "you must type something" friction is
-  // exactly the right friction for this destructive operation.
-  var typed = prompt(
-    'Clear EVERYTHING?\n\n' +
-    'This permanently deletes:\n' +
-    ' • the parsed catalog\n' +
-    ' • all your edits\n' +
-    ' • your saved identity\n' +
-    ' • your storage-consent setting\n\n' +
-    'This cannot be undone. Type "delete" (no quotes) to confirm:'
-  );
-  if (typed == null) return; // user cancelled
-  if (typed.trim().toLowerCase() !== 'delete') {
-    alert('That didn\'t match — nothing was deleted.');
-    return;
-  }
-  // Wipe everything: catalog (parsed + edits + imports), persistence
-  // storage, and the in-memory identity. persistence.clear() handles
-  // localStorage and the save timer; catalog.clear({parsed,edits,imports})
-  // handles the store.
-  window.HS.catalog.clear({ parsed: true, edits: true, imports: true });
-  if (window.HS.persistence.clear) window.HS.persistence.clear();
-  window.HS.user = {
-    name: '', netid: '', n_number: '', program: '', year: '',
-  };
-  if (typeof _clearIdentityFromStorage === 'function') _clearIdentityFromStorage();
-  if (typeof _renderIdentityForm === 'function') _renderIdentityForm();
-  if (typeof renderHeader === 'function') renderHeader();
-  renderManage();
-  alert('Cleared. Welcome to a fresh install.');
+  // Strong-confirmation pattern: type "delete" to confirm. The modal
+  // prompt's validator gates the action — friction is the point on
+  // this destructive operation.
+  _hsPrompt(
+    {
+      html: '<p>This permanently deletes:</p>' +
+        '<ul style="margin:0.4rem 0 0.4rem 1.2rem;padding:0">' +
+        '<li>the parsed catalog</li>' +
+        '<li>all your edits</li>' +
+        '<li>your saved identity</li>' +
+        '<li>your storage-consent setting</li>' +
+        '</ul>' +
+        '<p style="margin-top:0.6rem"><strong>This cannot be undone.</strong> Type <code>delete</code> to confirm:</p>'
+    },
+    '',
+    {
+      title: 'Clear EVERYTHING?',
+      placeholder: 'Type "delete"',
+      confirmLabel: 'Clear everything',
+      cancelLabel: 'Cancel',
+    }
+  ).then(function (typed) {
+    if (typed == null) return;
+    if (String(typed).trim().toLowerCase() !== 'delete') {
+      _hsAlert('That didn\'t match — nothing was deleted.');
+      return;
+    }
+    window.HS.catalog.clear({ parsed: true, edits: true, imports: true });
+    if (window.HS.persistence.clear) window.HS.persistence.clear();
+    window.HS.user = {
+      name: '', netid: '', n_number: '', program: '', year: '',
+    };
+    if (typeof _clearIdentityFromStorage === 'function') _clearIdentityFromStorage();
+    if (typeof _renderIdentityForm === 'function') _renderIdentityForm();
+    if (typeof renderHeader === 'function') renderHeader();
+    renderManage();
+    _hsAlert('Cleared. Welcome to a fresh install.');
+  });
 }
 
 function _manageExportEdits() {
@@ -9913,169 +10451,475 @@ function _bootPack() {
 }
 window.addEventListener('horarium:ready', _bootPack);
 
-// ============ MAIN-TAB PICKER (Piece 5a/2) ============
-// Course-staging surface. Reads from catalog.getEffective() (parsed +
-// edits + imports overlay). Search filters across subject / code /
-// title. Each course expands inline to show its sections; each section
-// has a Stage button that calls catalog.plans.stageSection on the
-// VIEWED plan (not necessarily the active plan — viewing a candidate
-// stages into that candidate). Conflict warnings against existing
-// staged sections render inline.
+// ============ MAIN-TAB PICKER (Piece 5a/3 — drill-down) ============
+// Hierarchical course-staging surface. Three primary modes:
+//
+//   1. Directory mode (no search): subjects collapsed by default.
+//      Clicking a subject expands it inline, revealing courses
+//      grouped by level (1xxx, 2xxx, 3xxx…) with level-headers as
+//      visual dividers (NOT collapsible — that would put courses
+//      four clicks deep). Clicking a course expands its sections.
+//      Net click depth to a section: 3 (subject → course → section).
+//
+//   2. Search mode (query non-empty): subjects collapse away. Results
+//      render as a flat list of matching courses (still expandable
+//      to sections), sorted by relevance score. Search debounced
+//      100ms. Search fields: subject, code, title, instructors via
+//      precomputed instructor-by-course index.
+//
+//   3. Filter mode (any filter chip active, possibly combined with
+//      search): same hierarchy but sections that don't pass filters
+//      are pruned. Courses with zero passing sections collapse out.
+//
+// Stage button copy varies with section status; non-open statuses
+// trigger a confirmation modal before staging (waitlist / closed /
+// cancelled — each with appropriately contextualized copy).
 let _pkSearchQuery = '';
-let _pkExpandedCourse = null; // course code currently expanded
+let _pkSearchTimer = null;
+let _pkExpandedSubjects = new Set();   // subject codes currently expanded in directory mode
+let _pkExpandedCourse = null;          // course code currently expanded
+let _pkFilters = Object.assign({}, window.HS && window.HS.picker ? window.HS.picker.DEFAULT_FILTERS : { status: 'all', components: null, days: null, time: 'all' });
+let _pkInstructorIndex = { byInstructor: new Map(), byCourseCode: new Map() };
+let _pkInstructorIndexDirty = true;
 
 function _bootPicker() {
   const inp = document.getElementById('mp-search');
   if (!inp) return;
+  // Initialize the filter shape now that window.HS.picker is ready.
+  _pkFilters = {
+    status: 'all',
+    components: null,
+    days: null,
+    time: 'all',
+  };
   inp.addEventListener('input', function () {
-    _pkSearchQuery = inp.value || '';
-    renderPicker();
+    if (_pkSearchTimer) clearTimeout(_pkSearchTimer);
+    _pkSearchTimer = setTimeout(function () {
+      _pkSearchQuery = inp.value || '';
+      renderPicker();
+    }, 100);
   });
-  // Re-render on catalog mutations so newly-pasted subjects appear
-  // immediately, and so stage/unstage updates the staged badges.
+  const clearBtn = document.getElementById('mp-clear-search');
+  if (clearBtn) clearBtn.addEventListener('click', function () {
+    _pkSearchQuery = '';
+    inp.value = '';
+    renderPicker();
+    inp.focus();
+  });
+  // Re-render on catalog mutations + invalidate the instructor index.
   if (window.HS && window.HS.catalog && window.HS.catalog.subscribe) {
-    window.HS.catalog.subscribe(function () {
-      // Only re-render Main when it's visible — cheap to compute, but
-      // even cheaper to skip when off-screen.
-      if (currentTab === 'main') {
-        render();
-      }
+    window.HS.catalog.subscribe(function (e) {
+      // Index needs rebuild on data mutations (ingest / setEdit /
+      // import / hydrate). Plan mutations don't change instructors.
+      if (e && e.reason !== 'plan_mutation') _pkInstructorIndexDirty = true;
+      if (currentTab === 'main') render();
     });
   }
 }
 window.addEventListener('horarium:ready', _bootPicker);
 
+function _ensureInstructorIndex() {
+  if (!_pkInstructorIndexDirty) return _pkInstructorIndex;
+  const eff = _effectiveCatalog();
+  _pkInstructorIndex = window.HS.picker.buildInstructorIndex(eff);
+  _pkInstructorIndexDirty = false;
+  return _pkInstructorIndex;
+}
+
 function renderPicker() {
-  const el = document.getElementById('mp-results');
-  if (!el) return;
-  if (!(window.HS && window.HS.catalog && window.HS.mainPlanner)) {
-    el.innerHTML = '<div class="mp-empty">Loading…</div>';
+  const resultsEl = document.getElementById('mp-results');
+  const filtersEl = document.getElementById('mp-filters');
+  const clearBtn = document.getElementById('mp-clear-search');
+  if (!resultsEl) return;
+  if (!(window.HS && window.HS.catalog && window.HS.mainPlanner && window.HS.picker)) {
+    resultsEl.innerHTML = '<div class="mp-empty">Loading…</div>';
     return;
   }
+  if (clearBtn) clearBtn.hidden = !_pkSearchQuery;
+
   const eff = _effectiveCatalog();
   const allCourses = (eff.courses || []).filter(function (c) { return !c._user_created; });
-  const filtered = window.HS.mainPlanner.filterCoursesByQuery(allCourses, _pkSearchQuery);
   const stats = document.getElementById('mp-search-stats');
-  if (stats) {
-    if (allCourses.length === 0) stats.textContent = 'Catalog is empty. Paste a subject in Catalog → Paste.';
-    else stats.textContent = filtered.length + ' of ' + allCourses.length + ' course' + (allCourses.length === 1 ? '' : 's');
-  }
-  if (allCourses.length === 0) {
-    el.innerHTML = '<div class="mp-empty">No courses in your catalog yet. Paste a subject\'s search-results page in <a onclick="switchTab(\'catalog\');return false;">Catalog → Paste</a> and they\'ll appear here.</div>';
-    return;
-  }
-  if (filtered.length === 0) {
-    el.innerHTML = '<div class="mp-empty">No matches for <code>' + _escHtml(_pkSearchQuery) + '</code>.</div>';
-    return;
-  }
-  // Cap how many we render at once — long subject lists (ENGR-UH has
-  // ~50 courses) are fine, but unfiltered "show all" across multiple
-  // subjects can hit hundreds. Hint to refine the search.
-  const HARD_CAP = 60;
-  const rendered = filtered.slice(0, HARD_CAP);
-  const moreNote = filtered.length > HARD_CAP
-    ? '<div class="mp-more-note">Showing first ' + HARD_CAP + ' of ' + filtered.length + '. Refine the search to narrow.</div>'
-    : '';
-  // Pre-resolve the viewed plan's staged-section refs for quick
-  // is-staged checks AND conflict computation.
-  const plan = _viewedPlan();
-  const stagedRefs = (plan && plan.sections) ? plan.sections.slice() : [];
-  const stagedSet = new Set(stagedRefs.map(function (r) { return r.class_number; }));
-  const hydratedStaged = window.HS.mainPlanner.resolveStagedSections(plan, eff);
 
+  // Filters bar always renders.
+  if (filtersEl) filtersEl.innerHTML = _pkRenderFilters(_pkFilters);
+
+  if (allCourses.length === 0) {
+    if (stats) stats.textContent = '';
+    resultsEl.innerHTML = '<div class="mp-empty">No courses in your catalog yet. Paste a subject\'s search-results page in <a onclick="switchTab(\'catalog\');return false;">Catalog → Paste</a> and they\'ll appear here.</div>';
+    _pkWireFilters();
+    return;
+  }
+
+  const plan = _viewedPlan();
+  const stagedSet = new Set(((plan && plan.sections) || []).map(function (r) { return r.class_number; }));
+  const hydratedStaged = window.HS.mainPlanner.resolveStagedSections(plan, eff);
+  const idx = _ensureInstructorIndex();
+
+  // Decide rendering mode: search active → flat list, else directory.
+  const query = _pkSearchQuery.trim();
+  if (query) {
+    _pkRenderSearchResults(resultsEl, allCourses, idx, stagedSet, hydratedStaged, query);
+    if (stats) {
+      const visibleCount = resultsEl.querySelectorAll('.mp-course').length;
+      stats.textContent = visibleCount + ' match' + (visibleCount === 1 ? '' : 'es');
+    }
+    _pkWireAll(resultsEl);
+    _pkWireFilters();
+    return;
+  }
+
+  _pkRenderDirectory(resultsEl, allCourses, stagedSet, hydratedStaged);
+  if (stats) {
+    const subjects = new Set();
+    for (const c of allCourses) if (c.subject) subjects.add(c.subject);
+    stats.textContent = subjects.size + ' subject' + (subjects.size === 1 ? '' : 's') +
+      ' · ' + allCourses.length + ' course' + (allCourses.length === 1 ? '' : 's');
+  }
+  _pkWireAll(resultsEl);
+  _pkWireFilters();
+}
+
+// --- filter bar ---
+
+function _pkRenderFilters(f) {
+  const isActive = window.HS.picker.isFilterActive(f);
   let html = '';
-  for (const c of rendered) {
-    const isExpanded = c.code === _pkExpandedCourse;
-    const unitsStr = (c.units == null) ? '—' :
-      (typeof c.units === 'object' ? c.units.min + '–' + c.units.max : c.units);
-    const stagedCount = (c.sections || []).filter(function (s) { return stagedSet.has(s.class_number); }).length;
-    html += '<div class="mp-course' + (isExpanded ? ' is-open' : '') + '" data-course-code="' + _escHtml(c.code) + '">';
-    html += '<button type="button" class="mp-course-head" data-course-code="' + _escHtml(c.code) + '">';
-    html += '<span class="mp-course-head-text">';
-    html += '<span class="mp-course-code">' + _escHtml(c.code) + '</span>';
-    html += '<span class="mp-course-title">' + _escHtml(c.title || '(untitled)') + '</span>';
-    html += '</span>';
-    html += '<span class="mp-course-meta">' +
-      (c.sections || []).length + ' section' + ((c.sections || []).length === 1 ? '' : 's') +
-      ' · ' + _escHtml(String(unitsStr)) + ' unit' + (unitsStr === 1 ? '' : 's') +
-      (stagedCount > 0 ? ' · <strong>' + stagedCount + ' staged</strong>' : '') +
-      '</span>';
-    html += '</button>';
-    if (isExpanded) {
-      html += '<div class="mp-sections">';
-      for (const s of (c.sections || [])) {
-        const isStaged = stagedSet.has(s.class_number);
-        const conflicts = isStaged ? [] : window.HS.mainPlanner.conflictsWithStaged(s, hydratedStaged);
-        const meetingLines = (s.meetings || []).map(function (m) {
-          const days = (m.days || []).join(',');
-          const t = (m.start_time && m.end_time) ? (m.start_time + '–' + m.end_time) : '—';
-          const room = m.room ? ' · ' + m.room : '';
-          const instr = (m.instructors && m.instructors.length) ? ' · ' + m.instructors.join('; ') : '';
-          return '<div class="mp-mtg">' + _escHtml(days) + ' ' + _escHtml(t) + _escHtml(room) + _escHtml(instr) + '</div>';
-        }).join('') || '<div class="mp-mtg"><em>No meetings.</em></div>';
-        const statusType = (s.status && s.status.type) || 'unknown';
-        const statusLabel = (s.status && s.status.raw) || statusType;
-        const sess = (s.session && s.session.code) || '—';
-        let conflictNote = '';
-        if (conflicts.length > 0) {
-          conflictNote = '<div class="mp-conflict-note">⚠ Conflicts with: ' +
-            conflicts.map(function (x) { return _escHtml(x.course_code + (x.section_code ? ' (' + x.section_code + ')' : '')); }).join(', ') +
-            '. You can stage anyway.</div>';
-        }
-        html += '<div class="mp-section' + (isStaged ? ' is-staged' : '') + '" data-class-number="' + _escHtml(s.class_number) + '">';
-        html += '<div class="mp-section-head">';
-        html += '<div class="mp-section-ident">';
-        html += '<span class="mp-section-code">' + _escHtml(s.section_code || '—') + '</span>';
-        html += ' · <span class="mp-section-comp">' + _escHtml(s.component || '—') + '</span>';
-        html += ' · <span class="mp-section-cn">#' + _escHtml(s.class_number || '—') + '</span>';
-        html += ' · <span class="mp-section-sess">' + _escHtml(sess) + '</span>';
-        html += ' · <span class="mp-section-status mp-status-' + _escHtml(statusType) + '">' + _escHtml(statusLabel) + '</span>';
-        html += '</div>';
-        if (isStaged) {
-          html += '<button type="button" class="mp-stage-btn is-staged" data-action="unstage" data-class-number="' + _escHtml(s.class_number) + '">Staged ✓ · click to unstage</button>';
-        } else {
-          html += '<button type="button" class="mp-stage-btn" data-action="stage" data-class-number="' + _escHtml(s.class_number) + '" data-subject="' + _escHtml(s.subject || c.subject || '') + '">Stage</button>';
-        }
-        html += '</div>';
-        html += '<div class="mp-section-body">' + meetingLines + conflictNote + '</div>';
-        html += '</div>';
+  // Status group.
+  html += '<span class="mp-filter-group"><span class="mp-filter-label">Status</span>';
+  for (const opt of [
+    { v: 'all', label: 'All' },
+    { v: 'open', label: 'Open only' },
+    { v: 'open_or_waitlist', label: 'Open + WL' },
+  ]) {
+    html += '<button type="button" class="mp-filter-chip' + (f.status === opt.v ? ' is-active' : '') +
+      '" data-pkf="status" data-pkv="' + _escHtml(opt.v) + '">' + _escHtml(opt.label) + '</button>';
+  }
+  html += '</span>';
+  // Component group.
+  html += '<span class="mp-filter-group"><span class="mp-filter-label">Type</span>';
+  const compOpts = ['Lecture', 'Laboratory', 'Recitation', 'Seminar'];
+  for (const opt of compOpts) {
+    const on = !!(f.components && f.components.has(opt));
+    html += '<button type="button" class="mp-filter-chip' + (on ? ' is-active' : '') +
+      '" data-pkf="components" data-pkv="' + _escHtml(opt) + '">' + _escHtml(opt) + '</button>';
+  }
+  html += '</span>';
+  // Days group.
+  html += '<span class="mp-filter-group"><span class="mp-filter-label">Days</span>';
+  for (const d of ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']) {
+    const on = !!(f.days && f.days.has(d));
+    html += '<button type="button" class="mp-filter-chip' + (on ? ' is-active' : '') +
+      '" data-pkf="days" data-pkv="' + _escHtml(d) + '">' + _escHtml(d) + '</button>';
+  }
+  html += '</span>';
+  // Time group.
+  html += '<span class="mp-filter-group"><span class="mp-filter-label">Time</span>';
+  for (const opt of [
+    { v: 'all', label: 'Any' },
+    { v: 'morning', label: 'AM' },
+    { v: 'afternoon', label: 'PM' },
+    { v: 'evening', label: 'Evening' },
+  ]) {
+    html += '<button type="button" class="mp-filter-chip' + (f.time === opt.v ? ' is-active' : '') +
+      '" data-pkf="time" data-pkv="' + _escHtml(opt.v) + '">' + _escHtml(opt.label) + '</button>';
+  }
+  html += '</span>';
+  if (isActive) {
+    html += '<button type="button" class="mp-clear-filters" id="mp-clear-filters">Clear filters</button>';
+  }
+  return html;
+}
+
+function _pkWireFilters() {
+  const filtersEl = document.getElementById('mp-filters');
+  if (!filtersEl) return;
+  filtersEl.querySelectorAll('.mp-filter-chip').forEach(function (chip) {
+    chip.addEventListener('click', function () {
+      const k = chip.getAttribute('data-pkf');
+      const v = chip.getAttribute('data-pkv');
+      if (k === 'status') {
+        _pkFilters.status = v;
+      } else if (k === 'time') {
+        _pkFilters.time = v;
+      } else if (k === 'components') {
+        if (!_pkFilters.components) _pkFilters.components = new Set();
+        if (_pkFilters.components.has(v)) _pkFilters.components.delete(v);
+        else _pkFilters.components.add(v);
+        if (_pkFilters.components.size === 0) _pkFilters.components = null;
+      } else if (k === 'days') {
+        if (!_pkFilters.days) _pkFilters.days = new Set();
+        if (_pkFilters.days.has(v)) _pkFilters.days.delete(v);
+        else _pkFilters.days.add(v);
+        if (_pkFilters.days.size === 0) _pkFilters.days = null;
       }
-      html += '</div>';
+      renderPicker();
+    });
+  });
+  const clr = document.getElementById('mp-clear-filters');
+  if (clr) clr.addEventListener('click', function () {
+    _pkFilters = { status: 'all', components: null, days: null, time: 'all' };
+    renderPicker();
+  });
+}
+
+// --- directory mode ---
+
+function _pkRenderDirectory(el, allCourses, stagedSet, hydratedStaged) {
+  // Group courses by subject; each subject sorts internally by level/code.
+  const bySubject = new Map();
+  for (const c of allCourses) {
+    if (!bySubject.has(c.subject)) bySubject.set(c.subject, []);
+    bySubject.get(c.subject).push(c);
+  }
+  const subjects = Array.from(bySubject.keys()).sort();
+  let html = '';
+  for (const subj of subjects) {
+    const courses = bySubject.get(subj);
+    const isOpen = _pkExpandedSubjects.has(subj);
+    html += '<div class="mp-subject' + (isOpen ? ' is-open' : '') + '" data-subject="' + _escHtml(subj) + '">';
+    html += '<button type="button" class="mp-subject-head" data-pksubj="' + _escHtml(subj) + '">';
+    html += '<span class="mp-subject-code">' + _escHtml(subj) + '</span>';
+    html += '<span class="mp-subject-meta">' + courses.length + ' course' + (courses.length === 1 ? '' : 's') +
+      '<span class="mp-chevron">›</span></span>';
+    html += '</button>';
+    if (isOpen) {
+      // Bucket by level and emit each level as a header + course list.
+      const buckets = window.HS.picker.bucketByLevel(courses);
+      for (const b of buckets) {
+        // Pre-filter the bucket's courses against active filters (drop
+        // courses whose sections all fail; surface staged-count-only).
+        const courseRows = [];
+        for (const c of b.courses) {
+          const passingSections = (c.sections || []).filter(function (s) {
+            return window.HS.picker.sectionPassesFilters(s, _pkFilters);
+          });
+          if (passingSections.length === 0 && window.HS.picker.isFilterActive(_pkFilters)) continue;
+          courseRows.push(_pkRenderCourseRow(c, passingSections, stagedSet, hydratedStaged));
+        }
+        if (courseRows.length === 0) continue;
+        html += '<div class="mp-level-head">' + _escHtml(b.label) + ' · ' + courseRows.length + '</div>';
+        html += courseRows.join('');
+      }
     }
     html += '</div>';
   }
-  html += moreNote;
+  el.classList.remove('mp-results-flat');
   el.innerHTML = html;
+}
 
-  // Wire course-head clicks (toggle expand).
-  el.querySelectorAll('.mp-course-head').forEach(function (btn) {
+// --- search mode ---
+
+function _pkRenderSearchResults(el, allCourses, idx, stagedSet, hydratedStaged, query) {
+  // Score every course; keep those with score > 0; sort desc.
+  const scored = [];
+  for (const c of allCourses) {
+    const instr = idx.byCourseCode.get(c.code) || [];
+    const s = window.HS.picker.scoreCourseMatch(c, query, instr);
+    if (s > 0) scored.push({ c: c, score: s });
+  }
+  scored.sort(function (a, b) {
+    if (b.score !== a.score) return b.score - a.score;
+    return String(a.c.code || '').localeCompare(String(b.c.code || ''));
+  });
+  // Cap to keep the DOM bounded — 80 hits is plenty; refining the
+  // search narrows further.
+  const HARD_CAP = 80;
+  const rows = [];
+  let kept = 0;
+  for (const item of scored) {
+    if (kept >= HARD_CAP) break;
+    const passing = (item.c.sections || []).filter(function (s) {
+      return window.HS.picker.sectionPassesFilters(s, _pkFilters);
+    });
+    if (passing.length === 0 && window.HS.picker.isFilterActive(_pkFilters)) continue;
+    rows.push(_pkRenderCourseRow(item.c, passing, stagedSet, hydratedStaged));
+    kept++;
+  }
+  if (rows.length === 0) {
+    el.classList.remove('mp-results-flat');
+    el.innerHTML = '<div class="mp-no-results">No matches for <code>' + _escHtml(query) + '</code>' +
+      (window.HS.picker.isFilterActive(_pkFilters) ? ' with active filters' : '') + '.</div>';
+    return;
+  }
+  el.classList.add('mp-results-flat');
+  el.innerHTML = rows.join('') +
+    (scored.length > HARD_CAP ? '<div class="mp-more-note">Showing first ' + HARD_CAP + ' of ' + scored.length + '. Refine the search.</div>' : '');
+}
+
+// --- shared course-row + section rendering ---
+
+function _pkRenderCourseRow(c, sections, stagedSet, hydratedStaged) {
+  const isExpanded = c.code === _pkExpandedCourse;
+  const unitsStr = (c.units == null) ? '—' :
+    (typeof c.units === 'object' ? c.units.min + '–' + c.units.max : c.units);
+  const stagedCount = (c.sections || []).filter(function (s) { return stagedSet.has(s.class_number); }).length;
+  const stagedDot = stagedCount > 0
+    ? '<span class="mp-course-staged-dot" style="background:' +
+      _escHtml(window.HS.mainPlanner.colorForCourse(c.code).bg) + '"></span>'
+    : '';
+  let html = '<div class="mp-course' + (isExpanded ? ' is-open' : '') + '" data-course-code="' + _escHtml(c.code) + '">';
+  html += '<button type="button" class="mp-course-head" data-pkcourse="' + _escHtml(c.code) + '">';
+  html += '<span class="mp-course-head-text">';
+  html += '<span class="mp-course-code-small">' + stagedDot + _escHtml(c.code) + '</span>';
+  html += '<span class="mp-course-title-small">' + _escHtml(c.title || '(untitled)') + '</span>';
+  html += '</span>';
+  html += '<span class="mp-course-meta-small">' +
+    sections.length + (sections.length !== (c.sections || []).length ? '/' + (c.sections || []).length : '') +
+    ' section' + (sections.length === 1 ? '' : 's') +
+    ' · ' + _escHtml(String(unitsStr)) + ' unit' + (unitsStr === 1 ? '' : 's') +
+    (stagedCount > 0 ? ' · <strong>' + stagedCount + ' staged</strong>' : '') +
+    '<span class="mp-chevron">›</span></span>';
+  html += '</button>';
+  if (isExpanded) {
+    for (const s of sections) html += _pkRenderSectionRow(s, c, stagedSet, hydratedStaged);
+  }
+  html += '</div>';
+  return html;
+}
+
+function _pkRenderSectionRow(s, c, stagedSet, hydratedStaged) {
+  const isStaged = stagedSet.has(s.class_number);
+  const conflicts = isStaged ? [] : window.HS.mainPlanner.conflictsWithStaged(s, hydratedStaged);
+  const dot = window.HS.picker.statusDot(s);
+  const action = window.HS.picker.stageActionLabel(s);
+
+  // Compose the meeting / room / instructor line (compact, single line
+  // when possible — wraps when the row is narrow).
+  const meetingBits = (s.meetings || []).map(function (m) {
+    const days = (m.days || []).join('/') || '—';
+    const t = (m.start_time && m.end_time) ? (m.start_time + '–' + m.end_time) : '';
+    const room = m.room || '';
+    const instr = (m.instructors || []).join(', ');
+    return { days, t, room, instr };
+  });
+  let mtgHtml = '';
+  if (meetingBits.length === 0) {
+    mtgHtml = '<span class="meet"><em>No meeting</em></span>';
+  } else {
+    mtgHtml = meetingBits.map(function (m) {
+      return '<span class="meet">' + _escHtml(m.days) + (m.t ? ' ' + _escHtml(m.t) : '') + '</span>' +
+        (m.room ? '<span class="room"> · ' + _escHtml(m.room) + '</span>' : '') +
+        (m.instr ? '<span class="instr"> · ' + _escHtml(m.instr) + '</span>' : '');
+    }).join('<br>');
+  }
+
+  let html = '<div class="mp-section' + (isStaged ? ' is-staged' : '') +
+    '" data-class-number="' + _escHtml(s.class_number) + '">';
+  html += '<div class="mp-section-status-cell">' +
+    '<span class="mp-status-dot" style="background:' + _escHtml(dot.color) + '"></span>' +
+    _escHtml(dot.label) + (s.status && s.status.count != null ? ' (' + s.status.count + ')' : '') +
+    '</div>';
+  html += '<div class="mp-section-info">';
+  html += '<span class="scode">' + _escHtml(s.section_code || '—') + '</span>';
+  html += '<span class="meet"> ' + _escHtml(s.component || 'Section') + ' · #' + _escHtml(s.class_number) + '</span><br>';
+  html += mtgHtml;
+  if (conflicts.length > 0) {
+    html += '<span class="mp-section-conflict">⚠ Conflicts with: ' +
+      conflicts.map(function (x) {
+        return _escHtml(x.course_code + (x.section_code ? ' (' + x.section_code + ')' : ''));
+      }).join(', ') + '</span>';
+  }
+  html += '</div>';
+
+  if (isStaged) {
+    html += '<button type="button" class="mp-stage is-staged" data-pkaction="unstage" data-class-number="' +
+      _escHtml(s.class_number) + '">Staged ✓</button>';
+  } else {
+    const cls = action.needsConfirm ? 'mp-stage is-warn' : 'mp-stage';
+    html += '<button type="button" class="' + cls + '" data-pkaction="stage" data-class-number="' +
+      _escHtml(s.class_number) + '" data-subject="' + _escHtml(s.subject || c.subject || '') +
+      '" data-confirm="' + _escHtml(action.confirmReason || '') + '">' +
+      _escHtml(action.label) + '</button>';
+  }
+  html += '</div>';
+  return html;
+}
+
+// --- click wiring (event delegation) ---
+
+function _pkWireAll(root) {
+  // Subject expand/collapse.
+  root.querySelectorAll('[data-pksubj]').forEach(function (btn) {
     btn.addEventListener('click', function () {
-      const code = btn.getAttribute('data-course-code');
+      const subj = btn.getAttribute('data-pksubj');
+      if (_pkExpandedSubjects.has(subj)) _pkExpandedSubjects.delete(subj);
+      else _pkExpandedSubjects.add(subj);
+      renderPicker();
+    });
+  });
+  // Course expand/collapse.
+  root.querySelectorAll('[data-pkcourse]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      const code = btn.getAttribute('data-pkcourse');
       _pkExpandedCourse = (_pkExpandedCourse === code) ? null : code;
       renderPicker();
     });
   });
-  // Wire stage / unstage clicks.
-  el.querySelectorAll('.mp-stage-btn').forEach(function (btn) {
+  // Stage / unstage with status-aware confirmation.
+  root.querySelectorAll('[data-pkaction]').forEach(function (btn) {
     btn.addEventListener('click', function (e) {
       e.stopPropagation();
-      const action = btn.getAttribute('data-action');
+      const action = btn.getAttribute('data-pkaction');
       const cn = btn.getAttribute('data-class-number');
       const subject = btn.getAttribute('data-subject') || null;
-      const planId = _viewedPlanId();
-      if (!planId) { alert('No plan to stage into.'); return; }
-      try {
-        if (action === 'stage') {
-          window.HS.catalog.plans.stageSection(planId, { class_number: cn, subject: subject });
-        } else {
-          window.HS.catalog.plans.unstageSection(planId, cn);
-        }
-      } catch (err) {
-        alert('Could not ' + action + ': ' + (err && err.message ? err.message : String(err)));
+      const confirmReason = btn.getAttribute('data-confirm') || '';
+      if (action === 'stage' && confirmReason) {
+        _pkConfirmStage(cn, subject, confirmReason);
+      } else {
+        _pkExecStage(action, cn, subject);
       }
-      // The catalog subscriber re-renders Main globally.
     });
   });
+}
+
+function _pkConfirmStage(classNumber, subject, reason) {
+  // Resolve the section so we can quote its identity in the modal.
+  const hit = _resolveSection(classNumber);
+  if (!hit) { _pkExecStage('stage', classNumber, subject); return; }
+  const s = hit.section;
+  let title = '';
+  let body = '';
+  if (reason === 'waitlist') {
+    const cnt = (s.status && s.status.count != null) ? s.status.count : null;
+    title = 'Stage waitlisted section?';
+    body = 'This section is full' + (cnt != null ? (' with ' + cnt + ' student' + (cnt === 1 ? '' : 's') + ' waitlisted') : '') +
+      '. You can stage it for planning purposes, but enrollment isn\'t guaranteed.';
+  } else if (reason === 'closed') {
+    title = 'Stage closed section?';
+    body = 'This section is closed and cannot be enrolled. You can stage it for planning purposes, but you won\'t be able to register for it.';
+  } else if (reason === 'cancelled') {
+    title = 'Stage cancelled section?';
+    body = 'This section has been cancelled. You can stage it for planning purposes, but it won\'t run this term.';
+  } else {
+    _pkExecStage('stage', classNumber, subject);
+    return;
+  }
+  window.HS.modal.showModalConfirm({
+    title: title,
+    body: body,
+    confirmLabel: 'Stage anyway',
+    cancelLabel: 'Cancel',
+  }).then(function (ok) {
+    if (ok) _pkExecStage('stage', classNumber, subject);
+  });
+}
+
+function _pkExecStage(action, classNumber, subject) {
+  const planId = _viewedPlanId();
+  if (!planId) { window.HS.modal.showModalAlert({ title: 'No plan', body: 'There\'s no plan to stage into.' }); return; }
+  try {
+    if (action === 'stage') {
+      window.HS.catalog.plans.stageSection(planId, { class_number: classNumber, subject: subject });
+    } else {
+      window.HS.catalog.plans.unstageSection(planId, classNumber);
+    }
+  } catch (err) {
+    window.HS.modal.showModalAlert({
+      title: 'Could not ' + action,
+      body: (err && err.message) ? err.message : String(err),
+    });
+  }
 }
 
 // --- export ---
@@ -10258,9 +11102,15 @@ function _renderManageImports() {
     btn.addEventListener('click', function () {
       var id = btn.getAttribute('data-pack-id');
       if (!id) return;
-      if (!confirm('Delete imported pack "' + id + '"?\n\nYour own catalog is unaffected.')) return;
-      window.HS.catalog.removeImport(id);
-      _renderManageImports();
+      _hsConfirm('Your own catalog is unaffected.', {
+        title: 'Delete imported pack "' + id + '"?',
+        confirmLabel: 'Delete',
+        danger: true,
+      }).then(function (ok) {
+        if (!ok) return;
+        window.HS.catalog.removeImport(id);
+        _renderManageImports();
+      });
     });
   });
 }
