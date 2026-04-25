@@ -70,7 +70,10 @@ describe("scoreCourseMatch — structured queries (Bug 1 fix)", () => {
   const courses = [
     { subject: "PHYED-UH", catalog_number: "1001", code: "PHYED-UH 1001", title: "Yoga" },
     { subject: "PHYED-UH", catalog_number: "1057", code: "PHYED-UH 1057", title: "Volleyball" },
+    { subject: "PHYED-UH", catalog_number: "1100", code: "PHYED-UH 1100", title: "Recreational Games" },
     { subject: "PSYCH-UA", catalog_number: "1011", code: "PSYCH-UA 1011", title: "Cognitive Neuroscience" },
+    { subject: "PSYCH-UA", catalog_number: "1001", code: "PSYCH-UA 1001", title: "Intro to Psychology" },
+    { subject: "ENGR-UH",  catalog_number: "1000", code: "ENGR-UH 1000", title: "Computer Programming" },
     { subject: "ENGR-UH",  catalog_number: "1001", code: "ENGR-UH 1001", title: "Programming" },
     { subject: "ENGR-UH",  catalog_number: "3120", code: "ENGR-UH 3120", title: "Engineering Materials" },
     { subject: "GERM-UA",  catalog_number: "1001", code: "GERM-UA 1001", title: "Beginning German I" },
@@ -86,37 +89,59 @@ describe("scoreCourseMatch — structured queries (Bug 1 fix)", () => {
 
   it("'PHYED-UH 1001' bullseye ranks first; sibling subjects rank below", () => {
     const ranked = rankedFor("PHYED-UH 1001");
-    expect(ranked[0]).toBe("PHYED-UH 1001");
-    // Other matches should be siblings (same subject OR same catnum).
-    expect(ranked).toContain("PHYED-UH 1057"); // same subject
-    expect(ranked).toContain("ENGR-UH 1001");  // same catnum
-    expect(ranked).toContain("GERM-UA 1001");  // same catnum
-    // PSYCH-UA 1011 (Lev=1 against 1001 in old fuzzy) MUST NOT appear.
+    // EXACTLY one result: the bullseye. No siblings, no cross-subject
+    // false positives. The Mk-II algorithm trades the "did you mean
+    // these similar courses?" affordance for the "exact code = exact
+    // result" predictability the user asked for.
+    expect(ranked).toEqual(["PHYED-UH 1001"]);
+    // PSYCH-UA 1011 (the Lev=1 false positive from the old fuzzy
+    // tier) MUST NOT appear — pinned in case anyone re-introduces a
+    // Levenshtein backstop.
     expect(ranked).not.toContain("PSYCH-UA 1011");
   });
 
-  it("'PHYED-UH 1001' caps at 5-ish results — only structured tiers contribute", () => {
-    const ranked = rankedFor("PHYED-UH 1001");
-    expect(ranked.length).toBeLessThanOrEqual(5);
-  });
-
-  it("'engruh 3120' (no dash, no space) still hits ENGR-UH 3120 as bullseye", () => {
+  it("'engruh 3120' (compact form, no dash) still hits ENGR-UH 3120 exactly", () => {
     const ranked = rankedFor("engruh 3120");
-    expect(ranked[0]).toBe("ENGR-UH 3120");
+    expect(ranked).toEqual(["ENGR-UH 3120"]);
   });
 
-  it("unstructured number-only query '1001' falls through to fuzzy and matches everything with 1001 in code/catnum", () => {
-    // Single number without subject prefix is NOT structured — uses
-    // the fuzzy path. Expect at least the 1001 courses to surface.
+  it("'engruh3120' (no space at all) also hits ENGR-UH 3120 exactly", () => {
+    const ranked = rankedFor("engruh3120");
+    expect(ranked).toEqual(["ENGR-UH 3120"]);
+  });
+
+  it("number-only query '1001' returns ALL 1001-numbered courses across subjects", () => {
     const ranked = rankedFor("1001");
     expect(ranked).toContain("PHYED-UH 1001");
     expect(ranked).toContain("ENGR-UH 1001");
     expect(ranked).toContain("GERM-UA 1001");
+    expect(ranked).toContain("PSYCH-UA 1001");
+    // 1011 is NOT 1001 — substring match excludes it cleanly.
+    expect(ranked).not.toContain("PSYCH-UA 1011");
   });
 
-  it("title / instructor fuzzy still works for unstructured queries", () => {
-    expect(scoreCourseMatch(courses[4], "engineering materials")).toBeGreaterThan(0);
-    expect(scoreCourseMatch(courses[3], "")).toBe(1); // empty-query sentinel
+  it("subject-only query 'PHYED' returns all PHYED-UH courses", () => {
+    const ranked = rankedFor("PHYED");
+    expect(ranked).toContain("PHYED-UH 1001");
+    expect(ranked).toContain("PHYED-UH 1057");
+    expect(ranked).toContain("PHYED-UH 1100");
+    // No PSYCH-UA leakage from the prefix overlap.
+    expect(ranked).not.toContain("PSYCH-UA 1001");
+  });
+
+  it("title fragment finds the right course", () => {
+    const ranked = rankedFor("engineering materials");
+    expect(ranked).toContain("ENGR-UH 3120");
+  });
+
+  it("typos no longer match — Mk-II drops Levenshtein deliberately", () => {
+    // "hashikeh" missing the 'a' between 'hash' and 'ikeh'. The old
+    // fuzzy tier matched this; Mk-II doesn't (acceptable trade-off
+    // documented in the scorer's header comment).
+    const c = courses[5]; // ENGR-UH 1000 with Hashaikeh
+    expect(scoreCourseMatch(c, "hashikeh", ["Hashaikeh, Rashid"])).toBe(0);
+    // Exact instructor name still works.
+    expect(scoreCourseMatch(c, "hashaikeh", ["Hashaikeh, Rashid"])).toBeGreaterThan(0);
   });
 });
 

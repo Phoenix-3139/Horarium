@@ -6427,29 +6427,32 @@ function buildGrid(gridId, half) {
       cellSlot.className = 'cell-slot' + (evt ? '' : ' empty');
       if (evt) {
         const meta = _courseMeta(evt.course);
+        // Defensive: guarantee the color object has bg+ink even if a
+        // future change to _courseMeta or colorForCourse returns null.
+        // Without this, an undefined `meta.color.bg` would make
+        // setProperty a no-op AND the cell would render with the
+        // browser-default transparent background — invisible against
+        // the cream paper. Reproduces the user-reported "tiles aren't
+        // visible" symptom on any path that loses meta.color.
+        const safeBg  = (meta.color && meta.color.bg)  || '#E5DBE9';
+        const safeInk = (meta.color && meta.color.ink) || '#5F416E';
         const cell = document.createElement('div');
-        cell.className = 'cell ' + meta.cls;
-        // Force the color via setProperty('important') so any rogue
-        // legacy `.grid .cell.c-X` rule (cores-era) can't shadow it.
-        // The legacy class rules don't match `c-dynamic` today, but the
-        // belt+suspenders here is cheap and stops a future maintainer
-        // from accidentally re-introducing a class-based override that
-        // would silently lose to/from the inline style.
-        cell.style.setProperty('background', meta.color.bg, 'important');
-        cell.style.setProperty('color', meta.color.ink, 'important');
-        cell.style.setProperty('border-left-color', meta.color.ink, 'important');
+        cell.className = 'cell ' + (meta.cls || 'c-dynamic');
+        // Diagnostic: surface the class number on the DOM so anyone
+        // inspecting can confirm cells exist even if styling is wrong.
+        if (evt.secKey) cell.setAttribute('data-class-number', String(evt.secKey));
+        // Use plain inline-style assignment (not setProperty) — the
+        // `!important`-via-setProperty path was overengineering; nothing
+        // in our stylesheet actually needs to be beaten.
+        cell.style.background = safeBg;
+        cell.style.color = safeInk;
+        cell.style.borderLeftColor = safeInk;
         const typeNote = evt.label === 'Lecture' ? '' : ' <em>' + _escHtml(String(evt.label).toLowerCase()) + '</em>';
-        // Three-line cell layout: code (always), title (drops if too
-        // short), time. CSS-only priority: the column is flex-direction
-        // column with the time element marked flex-shrink:1 so it gets
-        // clipped first when vertical space is tight. Title is rendered
-        // unconditionally when available — the prior equality-check
-        // gate was brittle.
         const titleLine = meta.title
           ? '<div class="title-sub">' + _escHtml(meta.title) + '</div>'
           : '';
         cell.innerHTML =
-          '<div class="name">' + _escHtml(meta.short) + typeNote + '</div>' +
+          '<div class="name">' + _escHtml(meta.short || '') + typeNote + '</div>' +
           titleLine +
           '<div class="time-sub">' + fmtShort(evt.start) + '–' + fmtShort(evt.end) + '</div>';
         cell.addEventListener('click', () => showSectionModal(evt.secKey));

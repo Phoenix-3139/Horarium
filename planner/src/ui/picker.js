@@ -98,14 +98,40 @@ export function fuzzyMatch(query, haystack) {
   return 0;
 }
 
-// --- Structured-query detection ------------------------------------
-// A "structured course identifier" query contains BOTH a recognizable
-// subject prefix (UPPERCASE letters with optional dash + suffix) AND a
-// catalog-number-shaped digit run. When detected, the scorer skips
-// fuzzy / Levenshtein matching entirely — those tiers add noise on
-// queries the user has typed deliberately ("PHYED-UH 1001" vs Lev=1
-// match "PSYCH-UA 1011" is the kind of thing they're complaining
-// about). Only exact matches qualify.
+// --- Course-search scoring (Mk II — simple substring matching) ----
+// Earlier iterations had three tiers (exact, word-prefix, Levenshtein
+// ≤2) plus a separate "structured query" path that returned siblings
+// for partial matches. Real usage exposed both as wrong: typing the
+// exact code "PHYED-UH 1001" surfaced four sibling courses (noise),
+// and Levenshtein matched "1001" against "1011" (also noise).
+//
+// Replaced with a flat substring matcher with field-weighted scores
+// and AND-token semantics for multi-word queries. Predictable,
+// debuggable, no fuzzy edit-distance theatre. The cost is that typos
+// ("hashikeh" for "hashaikeh") no longer match — that's acceptable
+// because the user can see the catalog as they type and self-correct.
+//
+// Score bands:
+//   1000  — query equals course code (after normalize)
+//   900   — code starts with query
+//   800   — subject equals or starts with query
+//   700   — code OR catalog_number contains query as substring
+//   600   — title contains query
+//   500   — any instructor name contains query
+//   400   — multi-word query: every word matches somewhere in the
+//           combined haystack
+//   0     — no match
+
+function _normForSearch(s) {
+  // Lowercase, drop punctuation but KEEP word breaks. "ENGR-UH 3120"
+  // becomes "engr uh 3120". Allows "engr 3120" to match by code via
+  // substring search.
+  return String(s == null ? "" : s).toLowerCase().replace(/[^a-z0-9 ]+/g, " ").replace(/\s+/g, " ").trim();
+}
+
+// Kept for backwards compat with tests that exercise the parser.
+// No longer used in the search path itself — a structured query is
+// just an ordinary substring search now.
 const _STRUCTURED_RE = /([A-Za-z]+(?:-[A-Za-z]+)?)\s*[\s-]?\s*(\d{3,4}[A-Za-z]?)/;
 export function parseStructuredQuery(query) {
   if (typeof query !== "string") return null;
@@ -115,73 +141,62 @@ export function parseStructuredQuery(query) {
   if (!m) return null;
   const subj = m[1].toUpperCase();
   const cat = m[2];
-  // Both pieces must be present; the regex enforces that. Reject when
-  // the subject is suspiciously short (1 char) — a stray letter next
-  // to a number isn't a real prefix. NYU prefixes are 2+ chars.
   if (subj.length < 2) return null;
   return { subject: subj, catnum: cat };
 }
 
-// --- Course-search scoring -----------------------------------------
-// Given a course and a search query, return the best match score
-// across the searchable fields (subject, code, title, catalog number,
-// instructors). 0 means "doesn't match — exclude."
-//
-// Structured queries (subject + catnum together) use a stricter
-// match: only exact-prefix subject matches and exact catnum matches
-// score, with the bullseye <subject> <catnum> getting the highest
-// possible score. Levenshtein/fuzzy is suppressed for these queries.
-//
-// Score ranges for structured queries:
-//   2000  — exact <subject> <catnum> bullseye (one course)
-//   1500  — same subject prefix, exact catnum (cross-suffix)
-//   1200  — same subject prefix, any catnum (sibling courses)
-//   1100  — same catnum, different subject (cross-subject sibling)
-//   0     — no match
 export function scoreCourseMatch(course, query, instructorsForCourse) {
-  if (!query || !query.trim()) return 1; // sentinel: include all when no query
-  const struct = parseStructuredQuery(query);
-  if (struct) {
-    return _scoreStructured(course, struct);
-  }
-  let best = 0;
-  const fields = [
-    course.subject || "",
-    course.catalog_number || "",
-    course.code || "",
-    course.title || "",
-  ];
-  for (const f of fields) {
-    const s = fuzzyMatch(query, f);
-    if (s > best) best = s;
-  }
-  if (Array.isArray(instructorsForCourse)) {
-    for (const name of instructorsForCourse) {
-      const s = fuzzyMatch(query, name);
-      if (s > best) best = s;
-    }
-  }
-  return best;
-}
+  if (!query || !query.trim()) return 1; // sentinel: include all
+  const q = _normForSearch(query);
+  if (!q) return 1;
 
-function _scoreStructured(course, struct) {
-  const cSubj = String(course.subject || "").toUpperCase();
-  const cCat  = String(course.catalog_number || "");
-  const qSubj = struct.subject;
-  const qCat  = struct.catnum;
-  // Subject equality: exact OR prefix-match (e.g., query "ENGR" matches
-  // ENGR-UH as a prefix). The dash-stripped form lets users type
-  // "engruh" and still hit the right subject.
-  const subjEqual =
-    cSubj === qSubj ||
-    cSubj.replace(/-/g, "") === qSubj.replace(/-/g, "") ||
-    cSubj.startsWith(qSubj) ||
-    cSubj.replace(/-/g, "").startsWith(qSubj.replace(/-/g, ""));
-  const catEqual = cCat === qCat;
-  if (subjEqual && catEqual) return 2000;
-  if (subjEqual && cCat.startsWith(qCat)) return 1500; // catnum prefix (e.g., "100" → 1001/1002)
-  if (subjEqual) return 1200;
-  if (catEqual) return 1100;
+  const code = _normForSearch(course.code);
+  const subj = _normForSearch(course.subject);
+  const cat  = _normForSearch(course.catalog_number);
+  const title = _normForSearch(course.title);
+  const instructors = Array.isArray(instructorsForCourse) ? instructorsForCourse : [];
+
+  // Compact (no-space) forms so users can type "engruh 3120" or
+  // "engruh3120" and still match "ENGR-UH 3120" → "engr uh 3120".
+  const codeCompact = code.replace(/\s+/g, "");
+  const qCompact    = q.replace(/\s+/g, "");
+
+  // Tier 1: exact code match (with or without spacing).
+  if (code === q) return 1000;
+  if (codeCompact === qCompact) return 1000;
+
+  // Tier 2: code starts with query (e.g., "engr-uh 312" → ENGR-UH 3120).
+  if (code.startsWith(q)) return 900;
+  if (codeCompact.startsWith(qCompact)) return 900;
+
+  // Tier 3: subject equality / prefix (e.g., "phyed" → all PHYED-UH).
+  if (subj === q || subj.startsWith(q)) return 800;
+  const subjCompact = subj.replace(/\s+/g, "");
+  if (subjCompact === qCompact || subjCompact.startsWith(qCompact)) return 800;
+
+  // Tier 4: code or catalog-number contains query as substring.
+  // "1001" → all 1001-numbered courses; "engr 3120" → ENGR-UH 3120
+  // (the space between "engr" and "3120" is preserved by normalize).
+  if (code.includes(q)) return 700;
+  if (cat === q) return 700;
+  if (cat.startsWith(q)) return 650;
+
+  // Tier 5: title substring.
+  if (title.includes(q)) return 600;
+
+  // Tier 6: instructor substring.
+  for (const name of instructors) {
+    if (_normForSearch(name).includes(q)) return 500;
+  }
+
+  // Tier 7: multi-word AND across the combined haystack. Each
+  // whitespace-separated word in the query must appear somewhere.
+  const words = q.split(/\s+/).filter(Boolean);
+  if (words.length > 1) {
+    const hay = [code, subj, cat, title].concat(instructors.map(_normForSearch)).join(" ");
+    if (words.every(function (w) { return hay.includes(w); })) return 400;
+  }
+
   return 0;
 }
 
