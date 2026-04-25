@@ -4531,70 +4531,142 @@
     color: rgba(28, 26, 23, 0.65);
   }
   .mp-clear-btn:hover { background: rgba(28, 26, 23, 0.04); }
-  .mp-fuzzy-toggle {
-    /* Tiny chip — visual weight matches stats text, not a primary
-       action. When on, picks up the ochre accent so it's clearly
-       distinct from off. */
-    padding: 0.25rem 0.55rem;
-    border: 1px solid rgba(28, 26, 23, 0.15);
-    background: #fff;
-    border-radius: 3px;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: 0.72rem;
-    color: rgba(28, 26, 23, 0.6);
-    text-transform: lowercase;
-    letter-spacing: 0.04em;
-  }
-  .mp-fuzzy-toggle:hover { background: rgba(28, 26, 23, 0.04); }
-  .mp-fuzzy-toggle[aria-pressed="true"] {
-    background: rgba(183, 129, 63, 0.16);
-    border-color: rgba(183, 129, 63, 0.5);
-    color: rgba(120, 70, 30, 0.95);
-  }
-  .mp-fuzzy-info {
-    width: 1.4rem;
-    height: 1.4rem;
-    padding: 0;
-    border: 0;
-    background: transparent;
-    cursor: help;
-    font-family: inherit;
-    font-size: 0.85rem;
-    color: rgba(28, 26, 23, 0.45);
-    border-radius: 50%;
-    line-height: 1.4rem;
-    text-align: center;
+  /* Search-options cog: tucked-away access point for advanced search
+     toggles. Subtle gear icon at idle; lights up when its popover is
+     open. Popover overlays absolutely, dismisses on outside-click. */
+  .mp-search-options {
     position: relative;
   }
-  .mp-fuzzy-info:hover { color: rgba(120, 70, 30, 0.85); }
-  /* The popover renders only when .is-open is set on the button, via
-     a JS click handler. Hover is intentionally NOT triggering — info
-     icons that pop on hover get accidentally activated as the user's
-     mouse moves through the bar. */
-  .mp-fuzzy-info-popover {
+  .mp-cog-btn {
+    width: 1.85rem;
+    height: 1.85rem;
+    padding: 0;
+    border: 1px solid rgba(28, 26, 23, 0.12);
+    background: transparent;
+    border-radius: 50%;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.95rem;
+    line-height: 1;
+    color: rgba(28, 26, 23, 0.45);
+    transition: background 0.12s, border-color 0.12s, color 0.12s, transform 0.18s;
+  }
+  .mp-cog-btn:hover {
+    background: rgba(28, 26, 23, 0.04);
+    color: rgba(28, 26, 23, 0.7);
+    transform: rotate(15deg);
+  }
+  .mp-cog-btn[aria-expanded="true"] {
+    background: rgba(183, 129, 63, 0.14);
+    border-color: rgba(183, 129, 63, 0.5);
+    color: rgba(120, 70, 30, 0.95);
+    transform: rotate(30deg);
+  }
+  /* When the toggle inside the popover is ON, give the cog a small
+     ochre accent dot to hint that a non-default option is active. */
+  .mp-cog-btn.is-active::after {
+    content: "";
     position: absolute;
-    top: 1.7rem;
-    right: -0.4rem;
-    width: 18rem;
-    padding: 0.7rem 0.85rem;
+    top: 0.18rem;
+    right: 0.18rem;
+    width: 0.4rem;
+    height: 0.4rem;
+    background: rgb(183, 129, 63);
+    border-radius: 50%;
+    box-shadow: 0 0 0 1.5px var(--paper, #fffdf9);
+  }
+  .mp-cog-pop {
+    position: absolute;
+    top: calc(100% + 0.4rem);
+    right: 0;
+    width: 19rem;
+    padding: 0.85rem 1rem 0.95rem 1rem;
     background: var(--paper, #fffdf9);
     border: 1px solid rgba(28, 26, 23, 0.15);
-    border-radius: 4px;
-    box-shadow: 0 4px 18px rgba(28, 26, 23, 0.12);
-    font-size: 0.8rem;
-    line-height: 1.5;
-    color: rgba(28, 26, 23, 0.78);
-    text-align: left;
+    border-radius: 5px;
+    box-shadow: 0 8px 28px rgba(28, 26, 23, 0.15);
     z-index: 100;
-    cursor: default;
+    animation: mp-cog-rise 0.16s ease;
   }
-  .mp-fuzzy-info-popover code {
-    font-family: var(--font-mono);
-    font-size: 0.78em;
-    background: rgba(28, 26, 23, 0.05);
-    padding: 0 0.25rem;
-    border-radius: 2px;
+  @keyframes mp-cog-rise {
+    from { opacity: 0; transform: translateY(-3px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .mp-cog-pop[hidden] { display: none; }
+  .mp-cog-title {
+    font-family: 'Fraunces', serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: rgba(28, 26, 23, 0.5);
+    margin-bottom: 0.6rem;
+  }
+  .mp-cog-row {
+    display: flex;
+    gap: 0.65rem;
+    align-items: flex-start;
+    cursor: pointer;
+  }
+  .mp-cog-row-text { flex: 1; min-width: 0; }
+  .mp-cog-row-label {
+    display: block;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: rgba(28, 26, 23, 0.9);
+    line-height: 1.3;
+  }
+  .mp-cog-row-help {
+    display: block;
+    margin-top: 0.2rem;
+    font-size: 0.76rem;
+    line-height: 1.45;
+    color: rgba(28, 26, 23, 0.6);
+  }
+
+  /* Toggle switch — proper iOS-style toggle, not a chip-button. */
+  .mp-toggle {
+    position: relative;
+    display: inline-block;
+    flex-shrink: 0;
+    margin-top: 0.18rem;
+  }
+  .mp-toggle input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    width: 0;
+    height: 0;
+  }
+  .mp-toggle-track {
+    display: inline-block;
+    width: 1.95rem;
+    height: 1.1rem;
+    background: rgba(28, 26, 23, 0.18);
+    border-radius: 999px;
+    position: relative;
+    transition: background 0.18s;
+    cursor: pointer;
+  }
+  .mp-toggle-thumb {
+    position: absolute;
+    top: 0.13rem;
+    left: 0.13rem;
+    width: 0.84rem;
+    height: 0.84rem;
+    background: #fffdf9;
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(28, 26, 23, 0.25);
+    transition: left 0.18s;
+  }
+  .mp-toggle input:checked + .mp-toggle-track {
+    background: rgb(183, 129, 63);
+  }
+  .mp-toggle input:checked + .mp-toggle-track .mp-toggle-thumb {
+    left: 0.98rem;
+  }
+  .mp-toggle input:focus-visible + .mp-toggle-track {
+    box-shadow: 0 0 0 2px rgba(183, 129, 63, 0.35);
   }
 
   .mp-filters {
@@ -5343,9 +5415,24 @@
     <div class="mp-search-row">
       <input type="search" id="mp-search" class="mp-search" placeholder="Search subject, code, title, or instructor — e.g. 'engr 2010', 'hashaikeh', 'materials'…" autocomplete="off" />
       <button type="button" class="mp-clear-btn" id="mp-clear-search" hidden>Clear</button>
-      <button type="button" class="mp-fuzzy-toggle" id="mp-fuzzy-toggle" aria-pressed="false"
-              title="Off — match exact text only. Click to allow small typos."><span class="mp-fuzzy-label">tolerate typos</span></button>
-      <button type="button" class="mp-fuzzy-info" id="mp-fuzzy-info" aria-label="What does this do?" tabindex="0">ⓘ</button>
+      <!-- Search options: cog button opens a small popover with the
+           "Tolerate Typos" toggle. Tucked away but discoverable. -->
+      <div class="mp-search-options" id="mp-search-options">
+        <button type="button" class="mp-cog-btn" id="mp-cog-btn" aria-label="Search options" aria-haspopup="true" aria-expanded="false" title="Search options">⚙</button>
+        <div class="mp-cog-pop" id="mp-cog-pop" hidden role="dialog" aria-label="Search options">
+          <div class="mp-cog-title">Search Options</div>
+          <label class="mp-cog-row">
+            <span class="mp-toggle">
+              <input type="checkbox" id="mp-fuzzy-toggle" />
+              <span class="mp-toggle-track"><span class="mp-toggle-thumb"></span></span>
+            </span>
+            <span class="mp-cog-row-text">
+              <span class="mp-cog-row-label">Tolerate Typos</span>
+              <span class="mp-cog-row-help">Match results with small spelling mistakes — about one or two wrong letters. Exact matches always show first.</span>
+            </span>
+          </label>
+        </div>
+      </div>
       <span id="mp-search-stats" class="mp-search-stats"></span>
     </div>
     <div class="mp-filters" id="mp-filters"></div>
@@ -6502,26 +6589,27 @@ function buildGrid(gridId, half) {
       cellSlot.className = 'cell-slot' + (evt ? '' : ' empty');
       if (evt) {
         const meta = _courseMeta(evt.course);
-        // Defensive: guarantee the color object has bg+ink even if a
-        // future change to _courseMeta or colorForCourse returns null.
-        // Without this, an undefined `meta.color.bg` would make
-        // setProperty a no-op AND the cell would render with the
-        // browser-default transparent background — invisible against
-        // the cream paper. Reproduces the user-reported "tiles aren't
-        // visible" symptom on any path that loses meta.color.
         const safeBg  = (meta.color && meta.color.bg)  || '#E5DBE9';
         const safeInk = (meta.color && meta.color.ink) || '#5F416E';
         const cell = document.createElement('div');
         cell.className = 'cell ' + (meta.cls || 'c-dynamic');
-        // Diagnostic: surface the class number on the DOM so anyone
-        // inspecting can confirm cells exist even if styling is wrong.
         if (evt.secKey) cell.setAttribute('data-class-number', String(evt.secKey));
-        // Use plain inline-style assignment (not setProperty) — the
-        // `!important`-via-setProperty path was overengineering; nothing
-        // in our stylesheet actually needs to be beaten.
-        cell.style.background = safeBg;
-        cell.style.color = safeInk;
-        cell.style.borderLeftColor = safeInk;
+        cell.setAttribute('data-bg', safeBg);
+        cell.setAttribute('data-ink', safeInk);
+        // Set the entire inline style attribute as a single string
+        // with `!important`. This is the most bulletproof spot in the
+        // CSS cascade — beats every stylesheet rule including
+        // future-added !important ones from third-party CSS, beats
+        // class-driven backgrounds the legacy CSS still defines for
+        // .c-stat / .c-cons / etc. (none of which match our class but
+        // belt+suspenders), and survives any subsequent CSSOM mutation
+        // that touches individual properties. Reported twice as
+        // "tiles have no color" — this should put it to bed.
+        const styleStr =
+          'background: ' + safeBg + ' !important;' +
+          'color: ' + safeInk + ' !important;' +
+          'border-left-color: ' + safeInk + ' !important;';
+        cell.setAttribute('style', styleStr);
         const typeNote = evt.label === 'Lecture' ? '' : ' <em>' + _escHtml(String(evt.label).toLowerCase()) + '</em>';
         const titleLine = meta.title
           ? '<div class="title-sub">' + _escHtml(meta.title) + '</div>'
@@ -10642,38 +10730,49 @@ function _bootPicker() {
     renderPicker();
     inp.focus();
   });
-  // Fuzzy toggle.
-  const fuzzyBtn = document.getElementById('mp-fuzzy-toggle');
-  if (fuzzyBtn) fuzzyBtn.addEventListener('click', function () {
-    _pkFuzzy = !_pkFuzzy;
-    fuzzyBtn.setAttribute('aria-pressed', _pkFuzzy ? 'true' : 'false');
-    fuzzyBtn.title = _pkFuzzy
-      ? 'On — small typos still match. Click to switch off.'
-      : 'Off — match exact text only. Click to allow small typos.';
-    renderPicker();
-  });
-  // Info icon: click toggles a popover with the explanation.
-  const infoBtn = document.getElementById('mp-fuzzy-info');
-  if (infoBtn) {
-    infoBtn.addEventListener('click', function (e) {
+  // Search-options cog + popover. Click the cog to open; click the
+  // toggle inside to flip _pkFuzzy; click outside to close. Tucked
+  // away (gear icon, no chip), discreet but available.
+  const cogBtn = document.getElementById('mp-cog-btn');
+  const cogPop = document.getElementById('mp-cog-pop');
+  const fuzzyToggle = document.getElementById('mp-fuzzy-toggle');
+  if (cogBtn && cogPop) {
+    cogBtn.addEventListener('click', function (e) {
       e.stopPropagation();
-      const existing = infoBtn.querySelector('.mp-fuzzy-info-popover');
-      if (existing) { existing.remove(); return; }
-      const pop = document.createElement('div');
-      pop.className = 'mp-fuzzy-info-popover';
-      pop.innerHTML =
-        '<strong>Tolerate typos</strong><br>' +
-        'When <em>off</em> (default), search only matches text you type exactly. ' +
-        '<code>hashaikeh</code> finds the instructor; <code>hashikeh</code> (a typo) does not.<br><br>' +
-        'When <em>on</em>, search forgives small spelling mistakes — about one or two wrong letters. ' +
-        'Useful when you\'re not sure how a name or word is spelled. Exact matches always show first.';
-      pop.addEventListener('click', function (ev) { ev.stopPropagation(); });
-      infoBtn.appendChild(pop);
+      const open = !cogPop.hasAttribute('hidden');
+      if (open) {
+        cogPop.setAttribute('hidden', '');
+        cogBtn.setAttribute('aria-expanded', 'false');
+      } else {
+        cogPop.removeAttribute('hidden');
+        cogBtn.setAttribute('aria-expanded', 'true');
+      }
     });
-    // Click anywhere else dismisses the popover.
+    // Click inside the popover doesn't close it.
+    cogPop.addEventListener('click', function (e) { e.stopPropagation(); });
+    // Click outside closes it.
     document.addEventListener('click', function () {
-      const p = infoBtn.querySelector('.mp-fuzzy-info-popover');
-      if (p) p.remove();
+      if (!cogPop.hasAttribute('hidden')) {
+        cogPop.setAttribute('hidden', '');
+        cogBtn.setAttribute('aria-expanded', 'false');
+      }
+    });
+    // Escape also closes (keyboard parity).
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !cogPop.hasAttribute('hidden')) {
+        cogPop.setAttribute('hidden', '');
+        cogBtn.setAttribute('aria-expanded', 'false');
+        cogBtn.focus();
+      }
+    });
+  }
+  if (fuzzyToggle) {
+    fuzzyToggle.addEventListener('change', function () {
+      _pkFuzzy = !!fuzzyToggle.checked;
+      // Mark the cog with an accent dot when a non-default option is
+      // active so the user can tell at a glance that something is on.
+      if (cogBtn) cogBtn.classList.toggle('is-active', _pkFuzzy);
+      renderPicker();
     });
   }
   // Re-render on catalog mutations + invalidate the instructor index.
