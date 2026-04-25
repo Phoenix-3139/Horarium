@@ -5565,13 +5565,15 @@ window.dispatchEvent(new CustomEvent('horarium:ready'));
 // plan — viewing a candidate doesn't promote it.
 let currentViewPlanId = null;
 
-// Vestigial constant. The legacy export / table / comparison paths
-// still read `SCHED_DATA.options[currentOption]` and
-// `SCHED_DATA.conflicts[currentOption][...]` through the shim. The shim
-// orders the active plan at index 0, so `currentOption = 0` keeps
-// those reads pointing at the active plan. Burns when those paths get
-// converted off the shim in 5a/3.
+// Vestigial constants. The legacy export / table / comparison paths
+// still read `SCHED_DATA.options[currentOption]`,
+// `SCHED_DATA.conflicts[currentOption][...]`, and `selected[cat]` (the
+// old core-elective preview state) through the shim. The shim orders
+// the active plan at index 0, and `selected` is now permanently empty
+// because the Cores module is gone. Both burn in 5a/3 when those
+// paths get converted off the shim.
 let currentOption = 0;
+const selected = Object.freeze(Object.create(null));
 
 function _activePlanId() {
   if (!(window.HS && window.HS.catalog && window.HS.catalog.plans)) return null;
@@ -5892,6 +5894,7 @@ function buildGrid(gridId, half) {
         // the legacy CSS-class-per-course approach.
         cell.style.background = meta.color.bg;
         cell.style.color = meta.color.ink;
+        cell.style.borderLeftColor = meta.color.ink;
         const typeNote = evt.label === 'Lecture' ? '' : ' <em>' + _escHtml(String(evt.label).toLowerCase()) + '</em>';
         cell.innerHTML =
           '<div class="name">' + _escHtml(meta.short) + typeNote + '</div>' +

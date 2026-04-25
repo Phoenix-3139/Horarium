@@ -184,21 +184,24 @@ export function filterCoursesByQuery(courses, query) {
 // Assign deterministic palette colors to courses so the same course
 // always gets the same color across renders. Uses the course code as
 // the key so the same course in different plans renders the same hue.
-// 12-color palette tuned to be readable on the cream background.
+// 12-color palette tuned for clear differentiation on the cream
+// background — bg colors are SOLID (not low-alpha rgba), matching the
+// brightness of the legacy --c-stat-bg / --c-cons-bg / etc. variables
+// the cells used to read.
 
 export const COURSE_PALETTE = [
-  { bg: "rgba(183, 129, 63, 0.20)",  ink: "rgba(120, 70, 30, 1)" },   // ochre
-  { bg: "rgba(95, 130, 90, 0.20)",   ink: "rgba(45, 80, 50, 1)" },    // sage
-  { bg: "rgba(120, 100, 160, 0.20)", ink: "rgba(70, 55, 110, 1)" },   // lavender
-  { bg: "rgba(180, 110, 130, 0.20)", ink: "rgba(125, 50, 70, 1)" },   // rose
-  { bg: "rgba(70, 130, 160, 0.20)",  ink: "rgba(30, 80, 110, 1)" },   // slate-blue
-  { bg: "rgba(180, 150, 70, 0.22)",  ink: "rgba(125, 95, 30, 1)" },   // mustard
-  { bg: "rgba(130, 100, 90, 0.20)",  ink: "rgba(80, 55, 45, 1)" },    // taupe
-  { bg: "rgba(80, 130, 130, 0.20)",  ink: "rgba(35, 85, 85, 1)" },    // teal
-  { bg: "rgba(160, 90, 90, 0.20)",   ink: "rgba(110, 45, 45, 1)" },   // brick
-  { bg: "rgba(110, 140, 110, 0.20)", ink: "rgba(55, 95, 60, 1)" },    // moss
-  { bg: "rgba(150, 120, 160, 0.20)", ink: "rgba(95, 65, 110, 1)" },   // mauve
-  { bg: "rgba(120, 130, 100, 0.22)", ink: "rgba(70, 80, 50, 1)" },    // olive
+  { bg: "#EDD9CE", ink: "#6B3520" },  // warm ochre/peach
+  { bg: "#D6E3D2", ink: "#365A36" },  // sage
+  { bg: "#E0D8EA", ink: "#3F2D5A" },  // lavender
+  { bg: "#F0D5DC", ink: "#7E2F47" },  // rose
+  { bg: "#D9E1EC", ink: "#2A4466" },  // slate-blue
+  { bg: "#EFE4C0", ink: "#7D5E1E" },  // mustard
+  { bg: "#E5D9D2", ink: "#5A3D30" },  // taupe
+  { bg: "#D2E4E2", ink: "#235555" },  // teal
+  { bg: "#EFD4D0", ink: "#762D2D" },  // brick
+  { bg: "#DDE7DB", ink: "#3F6342" },  // moss
+  { bg: "#E5DBE9", ink: "#5F416E" },  // mauve
+  { bg: "#E1E4D2", ink: "#4A5333" },  // olive
 ];
 
 function _hashCode(s) {
