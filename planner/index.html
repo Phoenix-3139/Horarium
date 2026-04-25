@@ -4541,6 +4541,17 @@
     color: rgba(28, 26, 23, 0.65);
   }
   .mp-clear-btn:hover { background: rgba(28, 26, 23, 0.04); }
+  /* Layout helper: view-toggle pill + cog sit on a single row. */
+  .view-toggle-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.5rem;
+  }
+  /* Calendar-area cog inherits the picker cog's styling for visual
+     consistency. Same hover/expanded/active states. */
+  .mp-cog-btn-cal { flex-shrink: 0; }
+
   /* Search-options cog: tucked-away access point for advanced search
      toggles. Subtle gear icon at idle; lights up when its popover is
      open. Popover overlays absolutely, dismisses on outside-click. */
@@ -5501,14 +5512,21 @@
     <button class="module-menu-btn" onclick="openModuleMenu(event, 'schedule')" title="Move module">⋮</button>
     <div class="section-label"><span class="num">03</span> Weekly hours</div>
 
-    <div class="view-toggle" id="view-toggle">
-      <div class="vt-slider" id="vt-slider"></div>
-      <button class="vt-btn active" data-view="calendar" onclick="switchView('calendar', this)">
-        <span class="vt-icon">⊟</span> <span>Calendar</span>
-      </button>
-      <button class="vt-btn" data-view="table" onclick="switchView('table', this)">
-        <span class="vt-icon">≡</span> <span>Table</span>
-      </button>
+    <div class="view-toggle-row">
+      <div class="view-toggle" id="view-toggle">
+        <div class="vt-slider" id="vt-slider"></div>
+        <button class="vt-btn active" data-view="calendar" onclick="switchView('calendar', this)">
+          <span class="vt-icon">⊟</span> <span>Calendar</span>
+        </button>
+        <button class="vt-btn" data-view="table" onclick="switchView('table', this)">
+          <span class="vt-icon">≡</span> <span>Table</span>
+        </button>
+      </div>
+      <!-- Second instance of the search/display cog. Opens the same
+           popover as the picker's cog — sharing state means a slider
+           change here shows up in both. Anchored next to the view
+           toggle so it's reachable while looking at the calendar. -->
+      <button type="button" class="mp-cog-btn mp-cog-btn-cal" id="mp-cog-btn-cal" title="Display options">⚙&#xFE0E;</button>
     </div>
 
     <div class="view-pane" id="view-calendar">
@@ -10775,13 +10793,16 @@ function _bootPicker() {
   // no <input type="checkbox">, no <label>, since both have surprised
   // us with extension behaviour in the past.
   const cogBtn = document.getElementById('mp-cog-btn');
+  const cogBtnCal = document.getElementById('mp-cog-btn-cal');
   let _cogPop = null;
+  let _cogPopAnchor = null;
   function _closeCogPop() {
-    if (_cogPop) { _cogPop.remove(); _cogPop = null; }
+    if (_cogPop) { _cogPop.remove(); _cogPop = null; _cogPopAnchor = null; }
   }
-  function _openCogPop() {
+  function _openCogPop(anchor) {
     _closeCogPop();
-    const rect = cogBtn.getBoundingClientRect();
+    _cogPopAnchor = anchor || cogBtn;
+    const rect = _cogPopAnchor.getBoundingClientRect();
     const pop = document.createElement('div');
     pop.className = 'mp-cog-pop-built';
     pop.style.position = 'fixed';
@@ -10820,7 +10841,7 @@ function _bootPicker() {
       _pkFuzzy = !_pkFuzzy;
       const toggleEl = pop.querySelector('#mp-cog-fuzzy-toggle');
       if (toggleEl) toggleEl.classList.toggle('is-on', _pkFuzzy);
-      if (cogBtn) cogBtn.classList.toggle('is-active', _pkFuzzy || _pkTileIntensity !== 70);
+      _syncCogActiveState();
       renderPicker();
     });
     // Intensity slider — live-updates the CSS variable, persists on
@@ -10837,18 +10858,29 @@ function _bootPicker() {
       });
       slider.addEventListener('change', function () {
         try { localStorage.setItem(_PK_INTENSITY_KEY, String(_pkTileIntensity)); } catch {}
-        if (cogBtn) cogBtn.classList.toggle('is-active', _pkFuzzy || _pkTileIntensity !== 70);
+        _syncCogActiveState();
       });
     }
     // Inside-popover clicks don't dismiss; outside-clicks do.
     pop.addEventListener('click', function (e) { e.stopPropagation(); });
   }
-  if (cogBtn) {
-    cogBtn.addEventListener('click', function (e) {
+  function _syncCogActiveState() {
+    const active = _pkFuzzy || _pkTileIntensity !== 70;
+    if (cogBtn) cogBtn.classList.toggle('is-active', active);
+    if (cogBtnCal) cogBtnCal.classList.toggle('is-active', active);
+  }
+  _syncCogActiveState();
+  function _wireCog(btn) {
+    if (!btn) return;
+    btn.addEventListener('click', function (e) {
       e.stopPropagation();
-      if (_cogPop) _closeCogPop();
-      else _openCogPop();
+      if (_cogPop && _cogPopAnchor === btn) _closeCogPop();
+      else _openCogPop(btn);
     });
+  }
+  _wireCog(cogBtn);
+  _wireCog(cogBtnCal);
+  if (cogBtn || cogBtnCal) {
     document.addEventListener('click', function () { _closeCogPop(); });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') _closeCogPop();
