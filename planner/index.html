@@ -154,17 +154,14 @@
   :root[data-theme="coffee"] .fn-item.active {
     box-shadow: 0 0 0 1px rgba(237, 228, 211, 0.06) inset;
   }
-  /* Calendar tiles in Coffee — the warm earthtone course palette
-     reads as garish unfaded oranges/yellows against the deep coffee
-     canvas. Blend each tile heavily with the surface so they become
-     muted, warm-tinted swatches that sit naturally in the dark; use
-     the original tile bg as the left-edge accent so the per-course
-     identity is still readable. Text flips to var(--ink) (light cream
-     in coffee) since the original dark ink on a darkened tile is
-     unreadable. */
+  /* Calendar tiles in Coffee — keep the warm palette readable on
+     the dark canvas without desaturating into mud. Tile bg stays
+     vibrant (~55%) and text uses the original dark ink (which still
+     reads against the warm-tinted surface). Left rail is the full
+     saturated tile color for stronger per-course identity. */
   :root[data-theme="coffee"] .grid .cell.c-dynamic {
-    background: color-mix(in srgb, var(--cell-bg, var(--paper-soft)) 28%, var(--surface)) !important;
-    color: var(--ink) !important;
+    background: color-mix(in srgb, var(--cell-bg, var(--paper-soft)) 55%, var(--surface)) !important;
+    color: var(--cell-ink, var(--ink)) !important;
     border-left-color: var(--cell-bg, var(--accent)) !important;
     border-left-width: 3px;
   }
@@ -270,16 +267,19 @@
   :root[data-theme="futuristic"] .filter-tag {
     box-shadow: 0 0 0 1px rgba(94, 229, 229, 0.3), 0 0 12px rgba(94, 229, 229, 0.15);
   }
-  /* Calendar tiles in Futuristic — desaturate the warm earthtone
-     palette and sink it deep into the navy canvas so tiles read as
-     muted glow blocks rather than out-of-place oranges. The original
-     tile color survives only as the left rail accent. */
+  /* Calendar tiles in Futuristic — keep the palette colors vibrant
+     so each course actually reads as itself. Tile bg stays at full
+     intensity (no surface mix) and text uses the original dark ink
+     for max contrast — the warm hue + dark ink reads as a printed
+     card backlit on the dark canvas. A soft cyan outer glow ties
+     the tile to the phosphor-terminal aesthetic; no desaturation. */
   :root[data-theme="futuristic"] .grid .cell.c-dynamic {
-    background: color-mix(in srgb, var(--cell-bg, var(--paper-soft)) 22%, var(--surface)) !important;
-    color: var(--ink) !important;
-    border-left-color: var(--cell-bg, var(--accent)) !important;
+    background: var(--cell-bg, var(--paper-soft)) !important;
+    color: var(--cell-ink, var(--ink)) !important;
+    border-left-color: var(--cell-ink, var(--ink-faint)) !important;
     border-left-width: 3px;
-    filter: saturate(0.7);
+    box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 22%, transparent),
+                0 0 0 1px color-mix(in srgb, var(--accent) 25%, transparent);
   }
   /* Filter flag becomes an illuminated cyan readout — phosphor on
      dark with a soft glow. */
