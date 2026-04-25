@@ -164,11 +164,11 @@
     color: var(--paper);
     box-shadow: -4px 3px 14px rgba(0, 0, 0, 0.4);
   }
-  /* Legend in Coffee — warmer surface lift + subtle honey halo on
-     the left accent stripe. */
+  /* Legend in Coffee — warmer surface lift, single clean edge.
+     The base .legend rule already provides border-left: 3px var(--accent);
+     don't add another inset stripe on top of it. */
   :root[data-theme="coffee"] .legend {
     background: color-mix(in srgb, var(--surface) 88%, var(--accent) 12%);
-    box-shadow: inset 3px 0 0 0 color-mix(in srgb, var(--accent) 40%, transparent);
   }
   :root[data-theme="coffee"] .legend .lg-section-item:hover {
     background: color-mix(in srgb, var(--accent) 8%, transparent);
@@ -269,14 +269,13 @@
   :root[data-theme="futuristic"] .drawer-flag .flag-label {
     text-shadow: 0 0 6px rgba(255, 255, 255, 0.45);
   }
-  /* Legend in Futuristic — control-panel feel: cyan border, soft
-     outer glow, the left accent stripe reads as illuminated. */
+  /* Legend in Futuristic — control-panel feel: cyan border + soft
+     outer glow. Drop the inset stripe (the base border-left already
+     provides the accent edge) so the box has one clean perimeter. */
   :root[data-theme="futuristic"] .legend {
     background: color-mix(in srgb, var(--surface) 90%, transparent);
     border-color: color-mix(in srgb, var(--accent) 30%, transparent);
-    box-shadow:
-      inset 3px 0 0 0 var(--accent),
-      0 0 18px color-mix(in srgb, var(--accent) 12%, transparent);
+    box-shadow: 0 0 18px color-mix(in srgb, var(--accent) 12%, transparent);
   }
   :root[data-theme="futuristic"] .legend .lg-label {
     color: var(--accent);
@@ -358,13 +357,14 @@
     color: #fafcf8;
     box-shadow: -4px 3px 14px rgba(42, 58, 40, 0.18);
   }
-  /* Legend in Nature — pale sage canvas with rounded corners + a
-     softer leaf-green accent stripe to match the theme's softer
-     radii everywhere else. */
+  /* Legend in Nature — pale sage canvas with rounded corners. The
+     theme's larger radius + the base border-left stripe + an inset
+     shadow stacked together created a "nested boxes" look at the
+     left edge; dropped the inset shadow so there's one clean
+     rounded outline with a single leaf-green accent edge. */
   :root[data-theme="nature"] .legend {
     background: color-mix(in srgb, var(--surface) 92%, var(--accent) 8%);
     border-radius: var(--radius-md, 8px);
-    box-shadow: inset 3px 0 0 0 color-mix(in srgb, var(--accent) 60%, transparent);
   }
   :root[data-theme="nature"] .legend .lg-section-item:hover {
     background: color-mix(in srgb, var(--accent) 6%, transparent);
@@ -5571,6 +5571,38 @@
     font-size: 0.78rem;
     color: color-mix(in srgb, var(--ink) 78%, transparent);
     white-space: nowrap;
+  }
+  /* Stage button + chain icon stack horizontally for staged sections. */
+  .mp-section-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  .mp-link-btn {
+    width: 1.85rem;
+    height: 1.85rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 1px solid color-mix(in srgb, var(--ink) 18%, transparent);
+    background: var(--cream);
+    border-radius: 3px;
+    cursor: pointer;
+    color: color-mix(in srgb, var(--ink) 70%, transparent);
+    font-size: 0.95rem;
+    line-height: 1;
+    transition: background 0.12s, color 0.12s, border-color 0.12s;
+  }
+  .mp-link-btn:hover {
+    background: color-mix(in srgb, var(--accent, var(--ochre)) 10%, transparent);
+    border-color: color-mix(in srgb, var(--accent, var(--ochre)) 40%, transparent);
+    color: var(--accent, var(--ochre));
+  }
+  .mp-link-btn.is-linked {
+    background: color-mix(in srgb, var(--accent, var(--ochre)) 14%, transparent);
+    border-color: color-mix(in srgb, var(--accent, var(--ochre)) 55%, transparent);
+    color: var(--accent, var(--ochre));
   }
   .mp-stage:hover { background: color-mix(in srgb, var(--ink) 4%, transparent); }
   .mp-stage.is-staged {
@@ -12653,8 +12685,21 @@ function _pkRenderSectionRow(s, c, stagedSet, hydratedStaged) {
   html += '</div>';
 
   if (isStaged) {
+    // Staged sections also get a chain affordance — click to enter
+    // link-mode from the picker (same flow as the legend kebab),
+    // useful when the user is staging rapid-fire and wants to pair
+    // sections without scrolling down to the legend.
+    const plan = (typeof _viewedPlan === 'function') ? _viewedPlan() : null;
+    const linkSet = _buildLinkSet(plan);
+    const isLinked = linkSet.has(String(s.class_number));
+    html += '<div class="mp-section-actions">';
+    html += '<button type="button" class="mp-link-btn' + (isLinked ? ' is-linked' : '') +
+      '" data-pkaction="link" data-class-number="' + _escHtml(s.class_number) +
+      '" title="' + (isLinked ? 'Linked — click to manage' : 'Link to another staged section') +
+      '" aria-label="' + (isLinked ? 'Manage link' : 'Link to another section') + '">⛓</button>';
     html += '<button type="button" class="mp-stage is-staged" data-pkaction="unstage" data-class-number="' +
       _escHtml(s.class_number) + '">Staged ✓</button>';
+    html += '</div>';
   } else {
     const cls = action.needsConfirm ? 'mp-stage is-warn' : 'mp-stage';
     html += '<button type="button" class="' + cls + '" data-pkaction="stage" data-class-number="' +
@@ -12694,6 +12739,13 @@ function _pkWireAll(root) {
       const cn = btn.getAttribute('data-class-number');
       const subject = btn.getAttribute('data-subject') || null;
       const confirmReason = btn.getAttribute('data-confirm') || '';
+      if (action === 'link') {
+        // Reuse the legend's section-menu path so the same modal +
+        // link-mode flow runs whether the user kicks it off from the
+        // legend kebab or the picker chain button.
+        if (typeof _openLegendSectionMenu === 'function') _openLegendSectionMenu(cn);
+        return;
+      }
       if (action === 'stage' && confirmReason) {
         _pkConfirmStage(cn, subject, confirmReason);
       } else {
