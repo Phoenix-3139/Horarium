@@ -241,6 +241,7 @@ export function buildLegendRows(plan, effective) {
       section_code: h.section.section_code || "",
       meeting_summary: meetingSummary,
       color: colorForCourse(h.course_code),
+      user_authored: !!(h.course._user_authored || h.section._user_authored),
     };
   });
   return { filters, sections };

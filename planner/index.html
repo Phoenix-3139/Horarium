@@ -917,6 +917,21 @@
     font-size: 0.85em;
     opacity: 0.85;
   }
+  .legend .lg-user-tag {
+    margin-left: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 8.5px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--accent, var(--ochre));
+    background: color-mix(in srgb, var(--accent, var(--ochre)) 12%, transparent);
+    padding: 1px 4px;
+    border-radius: 2px;
+    border: 1px dashed color-mix(in srgb, var(--accent, var(--ochre)) 35%, transparent);
+  }
+  .legend .lg-section-item.lg-user-authored {
+    border-bottom: 1px dashed color-mix(in srgb, var(--accent, var(--ochre)) 50%, transparent);
+  }
   /* Same chain glyph on the calendar tile — top-right corner so it
      never collides with the time / title content. */
   .grid .cell .cell-link-icon {
@@ -928,6 +943,27 @@
     opacity: 0.75;
   }
   .grid .cell { position: relative; }
+  /* User-authored badge on calendar tiles + dashed accent border on
+     the cell itself so the source is unmistakable at a glance. */
+  .grid .cell.cell-user-authored {
+    border-top: 1px dashed color-mix(in srgb, var(--accent, var(--ochre)) 55%, transparent);
+    border-right: 1px dashed color-mix(in srgb, var(--accent, var(--ochre)) 55%, transparent);
+    border-bottom: 1px dashed color-mix(in srgb, var(--accent, var(--ochre)) 55%, transparent);
+  }
+  .grid .cell .cell-user-badge {
+    position: absolute;
+    top: 3px;
+    left: 5px;
+    font-family: var(--font-mono);
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--accent, var(--ochre));
+    background: color-mix(in srgb, var(--accent, var(--ochre)) 12%, transparent);
+    padding: 1px 4px;
+    border-radius: 2px;
+    line-height: 1.2;
+  }
   /* Link-mode highlight: targetable rows pulse a soft accent border;
      the source row gets a stronger ring so the user knows what's
      being linked from. */
@@ -3790,6 +3826,7 @@
   .br-chip-flag      { background: color-mix(in srgb, var(--ochre) 16%, transparent); color: #8A5E1B; }
   .br-chip-topics    { background: rgba(139,158,181,0.18); color: #465E79; }
   .br-chip-cancelled { background: color-mix(in srgb, var(--rust) 14%, transparent); color: #8A3826; }
+  .br-chip-user      { background: color-mix(in srgb, var(--accent, var(--ochre)) 16%, transparent); color: var(--accent, var(--ochre)); border: 1px dashed color-mix(in srgb, var(--accent, var(--ochre)) 40%, transparent); }
 
   /* ----- detail column ----- */
   .browse-detail {
@@ -7544,6 +7581,7 @@ function gatherEvents(half) {
           label: hit.section.component || 'Lecture',
           ghost: false,
           secKey: ref.class_number,
+          user_authored: !!(hit.course._user_authored || hit.section._user_authored),
         });
       }
     }
@@ -7644,10 +7682,11 @@ function buildLegend() {
       const isLinked = linkSet.has(String(s.class_number));
       const isLinkTarget = _legendLinkSourceCN && _legendLinkSourceCN !== String(s.class_number);
       html += '<span class="lg-section-wrap' + (isLinkTarget ? ' lg-link-target' : '') + (_legendLinkSourceCN === String(s.class_number) ? ' lg-link-source' : '') + '">';
-      html += '<button type="button" class="item lg-section-item" data-class-number="' + _escHtml(s.class_number) + '" title="' +
+      html += '<button type="button" class="item lg-section-item' + (s.user_authored ? ' lg-user-authored' : '') + '" data-class-number="' + _escHtml(s.class_number) + '" title="' +
         _escHtml(s.course_title) + ' — ' + _escHtml(s.meeting_summary || 'no meetings') + '">' +
         swatch + _escHtml(s.course_code) +
         (s.section_code ? ' <span style="opacity:0.5">' + _escHtml(s.section_code) + '</span>' : '') +
+        (s.user_authored ? ' <span class="lg-user-tag">USER</span>' : '') +
         (isLinked ? ' <span class="lg-link-icon" title="Linked to another section">⛓</span>' : '') +
         '</button>';
       html += '<button type="button" class="lg-section-menu" data-class-number="' + _escHtml(s.class_number) + '" title="Section options" aria-label="Section options">⋮</button>';
@@ -8640,8 +8679,14 @@ function _buildOwnCell(evt, extraClass) {
   const linkSet = _buildLinkSet(plan);
   const linkBadge = (evt.secKey && linkSet.has(String(evt.secKey)))
     ? '<span class="cell-link-icon" title="Linked to another section">⛓</span>' : '';
+  // User-authored sections get a small dashed-border tag so they're
+  // visually distinct from real Albert data on the calendar.
+  const userBadge = evt.user_authored
+    ? '<span class="cell-user-badge" title="User-created section">USER</span>' : '';
+  if (evt.user_authored) cell.classList.add('cell-user-authored');
   cell.innerHTML =
     linkBadge +
+    userBadge +
     '<div class="name">' + _escHtml(meta.short || evt.course || '') + typeNote + '</div>' +
     titleLine +
     '<div class="time-sub">' + fmtShort(evt.start) + '–' + fmtShort(evt.end) + '</div>';
@@ -9254,7 +9299,44 @@ function _auFormHtml(suggestedClass) {
   ].join('\n');
 }
 
+// Mirror every input/select into _auState as the user types. The modal
+// closes BEFORE the action callback runs (modal.js calls hideModal()
+// then action()), so by the time _auSubmit fires, the form's DOM is
+// already gone — reading directly via getElementById() throws. We
+// snapshot live into _auState instead.
+function _auMirror(id, key, opts) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  opts = opts || {};
+  const read = () => {
+    let v = el.value;
+    if (typeof v === 'string') v = v.trim();
+    if (opts.upper && typeof v === 'string') v = v.toUpperCase();
+    if (opts.nullIfEmpty && (v === '' || v == null)) v = null;
+    _auState[key] = v;
+  };
+  read(); // capture default value
+  el.addEventListener('input', read);
+  el.addEventListener('change', read);
+}
+
 function _auWireForm() {
+  // Initialize the mirror; defaults from the rendered form are read
+  // here so even an instant-submit captures component/session/status.
+  _auMirror('au-subject',  'subject',        { upper: true });
+  _auMirror('au-catnum',   'catalog_number');
+  _auMirror('au-title',    'title');
+  _auMirror('au-units',    'units_raw');
+  _auMirror('au-classnum', 'class_number');
+  _auMirror('au-section',  'section_code');
+  _auMirror('au-component','component');
+  _auMirror('au-session',  'session_code');
+  _auMirror('au-status',   'status_type');
+  _auMirror('au-start',    'start_time', { nullIfEmpty: true });
+  _auMirror('au-end',      'end_time',   { nullIfEmpty: true });
+  _auMirror('au-building', 'building',   { nullIfEmpty: true });
+  _auMirror('au-room',     'room_number',{ nullIfEmpty: true });
+  _auMirror('au-instr',    'instructors');
   const daysWrap = document.getElementById('au-days');
   if (daysWrap) {
     daysWrap.querySelectorAll('.au-day').forEach(function (btn) {
@@ -9271,32 +9353,34 @@ function _auWireForm() {
 }
 
 function _auSubmit() {
-  const errEl = document.getElementById('au-error');
   function fail(msg) {
-    if (errEl) { errEl.textContent = msg; errEl.hidden = false; }
+    // The modal already closed before our action ran, so error display
+    // goes to a toast/alert rather than the in-form red strip.
+    _hsAlert(msg, 'Could not create course');
     return false;
   }
-  const subject = (document.getElementById('au-subject').value || '').trim().toUpperCase();
-  const catalog_number = (document.getElementById('au-catnum').value || '').trim();
-  const title = (document.getElementById('au-title').value || '').trim();
-  const unitsRaw = (document.getElementById('au-units').value || '').trim();
+  if (!_auState) return fail('Form state was lost — please re-open the dialog.');
+  const subject = (_auState.subject || '').toUpperCase();
+  const catalog_number = _auState.catalog_number || '';
+  const title = _auState.title || '';
+  const unitsRaw = _auState.units_raw || '';
   if (!subject) return fail('Subject is required (e.g. MATH-UH).');
   if (!catalog_number) return fail('Catalog number is required.');
   if (!title) return fail('Title is required.');
   const units = unitsRaw === '' ? null : Number(unitsRaw);
   if (units != null && !Number.isFinite(units)) return fail('Units must be a number or left blank.');
 
-  const class_number = (document.getElementById('au-classnum').value || '').trim();
+  const class_number = _auState.class_number || '';
   if (!class_number) return fail('Class number is required.');
-  const section_code = (document.getElementById('au-section').value || '').trim() || '001';
-  const component = document.getElementById('au-component').value;
-  const session_code = document.getElementById('au-session').value;
-  const status_type = document.getElementById('au-status').value;
-  const start_time = document.getElementById('au-start').value || null;
-  const end_time = document.getElementById('au-end').value || null;
-  const building = (document.getElementById('au-building').value || '').trim() || null;
-  const room_number = (document.getElementById('au-room').value || '').trim() || null;
-  const instructors = (document.getElementById('au-instr').value || '').trim();
+  const section_code = _auState.section_code || '001';
+  const component = _auState.component || 'Lecture';
+  const session_code = _auState.session_code || 'AD';
+  const status_type = _auState.status_type || 'open';
+  const start_time = _auState.start_time || null;
+  const end_time = _auState.end_time || null;
+  const building = _auState.building || null;
+  const room_number = _auState.room_number || null;
+  const instructors = _auState.instructors || '';
 
   const days = Array.from(_auState.days);
   if ((start_time && !end_time) || (end_time && !start_time)) {
@@ -9317,9 +9401,8 @@ function _auSubmit() {
   } catch (err) {
     return fail(String((err && err.message) || err));
   }
-  // Fully success — let the caller's onClose chain do its thing.
-  // Surface the result via toast / modal alert so the user sees
-  // confirmation; rendering happens via catalog subscription.
+  // Surface the result via toast so the user sees confirmation;
+  // rendering happens via catalog subscription.
   setTimeout(function () {
     _hsAlert('Created ' + subject + ' ' + catalog_number + ' · ' + title + '.\nFind it in Catalog → Browse.', 'Saved');
   }, 50);
@@ -10362,7 +10445,21 @@ function _brAllSubjects() {
       if (!pack || !pack.data || !pack.data.catalog) return [];
       return Object.keys(pack.data.catalog).sort();
     }
-    return Object.keys(window.HS.catalog.getSubjectMetadata() || {}).sort();
+    // Union: parsed-subject metadata keys + the natural `subject` of
+    // any user-authored course. The synthetic "USER-CREATED" metadata
+    // bucket gets dropped — its courses surface under their actual
+    // subject (MATH-UH 9999 lives under MATH-UH alongside parsed
+    // MATH-UH courses if any).
+    var meta = window.HS.catalog.getSubjectMetadata() || {};
+    var subjects = new Set(
+      Object.keys(meta).filter(function (k) { return k !== 'USER-CREATED'; })
+    );
+    var eff = window.HS.catalog.getEffective();
+    for (var i = 0; i < (eff.courses || []).length; i++) {
+      var c = eff.courses[i];
+      if (c && c._user_authored && c.subject) subjects.add(c.subject);
+    }
+    return Array.from(subjects).sort();
   } catch (_) { return []; }
 }
 
@@ -10451,16 +10548,19 @@ function _renderBrowseCourses() {
   if (!el) return;
   var parsed = _brParsedFor(_browseSel.subject);
   var effCourses = _brEffectiveFor(_browseSel.subject) || [];
-  if (!parsed || !effCourses.length) {
+  // Empty when there are no effective courses for the subject. Parsed
+  // can be null for subjects whose only contents are user-authored
+  // (e.g. user creates MATH-UH 9999 with no parsed MATH-UH data) —
+  // we still render those.
+  if (!effCourses.length) {
     el.innerHTML = '<div class="browse-detail-empty" style="padding:1rem">' +
       'No courses in this subject. Try re-pasting.</div>';
     return;
   }
-  var cls = window.HS.browse.classifyWarnings(parsed);
+  // Only compute parser warnings when we actually have parsed output;
+  // user-authored-only subjects have no parser provenance to warn about.
+  var cls = parsed ? window.HS.browse.classifyWarnings(parsed) : { byClass: new Map(), byCourse: new Map() };
   var html = '';
-  // Iterate the effective courses (so edited titles show up) but compute
-  // warning chips from parsed (since warnings describe parser behavior,
-  // not post-edit state).
   for (var i = 0; i < effCourses.length; i++) {
     var c = effCourses[i];
     var flagged = window.HS.browse.countFlaggedSectionsInCourse(c, cls.byClass);
@@ -10473,6 +10573,7 @@ function _renderBrowseCourses() {
     }
     if (c.no_sections_offered) chips += '<span class="br-row-chip br-chip-cancelled">cancelled term</span>';
     if (c.has_topics) chips += '<span class="br-row-chip br-chip-topics">topics</span>';
+    if (c._user_authored) chips += '<span class="br-row-chip br-chip-user">user-created</span>';
     var unitsStr = (c.units == null) ? '—' :
       (typeof c.units === 'object' ? c.units.min + '–' + c.units.max : c.units);
     html += '<button type="button" class="br-row' + active + '" data-catnum="' + _brEscape(c.catalog_number) + '" tabindex="0">' +
@@ -12596,11 +12697,18 @@ function _unstageWithLinkPrompt(planId, classNumber) {
   const plan = window.HS.catalog.plans.get(planId);
   if (!plan) return;
   const cn = String(classNumber);
+  // Only count links whose partner is ALSO currently staged. A link
+  // pointing to an already-absent section is dead weight and gets
+  // cleaned up silently on the way through.
+  const stagedSet = new Set((plan.sections || []).map(function (s) { return String(s.class_number); }));
   const links = (plan.linked_sections || []).filter(function (l) {
-    return l.a === cn || l.b === cn;
+    if (l.a !== cn && l.b !== cn) return false;
+    const partner = l.a === cn ? l.b : l.a;
+    return stagedSet.has(partner);
   });
   if (links.length === 0) {
-    // No links — straight unstage.
+    // No live links — straight unstage. _planUnstageSection scrubs
+    // any stale link entries pointing at this cn as a side effect.
     try { window.HS.catalog.plans.unstageSection(planId, classNumber); }
     catch (err) {
       window.HS.modal.showModalAlert({ title: 'Could not unstage', body: (err && err.message) ? err.message : String(err) });
