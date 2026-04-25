@@ -143,6 +143,26 @@ describe("scoreCourseMatch — structured queries (Bug 1 fix)", () => {
     // Exact instructor name still works.
     expect(scoreCourseMatch(c, "hashaikeh", ["Hashaikeh, Rashid"])).toBeGreaterThan(0);
   });
+
+  it("opts.fuzzy:true re-enables typo tolerance as a fallback below strict tiers", () => {
+    const c = courses[5]; // ENGR-UH 1000 with Hashaikeh
+    // Strict mode misses the typo.
+    expect(scoreCourseMatch(c, "hashikeh", ["Hashaikeh, Rashid"])).toBe(0);
+    // Fuzzy mode catches it.
+    const fuzzyScore = scoreCourseMatch(c, "hashikeh", ["Hashaikeh, Rashid"], { fuzzy: true });
+    expect(fuzzyScore).toBeGreaterThan(0);
+    // Fuzzy hits never outrank strict hits — capped below the lowest
+    // strict band (400) so a real match always sorts above a fuzzy one.
+    expect(fuzzyScore).toBeLessThan(400);
+  });
+
+  it("opts.fuzzy:true does NOT degrade exact matches — strict result still wins", () => {
+    const c = courses[0]; // PHYED-UH 1001
+    const strict = scoreCourseMatch(c, "PHYED-UH 1001");
+    const fuzzy = scoreCourseMatch(c, "PHYED-UH 1001", null, { fuzzy: true });
+    expect(strict).toBe(1000);
+    expect(fuzzy).toBe(1000); // strict path hits first, fuzzy never runs
+  });
 });
 
 describe("scoreCourseMatch", () => {

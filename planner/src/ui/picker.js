@@ -145,7 +145,12 @@ export function parseStructuredQuery(query) {
   return { subject: subj, catnum: cat };
 }
 
-export function scoreCourseMatch(course, query, instructorsForCourse) {
+// `opts.fuzzy: true` enables a Levenshtein fallback that runs ONLY
+// when the strict substring scorer returns 0. The fallback's max
+// score is capped below the lowest non-fuzzy band (300) so fuzzy hits
+// always rank below real matches when both surface. Off by default;
+// the picker UI exposes a toggle.
+export function scoreCourseMatch(course, query, instructorsForCourse, opts) {
   if (!query || !query.trim()) return 1; // sentinel: include all
   const q = _normForSearch(query);
   if (!q) return 1;
@@ -195,6 +200,26 @@ export function scoreCourseMatch(course, query, instructorsForCourse) {
   if (words.length > 1) {
     const hay = [code, subj, cat, title].concat(instructors.map(_normForSearch)).join(" ");
     if (words.every(function (w) { return hay.includes(w); })) return 400;
+  }
+
+  // Tier 8 (opt-in): fuzzy fallback. Runs only when opts.fuzzy is
+  // true AND every strict tier above has missed. Capped at 299 so
+  // any future addition of a strict band stays above. Single-field
+  // best score wins; the picker's UI surfaces "tolerate typos" as a
+  // toggle so the user opts into the looser matching deliberately.
+  if (opts && opts.fuzzy) {
+    let best = 0;
+    for (const f of [course.code, course.subject, course.catalog_number, course.title]) {
+      const s = fuzzyMatch(query, f || "");
+      if (s > best) best = s;
+    }
+    for (const name of instructors) {
+      const s = fuzzyMatch(query, name || "");
+      if (s > best) best = s;
+    }
+    // fuzzyMatch returns up to 1000 for exact substring; we want fuzzy
+    // hits to rank below the strict 400 multi-word tier. Compress.
+    if (best > 0) return Math.min(299, Math.round(best * 0.3));
   }
 
   return 0;

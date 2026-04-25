@@ -4531,6 +4531,71 @@
     color: rgba(28, 26, 23, 0.65);
   }
   .mp-clear-btn:hover { background: rgba(28, 26, 23, 0.04); }
+  .mp-fuzzy-toggle {
+    /* Tiny chip — visual weight matches stats text, not a primary
+       action. When on, picks up the ochre accent so it's clearly
+       distinct from off. */
+    padding: 0.25rem 0.55rem;
+    border: 1px solid rgba(28, 26, 23, 0.15);
+    background: #fff;
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.72rem;
+    color: rgba(28, 26, 23, 0.6);
+    text-transform: lowercase;
+    letter-spacing: 0.04em;
+  }
+  .mp-fuzzy-toggle:hover { background: rgba(28, 26, 23, 0.04); }
+  .mp-fuzzy-toggle[aria-pressed="true"] {
+    background: rgba(183, 129, 63, 0.16);
+    border-color: rgba(183, 129, 63, 0.5);
+    color: rgba(120, 70, 30, 0.95);
+  }
+  .mp-fuzzy-info {
+    width: 1.4rem;
+    height: 1.4rem;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: help;
+    font-family: inherit;
+    font-size: 0.85rem;
+    color: rgba(28, 26, 23, 0.45);
+    border-radius: 50%;
+    line-height: 1.4rem;
+    text-align: center;
+    position: relative;
+  }
+  .mp-fuzzy-info:hover { color: rgba(120, 70, 30, 0.85); }
+  /* The popover renders only when .is-open is set on the button, via
+     a JS click handler. Hover is intentionally NOT triggering — info
+     icons that pop on hover get accidentally activated as the user's
+     mouse moves through the bar. */
+  .mp-fuzzy-info-popover {
+    position: absolute;
+    top: 1.7rem;
+    right: -0.4rem;
+    width: 18rem;
+    padding: 0.7rem 0.85rem;
+    background: var(--paper, #fffdf9);
+    border: 1px solid rgba(28, 26, 23, 0.15);
+    border-radius: 4px;
+    box-shadow: 0 4px 18px rgba(28, 26, 23, 0.12);
+    font-size: 0.8rem;
+    line-height: 1.5;
+    color: rgba(28, 26, 23, 0.78);
+    text-align: left;
+    z-index: 100;
+    cursor: default;
+  }
+  .mp-fuzzy-info-popover code {
+    font-family: var(--font-mono);
+    font-size: 0.78em;
+    background: rgba(28, 26, 23, 0.05);
+    padding: 0 0.25rem;
+    border-radius: 2px;
+  }
 
   .mp-filters {
     display: flex;
@@ -5278,6 +5343,9 @@
     <div class="mp-search-row">
       <input type="search" id="mp-search" class="mp-search" placeholder="Search subject, code, title, or instructor — e.g. 'engr 2010', 'hashaikeh', 'materials'…" autocomplete="off" />
       <button type="button" class="mp-clear-btn" id="mp-clear-search" hidden>Clear</button>
+      <button type="button" class="mp-fuzzy-toggle" id="mp-fuzzy-toggle" aria-pressed="false"
+              title="Off — exact substring matching only. Click to allow small typos."><span class="mp-fuzzy-label">fuzzy</span></button>
+      <button type="button" class="mp-fuzzy-info" id="mp-fuzzy-info" aria-label="What does fuzzy do?" tabindex="0">ⓘ</button>
       <span id="mp-search-stats" class="mp-search-stats"></span>
     </div>
     <div class="mp-filters" id="mp-filters"></div>
@@ -6363,7 +6431,14 @@ function gatherEvents(half) {
     const hit = _resolveSection(ref.class_number);
     if (!hit) continue;
     const sess = (hit.section.session && hit.section.session.code) || 'AD';
-    if (sess !== 'AD' && sess !== half) continue;
+    // Half-filter ONLY for the NYUAD half-term codes (A71/A72). Any
+    // other session code — AD, NYU-NY's "Regular", NYU-Shanghai, an
+    // empty string, anything novel — renders in both halves so the
+    // user sees their staged sections regardless of school. The user-
+    // reported bug was a GERM-UA (NYU-NY) section silently filtered
+    // out of A71 AND A72 because its session code was neither.
+    if (sess === 'A71' && half !== 'A71') continue;
+    if (sess === 'A72' && half !== 'A72') continue;
     for (const m of (hit.section.meetings || [])) {
       const startMin = window.HS.mainPlanner.hhmmToMinutes(m.start_time);
       const endMin = window.HS.mainPlanner.hhmmToMinutes(m.end_time);
@@ -10537,6 +10612,10 @@ let _pkExpandedCourse = null;          // course code currently expanded
 let _pkFilters = { status: 'all', components: null, days: null, start_after_min: null, end_before_min: null };
 let _pkInstructorIndex = { byInstructor: new Map(), byCourseCode: new Map() };
 let _pkInstructorIndexDirty = true;
+// Fuzzy/typo-tolerance toggle. Off by default — the strict scorer is
+// fast and predictable. User opts in via the chip beside the search
+// input.
+let _pkFuzzy = false;
 
 function _bootPicker() {
   const inp = document.getElementById('mp-search');
@@ -10563,6 +10642,40 @@ function _bootPicker() {
     renderPicker();
     inp.focus();
   });
+  // Fuzzy toggle.
+  const fuzzyBtn = document.getElementById('mp-fuzzy-toggle');
+  if (fuzzyBtn) fuzzyBtn.addEventListener('click', function () {
+    _pkFuzzy = !_pkFuzzy;
+    fuzzyBtn.setAttribute('aria-pressed', _pkFuzzy ? 'true' : 'false');
+    fuzzyBtn.title = _pkFuzzy
+      ? 'On — small typos still match. Click to switch off.'
+      : 'Off — exact substring matching only. Click to allow small typos.';
+    renderPicker();
+  });
+  // Info icon: click toggles a popover with the explanation.
+  const infoBtn = document.getElementById('mp-fuzzy-info');
+  if (infoBtn) {
+    infoBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      const existing = infoBtn.querySelector('.mp-fuzzy-info-popover');
+      if (existing) { existing.remove(); return; }
+      const pop = document.createElement('div');
+      pop.className = 'mp-fuzzy-info-popover';
+      pop.innerHTML =
+        '<strong>Fuzzy matching</strong><br>' +
+        'When <em>off</em> (default), search matches only exact substrings — typing <code>hashaikeh</code> finds the instructor, but <code>hashikeh</code> won\'t. ' +
+        'Predictable, no false positives.<br><br>' +
+        'When <em>on</em>, queries within 1–2 character typos still match (Levenshtein distance ≤ 2). Useful when you\'re not sure of the spelling. ' +
+        'Fuzzy hits always rank below exact hits, so they never push real matches off the list.';
+      pop.addEventListener('click', function (ev) { ev.stopPropagation(); });
+      infoBtn.appendChild(pop);
+    });
+    // Click anywhere else dismisses the popover.
+    document.addEventListener('click', function () {
+      const p = infoBtn.querySelector('.mp-fuzzy-info-popover');
+      if (p) p.remove();
+    });
+  }
   // Re-render on catalog mutations + invalidate the instructor index.
   if (window.HS && window.HS.catalog && window.HS.catalog.subscribe) {
     window.HS.catalog.subscribe(function (e) {
@@ -10792,7 +10905,7 @@ function _pkRenderSearchResults(el, allCourses, idx, stagedSet, hydratedStaged, 
   const scored = [];
   for (const c of allCourses) {
     const instr = idx.byCourseCode.get(c.code) || [];
-    const s = window.HS.picker.scoreCourseMatch(c, query, instr);
+    const s = window.HS.picker.scoreCourseMatch(c, query, instr, { fuzzy: _pkFuzzy });
     if (s > 0) scored.push({ c: c, score: s });
   }
   scored.sort(function (a, b) {
