@@ -63,8 +63,8 @@
     --ink-soft: #3D3A34;
     --ink-faint: #7D7669;
     --ink-whisper: #A8A294;
-    --rule: rgba(28, 26, 23, 0.12);
-    --rule-soft: rgba(28, 26, 23, 0.06);
+    --rule: color-mix(in srgb, var(--ink) 12%, transparent);
+    --rule-soft: color-mix(in srgb, var(--ink) 6%, transparent);
     --rust: #8F2D1E;
     --forest: #2F4A2B;
     --ochre: #B8842E;
@@ -94,78 +94,157 @@
     --font-heading: var(--font-display);
   }
 
-  /* ===== Dark theme ===== */
+  /* ===== Dark theme — editorial after dark =====
+     Warm coffee-charcoal canvas with the same Fraunces serif voice.
+     Ink is a warm cream (NOT cool grey), accent is a refined honey
+     amber, film grain mirrors the editorial paper texture so the
+     surface still feels printed rather than backlit. Three distinct
+     surface tiers (bg / surface / cream) so cards lift legibly.
+  */
   :root[data-theme="dark"] {
-    --bg: #0e0e10;
-    --surface: #16161a;
-    --ink: #e8e6e3;
-    --ink-muted: #9a9591;
-    --ink-subtle: #6b6660;
-    --accent: #c4a572;
-    --accent-soft: #8a7350;
-    --border: #2a2a30;
-    --border-strong: #4a4a52;
+    --bg: #14110d;             /* deep coffee */
+    --surface: #1d1915;        /* raised char */
+    --ink: #ede4d3;            /* warm cream */
+    --ink-muted: #b8a890;
+    --ink-subtle: #8a7c66;
+    --accent: #d4a574;         /* refined honey */
+    --accent-soft: #8e6d44;
+    --border: #2c2620;
+    --border-strong: #4a3f33;
     --warning: #d4a056;
-    --success: #6ba368;
-    --error: #c75858;
+    --success: #8aaf6f;
+    --error: #c96b5a;
     --radius-sm: 2px;
     --radius-md: 4px;
     --radius-lg: 6px;
     --border-width: 1px;
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
-    --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.5);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.45);
+    --shadow-md: 0 6px 24px rgba(0, 0, 0, 0.55), 0 2px 6px rgba(0, 0, 0, 0.4);
 
-    --paper: #0e0e10;
-    --paper-soft: #16161a;
-    --cream: #1c1c22;
-    --ink-soft: #c8c4be;
-    --ink-faint: #9a9591;
-    --ink-whisper: #6b6660;
-    --rule: rgba(232, 230, 227, 0.10);
-    --rule-soft: rgba(232, 230, 227, 0.05);
-    --rust: #c75858;
-    --forest: #6ba368;
-    --ochre: #c4a572;
-    --indigo: #6f8fc8;
+    --paper: #14110d;
+    --paper-soft: #1d1915;
+    --cream: #25201a;          /* card-on-card raise */
+    --ink-soft: #d8cbb3;
+    --ink-faint: #b8a890;
+    --ink-whisper: #8a7c66;
+    --rule: rgba(237, 228, 211, 0.10);
+    --rule-soft: rgba(237, 228, 211, 0.05);
+    --rust: #c96b5a;
+    --forest: #8aaf6f;
+    --ochre: #d4a574;
+    --indigo: #8ba3c8;
     --font-heading: var(--font-display);
   }
+  /* Dark gets its own grain — slightly more visible than editorial's
+     so the warm dark surface reads as paper, not glass. */
+  :root[data-theme="dark"] body::before {
+    opacity: 0.45;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='2' seed='9'/><feColorMatrix values='0 0 0 0 0.85 0 0 0 0 0.78 0 0 0 0 0.65 0 0 0 0.06 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+  }
+  /* Honey accent earns a soft halo on primary buttons/pills so it
+     reads as "lit," not flat. Subtle — perceptible only on the dark
+     canvas. */
+  :root[data-theme="dark"] .mdl-btn-primary,
+  :root[data-theme="dark"] .filter-tag.has-filters {
+    box-shadow: 0 0 0 1px rgba(212, 165, 116, 0.18), 0 4px 14px rgba(212, 165, 116, 0.12);
+  }
+  :root[data-theme="dark"] .fn-item.active {
+    box-shadow: 0 0 0 1px rgba(237, 228, 211, 0.06) inset;
+  }
 
-  /* ===== Futuristic theme ===== */
+  /* ===== Futuristic theme — phosphor terminal =====
+     A monitor's worth of dark space, phosphor cyan that earns its
+     glow, scanline overlay (replaces editorial's paper grain). Text
+     gets a subtle cyan halo so headings read as illuminated rather
+     than printed. Sharp 0px corners + a brighter ink so contrast
+     against the deep background actually pops.
+  */
   :root[data-theme="futuristic"] {
-    --bg: #070b14;
-    --surface: #0d1320;
-    --ink: #d4e4f7;
-    --ink-muted: #7a8ba3;
-    --ink-subtle: #4a5870;
-    --accent: #4ad9d9;
+    --bg: #04070d;
+    --surface: #0a1220;
+    --ink: #e8f4ff;            /* near-white phosphor */
+    --ink-muted: #8aa0c0;
+    --ink-subtle: #4a5e7c;
+    --accent: #5ee5e5;          /* phosphor cyan */
     --accent-soft: #2a8a8a;
-    --border: #1a2434;
-    --border-strong: #2a3a52;
-    --warning: #f0b040;
-    --success: #4ae878;
-    --error: #ff5577;
+    --border: #1a2840;
+    --border-strong: #2e4670;
+    --warning: #ffb840;
+    --success: #5eff8a;
+    --error: #ff4f6f;
     --radius-sm: 0px;
     --radius-md: 0px;
     --radius-lg: 0px;
     --border-width: 1px;
-    --shadow-sm: 0 0 0 1px rgba(74, 217, 217, 0.10);
-    --shadow-md: 0 0 12px rgba(74, 217, 217, 0.15);
+    --shadow-sm: 0 0 0 1px rgba(94, 229, 229, 0.18);
+    --shadow-md: 0 0 24px rgba(94, 229, 229, 0.22), 0 0 0 1px rgba(94, 229, 229, 0.25);
 
-    --paper: #070b14;
-    --paper-soft: #0d1320;
-    --cream: #121a2a;
-    --ink-soft: #b6c8de;
-    --ink-faint: #7a8ba3;
-    --ink-whisper: #4a5870;
-    --rule: rgba(212, 228, 247, 0.10);
-    --rule-soft: rgba(212, 228, 247, 0.04);
-    --rust: #ff5577;
-    --forest: #4ae878;
-    --ochre: #4ad9d9;
-    --indigo: #4a90c8;
+    --paper: #04070d;
+    --paper-soft: #0a1220;
+    --cream: #0f1a2c;
+    --ink-soft: #c8dcef;
+    --ink-faint: #8aa0c0;
+    --ink-whisper: #4a5e7c;
+    --rule: rgba(94, 229, 229, 0.12);
+    --rule-soft: rgba(94, 229, 229, 0.05);
+    --rust: #ff4f6f;
+    --forest: #5eff8a;
+    --ochre: #5ee5e5;
+    --indigo: #6ab0ff;
     --font-heading: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
     --font-body: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
     --font-display: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+  }
+  /* Scanline overlay replaces the paper grain. Two stacked gradients:
+     a faint horizontal band repeat (CRT scanlines) plus a darker
+     vignette toward edges. */
+  :root[data-theme="futuristic"] body::before {
+    opacity: 1;
+    background-image:
+      repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 2px,
+        rgba(94, 229, 229, 0.025) 2px,
+        rgba(94, 229, 229, 0.025) 3px
+      ),
+      radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.35) 100%);
+  }
+  /* Headings glow softly. Letterspaced uppercase via the existing
+     section-label style which already uppercases — futuristic just
+     makes the glow more pronounced. */
+  :root[data-theme="futuristic"] h1,
+  :root[data-theme="futuristic"] h2,
+  :root[data-theme="futuristic"] h3,
+  :root[data-theme="futuristic"] .mdl-title,
+  :root[data-theme="futuristic"] #hdr-title {
+    text-shadow: 0 0 12px rgba(94, 229, 229, 0.25), 0 0 2px rgba(94, 229, 229, 0.4);
+    letter-spacing: 0.02em;
+  }
+  /* Tab nav and primary buttons read as illuminated panels. */
+  :root[data-theme="futuristic"] .fn-item.active {
+    box-shadow: 0 0 0 1px rgba(94, 229, 229, 0.4), 0 0 18px rgba(94, 229, 229, 0.18);
+  }
+  :root[data-theme="futuristic"] .mdl-btn-primary {
+    box-shadow: 0 0 0 1px rgba(94, 229, 229, 0.5), 0 0 14px rgba(94, 229, 229, 0.25);
+    text-shadow: 0 0 6px rgba(94, 229, 229, 0.4);
+  }
+  /* The "filters" tag becomes a status LED instead of a flag. */
+  :root[data-theme="futuristic"] .filter-tag {
+    box-shadow: 0 0 0 1px rgba(94, 229, 229, 0.3), 0 0 12px rgba(94, 229, 229, 0.15);
+  }
+  /* Module section labels gain a leading > prompt prefix when in
+     futuristic. Pure decoration via ::before so other themes ignore. */
+  :root[data-theme="futuristic"] .section-label::before {
+    content: "> ";
+    color: var(--accent);
+    margin-right: 0.15rem;
+  }
+  /* The roman-numeral meta block (ii. arrangements considered) reads
+     like a system status line. */
+  :root[data-theme="futuristic"] header .meta {
+    color: var(--accent);
+    text-shadow: 0 0 8px rgba(94, 229, 229, 0.3);
   }
 
   /* ===== Nature theme ===== */
@@ -523,8 +602,8 @@
       repeating-linear-gradient(45deg,
         var(--f-color, #ccc),
         var(--f-color, #ccc) 7px,
-        var(--f-color-tint, rgba(255,255,255,0.35)) 7px,
-        var(--f-color-tint, rgba(255,255,255,0.35)) 10px);
+        var(--f-color-tint, var(--cream)) 7px,
+        var(--f-color-tint, var(--cream)) 10px);
   }
   .filter-overlay.filter-bg-pat-dots {
     background-color: var(--f-color-tint, #eee);
@@ -1051,7 +1130,7 @@
   .modal-bg {
     position: fixed;
     inset: 0;
-    background: rgba(28, 26, 23, 0.55);
+    background: color-mix(in srgb, var(--ink) 55%, transparent);
     display: none;
     align-items: center;
     justify-content: center;
@@ -2020,8 +2099,8 @@
       repeating-linear-gradient(45deg,
         var(--f-color, #ccc),
         var(--f-color, #ccc) 7px,
-        var(--f-color-tint, rgba(255,255,255,0.35)) 7px,
-        var(--f-color-tint, rgba(255,255,255,0.35)) 10px);
+        var(--f-color-tint, var(--cream)) 7px,
+        var(--f-color-tint, var(--cream)) 10px);
   }
   .grid .cell.filter-cell.pat-dots {
     background-color: var(--f-color-tint, #eee);
@@ -2039,7 +2118,7 @@
   /* Pattern preview in form */
   .pat-preview.pat-solid { background: #8F2D1E; }
   .pat-preview.pat-stripes {
-    background: repeating-linear-gradient(45deg, #8F2D1E, #8F2D1E 3px, rgba(255,255,255,0.35) 3px, rgba(255,255,255,0.35) 5px);
+    background: repeating-linear-gradient(45deg, #8F2D1E, #8F2D1E 3px, var(--cream) 3px, var(--cream) 5px);
   }
   .pat-preview.pat-dots {
     background-color: rgba(143,45,30,0.2);
@@ -2336,7 +2415,7 @@
     box-shadow:
       0 10px 40px rgba(0, 0, 0, 0.25),
       0 2px 6px rgba(0, 0, 0, 0.12),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+      inset 0 0 0 1px var(--cream);
     z-index: 100;
     gap: 0;
     max-width: calc(100vw - 32px);
@@ -2378,7 +2457,7 @@
   .fn-item:hover { color: rgba(245, 240, 228, 0.95); }
   .fn-item.active {
     background: rgba(255, 255, 255, 0.14);
-    color: var(--cream);
+    color: rgba(245, 240, 228, 0.95);
     box-shadow:
       0 0 0 1px rgba(255, 255, 255, 0.05),
       inset 0 1px 0 rgba(255, 255, 255, 0.1),
@@ -2774,7 +2853,7 @@
   }
   .fn-item.fn-add:hover {
     color: var(--cream);
-    background: rgba(255,255,255,0.08);
+    background: rgba(255, 255, 255, 0.08);
   }
   .fn-item.fn-add .fn-icon { font-size: 18px; letter-spacing: 0; }
 
@@ -3288,7 +3367,7 @@
     flex-wrap: wrap;
   }
   .cat-preview-headline {
-    font-family: 'Fraunces', serif;
+    font-family: var(--font-heading, 'Fraunces', serif);
     font-size: 1.35rem;
     font-weight: 500;
     color: var(--ink);
@@ -3442,7 +3521,7 @@
     position: fixed;
     inset: 0;
     z-index: 1000;
-    background: rgba(28, 26, 23, 0.55);
+    background: color-mix(in srgb, var(--ink) 55%, transparent);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -3456,7 +3535,7 @@
     max-width: 32rem;
     width: 100%;
     padding: 2rem 2.2rem;
-    box-shadow: 0 18px 60px rgba(28, 26, 23, 0.25);
+    box-shadow: 0 18px 60px color-mix(in srgb, var(--ink) 25%, transparent);
   }
   .consent-kicker {
     font-family: 'DM Sans', system-ui, sans-serif;
@@ -3467,7 +3546,7 @@
     margin-bottom: 0.5rem;
   }
   .consent-modal h3 {
-    font-family: 'Fraunces', serif;
+    font-family: var(--font-heading, 'Fraunces', serif);
     font-size: 1.5rem;
     font-weight: 500;
     color: var(--ink);
@@ -3605,7 +3684,7 @@
     text-transform: uppercase;
     vertical-align: 1px;
   }
-  .br-chip-info      { background: rgba(28,26,23,0.06); color: var(--ink-soft); }
+  .br-chip-info      { background: color-mix(in srgb, var(--ink) 6%, transparent); color: var(--ink-soft); }
   .br-chip-flag      { background: rgba(197,139,58,0.16); color: #8A5E1B; }
   .br-chip-topics    { background: rgba(139,158,181,0.18); color: #465E79; }
   .br-chip-cancelled { background: rgba(168,78,58,0.14); color: #8A3826; }
@@ -3757,7 +3836,7 @@
     font-size: 0.68rem;
     padding: 0.12rem 0.5rem;
     border-radius: 3px;
-    background: rgba(28,26,23,0.05);
+    background: color-mix(in srgb, var(--ink) 5%, transparent);
     color: var(--ink-soft);
     letter-spacing: 0.02em;
   }
@@ -3777,7 +3856,7 @@
   .br-warn {
     display: block;
     border-left: 3px solid var(--ink-faint);
-    background: rgba(28,26,23,0.03);
+    background: color-mix(in srgb, var(--ink) 3%, transparent);
     padding: 0.45rem 0.7rem;
     font-size: 0.82rem;
     color: var(--ink-soft);
@@ -3900,7 +3979,7 @@
     pointer-events: none;
     transition: opacity 0.2s, transform 0.2s;
     z-index: 900;
-    box-shadow: 0 8px 30px rgba(28, 26, 23, 0.25);
+    box-shadow: 0 8px 30px color-mix(in srgb, var(--ink) 25%, transparent);
     max-width: 28rem;
   }
   .cat-toast.show {
@@ -3915,7 +3994,7 @@
   }
   .ed-empty-lead {
     font-size: 1rem;
-    color: rgba(28, 26, 23, 0.75);
+    color: color-mix(in srgb, var(--ink) 75%, transparent);
     margin-bottom: 1.5rem;
     line-height: 1.5;
   }
@@ -3932,14 +4011,14 @@
     font-size: 0.78rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: rgba(28, 26, 23, 0.55);
+    color: color-mix(in srgb, var(--ink) 55%, transparent);
     margin-bottom: 0.5rem;
   }
   .ed-recent-row {
     display: block;
     padding: 0.5rem 0.75rem;
     border-left: 3px solid rgba(183, 129, 63, 0.4);
-    background: rgba(255, 248, 240, 0.5);
+    background: var(--cream);
     margin-bottom: 0.35rem;
     cursor: pointer;
     text-decoration: none;
@@ -3947,11 +4026,11 @@
     font-size: 0.88rem;
     transition: background 0.15s;
   }
-  .ed-recent-row:hover { background: rgba(255, 240, 220, 0.8); }
+  .ed-recent-row:hover { background: var(--cream); }
   .ed-recent-row-id {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.78rem;
-    color: rgba(28, 26, 23, 0.6);
+    color: color-mix(in srgb, var(--ink) 60%, transparent);
     margin-right: 0.75rem;
   }
 
@@ -3966,7 +4045,7 @@
   }
 
   .ed-context {
-    background: rgba(255, 248, 240, 0.5);
+    background: var(--cream);
     border: 1px solid rgba(183, 129, 63, 0.2);
     border-radius: 4px;
     padding: 1rem;
@@ -3978,7 +4057,7 @@
   .ed-breadcrumb {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.76rem;
-    color: rgba(28, 26, 23, 0.65);
+    color: color-mix(in srgb, var(--ink) 65%, transparent);
     margin-bottom: 0.35rem;
     word-break: break-word;
   }
@@ -4010,14 +4089,14 @@
     cursor: pointer;
     font-weight: 600;
     font-size: 0.82rem;
-    color: rgba(28, 26, 23, 0.7);
+    color: color-mix(in srgb, var(--ink) 70%, transparent);
     list-style: revert;
   }
   .ed-source-pre {
     margin-top: 0.5rem;
     padding: 0.7rem;
-    background: rgba(28, 26, 23, 0.04);
-    border-left: 3px solid rgba(28, 26, 23, 0.2);
+    background: color-mix(in srgb, var(--ink) 4%, transparent);
+    border-left: 3px solid color-mix(in srgb, var(--ink) 20%, transparent);
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.76rem;
     line-height: 1.45;
@@ -4028,8 +4107,8 @@
   }
 
   .ed-form-panel {
-    background: #fffdf9;
-    border: 1px solid rgba(28, 26, 23, 0.1);
+    background: var(--cream);
+    border: 1px solid color-mix(in srgb, var(--ink) 10%, transparent);
     border-radius: 4px;
     padding: 1.25rem;
   }
@@ -4053,7 +4132,7 @@
   .ed-scope-switch a {
     padding: 0.2rem 0.6rem;
     border-radius: 3px;
-    border: 1px solid rgba(28, 26, 23, 0.15);
+    border: 1px solid color-mix(in srgb, var(--ink) 15%, transparent);
     text-decoration: none;
     color: inherit;
     cursor: pointer;
@@ -4073,18 +4152,18 @@
     align-items: start;
     gap: 0.65rem;
     padding: 0.55rem 0;
-    border-top: 1px solid rgba(28, 26, 23, 0.06);
+    border-top: 1px solid color-mix(in srgb, var(--ink) 6%, transparent);
   }
   .ed-field:first-of-type { border-top: none; }
   .ed-field-label {
     font-size: 0.85rem;
-    color: rgba(28, 26, 23, 0.8);
+    color: color-mix(in srgb, var(--ink) 80%, transparent);
     padding-top: 0.35rem;
   }
   .ed-field-parsed {
     display: block;
     font-size: 0.7rem;
-    color: rgba(28, 26, 23, 0.5);
+    color: color-mix(in srgb, var(--ink) 50%, transparent);
     font-family: 'JetBrains Mono', monospace;
     margin-top: 0.15rem;
     word-break: break-word;
@@ -4097,11 +4176,11 @@
   .ed-field-control select {
     width: 100%;
     padding: 0.35rem 0.5rem;
-    border: 1px solid rgba(28, 26, 23, 0.2);
+    border: 1px solid color-mix(in srgb, var(--ink) 20%, transparent);
     border-radius: 3px;
     font-family: inherit;
     font-size: 0.88rem;
-    background: #fff;
+    background: var(--cream);
   }
   .ed-field-control textarea { min-height: 3.5rem; resize: vertical; }
   .ed-field-control input:focus,
@@ -4115,18 +4194,18 @@
     font-size: 0.72rem;
     padding: 0.2rem 0.45rem;
     background: transparent;
-    border: 1px solid rgba(28, 26, 23, 0.15);
+    border: 1px solid color-mix(in srgb, var(--ink) 15%, transparent);
     border-radius: 3px;
     cursor: pointer;
-    color: rgba(28, 26, 23, 0.7);
+    color: color-mix(in srgb, var(--ink) 70%, transparent);
   }
   .ed-field-reset:disabled {
     opacity: 0.3;
     cursor: default;
   }
-  .ed-field-reset:not(:disabled):hover { background: rgba(28, 26, 23, 0.04); }
+  .ed-field-reset:not(:disabled):hover { background: color-mix(in srgb, var(--ink) 4%, transparent); }
   .ed-field.is-dirty {
-    background: rgba(255, 245, 225, 0.45);
+    background: var(--cream);
   }
   .ed-field.is-focused {
     animation: ed-pulse 1.2s ease-out 1;
@@ -4143,7 +4222,7 @@
     border-left: 3px solid rgba(183, 129, 63, 0.7);
     font-size: 0.82rem;
     line-height: 1.45;
-    color: rgba(28, 26, 23, 0.8);
+    color: color-mix(in srgb, var(--ink) 80%, transparent);
     margin: 0.3rem 0;
   }
 
@@ -4161,9 +4240,9 @@
   }
   .ed-day-btn {
     padding: 0.3rem 0.55rem;
-    border: 1px solid rgba(28, 26, 23, 0.2);
+    border: 1px solid color-mix(in srgb, var(--ink) 20%, transparent);
     border-radius: 3px;
-    background: #fff;
+    background: var(--cream);
     font-size: 0.76rem;
     cursor: pointer;
     font-family: inherit;
@@ -4177,11 +4256,11 @@
     margin-top: 0.5rem;
   }
   .ed-meeting {
-    border: 1px solid rgba(28, 26, 23, 0.12);
+    border: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
     border-radius: 4px;
     padding: 0.75rem;
     margin-bottom: 0.6rem;
-    background: rgba(28, 26, 23, 0.015);
+    background: color-mix(in srgb, var(--ink) 1.5%, transparent);
   }
   .ed-meeting-head {
     display: flex;
@@ -4190,7 +4269,7 @@
     margin-bottom: 0.4rem;
     font-size: 0.8rem;
     font-weight: 600;
-    color: rgba(28, 26, 23, 0.7);
+    color: color-mix(in srgb, var(--ink) 70%, transparent);
   }
   .ed-meeting-remove {
     font-size: 0.72rem;
@@ -4205,13 +4284,13 @@
   .ed-add-meeting {
     font-size: 0.82rem;
     padding: 0.35rem 0.7rem;
-    background: rgba(28, 26, 23, 0.05);
-    border: 1px dashed rgba(28, 26, 23, 0.25);
+    background: color-mix(in srgb, var(--ink) 5%, transparent);
+    border: 1px dashed color-mix(in srgb, var(--ink) 25%, transparent);
     border-radius: 3px;
     cursor: pointer;
     font-family: inherit;
   }
-  .ed-add-meeting:hover { background: rgba(28, 26, 23, 0.1); }
+  .ed-add-meeting:hover { background: color-mix(in srgb, var(--ink) 10%, transparent); }
 
   .ed-instr-row {
     display: flex;
@@ -4221,8 +4300,8 @@
   .ed-instr-row input { flex: 1; }
   .ed-instr-rm, .ed-instr-add {
     padding: 0.25rem 0.55rem;
-    border: 1px solid rgba(28, 26, 23, 0.2);
-    background: #fff;
+    border: 1px solid color-mix(in srgb, var(--ink) 20%, transparent);
+    background: var(--cream);
     border-radius: 3px;
     cursor: pointer;
     font-size: 0.82rem;
@@ -4234,7 +4313,7 @@
     gap: 0.6rem;
     margin-top: 1.25rem;
     padding-top: 1rem;
-    border-top: 1px solid rgba(28, 26, 23, 0.1);
+    border-top: 1px solid color-mix(in srgb, var(--ink) 10%, transparent);
     flex-wrap: wrap;
     align-items: center;
   }
@@ -4244,8 +4323,8 @@
     font-family: inherit;
     font-size: 0.88rem;
     cursor: pointer;
-    border: 1px solid rgba(28, 26, 23, 0.15);
-    background: #fff;
+    border: 1px solid color-mix(in srgb, var(--ink) 15%, transparent);
+    background: var(--cream);
   }
   .ed-save-btn {
     background: #7c4a2e;
@@ -4269,7 +4348,7 @@
     font-size: 0.85rem;
     background: rgba(80, 140, 90, 0.12);
     border-left: 3px solid rgba(80, 140, 90, 0.7);
-    color: rgba(28, 26, 23, 0.85);
+    color: color-mix(in srgb, var(--ink) 85%, transparent);
   }
   .ed-banner.is-error {
     background: rgba(160, 60, 40, 0.12);
@@ -4285,10 +4364,10 @@
     font-size: 0.72rem;
     padding: 0.2rem 0.55rem;
     border: 1px solid rgba(183, 129, 63, 0.5);
-    background: #fffaf3;
+    background: var(--cream);
     border-radius: 2px;
     cursor: pointer;
-    color: rgba(28, 26, 23, 0.8);
+    color: color-mix(in srgb, var(--ink) 80%, transparent);
     font-family: inherit;
   }
   .br-warn-fix:hover { background: rgba(183, 129, 63, 0.12); }
@@ -4296,16 +4375,16 @@
   .br-section-edit {
     font-size: 0.72rem;
     padding: 0.15rem 0.55rem;
-    border: 1px solid rgba(28, 26, 23, 0.2);
+    border: 1px solid color-mix(in srgb, var(--ink) 20%, transparent);
     border-radius: 2px;
-    background: #fff;
-    color: rgba(28, 26, 23, 0.7);
+    background: var(--cream);
+    color: color-mix(in srgb, var(--ink) 70%, transparent);
     cursor: pointer;
     font-family: inherit;
     text-decoration: none;
     display: inline-block;
   }
-  .br-section-edit:hover { background: rgba(28, 26, 23, 0.04); }
+  .br-section-edit:hover { background: color-mix(in srgb, var(--ink) 4%, transparent); }
   .br-course-edit {
     /* Reset everything inherited from .br-course-code (uppercase,
        monospace, letter-spacing) and render as a normal-case inline
@@ -4319,9 +4398,9 @@
     font-weight: 500;
     text-transform: none;
     letter-spacing: normal;
-    color: rgba(28, 26, 23, 0.7);
-    background: rgba(28, 26, 23, 0.04);
-    border: 1px solid rgba(28, 26, 23, 0.12);
+    color: color-mix(in srgb, var(--ink) 70%, transparent);
+    background: color-mix(in srgb, var(--ink) 4%, transparent);
+    border: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
     border-radius: 3px;
     cursor: pointer;
     text-decoration: none;
@@ -4342,21 +4421,21 @@
     margin: 0.5rem 0;
   }
   .mp-strip-empty {
-    color: rgba(28,26,23,0.5);
+    color: color-mix(in srgb, var(--ink) 50%, transparent);
     font-size: 0.85rem;
     font-style: italic;
   }
   .mp-pill {
     display: inline-flex;
     align-items: stretch;
-    border: 1px solid rgba(28,26,23,0.18);
+    border: 1px solid color-mix(in srgb, var(--ink) 18%, transparent);
     border-radius: 4px;
-    background: #fffdf9;
+    background: var(--cream);
     overflow: hidden;
   }
   .mp-pill.is-active {
     border-color: rgba(183,129,63,0.6);
-    background: rgba(255,248,236,0.95);
+    background: var(--cream);
     box-shadow: 0 1px 3px rgba(183,129,63,0.15);
   }
   .mp-pill.is-viewed { outline: 2px solid rgba(183,129,63,0.4); outline-offset: 1px; }
@@ -4372,7 +4451,7 @@
     gap: 0.15rem;
     color: inherit;
   }
-  .mp-pill-main:hover { background: rgba(28,26,23,0.04); }
+  .mp-pill-main:hover { background: color-mix(in srgb, var(--ink) 4%, transparent); }
   .mp-active-badge {
     font-size: 0.65rem;
     font-weight: 700;
@@ -4381,36 +4460,36 @@
     color: rgba(120,70,30,0.85);
   }
   .mp-pill-name { font-size: 0.92rem; font-weight: 600; }
-  .mp-pill-stats { font-size: 0.74rem; color: rgba(28,26,23,0.55); }
+  .mp-pill-stats { font-size: 0.74rem; color: color-mix(in srgb, var(--ink) 55%, transparent); }
   .mp-pill-menu {
     padding: 0 0.55rem;
     background: transparent;
     border: 0;
-    border-left: 1px solid rgba(28,26,23,0.1);
+    border-left: 1px solid color-mix(in srgb, var(--ink) 10%, transparent);
     cursor: pointer;
     font-size: 1.1rem;
-    color: rgba(28,26,23,0.55);
+    color: color-mix(in srgb, var(--ink) 55%, transparent);
     font-family: inherit;
   }
-  .mp-pill-menu:hover { background: rgba(28,26,23,0.04); color: rgba(28,26,23,0.85); }
+  .mp-pill-menu:hover { background: color-mix(in srgb, var(--ink) 4%, transparent); color: color-mix(in srgb, var(--ink) 85%, transparent); }
   .mp-pill-add {
     padding: 0.45rem 0.85rem;
-    border: 1px dashed rgba(28,26,23,0.3);
+    border: 1px dashed color-mix(in srgb, var(--ink) 30%, transparent);
     border-radius: 4px;
     background: transparent;
     cursor: pointer;
     font-family: inherit;
     font-size: 0.85rem;
-    color: rgba(28,26,23,0.65);
+    color: color-mix(in srgb, var(--ink) 65%, transparent);
   }
-  .mp-pill-add:hover { background: rgba(28,26,23,0.04); }
+  .mp-pill-add:hover { background: color-mix(in srgb, var(--ink) 4%, transparent); }
 
   .mp-detail {
     margin: 0.5rem 0 0 0;
     font-size: 0.85rem;
-    color: rgba(28,26,23,0.7);
+    color: color-mix(in srgb, var(--ink) 70%, transparent);
   }
-  .mp-detail-empty { font-style: italic; color: rgba(28,26,23,0.5); }
+  .mp-detail-empty { font-style: italic; color: color-mix(in srgb, var(--ink) 50%, transparent); }
   .mp-detail-notes { white-space: pre-wrap; }
   .mp-promote-btn {
     padding: 0.35rem 0.85rem;
@@ -4433,11 +4512,11 @@
   .mp-search {
     flex: 1;
     padding: 0.5rem 0.75rem;
-    border: 1px solid rgba(28,26,23,0.2);
+    border: 1px solid color-mix(in srgb, var(--ink) 20%, transparent);
     border-radius: 3px;
     font-family: inherit;
     font-size: 0.92rem;
-    background: #fff;
+    background: var(--cream);
   }
   .mp-search:focus {
     outline: none;
@@ -4446,16 +4525,16 @@
   }
   .mp-search-stats {
     font-size: 0.78rem;
-    color: rgba(28,26,23,0.55);
+    color: color-mix(in srgb, var(--ink) 55%, transparent);
     white-space: nowrap;
   }
   .mp-results { display: flex; flex-direction: column; gap: 0.3rem; }
   .mp-empty {
     padding: 1rem;
-    color: rgba(28,26,23,0.55);
+    color: color-mix(in srgb, var(--ink) 55%, transparent);
     font-size: 0.9rem;
     text-align: center;
-    background: rgba(28,26,23,0.02);
+    background: color-mix(in srgb, var(--ink) 2%, transparent);
     border-radius: 3px;
   }
   .mp-empty a, .mp-empty code {
@@ -4465,15 +4544,15 @@
   .mp-more-note {
     padding: 0.5rem;
     font-size: 0.78rem;
-    color: rgba(28,26,23,0.55);
+    color: color-mix(in srgb, var(--ink) 55%, transparent);
     text-align: center;
     font-style: italic;
   }
   .mp-course {
-    border: 1px solid rgba(28,26,23,0.1);
+    border: 1px solid color-mix(in srgb, var(--ink) 10%, transparent);
     border-radius: 4px;
     overflow: hidden;
-    background: #fffdf9;
+    background: var(--cream);
   }
   .mp-course.is-open { border-color: rgba(183,129,63,0.4); }
   .mp-course-head {
@@ -4490,7 +4569,7 @@
     color: inherit;
     text-align: left;
   }
-  .mp-course-head:hover { background: rgba(28,26,23,0.03); }
+  .mp-course-head:hover { background: color-mix(in srgb, var(--ink) 3%, transparent); }
   .mp-course-head-text { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
   .mp-course-code {
     font-family: 'JetBrains Mono', monospace;
@@ -4500,20 +4579,20 @@
   .mp-course-title { font-size: 0.95rem; font-weight: 600; }
   .mp-course-meta {
     font-size: 0.78rem;
-    color: rgba(28,26,23,0.55);
+    color: color-mix(in srgb, var(--ink) 55%, transparent);
     white-space: nowrap;
   }
   .mp-sections {
-    border-top: 1px solid rgba(28,26,23,0.08);
-    background: rgba(28,26,23,0.02);
+    border-top: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
+    background: color-mix(in srgb, var(--ink) 2%, transparent);
     padding: 0.5rem;
     display: flex;
     flex-direction: column;
     gap: 0.4rem;
   }
   .mp-section {
-    background: #fff;
-    border: 1px solid rgba(28,26,23,0.08);
+    background: var(--cream);
+    border: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
     border-radius: 3px;
     padding: 0.5rem 0.7rem;
   }
@@ -4525,23 +4604,23 @@
     gap: 0.7rem;
     flex-wrap: wrap;
   }
-  .mp-section-ident { font-size: 0.85rem; color: rgba(28,26,23,0.85); }
-  .mp-section-cn { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: rgba(28,26,23,0.55); }
+  .mp-section-ident { font-size: 0.85rem; color: color-mix(in srgb, var(--ink) 85%, transparent); }
+  .mp-section-cn { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: color-mix(in srgb, var(--ink) 55%, transparent); }
   .mp-section-status { font-size: 0.74rem; padding: 0.05rem 0.4rem; border-radius: 2px; }
   .mp-status-open { background: rgba(80,140,90,0.15); color: rgba(45,80,50,0.95); }
   .mp-status-waitlist { background: rgba(183,129,63,0.18); color: rgba(120,70,30,0.95); }
-  .mp-status-closed { background: rgba(28,26,23,0.07); color: rgba(28,26,23,0.6); }
+  .mp-status-closed { background: color-mix(in srgb, var(--ink) 7%, transparent); color: color-mix(in srgb, var(--ink) 60%, transparent); }
   .mp-status-cancelled { background: rgba(160,60,40,0.12); color: rgba(160,60,40,0.85); }
   .mp-stage-btn {
     padding: 0.3rem 0.75rem;
-    background: #fff;
-    border: 1px solid rgba(28,26,23,0.2);
+    background: var(--cream);
+    border: 1px solid color-mix(in srgb, var(--ink) 20%, transparent);
     border-radius: 3px;
     cursor: pointer;
     font-family: inherit;
     font-size: 0.78rem;
   }
-  .mp-stage-btn:hover { background: rgba(28,26,23,0.04); }
+  .mp-stage-btn:hover { background: color-mix(in srgb, var(--ink) 4%, transparent); }
   .mp-stage-btn.is-staged {
     background: rgba(80,140,90,0.12);
     border-color: rgba(80,140,90,0.5);
@@ -4550,7 +4629,7 @@
   .mp-section-body {
     margin-top: 0.4rem;
     font-size: 0.82rem;
-    color: rgba(28,26,23,0.7);
+    color: color-mix(in srgb, var(--ink) 70%, transparent);
   }
   .mp-mtg { margin: 0.1rem 0; }
   .mp-conflict-note {
@@ -4579,7 +4658,7 @@
     color: inherit;
   }
   .lg-empty {
-    color: rgba(28,26,23,0.5);
+    color: color-mix(in srgb, var(--ink) 50%, transparent);
     font-style: italic;
     font-size: 0.85rem;
   }
@@ -4593,7 +4672,7 @@
   .mdl-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(28, 26, 23, 0.45);
+    background: color-mix(in srgb, var(--ink) 45%, transparent);
     z-index: 9000;
     display: flex;
     align-items: center;
@@ -4611,7 +4690,7 @@
     padding: 1.5rem 1.5rem 1rem 1.5rem;
     max-width: 46rem;
     min-width: 20rem;
-    box-shadow: var(--shadow-md, 0 12px 50px rgba(28, 26, 23, 0.25));
+    box-shadow: var(--shadow-md, 0 12px 50px color-mix(in srgb, var(--ink) 25%, transparent));
     animation: mdl-rise 0.2s ease;
   }
   @keyframes mdl-rise {
@@ -4638,11 +4717,11 @@
   .mdl-input {
     width: 100%;
     padding: 0.55rem 0.7rem;
-    border: 1px solid rgba(28, 26, 23, 0.2);
+    border: 1px solid color-mix(in srgb, var(--ink) 20%, transparent);
     border-radius: 3px;
     font-family: inherit;
     font-size: 0.95rem;
-    background: #fff;
+    background: var(--cream);
   }
   .mdl-input:focus {
     outline: none;
@@ -4667,9 +4746,9 @@
     font-family: inherit;
     font-size: 0.9rem;
     cursor: pointer;
-    border: var(--border-width, 1px) solid var(--border, rgba(28, 26, 23, 0.18));
+    border: var(--border-width, 1px) solid var(--border, color-mix(in srgb, var(--ink) 18%, transparent));
     background: var(--surface, #fff);
-    color: var(--ink, rgba(28, 26, 23, 0.85));
+    color: var(--ink, color-mix(in srgb, var(--ink) 85%, transparent));
     transition: background 0.12s, border-color 0.12s;
     flex: 0 0 auto;
     min-width: 6rem;
@@ -4695,15 +4774,15 @@
   }
   .mp-clear-btn {
     padding: 0.45rem 0.7rem;
-    border: 1px solid rgba(28, 26, 23, 0.18);
-    background: #fff;
+    border: 1px solid color-mix(in srgb, var(--ink) 18%, transparent);
+    background: var(--cream);
     border-radius: 3px;
     cursor: pointer;
     font-family: inherit;
     font-size: 0.85rem;
-    color: rgba(28, 26, 23, 0.65);
+    color: color-mix(in srgb, var(--ink) 65%, transparent);
   }
-  .mp-clear-btn:hover { background: rgba(28, 26, 23, 0.04); }
+  .mp-clear-btn:hover { background: color-mix(in srgb, var(--ink) 4%, transparent); }
   /* Layout helper: view-toggle pill + cog sit on a single row. The
      view-toggle has its own asymmetric margins (`0.5rem 0 1.5rem`)
      for stand-alone use. Inside the row those margins would pull the
@@ -4752,19 +4831,19 @@
     width: 1.85rem;
     height: 1.85rem;
     padding: 0;
-    border: 1px solid rgba(28, 26, 23, 0.12);
+    border: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
     background: transparent;
     border-radius: 50%;
     cursor: pointer;
     font-family: inherit;
     font-size: 0.95rem;
     line-height: 1;
-    color: rgba(28, 26, 23, 0.45);
+    color: color-mix(in srgb, var(--ink) 45%, transparent);
     transition: background 0.12s, border-color 0.12s, color 0.12s, transform 0.18s;
   }
   .mp-cog-btn:hover {
-    background: rgba(28, 26, 23, 0.04);
-    color: rgba(28, 26, 23, 0.7);
+    background: color-mix(in srgb, var(--ink) 4%, transparent);
+    color: color-mix(in srgb, var(--ink) 70%, transparent);
     transform: rotate(15deg);
   }
   .mp-cog-btn[aria-expanded="true"] {
@@ -4793,9 +4872,9 @@
     width: 19rem;
     padding: 0.85rem 1rem 0.95rem 1rem;
     background: var(--paper, #fffdf9);
-    border: 1px solid rgba(28, 26, 23, 0.15);
+    border: 1px solid color-mix(in srgb, var(--ink) 15%, transparent);
     border-radius: 5px;
-    box-shadow: 0 8px 28px rgba(28, 26, 23, 0.15);
+    box-shadow: 0 8px 28px color-mix(in srgb, var(--ink) 15%, transparent);
     z-index: 9500;
     animation: mp-cog-rise 0.16s ease;
   }
@@ -4804,12 +4883,12 @@
     to { opacity: 1; transform: translateY(0); }
   }
   .mp-cog-title {
-    font-family: 'Fraunces', serif;
+    font-family: var(--font-heading, 'Fraunces', serif);
     font-size: 0.78rem;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    color: rgba(28, 26, 23, 0.5);
+    color: color-mix(in srgb, var(--ink) 50%, transparent);
     margin-bottom: 0.6rem;
   }
   .mp-cog-row {
@@ -4823,7 +4902,7 @@
     display: block;
     font-size: 0.88rem;
     font-weight: 500;
-    color: rgba(28, 26, 23, 0.9);
+    color: color-mix(in srgb, var(--ink) 90%, transparent);
     line-height: 1.3;
   }
   .mp-cog-row-help {
@@ -4831,7 +4910,7 @@
     margin-top: 0.2rem;
     font-size: 0.76rem;
     line-height: 1.45;
-    color: rgba(28, 26, 23, 0.6);
+    color: color-mix(in srgb, var(--ink) 60%, transparent);
   }
 
   /* Toggle — a clickable div, not a native checkbox. State driven by
@@ -4848,7 +4927,7 @@
   .mp-toggle-track {
     width: 1.95rem;
     height: 1.1rem;
-    background: rgba(28, 26, 23, 0.18);
+    background: color-mix(in srgb, var(--ink) 18%, transparent);
     border-radius: 999px;
     position: relative;
     transition: background 0.18s;
@@ -4859,9 +4938,9 @@
     left: 0.13rem;
     width: 0.84rem;
     height: 0.84rem;
-    background: #fffdf9;
+    background: var(--cream);
     border-radius: 50%;
-    box-shadow: 0 1px 3px rgba(28, 26, 23, 0.25);
+    box-shadow: 0 1px 3px color-mix(in srgb, var(--ink) 25%, transparent);
     transition: left 0.18s;
   }
   .mp-toggle.is-on .mp-toggle-track {
@@ -4874,7 +4953,7 @@
   /* Visual divider between cog popover sections (Search vs Display). */
   .mp-cog-divider {
     height: 1px;
-    background: rgba(28, 26, 23, 0.08);
+    background: color-mix(in srgb, var(--ink) 8%, transparent);
     margin: 0.85rem -0.4rem 0.2rem;
   }
 
@@ -4904,7 +4983,7 @@
     appearance: none;
     width: 100%;
     height: 0.4rem;
-    background: rgba(28, 26, 23, 0.12);
+    background: color-mix(in srgb, var(--ink) 12%, transparent);
     border-radius: 999px;
     outline: none;
     cursor: pointer;
@@ -4917,7 +4996,7 @@
     background: rgb(183, 129, 63);
     border-radius: 50%;
     border: 2px solid #fffdf9;
-    box-shadow: 0 1px 3px rgba(28, 26, 23, 0.25);
+    box-shadow: 0 1px 3px color-mix(in srgb, var(--ink) 25%, transparent);
     cursor: pointer;
     transition: transform 0.12s;
   }
@@ -4930,7 +5009,7 @@
     background: rgb(183, 129, 63);
     border-radius: 50%;
     border: 2px solid #fffdf9;
-    box-shadow: 0 1px 3px rgba(28, 26, 23, 0.25);
+    box-shadow: 0 1px 3px color-mix(in srgb, var(--ink) 25%, transparent);
     cursor: pointer;
   }
 
@@ -4941,7 +5020,7 @@
     margin: 0.4rem 0 0.7rem 0;
     align-items: center;
     font-size: 0.82rem;
-    color: rgba(28, 26, 23, 0.65);
+    color: color-mix(in srgb, var(--ink) 65%, transparent);
   }
   .mp-filter-group {
     display: inline-flex;
@@ -4952,20 +5031,20 @@
     font-size: 0.74rem;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: rgba(28, 26, 23, 0.5);
+    color: color-mix(in srgb, var(--ink) 50%, transparent);
     margin-right: 0.2rem;
   }
   .mp-filter-chip {
     padding: 0.2rem 0.55rem;
-    border: 1px solid rgba(28, 26, 23, 0.15);
-    background: #fff;
+    border: 1px solid color-mix(in srgb, var(--ink) 15%, transparent);
+    background: var(--cream);
     border-radius: 3px;
     cursor: pointer;
     font-family: inherit;
     font-size: 0.78rem;
-    color: rgba(28, 26, 23, 0.75);
+    color: color-mix(in srgb, var(--ink) 75%, transparent);
   }
-  .mp-filter-chip:hover { background: rgba(28, 26, 23, 0.04); }
+  .mp-filter-chip:hover { background: color-mix(in srgb, var(--ink) 4%, transparent); }
   .mp-filter-chip.is-active {
     background: rgba(183, 129, 63, 0.18);
     border-color: rgba(183, 129, 63, 0.5);
@@ -4984,10 +5063,10 @@
 
   /* Subject row in directory mode (closed). */
   .mp-subject {
-    border: 1px solid rgba(28, 26, 23, 0.1);
+    border: 1px solid color-mix(in srgb, var(--ink) 10%, transparent);
     border-radius: 4px;
     margin-bottom: 0.35rem;
-    background: #fffdf9;
+    background: var(--cream);
     overflow: hidden;
   }
   .mp-subject.is-open { border-color: rgba(183, 129, 63, 0.4); }
@@ -5004,21 +5083,21 @@
     text-align: left;
     color: inherit;
   }
-  .mp-subject-head:hover { background: rgba(28, 26, 23, 0.03); }
+  .mp-subject-head:hover { background: color-mix(in srgb, var(--ink) 3%, transparent); }
   .mp-subject-code {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.95rem;
     font-weight: 600;
-    color: rgba(28, 26, 23, 0.9);
+    color: color-mix(in srgb, var(--ink) 90%, transparent);
   }
   .mp-subject-meta {
     font-size: 0.82rem;
-    color: rgba(28, 26, 23, 0.55);
+    color: color-mix(in srgb, var(--ink) 55%, transparent);
   }
   .mp-chevron {
     display: inline-block;
     margin-left: 0.4rem;
-    color: rgba(28, 26, 23, 0.45);
+    color: color-mix(in srgb, var(--ink) 45%, transparent);
     transition: transform 0.15s;
     font-size: 0.85rem;
   }
@@ -5031,19 +5110,19 @@
     font-size: 0.72rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: rgba(28, 26, 23, 0.5);
-    background: rgba(28, 26, 23, 0.03);
-    border-top: 1px solid rgba(28, 26, 23, 0.06);
+    color: color-mix(in srgb, var(--ink) 50%, transparent);
+    background: color-mix(in srgb, var(--ink) 3%, transparent);
+    border-top: 1px solid color-mix(in srgb, var(--ink) 6%, transparent);
   }
   .mp-level-head:first-child { border-top: 0; }
 
   /* Course row (inside subject, or flat in search mode). */
   .mp-course {
-    background: rgba(255, 252, 248, 0.5);
-    border-top: 1px solid rgba(28, 26, 23, 0.05);
+    background: var(--cream);
+    border-top: 1px solid color-mix(in srgb, var(--ink) 5%, transparent);
   }
   .mp-course.is-open {
-    background: rgba(255, 250, 240, 0.85);
+    background: var(--cream);
   }
   .mp-course-head {
     width: 100%;
@@ -5059,15 +5138,15 @@
     text-align: left;
     color: inherit;
   }
-  .mp-course-head:hover { background: rgba(28, 26, 23, 0.03); }
+  .mp-course-head:hover { background: color-mix(in srgb, var(--ink) 3%, transparent); }
   .mp-course-head-text { display: flex; flex-direction: column; gap: 0.05rem; min-width: 0; }
   .mp-course-code-small {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.78rem;
     color: rgba(120, 70, 30, 0.85);
   }
-  .mp-course-title-small { font-size: 0.92rem; font-weight: 500; color: rgba(28, 26, 23, 0.85); }
-  .mp-course-meta-small { font-size: 0.75rem; color: rgba(28, 26, 23, 0.5); white-space: nowrap; }
+  .mp-course-title-small { font-size: 0.92rem; font-weight: 500; color: color-mix(in srgb, var(--ink) 85%, transparent); }
+  .mp-course-meta-small { font-size: 0.75rem; color: color-mix(in srgb, var(--ink) 50%, transparent); white-space: nowrap; }
   .mp-course-staged-dot {
     display: inline-block;
     width: 0.55rem;
@@ -5084,7 +5163,7 @@
     gap: 0.7rem;
     align-items: center;
     padding: 0.5rem 0.95rem 0.5rem 2rem;
-    border-top: 1px solid rgba(28, 26, 23, 0.04);
+    border-top: 1px solid color-mix(in srgb, var(--ink) 4%, transparent);
   }
   .mp-section.is-staged {
     background: rgba(80, 140, 90, 0.05);
@@ -5094,7 +5173,7 @@
     align-items: center;
     gap: 0.35rem;
     font-size: 0.78rem;
-    color: rgba(28, 26, 23, 0.7);
+    color: color-mix(in srgb, var(--ink) 70%, transparent);
     white-space: nowrap;
   }
   .mp-status-dot {
@@ -5105,7 +5184,7 @@
   }
   .mp-section-info {
     font-size: 0.82rem;
-    color: rgba(28, 26, 23, 0.75);
+    color: color-mix(in srgb, var(--ink) 75%, transparent);
     line-height: 1.45;
     min-width: 0;
   }
@@ -5115,9 +5194,9 @@
     color: rgba(120, 70, 30, 0.85);
     margin-right: 0.35rem;
   }
-  .mp-section-info .meet { color: rgba(28, 26, 23, 0.78); }
-  .mp-section-info .room { color: rgba(28, 26, 23, 0.55); }
-  .mp-section-info .instr { color: rgba(28, 26, 23, 0.55); font-style: italic; }
+  .mp-section-info .meet { color: color-mix(in srgb, var(--ink) 78%, transparent); }
+  .mp-section-info .room { color: color-mix(in srgb, var(--ink) 55%, transparent); }
+  .mp-section-info .instr { color: color-mix(in srgb, var(--ink) 55%, transparent); font-style: italic; }
   .mp-section-conflict {
     display: block;
     font-size: 0.74rem;
@@ -5126,16 +5205,16 @@
   }
   .mp-stage {
     padding: 0.32rem 0.7rem;
-    border: 1px solid rgba(28, 26, 23, 0.18);
-    background: #fff;
+    border: 1px solid color-mix(in srgb, var(--ink) 18%, transparent);
+    background: var(--cream);
     border-radius: 3px;
     cursor: pointer;
     font-family: inherit;
     font-size: 0.78rem;
-    color: rgba(28, 26, 23, 0.78);
+    color: color-mix(in srgb, var(--ink) 78%, transparent);
     white-space: nowrap;
   }
-  .mp-stage:hover { background: rgba(28, 26, 23, 0.04); }
+  .mp-stage:hover { background: color-mix(in srgb, var(--ink) 4%, transparent); }
   .mp-stage.is-staged {
     background: rgba(80, 140, 90, 0.12);
     border-color: rgba(80, 140, 90, 0.5);
@@ -5147,15 +5226,15 @@
   }
 
   /* Search-results mode: subjects collapse to a flat course list. */
-  .mp-results-flat .mp-course { border-radius: 4px; margin-bottom: 0.3rem; border: 1px solid rgba(28, 26, 23, 0.08); }
+  .mp-results-flat .mp-course { border-radius: 4px; margin-bottom: 0.3rem; border: 1px solid color-mix(in srgb, var(--ink) 8%, transparent); }
   .mp-results-flat .mp-course-head { padding-left: 0.95rem; }
   .mp-results-flat .mp-section { padding-left: 1.4rem; }
   .mp-no-results {
     padding: 1rem;
-    color: rgba(28, 26, 23, 0.55);
+    color: color-mix(in srgb, var(--ink) 55%, transparent);
     font-size: 0.9rem;
     text-align: center;
-    background: rgba(28, 26, 23, 0.02);
+    background: color-mix(in srgb, var(--ink) 2%, transparent);
     border-radius: 3px;
   }
 
@@ -5184,7 +5263,7 @@
     margin: 2rem 0 0.4rem 0;
     color: var(--ink);
     opacity: 0.85;
-    border-top: 1px solid var(--rule-soft, rgba(28, 26, 23, 0.08));
+    border-top: 1px solid var(--rule-soft, color-mix(in srgb, var(--ink) 8%, transparent));
     padding-top: 1.5rem;
   }
   .mn-section-h-warn {
@@ -5206,13 +5285,13 @@
     align-items: flex-start;
     gap: 0.6rem;
     padding: 0.55rem 0.7rem;
-    border: 1px solid rgba(28, 26, 23, 0.12);
+    border: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
     border-radius: 4px;
     cursor: pointer;
-    background: #fffdf9;
+    background: var(--cream);
   }
   .mn-consent-opt:hover {
-    background: rgba(255, 250, 240, 0.9);
+    background: var(--cream);
   }
   .mn-consent-opt input[type="radio"] {
     margin-top: 0.2rem;
@@ -5223,13 +5302,13 @@
   }
   .mn-opt-sub {
     font-size: 0.78rem;
-    color: var(--ink-faint, rgba(28, 26, 23, 0.6));
+    color: var(--ink-faint, color-mix(in srgb, var(--ink) 60%, transparent));
     margin-top: 0.1rem;
     line-height: 1.4;
   }
   .mn-last-saved {
     font-size: 0.8rem;
-    color: rgba(28, 26, 23, 0.6);
+    color: color-mix(in srgb, var(--ink) 60%, transparent);
     margin-top: 0.3rem;
   }
 
@@ -5246,7 +5325,7 @@
     align-items: flex-start;
     gap: 0.6rem;
     padding: 0.55rem 0.7rem;
-    border: var(--border-width, 1px) solid var(--border, rgba(28, 26, 23, 0.12));
+    border: var(--border-width, 1px) solid var(--border, color-mix(in srgb, var(--ink) 12%, transparent));
     border-radius: var(--radius-md, 4px);
     cursor: pointer;
     background: var(--surface, #fffdf9);
@@ -5267,21 +5346,21 @@
   }
   .mn-stat {
     padding: 0.7rem 0.85rem;
-    background: rgba(28, 26, 23, 0.025);
-    border: 1px solid rgba(28, 26, 23, 0.08);
-    border-radius: 4px;
+    background: var(--paper-soft);
+    border: var(--border-width, 1px) solid var(--rule, color-mix(in srgb, var(--ink) 8%, transparent));
+    border-radius: var(--radius-md, 4px);
   }
   .mn-stat-label {
     font-size: 0.72rem;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: rgba(28, 26, 23, 0.55);
+    color: var(--ink-faint);
     margin-bottom: 0.15rem;
   }
   .mn-stat-value {
     font-size: 1.2rem;
-    font-family: 'Fraunces', serif;
-    color: rgba(28, 26, 23, 0.9);
+    font-family: var(--font-heading, 'Fraunces', serif);
+    color: var(--ink);
   }
 
   .mn-subjects {
@@ -5295,9 +5374,9 @@
     align-items: center;
     gap: 0.75rem;
     padding: 0.55rem 0.7rem;
-    border: 1px solid rgba(28, 26, 23, 0.08);
+    border: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
     border-radius: 4px;
-    background: #fffdf9;
+    background: var(--cream);
     font-size: 0.88rem;
   }
   .mn-subj-code {
@@ -5305,10 +5384,10 @@
     font-weight: 600;
   }
   .mn-subj-counts {
-    color: rgba(28, 26, 23, 0.65);
+    color: color-mix(in srgb, var(--ink) 65%, transparent);
   }
   .mn-subj-time {
-    color: rgba(28, 26, 23, 0.6);
+    color: color-mix(in srgb, var(--ink) 60%, transparent);
     font-size: 0.82rem;
   }
   .mn-stale-chip {
@@ -5326,20 +5405,20 @@
   .mn-repaste-link {
     font-size: 0.8rem;
     padding: 0.2rem 0.55rem;
-    border: 1px solid rgba(28, 26, 23, 0.15);
-    background: #fff;
+    border: 1px solid color-mix(in srgb, var(--ink) 15%, transparent);
+    background: var(--cream);
     border-radius: 3px;
     cursor: pointer;
-    color: rgba(28, 26, 23, 0.75);
+    color: color-mix(in srgb, var(--ink) 75%, transparent);
     text-decoration: none;
     font-family: inherit;
   }
-  .mn-repaste-link:hover { background: rgba(28, 26, 23, 0.04); }
+  .mn-repaste-link:hover { background: color-mix(in srgb, var(--ink) 4%, transparent); }
   .mn-subjects-empty {
     padding: 0.7rem;
     font-size: 0.85rem;
-    color: rgba(28, 26, 23, 0.55);
-    background: rgba(28, 26, 23, 0.02);
+    color: color-mix(in srgb, var(--ink) 55%, transparent);
+    background: color-mix(in srgb, var(--ink) 2%, transparent);
     border-radius: 4px;
   }
 
@@ -5354,16 +5433,16 @@
     align-items: flex-start;
     gap: 0.2rem;
     padding: 0.6rem 0.85rem;
-    border: 1px solid rgba(28, 26, 23, 0.18);
+    border: 1px solid color-mix(in srgb, var(--ink) 18%, transparent);
     border-radius: 3px;
-    background: #fffdf9;
+    background: var(--cream);
     cursor: pointer;
     font-family: inherit;
     text-align: left;
     font-size: 0.92rem;
-    color: rgba(28, 26, 23, 0.85);
+    color: color-mix(in srgb, var(--ink) 85%, transparent);
   }
-  .mn-btn:hover { background: rgba(28, 26, 23, 0.04); }
+  .mn-btn:hover { background: color-mix(in srgb, var(--ink) 4%, transparent); }
   .mn-btn:disabled {
     opacity: 0.4;
     cursor: default;
@@ -5378,7 +5457,7 @@
   }
   .mn-btn-sub {
     font-size: 0.72rem;
-    color: rgba(28, 26, 23, 0.55);
+    color: color-mix(in srgb, var(--ink) 55%, transparent);
     font-weight: normal;
   }
   .mn-btn-danger .mn-btn-sub {
@@ -5399,7 +5478,7 @@
   }
   .mn-warning-time {
     font-size: 0.72rem;
-    color: rgba(28, 26, 23, 0.55);
+    color: color-mix(in srgb, var(--ink) 55%, transparent);
     font-family: 'JetBrains Mono', monospace;
   }
   .mn-export-row {
@@ -5418,9 +5497,9 @@
     gap: 0.75rem;
     align-items: center;
     padding: 0.6rem 0.75rem;
-    border: 1px solid rgba(28, 26, 23, 0.1);
+    border: 1px solid color-mix(in srgb, var(--ink) 10%, transparent);
     border-radius: 4px;
-    background: #fffdf9;
+    background: var(--cream);
   }
   .mn-import-name {
     font-weight: 600;
@@ -5428,13 +5507,13 @@
   }
   .mn-import-sub {
     font-size: 0.78rem;
-    color: rgba(28, 26, 23, 0.6);
+    color: color-mix(in srgb, var(--ink) 60%, transparent);
     font-family: 'JetBrains Mono', monospace;
     margin-top: 0.15rem;
   }
   .mn-import-stats {
     font-size: 0.82rem;
-    color: rgba(28, 26, 23, 0.7);
+    color: color-mix(in srgb, var(--ink) 70%, transparent);
     white-space: nowrap;
   }
   .mn-import-rm {
@@ -5451,8 +5530,8 @@
   .mn-imports-empty {
     padding: 0.7rem;
     font-size: 0.85rem;
-    color: rgba(28, 26, 23, 0.55);
-    background: rgba(28, 26, 23, 0.02);
+    color: color-mix(in srgb, var(--ink) 55%, transparent);
+    background: color-mix(in srgb, var(--ink) 2%, transparent);
     border-radius: 4px;
   }
 
@@ -5466,11 +5545,11 @@
   }
   .pk-import-hint {
     font-size: 0.78rem;
-    color: rgba(28, 26, 23, 0.6);
+    color: color-mix(in srgb, var(--ink) 60%, transparent);
   }
   .pk-import-hint code {
     font-family: 'JetBrains Mono', monospace;
-    background: rgba(28, 26, 23, 0.05);
+    background: color-mix(in srgb, var(--ink) 5%, transparent);
     padding: 0.05rem 0.28rem;
     border-radius: 2px;
   }
@@ -5503,7 +5582,7 @@
   .pk-import-result code {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.78rem;
-    background: rgba(28, 26, 23, 0.06);
+    background: color-mix(in srgb, var(--ink) 6%, transparent);
     padding: 0 0.25rem;
     border-radius: 2px;
   }
@@ -5515,8 +5594,8 @@
   .pk-review-btn {
     padding: 0.35rem 0.85rem;
     border-radius: 3px;
-    border: 1px solid rgba(28, 26, 23, 0.2);
-    background: #fff;
+    border: 1px solid color-mix(in srgb, var(--ink) 20%, transparent);
+    background: var(--cream);
     cursor: pointer;
     font-family: inherit;
     font-size: 0.85rem;
@@ -5529,7 +5608,7 @@
   .pk-review-meta {
     margin: 0.4rem 0;
     font-size: 0.82rem;
-    color: rgba(28, 26, 23, 0.75);
+    color: color-mix(in srgb, var(--ink) 75%, transparent);
   }
   .pk-review-meta dl {
     display: grid;
@@ -5538,7 +5617,7 @@
     margin: 0.2rem 0 0 0;
   }
   .pk-review-meta dt {
-    color: rgba(28, 26, 23, 0.55);
+    color: color-mix(in srgb, var(--ink) 55%, transparent);
     font-size: 0.78rem;
   }
   .pk-review-meta dd { margin: 0; }
@@ -5546,17 +5625,17 @@
   .br-pack-bar {
     margin-top: 0.6rem;
     padding: 0.45rem 0.7rem;
-    background: rgba(28, 26, 23, 0.03);
+    background: color-mix(in srgb, var(--ink) 3%, transparent);
     border-radius: 3px;
     font-size: 0.85rem;
     display: flex;
     align-items: center;
     gap: 0.6rem;
   }
-  .br-pack-bar label { color: rgba(28, 26, 23, 0.65); }
+  .br-pack-bar label { color: color-mix(in srgb, var(--ink) 65%, transparent); }
   .br-pack-bar select {
     padding: 0.25rem 0.4rem;
-    border: 1px solid rgba(28, 26, 23, 0.2);
+    border: 1px solid color-mix(in srgb, var(--ink) 20%, transparent);
     border-radius: 3px;
     font-family: inherit;
     font-size: 0.85rem;
@@ -5569,7 +5648,7 @@
     font-size: 0.72rem;
     padding: 0.18rem 0.55rem;
     border: 1px solid rgba(80, 140, 90, 0.5);
-    background: #fff;
+    background: var(--cream);
     color: rgba(40, 90, 50, 0.95);
     border-radius: 2px;
     cursor: pointer;
@@ -8011,7 +8090,7 @@ function _syncFormUI() {
     if (preview) {
       const pat = el.dataset.pattern;
       if (pat === 'solid') preview.style.background = ffColor;
-      else if (pat === 'stripes') preview.style.background = 'repeating-linear-gradient(45deg, ' + ffColor + ', ' + ffColor + ' 3px, rgba(255,255,255,0.35) 3px, rgba(255,255,255,0.35) 5px)';
+      else if (pat === 'stripes') preview.style.background = 'repeating-linear-gradient(45deg, ' + ffColor + ', ' + ffColor + ' 3px, var(--cream) 3px, var(--cream) 5px)';
       else if (pat === 'dots') {
         preview.style.backgroundColor = _tint(ffColor);
         preview.style.backgroundImage = 'radial-gradient(circle, ' + ffColor + ' 0.8px, transparent 1px)';
@@ -9899,7 +9978,7 @@ function _renderEditEmptyRecents() {
   if (recents.length === 0) {
     recentsEl.innerHTML =
       '<div class="ed-empty-recents-title">No warnings to repair</div>' +
-      '<div style="font-size:0.85rem;color:rgba(28,26,23,0.6)">' +
+      '<div style="font-size:0.85rem;color:color-mix(in srgb, var(--ink) 60%, transparent)">' +
       'Nothing in the catalog has flagged a parser issue. Click any section in Browse to edit it directly.' +
       '</div>';
     return;
