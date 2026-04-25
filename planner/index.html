@@ -154,6 +154,20 @@
   :root[data-theme="coffee"] .fn-item.active {
     box-shadow: 0 0 0 1px rgba(237, 228, 211, 0.06) inset;
   }
+  /* Calendar tiles in Coffee — the warm earthtone course palette
+     reads as garish unfaded oranges/yellows against the deep coffee
+     canvas. Blend each tile heavily with the surface so they become
+     muted, warm-tinted swatches that sit naturally in the dark; use
+     the original tile bg as the left-edge accent so the per-course
+     identity is still readable. Text flips to var(--ink) (light cream
+     in coffee) since the original dark ink on a darkened tile is
+     unreadable. */
+  :root[data-theme="coffee"] .grid .cell.c-dynamic {
+    background: color-mix(in srgb, var(--cell-bg, var(--paper-soft)) 28%, var(--surface)) !important;
+    color: var(--ink) !important;
+    border-left-color: var(--cell-bg, var(--accent)) !important;
+    border-left-width: 3px;
+  }
   /* Filter flag — honey-amber instead of editorial's brick red. Sits
      better on the warm dark canvas. */
   :root[data-theme="coffee"] .drawer-flag .flag-tip {
@@ -256,6 +270,17 @@
   :root[data-theme="futuristic"] .filter-tag {
     box-shadow: 0 0 0 1px rgba(94, 229, 229, 0.3), 0 0 12px rgba(94, 229, 229, 0.15);
   }
+  /* Calendar tiles in Futuristic — desaturate the warm earthtone
+     palette and sink it deep into the navy canvas so tiles read as
+     muted glow blocks rather than out-of-place oranges. The original
+     tile color survives only as the left rail accent. */
+  :root[data-theme="futuristic"] .grid .cell.c-dynamic {
+    background: color-mix(in srgb, var(--cell-bg, var(--paper-soft)) 22%, var(--surface)) !important;
+    color: var(--ink) !important;
+    border-left-color: var(--cell-bg, var(--accent)) !important;
+    border-left-width: 3px;
+    filter: saturate(0.7);
+  }
   /* Filter flag becomes an illuminated cyan readout — phosphor on
      dark with a soft glow. */
   :root[data-theme="futuristic"] .drawer-flag .flag-tip {
@@ -347,6 +372,12 @@
   /* Soft halo on accent buttons so green primary actions feel alive. */
   :root[data-theme="nature"] .mdl-btn-primary {
     box-shadow: 0 2px 8px rgba(90, 125, 74, 0.18), 0 0 0 1px rgba(90, 125, 74, 0.25);
+  }
+  /* Calendar tiles in Nature — gentle blend with the sage canvas so
+     warm tiles desaturate slightly and feel like part of the
+     pale-green page rather than floating earthtone blocks. */
+  :root[data-theme="nature"] .grid .cell.c-dynamic {
+    background: color-mix(in srgb, var(--cell-bg, var(--paper-soft)) 75%, var(--surface)) !important;
   }
   /* Filter flag in leaf green — keeps the nature voice. */
   :root[data-theme="nature"] .drawer-flag .flag-tip {
