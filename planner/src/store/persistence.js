@@ -232,6 +232,7 @@ export function createPersistence(catalog, options = {}) {
     "deleteCourse",
     "undelete",
     "clear",
+    "clearEdits",
   ];
   for (const name of WRAPPED_METHODS) {
     const orig = catalog[name].bind(catalog);

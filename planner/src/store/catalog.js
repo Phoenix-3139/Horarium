@@ -388,6 +388,16 @@ export function createCatalog() {
     };
   }
 
+  // Convenience for the Manage tab's "Clear edits only" button. Wipes
+  // every edit in the overlay (including soft-deletes) but leaves parsed
+  // data and metadata intact. Fires one notify, not one per edit, so the
+  // pub/sub stream stays clean for UI re-renders.
+  function clearEdits() {
+    state.edits.clear();
+    state.autoPruneLog.length = 0;
+    _notify({ type: "mutation", reason: "clear", parsed: false, edits: true });
+  }
+
   function clear({ parsed, edits }) {
     if (parsed) {
       state.parsed.clear();
@@ -458,6 +468,7 @@ export function createCatalog() {
     undelete,
     listEdits,
     clear,
+    clearEdits,
     toJSON,
     fromJSON,
     getSubjectMetadata,

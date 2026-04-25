@@ -688,6 +688,37 @@ describe("createCatalog — metadata", () => {
   });
 });
 
+describe("createCatalog — clearEdits()", () => {
+  it("wipes all edits, leaves parsed data intact, fires one notify", () => {
+    const cat = createCatalog();
+    cat.ingestSubject(
+      "ENGR-UH",
+      buildParserOutput({
+        courses: [
+          buildCourse({ sections: [buildSection({ class_number: "20607" })] }),
+        ],
+      }),
+    );
+    cat.setEdit({ class_number: "20607", field_path: "section_code", value: "X" });
+    cat.setEdit({ class_number: "20607", field_path: "instruction_mode", value: "Hybrid" });
+    expect(cat.listEdits().edits).toHaveLength(2);
+
+    const events = [];
+    cat.subscribe((e) => events.push(e));
+    cat.clearEdits();
+    expect(cat.listEdits().edits).toHaveLength(0);
+    // Parsed data still there.
+    const eff = cat.getEffective();
+    expect(eff.courses).toHaveLength(1);
+    expect(eff.courses[0].sections[0].class_number).toBe("20607");
+    // One mutation event for the clear, not two-per-edit.
+    const clearEvents = events.filter((e) => e.reason === "clear");
+    expect(clearEvents).toHaveLength(1);
+    expect(clearEvents[0].edits).toBe(true);
+    expect(clearEvents[0].parsed).toBe(false);
+  });
+});
+
 describe("createCatalog — pub/sub fires on setEdit so Browse auto-refreshes", () => {
   it("a subscriber called after setEdit sees the edit reflected in getEffective", () => {
     const cat = createCatalog();
