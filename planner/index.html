@@ -4575,24 +4575,23 @@
     border-radius: 50%;
     box-shadow: 0 0 0 1.5px var(--paper, #fffdf9);
   }
-  .mp-cog-pop {
-    position: absolute;
-    top: calc(100% + 0.4rem);
-    right: 0;
+  /* Body-mounted popover (built in JS, not inline HTML). Fixed
+     position so it follows the viewport regardless of scroll context.
+     z-index well above any scheduled overlay. */
+  .mp-cog-pop-built {
     width: 19rem;
     padding: 0.85rem 1rem 0.95rem 1rem;
     background: var(--paper, #fffdf9);
     border: 1px solid rgba(28, 26, 23, 0.15);
     border-radius: 5px;
     box-shadow: 0 8px 28px rgba(28, 26, 23, 0.15);
-    z-index: 100;
+    z-index: 9500;
     animation: mp-cog-rise 0.16s ease;
   }
   @keyframes mp-cog-rise {
     from { opacity: 0; transform: translateY(-3px); }
     to { opacity: 1; transform: translateY(0); }
   }
-  .mp-cog-pop[hidden] { display: none; }
   .mp-cog-title {
     font-family: 'Fraunces', serif;
     font-size: 0.78rem;
@@ -4624,29 +4623,24 @@
     color: rgba(28, 26, 23, 0.6);
   }
 
-  /* Toggle switch — proper iOS-style toggle, not a chip-button. */
+  /* Toggle — a clickable div, not a native checkbox. State driven by
+     .is-on class on the wrapper. Pure CSS animated track + thumb,
+     ochre when on. The whole row in the popover (mp-cog-row) is the
+     click target so users don't need to hit the toggle precisely. */
   .mp-toggle {
     position: relative;
-    display: inline-block;
     flex-shrink: 0;
     margin-top: 0.18rem;
-  }
-  .mp-toggle input[type="checkbox"] {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
-    width: 0;
-    height: 0;
+    cursor: pointer;
+    user-select: none;
   }
   .mp-toggle-track {
-    display: inline-block;
     width: 1.95rem;
     height: 1.1rem;
     background: rgba(28, 26, 23, 0.18);
     border-radius: 999px;
     position: relative;
     transition: background 0.18s;
-    cursor: pointer;
   }
   .mp-toggle-thumb {
     position: absolute;
@@ -4659,14 +4653,11 @@
     box-shadow: 0 1px 3px rgba(28, 26, 23, 0.25);
     transition: left 0.18s;
   }
-  .mp-toggle input:checked + .mp-toggle-track {
+  .mp-toggle.is-on .mp-toggle-track {
     background: rgb(183, 129, 63);
   }
-  .mp-toggle input:checked + .mp-toggle-track .mp-toggle-thumb {
+  .mp-toggle.is-on .mp-toggle-track .mp-toggle-thumb {
     left: 0.98rem;
-  }
-  .mp-toggle input:focus-visible + .mp-toggle-track {
-    box-shadow: 0 0 0 2px rgba(183, 129, 63, 0.35);
   }
 
   .mp-filters {
@@ -5415,24 +5406,17 @@
     <div class="mp-search-row">
       <input type="search" id="mp-search" class="mp-search" placeholder="Search subject, code, title, or instructor — e.g. 'engr 2010', 'hashaikeh', 'materials'…" autocomplete="off" />
       <button type="button" class="mp-clear-btn" id="mp-clear-search" hidden>Clear</button>
-      <!-- Search options: cog button opens a small popover with the
-           "Tolerate Typos" toggle. Tucked away but discoverable. -->
-      <div class="mp-search-options" id="mp-search-options">
-        <button type="button" class="mp-cog-btn" id="mp-cog-btn" aria-label="Search options" aria-haspopup="true" aria-expanded="false" title="Search options">⚙</button>
-        <div class="mp-cog-pop" id="mp-cog-pop" hidden role="dialog" aria-label="Search options">
-          <div class="mp-cog-title">Search Options</div>
-          <label class="mp-cog-row">
-            <span class="mp-toggle">
-              <input type="checkbox" id="mp-fuzzy-toggle" />
-              <span class="mp-toggle-track"><span class="mp-toggle-thumb"></span></span>
-            </span>
-            <span class="mp-cog-row-text">
-              <span class="mp-cog-row-label">Tolerate Typos</span>
-              <span class="mp-cog-row-help">Match results with small spelling mistakes — about one or two wrong letters. Exact matches always show first.</span>
-            </span>
-          </label>
-        </div>
-      </div>
+      <!-- Search options. The popover content lives in JS, not the
+           static HTML — built and appended to <body> on click via the
+           controller below. This sidesteps two failure modes the user
+           hit: (1) browser extensions sometimes hide elements with
+           role="dialog" / aria-haspopup; (2) absolutely-positioned
+           popovers nested inside small clipping ancestors can render
+           off-canvas. The button's the only static element here.
+           Glyph is U+2699 GEAR + U+FE0E VARIATION SELECTOR-15 which
+           forces monochrome text presentation, so emoji-fallback
+           fonts can't render it as a colour cartoon. -->
+      <button type="button" class="mp-cog-btn" id="mp-cog-btn" title="Search options">⚙&#xFE0E;</button>
       <span id="mp-search-stats" class="mp-search-stats"></span>
     </div>
     <div class="mp-filters" id="mp-filters"></div>
@@ -10730,50 +10714,72 @@ function _bootPicker() {
     renderPicker();
     inp.focus();
   });
-  // Search-options cog + popover. Click the cog to open; click the
-  // toggle inside to flip _pkFuzzy; click outside to close. Tucked
-  // away (gear icon, no chip), discreet but available.
+  // Search-options popover. Built ENTIRELY in JS, appended to <body>,
+  // no aria roles. Goes around two failure modes the inline-HTML
+  // version hit:
+  //   * Some browser extensions (privacy / ad-blocker filter lists)
+  //     hide elements with role="dialog", aria-haspopup, etc.
+  //   * Absolute-positioned popovers nested inside a clipping
+  //     ancestor render off-canvas if the ancestor's overflow is
+  //     constrained.
+  // Toggle inside the popover is a plain div with a click handler —
+  // no <input type="checkbox">, no <label>, since both have surprised
+  // us with extension behaviour in the past.
   const cogBtn = document.getElementById('mp-cog-btn');
-  const cogPop = document.getElementById('mp-cog-pop');
-  const fuzzyToggle = document.getElementById('mp-fuzzy-toggle');
-  if (cogBtn && cogPop) {
-    cogBtn.addEventListener('click', function (e) {
-      e.stopPropagation();
-      const open = !cogPop.hasAttribute('hidden');
-      if (open) {
-        cogPop.setAttribute('hidden', '');
-        cogBtn.setAttribute('aria-expanded', 'false');
-      } else {
-        cogPop.removeAttribute('hidden');
-        cogBtn.setAttribute('aria-expanded', 'true');
-      }
-    });
-    // Click inside the popover doesn't close it.
-    cogPop.addEventListener('click', function (e) { e.stopPropagation(); });
-    // Click outside closes it.
-    document.addEventListener('click', function () {
-      if (!cogPop.hasAttribute('hidden')) {
-        cogPop.setAttribute('hidden', '');
-        cogBtn.setAttribute('aria-expanded', 'false');
-      }
-    });
-    // Escape also closes (keyboard parity).
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && !cogPop.hasAttribute('hidden')) {
-        cogPop.setAttribute('hidden', '');
-        cogBtn.setAttribute('aria-expanded', 'false');
-        cogBtn.focus();
-      }
-    });
+  let _cogPop = null;
+  function _closeCogPop() {
+    if (_cogPop) { _cogPop.remove(); _cogPop = null; }
   }
-  if (fuzzyToggle) {
-    fuzzyToggle.addEventListener('change', function () {
-      _pkFuzzy = !!fuzzyToggle.checked;
-      // Mark the cog with an accent dot when a non-default option is
-      // active so the user can tell at a glance that something is on.
+  function _openCogPop() {
+    _closeCogPop();
+    const rect = cogBtn.getBoundingClientRect();
+    const pop = document.createElement('div');
+    pop.className = 'mp-cog-pop-built';
+    pop.style.position = 'fixed';
+    pop.style.top = (rect.bottom + 8) + 'px';
+    // Right-align the popover with the cog so it doesn't run off the
+    // viewport on small windows. 19rem ~ 304px wide.
+    pop.style.right = (window.innerWidth - rect.right - 4) + 'px';
+    pop.innerHTML =
+      '<div class="mp-cog-title">Search Options</div>' +
+      '<div class="mp-cog-row" id="mp-cog-fuzzy-row">' +
+        '<div class="mp-toggle' + (_pkFuzzy ? ' is-on' : '') + '" id="mp-cog-fuzzy-toggle">' +
+          '<div class="mp-toggle-track"><div class="mp-toggle-thumb"></div></div>' +
+        '</div>' +
+        '<div class="mp-cog-row-text">' +
+          '<div class="mp-cog-row-label">Tolerate Typos</div>' +
+          '<div class="mp-cog-row-help">Match results with small spelling mistakes — about one or two wrong letters. Exact matches always show first.</div>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(pop);
+    _cogPop = pop;
+    // Clicking the entire row flips the toggle.
+    const row = pop.querySelector('#mp-cog-fuzzy-row');
+    if (row) row.addEventListener('click', function (e) {
+      e.stopPropagation();
+      _pkFuzzy = !_pkFuzzy;
+      const toggleEl = pop.querySelector('#mp-cog-fuzzy-toggle');
+      if (toggleEl) toggleEl.classList.toggle('is-on', _pkFuzzy);
       if (cogBtn) cogBtn.classList.toggle('is-active', _pkFuzzy);
       renderPicker();
     });
+    // Inside-popover clicks don't dismiss; outside-clicks do.
+    pop.addEventListener('click', function (e) { e.stopPropagation(); });
+  }
+  if (cogBtn) {
+    cogBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (_cogPop) _closeCogPop();
+      else _openCogPop();
+    });
+    document.addEventListener('click', function () { _closeCogPop(); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') _closeCogPop();
+    });
+    // Reposition / dismiss on viewport change so the popover doesn't
+    // detach from the cog.
+    window.addEventListener('resize', _closeCogPop);
+    window.addEventListener('scroll', _closeCogPop, true);
   }
   // Re-render on catalog mutations + invalidate the instructor index.
   if (window.HS && window.HS.catalog && window.HS.catalog.subscribe) {
