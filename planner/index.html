@@ -154,6 +154,16 @@
   :root[data-theme="coffee"] .fn-item.active {
     box-shadow: 0 0 0 1px rgba(237, 228, 211, 0.06) inset;
   }
+  /* Filter flag — honey-amber instead of editorial's brick red. Sits
+     better on the warm dark canvas. */
+  :root[data-theme="coffee"] .drawer-flag .flag-tip {
+    border-color: transparent var(--accent) transparent transparent;
+  }
+  :root[data-theme="coffee"] .drawer-flag .flag-body {
+    background: var(--accent);
+    color: var(--paper);
+    box-shadow: -4px 3px 14px rgba(0, 0, 0, 0.4);
+  }
 
   /* ===== Futuristic theme — phosphor terminal =====
      A monitor's worth of dark space, phosphor cyan that earns its
@@ -237,6 +247,19 @@
   :root[data-theme="futuristic"] .filter-tag {
     box-shadow: 0 0 0 1px rgba(94, 229, 229, 0.3), 0 0 12px rgba(94, 229, 229, 0.15);
   }
+  /* Filter flag becomes an illuminated cyan readout — phosphor on
+     dark with a soft glow. */
+  :root[data-theme="futuristic"] .drawer-flag .flag-tip {
+    border-color: transparent var(--accent) transparent transparent;
+  }
+  :root[data-theme="futuristic"] .drawer-flag .flag-body {
+    background: var(--accent);
+    color: #04070d;
+    box-shadow: -4px 3px 18px rgba(94, 229, 229, 0.35), 0 0 0 1px rgba(94, 229, 229, 0.5);
+  }
+  :root[data-theme="futuristic"] .drawer-flag .flag-label {
+    text-shadow: 0 0 6px rgba(255, 255, 255, 0.45);
+  }
   /* Module section labels gain a leading > prompt prefix when in
      futuristic. Pure decoration via ::before so other themes ignore. */
   :root[data-theme="futuristic"] .section-label::before {
@@ -296,6 +319,15 @@
   /* Soft halo on accent buttons so green primary actions feel alive. */
   :root[data-theme="nature"] .mdl-btn-primary {
     box-shadow: 0 2px 8px rgba(90, 125, 74, 0.18), 0 0 0 1px rgba(90, 125, 74, 0.25);
+  }
+  /* Filter flag in leaf green — keeps the nature voice. */
+  :root[data-theme="nature"] .drawer-flag .flag-tip {
+    border-color: transparent var(--accent) transparent transparent;
+  }
+  :root[data-theme="nature"] .drawer-flag .flag-body {
+    background: var(--accent);
+    color: #fafcf8;
+    box-shadow: -4px 3px 14px rgba(42, 58, 40, 0.18);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -12184,8 +12216,8 @@ function _catUpdateEmptyState() {
   <div class="config-modal" onclick="event.stopPropagation()">
     <div class="config-header">
       <div>
-        <div class="config-tag">Layout configuration</div>
-        <h3>Organise thy <em>modules</em></h3>
+        <div class="config-tag" data-i18n="config.tag">Layout configuration</div>
+        <h3 data-i18n="config.title">Organise thy modules</h3>
       </div>
       <button class="config-close" onclick="closeConfigModal()" aria-label="Close">×</button>
     </div>

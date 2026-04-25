@@ -50,6 +50,8 @@ export const COPY = {
     "manage.export.heading": "Export",
     "manage.clear.heading": "Clear data",
     "manage.theme.heading": "Theme",
+    "config.title": "Organise thy modules",
+    "config.tag": "Layout configuration",
     "footer": "Final registration happens in Albert.",
   },
   coffee: {
@@ -72,6 +74,8 @@ export const COPY = {
     "manage.export.heading": "Export",
     "manage.clear.heading": "Clear data",
     "manage.theme.heading": "Theme",
+    "config.title": "Organize modules",
+    "config.tag": "Layout configuration",
     "footer": "Register in Albert.",
   },
   futuristic: {
@@ -94,6 +98,8 @@ export const COPY = {
     "manage.export.heading": "EXPORT",
     "manage.clear.heading": "PURGE",
     "manage.theme.heading": "THEME",
+    "config.title": "MODULE LAYOUT",
+    "config.tag": "LAYOUT CONFIGURATION",
     "footer": "FINALIZE IN ALBERT.",
   },
   nature: {
@@ -116,6 +122,8 @@ export const COPY = {
     "manage.export.heading": "Export",
     "manage.clear.heading": "Clear data",
     "manage.theme.heading": "Theme",
+    "config.title": "Organize your modules",
+    "config.tag": "Layout configuration",
     "footer": "Finalize your registration in Albert.",
   },
 };
