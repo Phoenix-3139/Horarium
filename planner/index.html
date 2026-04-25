@@ -4169,6 +4169,40 @@
     font-size: 0.9em;
   }
   .ed-empty-recents { margin-top: 1rem; }
+  .ed-warnings-empty {
+    margin-top: 1rem;
+    padding: 2.25rem 1.5rem;
+    text-align: center;
+    background-image: repeating-linear-gradient(
+      -45deg,
+      color-mix(in srgb, var(--ink) 9%, transparent) 0,
+      color-mix(in srgb, var(--ink) 9%, transparent) 9px,
+      transparent 9px,
+      transparent 20px
+    );
+    background-color: color-mix(in srgb, var(--paper-soft) 55%, transparent);
+    border: 1px dashed color-mix(in srgb, var(--ink) 22%, transparent);
+    border-radius: var(--radius-md, 4px);
+  }
+  .ed-warnings-empty-label {
+    font-family: var(--font-mono);
+    font-size: 0.92rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: var(--ink);
+    opacity: 0.7;
+    text-shadow: 0 0 8px var(--paper-soft);
+  }
+  .ed-warnings-empty-sub {
+    margin-top: 0.45rem;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--ink-faint);
+    text-shadow: 0 0 6px var(--paper-soft);
+  }
   .ed-empty-recents-title {
     font-size: 0.78rem;
     text-transform: uppercase;
@@ -5549,24 +5583,20 @@
   }
   .no-data > * { position: relative; z-index: 0; opacity: 0.35; }
 
-  /* Empty schedule grid: hatched overlay + "no classes scheduled yet"
-     label so the half-grid reads as deliberately empty rather than
-     unfinished. The grid itself stays rendered (headers visible) and
-     the overlay sits over the row area. */
-  .grid-empty {
-    position: relative;
-  }
-  .grid-empty {
-    min-height: 14rem; /* give the overlay room even when no rows */
-  }
-  .grid-empty::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 4.2rem;
-    bottom: 0;
-    z-index: 4;
+  /* Empty schedule grid: a real grid item spans columns 1-7 and fills
+     the body area with hatched "no classes scheduled yet" treatment.
+     Lives inside the grid track so it always lines up cleanly with the
+     header row's bottom border, no fragile rem offsets. Symmetric
+     across both halves. */
+  .grid-empty-body {
+    grid-column: 1 / -1;
+    min-height: 18rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    padding: 2rem 1.5rem;
     background-image: repeating-linear-gradient(
       -45deg,
       color-mix(in srgb, var(--ink) 9%, transparent) 0,
@@ -5574,35 +5604,28 @@
       transparent 9px,
       transparent 20px
     );
-    pointer-events: none;
+    background-color: color-mix(in srgb, var(--paper-soft) 55%, transparent);
+    border-top: 1px solid var(--rule);
   }
-  .grid-empty::after {
-    content: "no classes scheduled yet · stage sections to fill the grid";
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 4.2rem;
-    bottom: 0;
-    z-index: 5;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .grid-empty-label {
     font-family: var(--font-mono);
-    font-size: 0.95rem;
+    font-size: 1rem;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.22em;
     color: var(--ink);
-    opacity: 0.65;
-    background: color-mix(in srgb, var(--paper-soft) 55%, transparent);
-    pointer-events: none;
-    text-align: center;
-    padding: 0 1rem;
-  }
-  /* Inner card framing the message so the long line reads as a
-     deliberate block rather than centered text floating on hatch. */
-  .grid-empty::after {
+    opacity: 0.7;
     text-shadow: 0 0 8px var(--paper-soft);
+    text-align: center;
+  }
+  .grid-empty-sub {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--ink-faint);
+    text-shadow: 0 0 6px var(--paper-soft);
+    text-align: center;
   }
 
   /* Inline variant — for a single stat cell where the label sits
@@ -7221,13 +7244,11 @@ function buildGrid(gridId, half) {
   const grid = document.getElementById(gridId);
   grid.innerHTML = '';
   const events = gatherEvents(half);
-  // Toggle the no-data overlay class on the grid's parent container so
-  // the hatched "no classes scheduled yet" treatment kicks in only
-  // when there are zero events for this half.
-  const wrap = grid.parentElement;
-  if (wrap) {
-    wrap.classList.toggle('grid-empty', events.length === 0);
-  }
+  const isEmpty = events.length === 0;
+  // Mark the grid itself (not the wrap) so we can scope CSS to the
+  // grid's exact bounds — same height every time, both halves render
+  // symmetrically.
+  grid.classList.toggle('grid-empty', isEmpty);
   const slotSet = new Set();
   events.forEach(e => slotSet.add(`${e.start}-${e.end}`));
   const slots = Array.from(slotSet)
@@ -7247,6 +7268,19 @@ function buildGrid(gridId, half) {
     h.innerHTML = `<div class="day-full">${dayFull[d]}</div><div class="day-abbr">${d}</div>`;
     grid.appendChild(h);
   });
+
+  // No-data treatment: when the grid would otherwise have zero
+  // body rows, render a single grid item that spans columns 1-7 and
+  // fills a generous body area with the hatched "no classes scheduled
+  // yet" message. Symmetric across both halves because it lives
+  // inside the grid's own row track.
+  if (isEmpty) {
+    const empty = document.createElement('div');
+    empty.className = 'grid-empty-body';
+    empty.innerHTML = '<div class="grid-empty-label">no classes scheduled yet</div><div class="grid-empty-sub">stage sections to fill the grid</div>';
+    grid.appendChild(empty);
+    return;
+  }
 
   // Rows
   slots.forEach((slot, si) => {
@@ -8206,6 +8240,8 @@ buildGrid = function(gridId, half) {
   const grid = document.getElementById(gridId);
   grid.innerHTML = '';
   const events = gatherEvents(half);
+  const isEmpty = events.length === 0;
+  grid.classList.toggle('grid-empty', isEmpty);
 
   // Live overlay stats (for the banner)
   if (friendOverlayOn && friendData) {
@@ -8229,6 +8265,14 @@ buildGrid = function(gridId, half) {
     h.innerHTML = '<div class="day-full">' + dayFull[d] + '</div><div class="day-abbr">' + d + '</div>';
     grid.appendChild(h);
   });
+
+  if (isEmpty) {
+    const empty = document.createElement('div');
+    empty.className = 'grid-empty-body';
+    empty.innerHTML = '<div class="grid-empty-label">no classes scheduled yet</div><div class="grid-empty-sub">stage sections to fill the grid</div>';
+    grid.appendChild(empty);
+    return;
+  }
 
   slots.forEach(slot => {
     const tc = document.createElement('div');
@@ -10489,9 +10533,9 @@ function _renderEditEmptyRecents() {
   var recents = window.HS.edit.listRecentWarnings(snap.parsed || {}, meta, { limit: 5 });
   if (recents.length === 0) {
     recentsEl.innerHTML =
-      '<div class="ed-empty-recents-title">No warnings to repair</div>' +
-      '<div style="font-size:0.85rem;color:color-mix(in srgb, var(--ink) 60%, transparent)">' +
-      'Nothing in the catalog has flagged a parser issue. Click any section in Browse to edit it directly.' +
+      '<div class="ed-warnings-empty">' +
+      '<div class="ed-warnings-empty-label">no warnings to repair</div>' +
+      '<div class="ed-warnings-empty-sub">Nothing in the catalog has flagged a parser issue.</div>' +
       '</div>';
     return;
   }
