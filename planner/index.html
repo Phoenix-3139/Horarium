@@ -7526,6 +7526,33 @@ gatherEvents = function(half) {
   return events;
 };
 
+// Build a "your own class" cell with the canonical dynamic-color
+// styling. Used by both the primary buildGrid render and the friend-
+// overlay buildGrid wrapper below — without this shared helper, the
+// wrapper's reimplementation silently used the legacy empty
+// `courseMeta` dict and rendered tiles without the class / custom
+// properties that the .grid .cell.c-dynamic CSS rule reads.
+function _buildOwnCell(evt, extraClass) {
+  const meta = _courseMeta(evt.course);
+  const safeBg  = (meta.color && meta.color.bg)  || '#E5DBE9';
+  const safeInk = (meta.color && meta.color.ink) || '#5F416E';
+  const cell = document.createElement('div');
+  cell.className = 'cell ' + (meta.cls || 'c-dynamic') + (extraClass ? ' ' + extraClass : '');
+  if (evt.secKey) cell.setAttribute('data-class-number', String(evt.secKey));
+  cell.setAttribute('data-bg', safeBg);
+  cell.setAttribute('data-ink', safeInk);
+  cell.style.setProperty('--cell-bg', safeBg);
+  cell.style.setProperty('--cell-ink', safeInk);
+  const typeNote = evt.label === 'Lecture' ? '' : ' <em>' + _escHtml(String(evt.label || '').toLowerCase()) + '</em>';
+  const titleLine = meta.title ? '<div class="title-sub">' + _escHtml(meta.title) + '</div>' : '';
+  cell.innerHTML =
+    '<div class="name">' + _escHtml(meta.short || evt.course || '') + typeNote + '</div>' +
+    titleLine +
+    '<div class="time-sub">' + fmtShort(evt.start) + '–' + fmtShort(evt.end) + '</div>';
+  cell.addEventListener('click', () => showSectionModal(evt.secKey));
+  return cell;
+}
+
 // Wrap buildGrid — stronger overlay rendering when friend is uploaded
 const _originalBuildGrid = buildGrid;
 buildGrid = function(gridId, half) {
@@ -7576,13 +7603,9 @@ buildGrid = function(gridId, half) {
         cellSlot.classList.add('both-class');
         if (friendOverlayOn && friendData) _overlayStats[half].bothClass++;
 
-        // Your class on top (normal styling)
-        const meta = courseMeta[mine.course];
-        const myCell = document.createElement('div');
-        myCell.className = 'cell ' + (meta ? meta.cls : '');
-        const typeNote = mine.label === 'Lecture' ? '' : ' <em>' + (mine.label || '').toLowerCase() + '</em>';
-        myCell.innerHTML = '<div class="name">' + (meta ? meta.short : mine.course) + typeNote + '</div><div class="time-sub">' + fmtShort(mine.start) + '–' + fmtShort(mine.end) + '</div>';
-        myCell.addEventListener('click', () => showSectionModal(mine.secKey));
+        // Your class on top — dynamic colour via _courseMeta + custom
+        // properties, same logic as the primary buildGrid path.
+        const myCell = _buildOwnCell(mine);
         cellSlot.appendChild(myCell);
 
         // Friend band below
@@ -7596,23 +7619,12 @@ buildGrid = function(gridId, half) {
       // ---- CASE B: classmate (both have same class here) ----
       else if (mine && theirs && theirs.classmate) {
         if (friendOverlayOn && friendData) _overlayStats[half].classmates++;
-        const meta = courseMeta[mine.course];
-        const cell = document.createElement('div');
-        cell.className = 'cell ' + (meta ? meta.cls : '') + ' classmate-cell';
-        const typeNote = mine.label === 'Lecture' ? '' : ' <em>' + (mine.label || '').toLowerCase() + '</em>';
-        cell.innerHTML = '<div class="name">' + (meta ? meta.short : mine.course) + typeNote + '</div><div class="time-sub">' + fmtShort(mine.start) + '–' + fmtShort(mine.end) + '</div>';
-        cell.addEventListener('click', () => showSectionModal(mine.secKey));
+        const cell = _buildOwnCell(mine, 'classmate-cell');
         cellSlot.appendChild(cell);
       }
       // ---- CASE C: only you (no friend here) ----
       else if (mine) {
-        const meta = courseMeta[mine.course];
-        const cell = document.createElement('div');
-        cell.className = 'cell ' + (meta ? meta.cls : '');
-        const typeNote = mine.label === 'Lecture' ? '' : ' <em>' + (mine.label || '').toLowerCase() + '</em>';
-        cell.innerHTML = '<div class="name">' + (meta ? meta.short : mine.course) + typeNote + '</div><div class="time-sub">' + fmtShort(mine.start) + '–' + fmtShort(mine.end) + '</div>';
-        cell.addEventListener('click', () => showSectionModal(mine.secKey));
-        cellSlot.appendChild(cell);
+        cellSlot.appendChild(_buildOwnCell(mine));
       }
       // ---- CASE D: staged core preview (ghost) ----
       else if (myGhost) {
