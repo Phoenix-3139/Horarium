@@ -143,6 +143,12 @@ export function createCatalog() {
     autoPruneLog: [], // {class_number?, course_code?, field_path, reason, at}
     migrationWarnings: [],
     subjectMetadata: new Map(),
+    // Imported packs (Piece 4). Map<pack_id, {pack, imported_at}>.
+    // Imports never blend into `parsed` / `edits` — they live in a
+    // separate namespace the UI can read for browse/compare but never
+    // mutates from. Use copySectionFromImport to materialize a section
+    // from an import as an edit in the user's primary overlay.
+    imports: new Map(),
   };
 
   // Pub/sub for mutation events. Subscribers get an event object of the
@@ -388,6 +394,102 @@ export function createCatalog() {
     };
   }
 
+  // --- Imports namespace (Piece 4) -----------------------------------
+  // addImport: stores a validated pack under its pack_id. If a pack with
+  // the same id already exists, replaces it (re-import = update). Fires
+  // one notify with reason:'import'.
+  function addImport(packId, pack) {
+    if (typeof packId !== "string" || !packId) throw new Error("addImport requires a non-empty pack_id");
+    if (!pack || typeof pack !== "object") throw new Error("addImport requires a pack object");
+    state.imports.set(packId, {
+      pack,
+      imported_at: new Date().toISOString(),
+    });
+    _notify({ type: "mutation", reason: "import", pack_id: packId });
+  }
+
+  function removeImport(packId) {
+    if (!state.imports.has(packId)) return false;
+    state.imports.delete(packId);
+    _notify({ type: "mutation", reason: "import_removed", pack_id: packId });
+    return true;
+  }
+
+  function listImports() {
+    const out = [];
+    for (const [id, entry] of state.imports.entries()) {
+      out.push({
+        pack_id: id,
+        imported_at: entry.imported_at,
+        exported_at: entry.pack.exported_at,
+        exported_by: entry.pack.exported_by,
+        term: entry.pack.term,
+        contents: entry.pack.contents,
+        // Surface a quick stats summary so the UI can render rows
+        // without walking the whole pack.
+        subject_count: entry.pack.data && entry.pack.data.catalog
+          ? Object.keys(entry.pack.data.catalog).length : 0,
+        edit_count: entry.pack.data && Array.isArray(entry.pack.data.edits)
+          ? entry.pack.data.edits.length : 0,
+      });
+    }
+    return out.sort((a, b) => (b.imported_at || "").localeCompare(a.imported_at || ""));
+  }
+
+  function getImport(packId) {
+    const entry = state.imports.get(packId);
+    return entry ? entry.pack : null;
+  }
+
+  // Materialize a section from an import as edits in the user's primary
+  // overlay. Walks the section's fields and emits setEdit calls so each
+  // diverging value becomes a tracked override on the user's parsed
+  // section (or a synthetic _USER_CREATED section if there's no parsed
+  // counterpart). Returns the count of fields written.
+  function copySectionFromImport(packId, classNumber) {
+    const pack = getImport(packId);
+    if (!pack || !pack.data || !pack.data.catalog) return 0;
+    let imported = null;
+    for (const subj of Object.keys(pack.data.catalog)) {
+      const po = pack.data.catalog[subj];
+      if (!po || !Array.isArray(po.courses)) continue;
+      for (const c of po.courses) {
+        for (const s of (c.sections || [])) {
+          if (s.class_number === classNumber) { imported = s; break; }
+        }
+        if (imported) break;
+      }
+      if (imported) break;
+    }
+    if (!imported) return 0;
+    // Top-level scalar / nested fields we know are valid edit paths.
+    // Mirrors SECTION_FIELDS in src/ui/edit.js but stays decoupled —
+    // only paths whose regex passes catalog's validation.
+    const PATHS = [
+      "section_code", "component", "session.code", "session.start_date",
+      "session.end_date", "status.type", "status.count", "requires_consent",
+      "grading", "instruction_mode", "location", "topic", "display_timezone",
+      "notes",
+    ];
+    let n = 0;
+    for (const p of PATHS) {
+      const tokens = parsePath(p);
+      const v = getAtPath(imported, tokens);
+      if (v === undefined) continue;
+      try {
+        setEdit({ class_number: classNumber, field_path: p, value: v });
+        n++;
+      } catch (e) { /* invalid path silently skipped */ }
+    }
+    if (Array.isArray(imported.meetings)) {
+      try {
+        setEdit({ class_number: classNumber, field_path: "meetings", value: imported.meetings });
+        n++;
+      } catch (e) {}
+    }
+    return n;
+  }
+
   // Convenience for the Manage tab's "Clear edits only" button. Wipes
   // every edit in the overlay (including soft-deletes) but leaves parsed
   // data and metadata intact. Fires one notify, not one per edit, so the
@@ -398,7 +500,7 @@ export function createCatalog() {
     _notify({ type: "mutation", reason: "clear", parsed: false, edits: true });
   }
 
-  function clear({ parsed, edits }) {
+  function clear({ parsed, edits, imports }) {
     if (parsed) {
       state.parsed.clear();
       state.subjectMetadata.clear();
@@ -408,10 +510,23 @@ export function createCatalog() {
       state.autoPruneLog.length = 0;
       state.migrationWarnings.length = 0;
     }
-    _notify({ type: "mutation", reason: "clear", parsed: !!parsed, edits: !!edits });
+    if (imports) {
+      state.imports.clear();
+    }
+    _notify({
+      type: "mutation",
+      reason: "clear",
+      parsed: !!parsed,
+      edits: !!edits,
+      imports: !!imports,
+    });
   }
 
   function toJSON() {
+    const importsObj = {};
+    for (const [id, entry] of state.imports.entries()) {
+      importsObj[id] = entry;
+    }
     return {
       schema_version: SCHEMA_VERSION,
       parsed: Object.fromEntries(state.parsed),
@@ -419,6 +534,7 @@ export function createCatalog() {
       auto_pruned: [...state.autoPruneLog],
       migration_warnings: [...state.migrationWarnings],
       subject_metadata: Object.fromEntries(state.subjectMetadata),
+      imports: importsObj,
     };
   }
 
@@ -428,7 +544,16 @@ export function createCatalog() {
     state.autoPruneLog.length = 0;
     state.migrationWarnings.length = 0;
     state.subjectMetadata.clear();
+    state.imports.clear();
 
+    for (const [id, entry] of Object.entries(data.imports || {})) {
+      // Defensive: only restore well-shaped entries. We don't re-run the
+      // pack validator here (that already ran at import time), but we do
+      // confirm the entry has a pack object.
+      if (entry && typeof entry === "object" && entry.pack) {
+        state.imports.set(id, entry);
+      }
+    }
     for (const [s, p] of Object.entries(data.parsed || {})) {
       state.parsed.set(s, p);
     }
@@ -469,6 +594,11 @@ export function createCatalog() {
     listEdits,
     clear,
     clearEdits,
+    addImport,
+    removeImport,
+    listImports,
+    getImport,
+    copySectionFromImport,
     toJSON,
     fromJSON,
     getSubjectMetadata,

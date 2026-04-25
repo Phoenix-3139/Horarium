@@ -688,6 +688,116 @@ describe("createCatalog — metadata", () => {
   });
 });
 
+describe("createCatalog — imports namespace (Piece 4)", () => {
+  it("addImport stores a pack and surfaces it via listImports", () => {
+    const cat = createCatalog();
+    const pack = {
+      format: "horarium-pack", format_version: 1, schema_version: "1.1.3",
+      exported_at: "2026-04-25T10:00:00Z",
+      exported_by: { display_name: "Alex", program: "CompE" },
+      term: "Fall 2026",
+      contents: ["catalog", "edits"],
+      data: {
+        catalog: {
+          "ENGR-UH": { courses: [{ code: "ENGR-UH 1000", sections: [] }] },
+        },
+        edits: [],
+      },
+    };
+    cat.addImport("alex__2026-04-25", pack);
+    const imports = cat.listImports();
+    expect(imports).toHaveLength(1);
+    expect(imports[0].pack_id).toBe("alex__2026-04-25");
+    expect(imports[0].exported_by.display_name).toBe("Alex");
+    expect(imports[0].subject_count).toBe(1);
+  });
+
+  it("addImport replaces existing pack on duplicate id", () => {
+    const cat = createCatalog();
+    cat.addImport("p", { exported_at: "1", data: { catalog: {}, edits: [] } });
+    cat.addImport("p", { exported_at: "2", data: { catalog: {}, edits: [] } });
+    expect(cat.listImports()).toHaveLength(1);
+    expect(cat.getImport("p").exported_at).toBe("2");
+  });
+
+  it("removeImport drops the pack and returns true; false when missing", () => {
+    const cat = createCatalog();
+    cat.addImport("p", { exported_at: "1", data: { catalog: {}, edits: [] } });
+    expect(cat.removeImport("p")).toBe(true);
+    expect(cat.removeImport("missing")).toBe(false);
+    expect(cat.listImports()).toEqual([]);
+  });
+
+  it("imports survive toJSON → fromJSON round-trip", () => {
+    const cat1 = createCatalog();
+    cat1.addImport("p", {
+      exported_at: "2026-04-25T10:00:00Z",
+      exported_by: { display_name: "Alex" },
+      data: { catalog: {}, edits: [] },
+    });
+    const snap = JSON.parse(JSON.stringify(cat1.toJSON()));
+    const cat2 = createCatalog();
+    cat2.fromJSON(snap);
+    expect(cat2.listImports()).toHaveLength(1);
+    expect(cat2.getImport("p").exported_by.display_name).toBe("Alex");
+  });
+
+  it("clear({imports:true}) wipes only the imports", () => {
+    const cat = createCatalog();
+    cat.ingestSubject("ENGR-UH", buildParserOutput({
+      courses: [buildCourse({ sections: [buildSection()] })],
+    }));
+    cat.addImport("p", { exported_at: "1", data: { catalog: {}, edits: [] } });
+    cat.clear({ imports: true });
+    expect(cat.listImports()).toEqual([]);
+    expect(cat.getEffective().courses).toHaveLength(1);
+  });
+
+  it("copySectionFromImport materializes a section's fields as edits", () => {
+    const cat = createCatalog();
+    // The section must already exist in parsed for class_number-keyed
+    // edits to be meaningful at apply time.
+    cat.ingestSubject("ENGR-UH", buildParserOutput({
+      courses: [buildCourse({
+        sections: [buildSection({ class_number: "20607", section_code: "001" })],
+      })],
+    }));
+    cat.addImport("alex", {
+      exported_at: "2026-04-25T10:00:00Z",
+      data: {
+        catalog: {
+          "ENGR-UH": {
+            courses: [{
+              code: "ENGR-UH 1000", sections: [{
+                class_number: "20607",
+                section_code: "ALEX-EDITED",
+                component: "Lecture",
+                session: { code: "AD", start_date: "2026-08-31", end_date: "2026-12-14" },
+                status: { type: "open", count: null },
+                requires_consent: false,
+                meetings: [],
+                notes: "From Alex",
+              }],
+            }],
+          },
+        },
+        edits: [],
+      },
+    });
+    const n = cat.copySectionFromImport("alex", "20607");
+    expect(n).toBeGreaterThan(0);
+    const eff = cat.getEffective();
+    const sec = eff.courses[0].sections.find((s) => s.class_number === "20607");
+    expect(sec.section_code).toBe("ALEX-EDITED");
+    expect(sec.notes).toBe("From Alex");
+  });
+
+  it("copySectionFromImport returns 0 for unknown pack or class_number", () => {
+    const cat = createCatalog();
+    expect(cat.copySectionFromImport("nope", "20607")).toBe(0);
+  });
+});
+
 describe("createCatalog — clearEdits()", () => {
   it("wipes all edits, leaves parsed data intact, fires one notify", () => {
     const cat = createCatalog();

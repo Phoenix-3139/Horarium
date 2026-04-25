@@ -4332,6 +4332,180 @@
     color: rgba(28, 26, 23, 0.55);
     font-family: 'JetBrains Mono', monospace;
   }
+  .mn-export-row {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+  .mn-imports {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .mn-import-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 0.75rem;
+    align-items: center;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid rgba(28, 26, 23, 0.1);
+    border-radius: 4px;
+    background: #fffdf9;
+  }
+  .mn-import-name {
+    font-weight: 600;
+    font-size: 0.92rem;
+  }
+  .mn-import-sub {
+    font-size: 0.78rem;
+    color: rgba(28, 26, 23, 0.6);
+    font-family: 'JetBrains Mono', monospace;
+    margin-top: 0.15rem;
+  }
+  .mn-import-stats {
+    font-size: 0.82rem;
+    color: rgba(28, 26, 23, 0.7);
+    white-space: nowrap;
+  }
+  .mn-import-rm {
+    font-size: 0.78rem;
+    padding: 0.28rem 0.65rem;
+    border: 1px solid rgba(160, 60, 40, 0.4);
+    color: rgba(160, 60, 40, 0.95);
+    background: transparent;
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .mn-import-rm:hover { background: rgba(160, 60, 40, 0.08); }
+  .mn-imports-empty {
+    padding: 0.7rem;
+    font-size: 0.85rem;
+    color: rgba(28, 26, 23, 0.55);
+    background: rgba(28, 26, 23, 0.02);
+    border-radius: 4px;
+  }
+
+  /* ====================== Pack import / pack selector (Piece 4) ====================== */
+  .pk-import-row {
+    display: flex;
+    gap: 0.7rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+  }
+  .pk-import-hint {
+    font-size: 0.78rem;
+    color: rgba(28, 26, 23, 0.6);
+  }
+  .pk-import-hint code {
+    font-family: 'JetBrains Mono', monospace;
+    background: rgba(28, 26, 23, 0.05);
+    padding: 0.05rem 0.28rem;
+    border-radius: 2px;
+  }
+  .pk-import-result {
+    margin-top: 0.85rem;
+    padding: 0.75rem 0.85rem;
+    border-radius: 4px;
+    font-size: 0.88rem;
+    line-height: 1.45;
+  }
+  .pk-import-result.ok {
+    background: rgba(80, 140, 90, 0.1);
+    border-left: 3px solid rgba(80, 140, 90, 0.7);
+  }
+  .pk-import-result.err {
+    background: rgba(160, 60, 40, 0.08);
+    border-left: 3px solid rgba(160, 60, 40, 0.7);
+  }
+  .pk-import-result h4 {
+    font-family: inherit;
+    font-size: 0.95rem;
+    margin: 0 0 0.4rem 0;
+    font-weight: 600;
+  }
+  .pk-import-result ul {
+    margin: 0.3rem 0 0.5rem 1.2rem;
+    padding: 0;
+    font-size: 0.82rem;
+  }
+  .pk-import-result code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    background: rgba(28, 26, 23, 0.06);
+    padding: 0 0.25rem;
+    border-radius: 2px;
+  }
+  .pk-review-actions {
+    margin-top: 0.6rem;
+    display: flex;
+    gap: 0.5rem;
+  }
+  .pk-review-btn {
+    padding: 0.35rem 0.85rem;
+    border-radius: 3px;
+    border: 1px solid rgba(28, 26, 23, 0.2);
+    background: #fff;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.85rem;
+  }
+  .pk-review-btn-primary {
+    background: #7c4a2e;
+    color: #fff;
+    border-color: #7c4a2e;
+  }
+  .pk-review-meta {
+    margin: 0.4rem 0;
+    font-size: 0.82rem;
+    color: rgba(28, 26, 23, 0.75);
+  }
+  .pk-review-meta dl {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.2rem 0.7rem;
+    margin: 0.2rem 0 0 0;
+  }
+  .pk-review-meta dt {
+    color: rgba(28, 26, 23, 0.55);
+    font-size: 0.78rem;
+  }
+  .pk-review-meta dd { margin: 0; }
+
+  .br-pack-bar {
+    margin-top: 0.6rem;
+    padding: 0.45rem 0.7rem;
+    background: rgba(28, 26, 23, 0.03);
+    border-radius: 3px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .br-pack-bar label { color: rgba(28, 26, 23, 0.65); }
+  .br-pack-bar select {
+    padding: 0.25rem 0.4rem;
+    border: 1px solid rgba(28, 26, 23, 0.2);
+    border-radius: 3px;
+    font-family: inherit;
+    font-size: 0.85rem;
+  }
+  .br-pack-bar.is-import {
+    background: rgba(183, 129, 63, 0.1);
+    border-left: 3px solid rgba(183, 129, 63, 0.5);
+  }
+  .br-section-copy {
+    font-size: 0.72rem;
+    padding: 0.18rem 0.55rem;
+    border: 1px solid rgba(80, 140, 90, 0.5);
+    background: #fff;
+    color: rgba(40, 90, 50, 0.95);
+    border-radius: 2px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .br-section-copy:hover { background: rgba(80, 140, 90, 0.08); }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
@@ -4394,6 +4568,21 @@
       </div>
     </section>
 
+    <!-- Module: Import pack (Piece 4 — non-destructive named-overlay import) -->
+    <section class="module" data-module-id="catalog-import">
+      <div class="section-label"><span class="num">◆</span> Catalog · <em>import pack</em></div>
+      <h2>Import a Horarium <em>pack</em>.</h2>
+      <p class="picker-sub">
+        Bring in another user's catalog as a named overlay. Imports are read-only — your own catalog isn't touched. You can browse the pack alongside yours and copy individual sections into your own data.
+      </p>
+      <div class="pk-import-row">
+        <input type="file" id="pk-import-file" accept=".json,application/json" hidden>
+        <button type="button" id="pk-import-btn" class="cat-btn cat-btn-parse">Choose pack file…</button>
+        <span class="pk-import-hint">Max 10&nbsp;MB. <code>.horarium.json</code> or any <code>.json</code> with the pack format.</span>
+      </div>
+      <div id="pk-import-result" class="pk-import-result" hidden></div>
+    </section>
+
     <!-- Module: Browse (Piece 3b — read-only inspection of pasted catalog) -->
     <section class="module" data-module-id="browse">
       <button class="module-menu-btn" onclick="openModuleMenu(event, 'browse')" title="Move module">⋮</button>
@@ -4406,6 +4595,11 @@
         <div class="cat-empty-head">◌ Nothing to browse yet</div>
         <div class="cat-empty-body">Paste subject data above and click Apply. Your catalog will appear here.</div>
       </div>
+
+      <!-- Pack selector — only visible when one or more imports exist.
+           "My catalog" is the default; selecting an imported pack switches
+           Browse into a read-only view of that pack's data. -->
+      <div class="br-pack-bar" id="br-pack-bar" hidden></div>
 
       <!-- Three-panel browse layout. Hidden when browse-empty is shown. -->
       <div class="browse-layout" id="browse-layout" hidden>
@@ -4667,11 +4861,19 @@
       <!-- ===== Export ===== -->
       <h3 class="mn-section-h">Export</h3>
       <p class="picker-sub mn-section-lead">
-        Download your edits as JSON. Useful for sharing or as a manual backup. Edits-only — no parsed data, no identity.
+        Two options. <strong>Edits-only</strong> is for sharing your room/instructor corrections with someone who already has the same catalog. <strong>Full pack</strong> bundles your catalog + edits + identity so a friend can browse what you have.
       </p>
-      <div>
+      <div class="mn-export-row">
         <button type="button" class="mn-btn" id="mn-export-edits">Export my edits…</button>
+        <button type="button" class="mn-btn" id="mn-export-pack">Export full pack…</button>
       </div>
+
+      <!-- ===== Imported packs ===== -->
+      <h3 class="mn-section-h">Imported packs</h3>
+      <p class="picker-sub mn-section-lead">
+        Packs other users have shared with you. Read-only — they don't blend into your own catalog. Switch between packs in Browse via the pack selector. Delete from here when you're done with one.
+      </p>
+      <div class="mn-imports" id="mn-imports"></div>
 
       <!-- ===== Async-save warnings (only rendered when non-empty) ===== -->
       <div id="mn-warnings-wrap" hidden>
@@ -4888,6 +5090,13 @@ import {
   buildEditsExportFilename,
   summarizeStorage,
 } from './src/ui/manage.js';
+import {
+  buildPack,
+  buildPackFilename,
+  parseAndValidatePack,
+  packId,
+  PACK_MAX_BYTES,
+} from './src/store/pack.js';
 const catalog = createCatalog();
 const persistence = createPersistence(catalog);
 persistence.load();
@@ -4913,6 +5122,13 @@ window.HS.manage = {
   buildEditsExport,
   buildEditsExportFilename,
   summarizeStorage,
+};
+window.HS.pack = {
+  buildPack,
+  buildPackFilename,
+  parseAndValidatePack,
+  packId,
+  PACK_MAX_BYTES,
 };
 window.HS.edit = {
   SECTION_FIELDS,
@@ -7701,6 +7917,14 @@ function _brFmtDate(iso) {
 // so user edits in the overlay are reflected in Browse.
 function _brParsedFor(subject) {
   try {
+    // When viewing an imported pack, pull from the pack's catalog
+    // instead of the user's own. Imports are read-only so there's no
+    // edits-overlay distinction — parsed and effective are the same.
+    if (_browseActivePackId) {
+      var pack = window.HS.catalog.getImport(_browseActivePackId);
+      if (!pack || !pack.data || !pack.data.catalog) return null;
+      return pack.data.catalog[subject] || null;
+    }
     var dump = window.HS.catalog.toJSON();
     return (dump && dump.parsed && dump.parsed[subject]) || null;
   } catch (_) { return null; }
@@ -7711,6 +7935,11 @@ function _brParsedFor(subject) {
 // from the Edit module immediately show up on re-render.
 function _brEffectiveFor(subject) {
   try {
+    if (_browseActivePackId) {
+      // Imports are read-only: effective == parsed.
+      var p = _brParsedFor(subject);
+      return p && Array.isArray(p.courses) ? p.courses : null;
+    }
     var eff = window.HS.catalog.getEffective();
     if (!eff || !Array.isArray(eff.courses)) return null;
     return eff.courses.filter(function (c) { return c.subject === subject; });
@@ -7718,14 +7947,25 @@ function _brEffectiveFor(subject) {
 }
 
 function _brAllSubjects() {
-  try { return Object.keys(window.HS.catalog.getSubjectMetadata() || {}).sort(); }
-  catch (_) { return []; }
+  try {
+    if (_browseActivePackId) {
+      var pack = window.HS.catalog.getImport(_browseActivePackId);
+      if (!pack || !pack.data || !pack.data.catalog) return [];
+      return Object.keys(pack.data.catalog).sort();
+    }
+    return Object.keys(window.HS.catalog.getSubjectMetadata() || {}).sort();
+  } catch (_) { return []; }
 }
 
 function renderBrowse() {
   var empty = document.getElementById('browse-empty');
   var layout = document.getElementById('browse-layout');
   if (!empty || !layout) return;
+
+  // Pack selector renders regardless of whether the (current) data
+  // source is empty — the user might be on an empty primary catalog
+  // but have imports to switch to.
+  if (typeof _renderBrowsePackBar === 'function') _renderBrowsePackBar();
 
   var subjects = _brAllSubjects();
   if (subjects.length === 0) {
@@ -8000,17 +8240,28 @@ function _brRenderSectionCard(s, warns) {
       warns.map(function (w) { return _brRenderWarning(w, sectionCtx); }).join('') + '</div>';
   }
   var notesHtml = s.notes ? '<div class="br-section-notes">' + _brEscape(s.notes) + '</div>' : '';
-  var sectionEditHash = window.HS.edit && s.class_number
-    ? window.HS.edit.formatEditHash(sectionCtx) : '';
-  var sectionEditBtn = sectionEditHash
-    ? '<button type="button" class="br-section-edit" data-edit-hash="' + _brEscape(sectionEditHash) + '">Edit</button>'
-    : '';
+  // When viewing an imported pack, the Edit button is replaced by a
+  // "Copy this section into my catalog" action — Edit doesn't apply
+  // because imports are read-only, but the user may want to ingest the
+  // imported version's data as edits in their own primary overlay.
+  var actionBtn = '';
+  if (_browseActivePackId && s.class_number) {
+    actionBtn = '<button type="button" class="br-section-copy" data-pack-section-cn="' +
+      _brEscape(s.class_number) + '" title="Copy this section\'s fields into your own catalog as edits">Copy to my catalog</button>';
+  } else {
+    var sectionEditHash = window.HS.edit && s.class_number
+      ? window.HS.edit.formatEditHash(sectionCtx) : '';
+    if (sectionEditHash) {
+      actionBtn = '<button type="button" class="br-section-edit" data-edit-hash="' +
+        _brEscape(sectionEditHash) + '">Edit</button>';
+    }
+  }
 
   return '<article class="br-section-card">' +
     '<div class="br-section-head">' +
       '<div class="br-section-ident">' + _brEscape(s.section_code || '—') + ' · ' + _brEscape(s.component || '—') +
         ' <span class="class-num">#' + _brEscape(s.class_number || '—') + '</span>' +
-        (sectionEditBtn ? ' ' + sectionEditBtn : '') +
+        (actionBtn ? ' ' + actionBtn : '') +
       '</div>' +
       '<div class="br-section-status ' + statusClass + '"><span class="dot"></span>' + _brEscape(statusLabel) + '</div>' +
     '</div>' +
@@ -8162,6 +8413,23 @@ function navigateToEdit(sel) {
 }
 
 function _edOnGlobalClick(e) {
+  // Section-copy from an imported pack handler — do this BEFORE the
+  // edit-hash check, since copy buttons live on imported-pack cards
+  // where there's no edit hash anyway.
+  var copyBtn = e.target.closest ? e.target.closest('[data-pack-section-cn]') : null;
+  if (copyBtn) {
+    e.preventDefault();
+    var cn = copyBtn.getAttribute('data-pack-section-cn');
+    if (!cn || !_browseActivePackId) return;
+    if (!confirm('Copy this section\'s fields into your own catalog as edits?\n\nThis writes to your primary overlay. The imported pack stays untouched. If your own catalog has the same class_number (' + cn + ') with edits, they will be overwritten.')) return;
+    var n = window.HS.catalog.copySectionFromImport(_browseActivePackId, cn);
+    if (n > 0) {
+      alert('Copied ' + n + ' field' + (n === 1 ? '' : 's') + ' into your catalog. Switch back to "My catalog" to see them.');
+    } else {
+      alert('Nothing was copied — the section may not exist in the imported pack, or no editable fields were found.');
+    }
+    return;
+  }
   var t = e.target.closest ? e.target.closest('[data-edit-hash]') : null;
   if (!t) return;
   e.preventDefault();
@@ -8911,6 +9179,7 @@ function renderManage() {
   _renderManageSubjects();
   _renderManageClearButtons();
   _renderManageWarnings();
+  if (typeof _renderManageImports === 'function') _renderManageImports();
 }
 
 function _renderManageConsent() {
@@ -9100,11 +9369,11 @@ function _manageClearAll() {
     alert('That didn\'t match — nothing was deleted.');
     return;
   }
-  // Wipe everything: catalog (parsed + edits), persistence storage, and
-  // the in-memory identity. persistence.clear() handles localStorage and
-  // the save timer; catalog.clear({parsed:true,edits:true}) handles the
-  // store.
-  window.HS.catalog.clear({ parsed: true, edits: true });
+  // Wipe everything: catalog (parsed + edits + imports), persistence
+  // storage, and the in-memory identity. persistence.clear() handles
+  // localStorage and the save timer; catalog.clear({parsed,edits,imports})
+  // handles the store.
+  window.HS.catalog.clear({ parsed: true, edits: true, imports: true });
   if (window.HS.persistence.clear) window.HS.persistence.clear();
   window.HS.user = {
     name: '', netid: '', n_number: '', program: '', year: '',
@@ -9161,6 +9430,277 @@ function _renderManageWarnings() {
 }
 
 window.addEventListener('horarium:ready', _bootManage);
+
+// ============ PACK MODULE (Piece 4) ============
+// Export/import .horarium.json packs. Imports are non-destructive: a
+// pack arrives as a named overlay in catalog.imports[], browseable
+// alongside the user's own catalog but never blended automatically.
+//
+// Security boundary: the import path treats the file as untrusted.
+// parseAndValidatePack collects all errors before returning; the user
+// sees one consolidated message. After validation passes, every render
+// path uses textContent (via _brEscape, which renders into innerHTML
+// after escaping) so a course title of "<script>alert(1)</script>"
+// renders as literal text.
+//
+// Browse pack-selection state. null = "My catalog" (default); any pack
+// id selects an imported pack. Lives outside _browseSel so switching
+// the selected subject doesn't reset which catalog you're viewing.
+var _browseActivePackId = null;
+
+function _bootPack() {
+  if (!window.HS || !window.HS.catalog || !window.HS.pack) return;
+  // Wire export-pack button (lives in Manage).
+  var ep = document.getElementById('mn-export-pack');
+  if (ep) ep.addEventListener('click', _packExportFull);
+  // Wire import button (lives in Catalog).
+  var imp = document.getElementById('pk-import-btn');
+  var fil = document.getElementById('pk-import-file');
+  if (imp && fil) {
+    imp.addEventListener('click', function () { fil.click(); });
+    fil.addEventListener('change', _packOnFileChosen);
+  }
+  // Re-render the pack selector + imports list when the catalog changes.
+  if (window.HS.catalog && window.HS.catalog.subscribe) {
+    window.HS.catalog.subscribe(function (e) {
+      if (e && (e.reason === 'import' || e.reason === 'import_removed' || e.reason === 'hydrate' || e.reason === 'clear')) {
+        renderBrowse();
+        if (currentTab === 'manage') renderManage();
+        // If the active pack was just removed, fall back to "My catalog".
+        if (_browseActivePackId && !window.HS.catalog.getImport(_browseActivePackId)) {
+          _browseActivePackId = null;
+          renderBrowse();
+        }
+      }
+    });
+  }
+}
+window.addEventListener('horarium:ready', _bootPack);
+
+// --- export ---
+function _packExportFull() {
+  if (!window.HS.pack) return;
+  var snap = window.HS.catalog.toJSON();
+  var ident = window.HS.user || {};
+  // Term: pull from any subject's parsed header. NYU pastes share a term.
+  var term = '';
+  for (var s in (snap.parsed || {})) {
+    var p = snap.parsed[s];
+    if (p && p.header && p.header.term) { term = p.header.term; break; }
+  }
+  var pack = window.HS.pack.buildPack({
+    catalogJSON: snap,
+    identity: ident,
+    term: term,
+    contents: ['catalog', 'edits'],
+    now: new Date(),
+  });
+  var fname = window.HS.pack.buildPackFilename({
+    displayName: ident.name || '',
+    term: term,
+    now: new Date(),
+  });
+  var blob = new Blob([JSON.stringify(pack, null, 2)], { type: 'application/json' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = fname;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(function () { document.body.removeChild(a); URL.revokeObjectURL(url); }, 0);
+}
+
+// --- import ---
+// State: when a file passes validation, we hold the pack here until the
+// user clicks "Import as overlay" (or Cancel). This keeps the side-effect
+// of mutating catalog.imports off the file-pick path.
+var _pkPendingPack = null;
+
+function _packOnFileChosen(e) {
+  var file = e.target.files && e.target.files[0];
+  // Reset the input value so picking the same file twice still triggers
+  // a change event.
+  e.target.value = '';
+  if (!file) return;
+  if (file.size > window.HS.pack.PACK_MAX_BYTES) {
+    _packShowResult({
+      ok: false,
+      errors: [{ path: '$', message: 'File is ' + file.size + ' bytes, larger than the ' + window.HS.pack.PACK_MAX_BYTES + '-byte cap.' }],
+    });
+    return;
+  }
+  var reader = new FileReader();
+  reader.onload = function () {
+    var text = String(reader.result || '');
+    var schemaVersion = (window.HS.catalog.toJSON() || {}).schema_version || '1.1.3';
+    var result = window.HS.pack.parseAndValidatePack(text, { currentSchemaVersion: schemaVersion });
+    if (result.ok) {
+      _pkPendingPack = result.pack;
+      _packShowReview(result.pack, file.name);
+    } else {
+      _pkPendingPack = null;
+      _packShowResult(result);
+    }
+  };
+  reader.onerror = function () {
+    _packShowResult({ ok: false, errors: [{ path: '$', message: 'Failed to read file.' }] });
+  };
+  reader.readAsText(file);
+}
+
+function _packShowResult(result) {
+  var el = document.getElementById('pk-import-result');
+  if (!el) return;
+  el.hidden = false;
+  if (result.ok) {
+    el.className = 'pk-import-result ok';
+    el.innerHTML = '<h4>Imported.</h4>' +
+      '<div>The pack is now available in <a onclick="switchTab(\'catalog\')">Browse</a> via the pack selector, and listed in <a onclick="switchTab(\'manage\')">Manage</a>.</div>';
+    return;
+  }
+  // Error path. Render every collected error so the user can fix the
+  // file in one round trip.
+  el.className = 'pk-import-result err';
+  var items = (result.errors || []).map(function (er) {
+    return '<li><code>' + _brEscape(er.path) + '</code> — ' + _brEscape(er.message) + '</li>';
+  }).join('');
+  el.innerHTML = '<h4>Import refused.</h4>' +
+    '<div>The file failed validation. Nothing was added to your catalog.</div>' +
+    '<ul>' + items + '</ul>';
+}
+
+function _packShowReview(pack, filename) {
+  var el = document.getElementById('pk-import-result');
+  if (!el) return;
+  el.hidden = false;
+  el.className = 'pk-import-result ok';
+  // Compute a contents summary the user can sanity-check before committing.
+  var subjCount = pack.data && pack.data.catalog ? Object.keys(pack.data.catalog).length : 0;
+  var editCount = pack.data && Array.isArray(pack.data.edits) ? pack.data.edits.length : 0;
+  var sectionCount = 0;
+  if (pack.data && pack.data.catalog) {
+    for (var s in pack.data.catalog) {
+      var po = pack.data.catalog[s];
+      if (!po || !Array.isArray(po.courses)) continue;
+      for (var i = 0; i < po.courses.length; i++) {
+        sectionCount += (po.courses[i].sections || []).length;
+      }
+    }
+  }
+  var by = pack.exported_by && pack.exported_by.display_name
+    ? pack.exported_by.display_name : 'Unknown sender';
+  var prog = pack.exported_by && pack.exported_by.program ? pack.exported_by.program : '';
+  // Every value below renders via _brEscape — defends against hostile
+  // strings in display_name/program/etc. on the import preview itself.
+  el.innerHTML =
+    '<h4>Review pack before importing</h4>' +
+    '<div class="pk-review-meta"><dl>' +
+      '<dt>From</dt><dd>' + _brEscape(by) + (prog ? ' <span style="color:rgba(0,0,0,0.5)">· ' + _brEscape(prog) + '</span>' : '') + '</dd>' +
+      '<dt>File</dt><dd><code>' + _brEscape(filename || '') + '</code></dd>' +
+      '<dt>Term</dt><dd>' + _brEscape(pack.term || '—') + '</dd>' +
+      '<dt>Exported</dt><dd>' + _brEscape(pack.exported_at || '') + '</dd>' +
+      '<dt>Schema</dt><dd>' + _brEscape(pack.schema_version || '') + '</dd>' +
+      '<dt>Contains</dt><dd>' + subjCount + ' subject' + (subjCount === 1 ? '' : 's') + ' · ' +
+        sectionCount + ' section' + (sectionCount === 1 ? '' : 's') + ' · ' +
+        editCount + ' edit' + (editCount === 1 ? '' : 's') + '</dd>' +
+    '</dl></div>' +
+    '<div>Your own catalog stays untouched. The pack will appear as a named overlay in Browse.</div>' +
+    '<div class="pk-review-actions">' +
+      '<button type="button" class="pk-review-btn pk-review-btn-primary" onclick="_packCommitImport()">Import as overlay</button>' +
+      '<button type="button" class="pk-review-btn" onclick="_packCancelImport()">Cancel</button>' +
+    '</div>';
+}
+
+function _packCommitImport() {
+  if (!_pkPendingPack) return;
+  var pid = window.HS.pack.packId(_pkPendingPack);
+  try {
+    window.HS.catalog.addImport(pid, _pkPendingPack);
+    _pkPendingPack = null;
+    _packShowResult({ ok: true });
+  } catch (e) {
+    _packShowResult({ ok: false, errors: [{ path: '$', message: e && e.message ? e.message : String(e) }] });
+  }
+}
+
+function _packCancelImport() {
+  _pkPendingPack = null;
+  var el = document.getElementById('pk-import-result');
+  if (el) { el.hidden = true; el.innerHTML = ''; }
+}
+
+// Render the imports list inside Manage. Called from renderManage.
+function _renderManageImports() {
+  var el = document.getElementById('mn-imports');
+  if (!el) return;
+  var imports = window.HS.catalog.listImports ? window.HS.catalog.listImports() : [];
+  if (imports.length === 0) {
+    el.innerHTML = '<div class="mn-imports-empty">No imported packs. Use the Catalog tab\'s "Import a pack" module to add one.</div>';
+    return;
+  }
+  el.innerHTML = imports.map(function (im) {
+    var by = (im.exported_by && im.exported_by.display_name) || 'Unknown sender';
+    var prog = (im.exported_by && im.exported_by.program) || '';
+    var rel = im.imported_at ? window.HS.browse.humanRelativeTime(im.imported_at, Date.now()) : '';
+    return '<div class="mn-import-row" data-pack-id="' + _brEscape(im.pack_id) + '">' +
+      '<div>' +
+        '<div class="mn-import-name">' + _brEscape(by) +
+          (prog ? ' <span style="color:rgba(0,0,0,0.5);font-weight:normal">· ' + _brEscape(prog) + '</span>' : '') + '</div>' +
+        '<div class="mn-import-sub">' + _brEscape(im.pack_id) +
+          (im.term ? ' · ' + _brEscape(im.term) : '') +
+          (rel ? ' · imported ' + _brEscape(rel) : '') + '</div>' +
+      '</div>' +
+      '<div class="mn-import-stats">' + im.subject_count + ' subj · ' + im.edit_count + ' edits</div>' +
+      '<button type="button" class="mn-import-rm" data-pack-id="' + _brEscape(im.pack_id) + '">Delete</button>' +
+      '</div>';
+  }).join('');
+  el.querySelectorAll('.mn-import-rm').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var id = btn.getAttribute('data-pack-id');
+      if (!id) return;
+      if (!confirm('Delete imported pack "' + id + '"?\n\nYour own catalog is unaffected.')) return;
+      window.HS.catalog.removeImport(id);
+      _renderManageImports();
+    });
+  });
+}
+
+// Browse pack selector. Shown only when at least one import exists.
+// Selecting a pack switches Browse to read from that pack's catalog
+// rather than the user's own.
+function _renderBrowsePackBar() {
+  var bar = document.getElementById('br-pack-bar');
+  if (!bar) return;
+  var imports = window.HS.catalog.listImports ? window.HS.catalog.listImports() : [];
+  if (imports.length === 0) {
+    bar.hidden = true;
+    bar.innerHTML = '';
+    return;
+  }
+  bar.hidden = false;
+  bar.classList.toggle('is-import', !!_browseActivePackId);
+  var opts = '<option value="">My catalog</option>';
+  for (var i = 0; i < imports.length; i++) {
+    var im = imports[i];
+    var label = ((im.exported_by && im.exported_by.display_name) || 'Anon') +
+      (im.term ? ' · ' + im.term : '') + ' (' + im.subject_count + ' subj)';
+    opts += '<option value="' + _brEscape(im.pack_id) + '"' +
+      (im.pack_id === _browseActivePackId ? ' selected' : '') + '>' +
+      _brEscape(label) + '</option>';
+  }
+  bar.innerHTML =
+    '<label for="br-pack-select">Viewing</label>' +
+    '<select id="br-pack-select">' + opts + '</select>' +
+    (_browseActivePackId
+      ? '<span style="color:rgba(120,70,30,0.85);font-size:0.8rem">Read-only — copy a section to bring it into your catalog</span>'
+      : '');
+  var sel = document.getElementById('br-pack-select');
+  if (sel) sel.addEventListener('change', function () {
+    _browseActivePackId = sel.value || null;
+    _browseSel.subject = null;
+    _browseSel.catnum = null;
+    renderBrowse();
+  });
+}
 
 // ============ INITIAL TAB STATE ============
 // Start on Plan tab; grids will build once schedule tab is opened.
