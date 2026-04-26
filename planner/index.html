@@ -6617,11 +6617,6 @@
     padding: 0;
   }
 
-  /* Kanban legacy compat: keep references valid (older fallback). */
-  .sch-kanban-wrap {
-    margin: 0 1.25rem;
-  }
-
   /* Fill-in panel: shelved-subject status under the calendar. */
   .sch-fill-in {
     margin-top: 1.25rem;
@@ -6694,216 +6689,6 @@
     color: var(--rust, var(--accent));
     border-color: var(--rust, var(--accent));
   }
-  .sch-kanban {
-    display: flex;
-    align-items: stretch;
-    gap: 0.55rem;
-    overflow-x: auto;
-    padding: 0.25rem 0.1rem 0.6rem;
-    scrollbar-color: var(--rule) transparent;
-  }
-  .sch-kanban::-webkit-scrollbar { height: 8px; }
-  .sch-kanban::-webkit-scrollbar-thumb {
-    background: var(--rule);
-    border-radius: 4px;
-  }
-  .sch-kanban-empty {
-    padding: 1.6rem 1rem;
-    text-align: center;
-    color: var(--ink-faint);
-    font-size: 0.84rem;
-    background-image: repeating-linear-gradient(
-      -45deg,
-      color-mix(in srgb, var(--ink) 6%, transparent) 0,
-      color-mix(in srgb, var(--ink) 6%, transparent) 5px,
-      transparent 5px, transparent 12px
-    );
-    border: 1px dashed color-mix(in srgb, var(--ink) 18%, transparent);
-    border-radius: var(--radius-md, 4px);
-    cursor: default;
-    transition: background-image 0.15s, border-color 0.15s, color 0.15s;
-  }
-  body.sch-has-pending .sch-kanban-empty {
-    cursor: copy;
-    border-color: var(--accent, var(--ochre));
-    color: var(--accent, var(--ochre));
-    background-image: repeating-linear-gradient(
-      -45deg,
-      color-mix(in srgb, var(--accent, var(--ochre)) 14%, transparent) 0,
-      color-mix(in srgb, var(--accent, var(--ochre)) 14%, transparent) 5px,
-      transparent 5px, transparent 12px
-    );
-  }
-  /* Column. Top accent bar reads as "this group of cards is one
-     thing the schedule must satisfy". */
-  .sch-col {
-    flex: 0 0 11.5rem;
-    display: flex;
-    flex-direction: column;
-    background: var(--cream);
-    border: 1px solid var(--rule);
-    border-radius: var(--radius-md, 4px);
-    padding: 0.55rem 0.6rem 0.55rem;
-    position: relative;
-    overflow: hidden;
-    transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
-  }
-  .sch-col::before {
-    content: '';
-    position: absolute;
-    left: 0; right: 0; top: 0;
-    height: 3px;
-    background: var(--accent, var(--ochre));
-    opacity: 0.85;
-  }
-  .sch-col[data-kind="or"]::before {
-    background: linear-gradient(90deg, var(--accent, var(--ochre)) 0%, color-mix(in srgb, var(--accent, var(--ochre)) 60%, var(--mossy, #5d6b3d)) 100%);
-  }
-  .sch-col-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.4rem;
-    margin: 0.15rem 0 0.45rem;
-  }
-  .sch-col-label {
-    font-family: var(--font-mono);
-    font-size: 0.6rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--ink-faint);
-    user-select: none;
-  }
-  .sch-col-label strong { color: var(--ink-soft); font-weight: 600; }
-  .sch-col-tool {
-    background: transparent;
-    border: 0;
-    color: var(--ink-faint);
-    cursor: pointer;
-    padding: 0 0.25rem;
-    font-size: 0.85rem;
-    line-height: 1;
-    border-radius: var(--radius-sm, 2px);
-  }
-  .sch-col-tool:hover { color: var(--rust, var(--accent)); background: color-mix(in srgb, var(--rust, var(--accent)) 10%, transparent); }
-  .sch-col-body {
-    display: flex;
-    flex-direction: column;
-    gap: 0.18rem;
-    flex: 1;
-  }
-  .sch-card {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.4rem 0.55rem;
-    background: var(--paper, #fff);
-    border: 1px solid var(--rule);
-    border-left: 3px solid var(--accent, var(--ochre));
-    border-radius: var(--radius-sm, 2px);
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
-    color: var(--ink);
-    line-height: 1.25;
-    transition: transform 0.12s, box-shadow 0.12s, border-color 0.12s;
-  }
-  .sch-card:hover {
-    box-shadow: 0 1px 0 color-mix(in srgb, var(--ink) 8%, transparent);
-    border-color: color-mix(in srgb, var(--accent, var(--ochre)) 50%, var(--rule));
-  }
-  .sch-card-text { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .sch-card-x {
-    background: transparent;
-    border: 0;
-    color: var(--ink-faint);
-    cursor: pointer;
-    padding: 0 0.2rem;
-    font-size: 0.78rem;
-    line-height: 1;
-    opacity: 0;
-    transition: opacity 0.12s, color 0.12s;
-  }
-  .sch-card:hover .sch-card-x { opacity: 1; }
-  .sch-card-x:hover { color: var(--rust, var(--accent)); }
-  .sch-or-sep {
-    align-self: center;
-    font-family: var(--font-display, 'Fraunces', serif);
-    font-style: italic;
-    font-size: 0.78rem;
-    color: var(--ink-faint);
-    padding: 0.05rem 0;
-    user-select: none;
-    letter-spacing: 0.04em;
-  }
-  .sch-col-foot {
-    margin-top: 0.45rem;
-    display: flex;
-    justify-content: center;
-  }
-  .sch-col-add {
-    background: transparent;
-    border: 1px dashed color-mix(in srgb, var(--ink) 22%, transparent);
-    border-radius: var(--radius-sm, 2px);
-    padding: 0.22rem 0.6rem;
-    font-family: var(--font-mono);
-    font-size: 0.62rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--ink-faint);
-    cursor: pointer;
-  }
-  .sch-col-add:hover {
-    color: var(--accent, var(--ochre));
-    border-color: var(--accent, var(--ochre));
-    background: color-mix(in srgb, var(--accent, var(--ochre)) 6%, transparent);
-  }
-  .sch-and-link {
-    align-self: center;
-    font-family: var(--font-display, 'Fraunces', serif);
-    font-style: italic;
-    font-weight: 400;
-    font-size: 0.95rem;
-    color: var(--ink-faint);
-    padding: 0 0.1rem;
-    user-select: none;
-  }
-  /* "Add another required" tile at the end of the strip. */
-  .sch-col-new {
-    flex: 0 0 8.5rem;
-    align-self: stretch;
-    border: 1px dashed color-mix(in srgb, var(--ink) 22%, transparent);
-    border-radius: var(--radius-md, 4px);
-    background: transparent;
-    color: var(--ink-faint);
-    cursor: pointer;
-    font-family: var(--font-mono);
-    font-size: 0.66rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    padding: 0.5rem;
-    line-height: 1.4;
-    transition: color 0.15s, border-color 0.15s, background 0.15s;
-  }
-  .sch-col-new:hover {
-    color: var(--accent, var(--ochre));
-    border-color: var(--accent, var(--ochre));
-    background: color-mix(in srgb, var(--accent, var(--ochre)) 6%, transparent);
-  }
-  /* Pending highlight: every column + the "+ another" tile glows as
-     a drop target. */
-  body.sch-has-pending .sch-col,
-  body.sch-has-pending .sch-col-new {
-    cursor: copy;
-    border-color: color-mix(in srgb, var(--accent, var(--ochre)) 55%, transparent);
-    box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent, var(--ochre)) 18%, transparent);
-  }
-  body.sch-has-pending .sch-col:hover,
-  body.sch-has-pending .sch-col-new:hover {
-    background: color-mix(in srgb, var(--accent, var(--ochre)) 10%, transparent);
-    border-color: var(--accent, var(--ochre));
-    transform: translateY(-1px);
-  }
-
   /* Cursor-follower chip when a course is pending. Mirrors the linker
      behavior (cursor → object) the user liked. */
   .sch-cursor-follow {
@@ -9313,42 +9098,6 @@ function _schAllShelvedSubjects(node, out) {
   return out;
 }
 
-// (Kanban projection retained as a legacy helper, but unused by the
-// rainbow-bracket renderer below. Keeping the function around in case
-// anything else still calls it; the new tree just iterates the
-// underlying ExprNode shape directly.)
-function _schKanbanColumns() {
-  const root = _schWantedRoot();
-  if (!root) return [];
-  // Already flat AND-of-OR? Render direct so paths line up with the
-  // catalog's child indices.
-  function isLeaf(n) { return n && n.type === 'course'; }
-  function isFlatOr(n) {
-    return n && n.type !== 'course' && n.op === 'OR' &&
-      (n.children || []).every(isLeaf);
-  }
-  const flat = root.type !== 'course' && root.op === 'AND' &&
-    (root.children || []).every((c) => isLeaf(c) || isFlatOr(c));
-  if (flat) {
-    return (root.children || []).map((c, i) => {
-      if (isLeaf(c)) {
-        return { kind: 'required', codes: [c.code], colIdx: i, fromTree: true };
-      }
-      return { kind: 'pickone', codes: c.children.map((k) => k.code), colIdx: i, fromTree: true };
-    });
-  }
-  // Fallback projection: distribute through CNF, render clauses as
-  // columns. Edits won't write back through this path — see _schEdit
-  // helpers; they're disabled in projected mode.
-  let clauses;
-  try { clauses = _schToCNF(root); } catch (_) { clauses = []; }
-  return clauses.map((cl, i) => ({
-    kind: cl.length === 1 ? 'required' : 'pickone',
-    codes: cl.slice(),
-    colIdx: i,
-    fromTree: false,
-  }));
-}
 
 // Render the full wanted expression as a rainbow-bracket nested
 // AND/OR tree. Each depth gets its own accent color so the
@@ -9548,8 +9297,8 @@ function _schRenderFillIn() {
   const plan = (typeof _viewedPlan === 'function') ? _viewedPlan() : null;
   if (!plan) { el.hidden = true; return; }
   const root = (plan.wanted && plan.wanted.root) || null;
-  const shelves = _schAllShelves(root, []);
-  if (shelves.length === 0) { el.hidden = true; return; }
+  const shelves = _schAllShelvedSubjects(root);
+  if (shelves.size === 0) { el.hidden = true; return; }
   const stagedBySubject = _schStagedCoursesBySubject(plan);
   let html = '<div class="sch-fill-in-h"><span>Fill-in</span><em>shelved subjects from your wanted</em></div>';
   for (const subject of shelves) {
@@ -9752,19 +9501,6 @@ function _schPruneShelves(node) {
   if (filtered.length === 0) return null;
   if (filtered.length === 1) return filtered[0];
   return Object.assign({}, node, { children: filtered });
-}
-// Walk the tree and collect every shelf subject (deduped) so the
-// fill-in panel knows what to ask the user to pick after preview.
-function _schAllShelves(node, out) {
-  out = out || [];
-  if (!node) return out;
-  if (node.type === 'shelf') {
-    if (out.indexOf(node.subject) === -1) out.push(node.subject);
-    return out;
-  }
-  if (node.type === 'course') return out;
-  for (const c of (node.children || [])) _schAllShelves(c, out);
-  return out;
 }
 function _schToCNF(node) {
   if (!node) return [];
@@ -10062,6 +9798,10 @@ function _schCancelPreview() {
 
 function _schPickPreview() {
   if (_schPreviewIndex < 0) return;
+  // If a course is on the cursor, the user has finished picking and
+  // probably doesn't still want it pending — clear so it doesn't
+  // surprise them on their next click.
+  if (_schPendingCourse) _schClearPending();
   _schPickCandidate(_schPreviewIndex);
 }
 
@@ -10224,6 +9964,7 @@ window.addEventListener('horarium:ready', function () {
       document.removeEventListener('mouseup', onUp);
       document.removeEventListener('touchmove', onMove);
       document.removeEventListener('touchend', onUp);
+      document.removeEventListener('touchcancel', onUp);
     };
     const onDown = (e) => {
       dragging = true;
@@ -10234,6 +9975,7 @@ window.addEventListener('horarium:ready', function () {
       document.addEventListener('mouseup', onUp);
       document.addEventListener('touchmove', onMove, { passive: true });
       document.addEventListener('touchend', onUp);
+      document.addEventListener('touchcancel', onUp);
       e.preventDefault();
     };
     dragHandle.addEventListener('mousedown', onDown);

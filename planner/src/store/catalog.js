@@ -928,12 +928,16 @@ export function createCatalog() {
     };
   }
   function _wantedNodeAtPath(root, path) {
+    // Returns the group at `path`, or null if the path doesn't resolve
+    // to a group. Course AND shelf leaves both return null — the
+    // callers (wantedAddCourse, wantedAddGroup, ...) need a
+    // children[]-bearing node to mutate.
     let cur = root;
     for (const idx of path) {
-      if (!cur || cur.type === "course") return null;
+      if (!cur || cur.type === "course" || cur.type === "shelf") return null;
       cur = cur.children[idx];
     }
-    if (!cur || cur.type === "course") return null;
+    if (!cur || cur.type === "course" || cur.type === "shelf") return null;
     return cur;
   }
   function _wantedFindCode(node, code) {
