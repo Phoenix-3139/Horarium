@@ -118,6 +118,52 @@
   }
   ::-webkit-scrollbar-corner { background: transparent; }
 
+  /* Per-theme scrollbar personality. The defaults above already adapt
+     via --ink and --accent; these tweaks dial in the right contrast +
+     character for each palette. */
+  /* Editorial — paper feel, warm rust thumb so it reads against the
+     cream paper without going harsh black. */
+  :root[data-theme="editorial"]::-webkit-scrollbar-thumb,
+  :root:not([data-theme])::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--rust) 30%, transparent);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  :root[data-theme="editorial"]::-webkit-scrollbar-thumb:hover,
+  :root:not([data-theme])::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in srgb, var(--rust) 70%, transparent);
+    background-clip: padding-box;
+  }
+  /* Nature — leafy moss against parchment; slightly thicker so it
+     reads like a vine on the margin. */
+  :root[data-theme="nature"] {
+    scrollbar-color: color-mix(in srgb, var(--mossy) 40%, transparent) transparent;
+  }
+  :root[data-theme="nature"]::-webkit-scrollbar { width: 12px; height: 12px; }
+  :root[data-theme="nature"]::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--mossy) 40%, transparent);
+    border: 3px solid transparent;
+    background-clip: padding-box;
+  }
+  :root[data-theme="nature"]::-webkit-scrollbar-thumb:hover {
+    background: var(--mossy);
+    background-clip: padding-box;
+  }
+  /* Futuristic — phosphor cyan thumb that reads as glowing. */
+  :root[data-theme="futuristic"]::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--accent) 35%, transparent);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    box-shadow: 0 0 6px color-mix(in srgb, var(--accent) 40%, transparent);
+  }
+  :root[data-theme="futuristic"]::-webkit-scrollbar-thumb:hover {
+    background: var(--accent);
+    background-clip: padding-box;
+    box-shadow: 0 0 12px var(--accent);
+  }
+  /* Coffee already uses the default ink-22%/accent-65% formula —
+     the warm cream ink against the dark backdrop reads well as-is. */
+
   /* dark theme — editorial after dark
      Warm coffee-charcoal canvas with the same Fraunces serif voice.
      Ink is a warm cream (NOT cool grey), accent is a refined honey
@@ -2844,7 +2890,16 @@
     text-transform: uppercase;
     font-weight: 600;
   }
-  .drawer-flag:hover { transform: translateX(-5px); }
+  /* Hover lifts the flag with a shadow boost instead of a translate
+     — translateX would expose the bare edge behind the flag, leaving
+     it floating off the page border. Filter brightness keeps the
+     affordance without the gap. */
+  .drawer-flag:hover {
+    filter: brightness(1.06);
+  }
+  .drawer-flag:hover .flag-body {
+    box-shadow: -6px 4px 18px rgba(0, 0, 0, 0.24);
+  }
   .drawer-flag.hidden { transform: translateX(110%); }
 
   .side-drawer {
@@ -6147,7 +6202,12 @@
     font-weight: 500;
   }
   .scheduler-flag .flag-label { font-size: 0.7rem; letter-spacing: 0.16em; }
-  .scheduler-flag:hover { transform: translateY(-3px); }
+  /* Hover deepens the shadow + brightens the fill instead of
+     translating up — translateY exposes the bare bottom edge. */
+  .scheduler-flag:hover {
+    filter: brightness(1.08);
+    box-shadow: 0 -8px 26px rgba(0, 0, 0, 0.24);
+  }
   body.sch-drawer-open .scheduler-flag { transform: translateY(-200px); }
   .scheduler-flag.hidden { transform: translateY(120%); }
 
@@ -6496,17 +6556,43 @@
     text-align: left;
   }
   .sch-dock-toggle .section-label { flex: 1; pointer-events: none; }
-  .sch-dock-toggle-caret {
+  .sch-dock-toggle-hint {
     font-family: var(--font-display, 'Fraunces', serif);
     font-style: italic;
-    font-size: 1.5rem;
+    font-size: 0.84rem;
     color: var(--ink-faint);
-    transition: transform 0.2s ease;
-    line-height: 1;
-    transform: rotate(90deg);
+    margin-right: 0.5rem;
+    pointer-events: none;
+    transition: color 0.15s, opacity 0.15s;
   }
-  .sch-dock[data-collapsed="false"] .sch-dock-toggle-caret { transform: rotate(-90deg); }
-  .sch-dock-toggle:hover .sch-dock-toggle-caret { color: var(--accent, var(--ochre)); }
+  .sch-dock[data-collapsed="false"] .sch-dock-toggle-hint { opacity: 0; }
+  .sch-dock-toggle:hover .sch-dock-toggle-hint { color: var(--accent, var(--ochre)); }
+  .sch-dock-toggle-caret {
+    flex: 0 0 auto;
+    width: 32px;
+    height: 32px;
+    border-radius: 999px;
+    background: var(--accent, var(--ochre));
+    color: var(--cream, #faf6ec);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    line-height: 1;
+    box-shadow:
+      0 2px 6px color-mix(in srgb, var(--ink) 25%, transparent),
+      inset 0 0 0 1px color-mix(in srgb, var(--cream, #fff) 25%, transparent);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), filter 0.15s, box-shadow 0.15s;
+  }
+  .sch-dock[data-collapsed="false"] .sch-dock-toggle-caret { transform: rotate(180deg); }
+  .sch-dock-toggle:hover .sch-dock-toggle-caret {
+    filter: brightness(1.08);
+    box-shadow:
+      0 4px 14px color-mix(in srgb, var(--ink) 35%, transparent),
+      inset 0 0 0 1px color-mix(in srgb, var(--cream, #fff) 50%, transparent);
+  }
+  .sch-dock-toggle:hover .sch-dock-toggle-caret { transform: rotate(0deg) translateY(2px); }
+  .sch-dock[data-collapsed="false"] .sch-dock-toggle:hover .sch-dock-toggle-caret { transform: rotate(180deg) translateY(2px); }
   .sch-dock-h2 {
     margin-top: 0.5rem;
     margin-bottom: 0.4rem;
@@ -8509,7 +8595,8 @@
   <section class="module sch-dock" data-module-id="auto-scheduler" data-collapsed="true" id="sch-dock">
     <button type="button" class="sch-dock-toggle" id="sch-dock-toggle" aria-expanded="false" title="Expand auto-scheduler">
       <span class="section-label"><span class="num">06</span> Auto-scheduler</span>
-      <span class="sch-dock-toggle-caret" aria-hidden="true">›</span>
+      <span class="sch-dock-toggle-hint">Tap to open</span>
+      <span class="sch-dock-toggle-caret" aria-hidden="true">▾</span>
     </button>
     <h2 class="sch-dock-h2">Build a schedule <em>from your wanted</em>.</h2>
     <p class="picker-sub sch-dock-blurb" style="max-width:65ch;">Open the <strong>logic maker</strong> on the right to declare what you want. Tune preferences below, then generate. Results appear in the strip at the bottom — click one to preview on the calendar.</p>
