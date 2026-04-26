@@ -7370,6 +7370,328 @@
     color: var(--ink-faint);
   }
 
+  /* =========================================================
+     ONBOARDING
+     Welcome overlay (first-run) + floating progress checklist.
+     Both share a paper-soft palette and editorial typography.
+     ========================================================= */
+  .onb-overlay[hidden] { display: none; }
+  .onb-checklist[hidden] { display: none; }
+  .onb-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: color-mix(in srgb, var(--ink) 35%, transparent);
+    backdrop-filter: blur(6px) saturate(110%);
+    -webkit-backdrop-filter: blur(6px) saturate(110%);
+    animation: onb-fade 0.3s ease;
+  }
+  @keyframes onb-fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .onb-card {
+    position: relative;
+    width: min(720px, 100%);
+    max-height: calc(100vh - 4rem);
+    overflow-y: auto;
+    background: var(--paper, #f6f1e7);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+    padding: 2.4rem 3rem 2.2rem;
+    color: var(--ink);
+    animation: onb-rise 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  @keyframes onb-rise {
+    from { opacity: 0; transform: translateY(20px) scale(0.98); }
+    to { opacity: 1; transform: none; }
+  }
+  .onb-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.1rem;
+  }
+  .onb-tag {
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--accent, var(--ochre));
+  }
+  .onb-close {
+    background: transparent;
+    border: 0;
+    color: var(--ink-faint);
+    font-size: 1.5rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+  }
+  .onb-close:hover { color: var(--ink); background: color-mix(in srgb, var(--ink) 6%, transparent); }
+  .onb-title {
+    font-family: var(--font-display, 'Fraunces', serif);
+    font-weight: 500;
+    font-size: clamp(2.2rem, 5vw, 3rem);
+    line-height: 1.1;
+    margin: 0 0 0.6rem;
+    letter-spacing: -0.015em;
+  }
+  .onb-title em { color: var(--accent, var(--ochre)); font-style: italic; font-weight: 500; }
+  .onb-blurb {
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    margin: 0 0 1.7rem;
+    max-width: 60ch;
+  }
+  .onb-blurb strong { color: var(--ink); font-weight: 600; }
+  .onb-steps {
+    list-style: none;
+    margin: 0 0 1.8rem;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    border-top: 1px solid var(--rule);
+    padding-top: 1.4rem;
+  }
+  .onb-steps li {
+    display: grid;
+    grid-template-columns: 3.4rem 1fr;
+    gap: 0.7rem;
+    align-items: baseline;
+  }
+  .onb-step-num {
+    font-family: var(--font-display, 'Fraunces', serif);
+    font-style: italic;
+    font-size: 1.6rem;
+    color: var(--accent, var(--ochre));
+    font-weight: 500;
+    line-height: 1;
+  }
+  .onb-step-body h3 {
+    font-family: var(--font-display, 'Fraunces', serif);
+    font-weight: 500;
+    font-size: 1.1rem;
+    margin: 0 0 0.18rem;
+    line-height: 1.25;
+    letter-spacing: -0.005em;
+  }
+  .onb-step-body h3 em { color: var(--accent, var(--ochre)); font-style: italic; }
+  .onb-step-body p {
+    margin: 0;
+    font-size: 0.84rem;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+  .onb-step-body kbd {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    padding: 0.05rem 0.32rem;
+    background: var(--cream);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    color: var(--ink);
+  }
+  .onb-actions {
+    display: flex;
+    gap: 0.65rem;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  .onb-primary, .onb-secondary {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 0.7rem 1.3rem;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    font-weight: 600;
+    transition: filter 0.15s, background 0.15s, border-color 0.15s;
+  }
+  .onb-primary {
+    background: var(--accent, var(--ochre));
+    color: var(--paper, #fff);
+  }
+  .onb-primary:hover { filter: brightness(0.95); }
+  .onb-secondary {
+    background: transparent;
+    color: var(--ink-soft);
+    border-color: var(--rule);
+  }
+  .onb-secondary:hover {
+    color: var(--ink);
+    border-color: var(--ink-soft);
+  }
+  .onb-foot {
+    font-size: 0.74rem;
+    color: var(--ink-faint);
+    margin: 0;
+    font-style: italic;
+  }
+  .onb-foot strong {
+    font-style: normal;
+    color: var(--accent, var(--ochre));
+    font-family: var(--font-mono);
+    font-weight: 600;
+  }
+  /* Help (?) button — sits in the nav as the last sibling of gear. */
+  .fn-item.fn-help {
+    color: var(--ink-soft);
+  }
+  .fn-item.fn-help .fn-icon {
+    font-family: var(--font-display, 'Fraunces', serif);
+    font-style: italic;
+    font-size: 1rem;
+  }
+
+  /* ===== Floating progress checklist ===== */
+  .onb-checklist {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    z-index: 95;
+    display: flex;
+    align-items: flex-end;
+    pointer-events: none;
+  }
+  .onb-checklist > * { pointer-events: auto; }
+  .onb-checklist-tab {
+    display: none;
+    background: var(--accent, var(--ochre));
+    color: var(--cream, #fff);
+    border: 0;
+    border-radius: 0 6px 0 0;
+    padding: 0.55rem 0.95rem 0.6rem;
+    cursor: pointer;
+    box-shadow: 3px -3px 14px rgba(0, 0, 0, 0.16);
+    font-family: var(--font-mono);
+    transition: transform 0.2s;
+  }
+  .onb-checklist-tab:hover { transform: translateY(-3px); }
+  .onb-checklist-tab-num {
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+  .onb-checklist-tab-of {
+    font-size: 0.7rem;
+    opacity: 0.85;
+    letter-spacing: 0.14em;
+    margin-left: 0.15rem;
+  }
+  .onb-checklist[data-collapsed="true"] .onb-checklist-tab { display: inline-flex; align-items: baseline; gap: 0.1rem; }
+  .onb-checklist[data-collapsed="true"] .onb-checklist-body { display: none; }
+
+  .onb-checklist-body {
+    width: 280px;
+    margin-left: 1rem;
+    margin-bottom: 1rem;
+    background: var(--surface, var(--paper-soft));
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+  }
+  .onb-checklist-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 0.7rem 0.9rem 0.55rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .onb-checklist-tag {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent, var(--ochre));
+    margin-bottom: 0.1rem;
+  }
+  .onb-checklist-progress {
+    font-family: var(--font-display, 'Fraunces', serif);
+    font-style: italic;
+    font-size: 0.84rem;
+    color: var(--ink-soft);
+  }
+  .onb-checklist-tools {
+    display: inline-flex;
+    gap: 0.15rem;
+  }
+  .onb-checklist-collapse, .onb-checklist-dismiss {
+    background: transparent;
+    border: 0;
+    color: var(--ink-faint);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    padding: 0 0.35rem;
+    line-height: 1;
+    border-radius: 3px;
+  }
+  .onb-checklist-collapse { transform: rotate(-90deg); display: inline-block; }
+  .onb-checklist-collapse:hover, .onb-checklist-dismiss:hover { color: var(--accent, var(--ochre)); background: color-mix(in srgb, var(--ink) 4%, transparent); }
+  .onb-checklist-dismiss:hover { color: var(--rust, var(--accent)); }
+
+  .onb-checklist-list {
+    list-style: none;
+    margin: 0;
+    padding: 0.4rem 0.4rem 0.7rem;
+  }
+  .onb-checklist-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.55rem;
+    padding: 0.45rem 0.55rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+  .onb-checklist-list li:hover { background: color-mix(in srgb, var(--ink) 4%, transparent); }
+  .onb-checklist-list li[data-done="true"] { opacity: 0.6; }
+  .onb-checklist-list li[data-done="true"] .onb-task-text { text-decoration: line-through; color: var(--ink-faint); }
+  .onb-task-mark {
+    flex: 0 0 auto;
+    width: 1.05rem;
+    height: 1.05rem;
+    border: 1.5px solid var(--ink-faint);
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--paper, #fff);
+    font-size: 0.7rem;
+    line-height: 1;
+    margin-top: 0.1rem;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  li[data-done="true"] .onb-task-mark {
+    background: var(--mossy, var(--accent));
+    border-color: var(--mossy, var(--accent));
+  }
+  .onb-task-text {
+    font-size: 0.84rem;
+    line-height: 1.35;
+    color: var(--ink);
+  }
+  .onb-task-hint {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--ink-faint);
+    margin-top: 0.1rem;
+    font-style: italic;
+  }
+
   /* ===== Empty-state utility =====
      For surfaces that LOOK like they should have content but don't —
      stats with no data yet, the empty schedule grid, browse panes
@@ -12488,6 +12810,13 @@ function renderNav() {
   gearBtn.innerHTML = '<span class="fn-icon">⚙</span>';
   gearBtn.onclick = openConfigModal;
   nav.appendChild(gearBtn);
+  // Help (?) button → re-opens the onboarding welcome card.
+  const helpBtn = document.createElement('button');
+  helpBtn.className = 'fn-item fn-help';
+  helpBtn.title = 'Replay the welcome';
+  helpBtn.innerHTML = '<span class="fn-icon">?</span>';
+  helpBtn.onclick = () => onbShowWelcome();
+  nav.appendChild(helpBtn);
 }
 
 function ensureTabPane(tabId) {
@@ -16387,6 +16716,286 @@ function _catUpdateEmptyState() {
 
 <!-- ========== TOAST (save feedback) ========== -->
 <div class="cat-toast" id="cat-toast" role="status" aria-live="polite"></div>
+
+<!-- ========== ONBOARDING — first-run welcome card ==========
+     Editorial-style overlay shown on first load (when localStorage
+     flag absent). Two outs: "walk me through" or "let me explore".
+     Replayable via the ? button in the nav. -->
+<div class="onb-overlay" id="onb-overlay" hidden aria-modal="true" role="dialog">
+  <article class="onb-card">
+    <header class="onb-card-head">
+      <span class="onb-tag">welcome</span>
+      <button type="button" class="onb-close" id="onb-close" aria-label="Close">×</button>
+    </header>
+    <h1 class="onb-title">You're in <em>Horarium</em>.</h1>
+    <p class="onb-blurb">
+      A schedule planner for <strong>NYU Abu Dhabi</strong>. It runs
+      entirely in this browser tab — no accounts, no cloud. Your
+      catalog and plans stay with you.
+    </p>
+    <ol class="onb-steps">
+      <li>
+        <span class="onb-step-num">01</span>
+        <div class="onb-step-body">
+          <h3>Paste from <em>Albert</em></h3>
+          <p>Open Albert's class search, copy the whole results page, and paste into the <strong>Catalog</strong> tab. Horarium parses what it finds.</p>
+        </div>
+      </li>
+      <li>
+        <span class="onb-step-num">02</span>
+        <div class="onb-step-body">
+          <h3>Stage <em>your sections</em></h3>
+          <p>Browse courses on the <strong>Main</strong> tab. Click <kbd>Stage</kbd> on any section — the calendar fills in. Conflicts surface inline; nothing blocks.</p>
+        </div>
+      </li>
+      <li>
+        <span class="onb-step-num">03</span>
+        <div class="onb-step-body">
+          <h3>Or, let the <em>auto-scheduler</em> try</h3>
+          <p>Tell it what you want with the rainbow-bracket logic maker. It generates schedules that fit. Preview, then pick.</p>
+        </div>
+      </li>
+    </ol>
+    <div class="onb-actions">
+      <button type="button" class="onb-primary" id="onb-walk">Walk me through it</button>
+      <button type="button" class="onb-secondary" id="onb-explore">Let me explore</button>
+    </div>
+    <p class="onb-foot">You can replay this any time from the <strong>?</strong> button in the nav.</p>
+  </article>
+</div>
+
+<!-- ========== ONBOARDING — floating progress checklist ==========
+     Bottom-left counterpart to the right-edge flags. Tracks 5
+     core milestones and auto-checks them as the user does things.
+     Collapsible; permanently dismissible via × once all done. -->
+<script>
+// =========================================================
+// ONBOARDING — welcome card + progress checklist
+// localStorage keys:
+//   horarium.onboarding.welcomed   "true" once the user has dismissed
+//                                  the welcome card (any path)
+//   horarium.onboarding.checklist_dismissed
+//                                  "true" if the user explicitly hid
+//                                  the checklist permanently
+//   horarium.onboarding.checklist_collapsed
+//                                  "true" if collapsed to tab (soft)
+// =========================================================
+const ONB_KEYS = {
+  WELCOMED: 'horarium.onboarding.welcomed',
+  CHECKLIST_DISMISSED: 'horarium.onboarding.checklist_dismissed',
+  CHECKLIST_COLLAPSED: 'horarium.onboarding.checklist_collapsed',
+};
+const ONB_TASKS = [
+  {
+    id: 'paste',
+    text: 'Paste your Albert catalog',
+    hint: 'Catalog tab → paste box',
+    goto: 'catalog',
+    done: () => (window.HS && window.HS.catalog && window.HS.catalog.getEffective().courses.length > 0),
+  },
+  {
+    id: 'stage',
+    text: 'Stage your first section',
+    hint: 'Main tab → click Stage on any section',
+    goto: 'main',
+    done: () => {
+      const p = window.HS && window.HS.catalog && window.HS.catalog.plans.getActive();
+      return !!(p && p.sections && p.sections.length > 0);
+    },
+  },
+  {
+    id: 'calendar',
+    text: 'See it on the calendar',
+    hint: 'Main tab — schedule grid lights up',
+    goto: 'main',
+    done: () => {
+      const p = window.HS && window.HS.catalog && window.HS.catalog.plans.getActive();
+      return !!(p && p.sections && p.sections.length > 0);
+    },
+  },
+  {
+    id: 'wanted',
+    text: 'Build a wanted expression',
+    hint: 'Open the logic maker (bottom-right tab)',
+    goto: 'main',
+    action: () => { if (typeof toggleSchedulerDrawer === 'function' && !document.body.classList.contains('sch-drawer-open')) toggleSchedulerDrawer(); },
+    done: () => {
+      const p = window.HS && window.HS.catalog && window.HS.catalog.plans.getActive();
+      return !!(p && p.wanted && p.wanted.root);
+    },
+  },
+  {
+    id: 'auto',
+    text: 'Pick an auto-generated schedule',
+    hint: 'Generate schedules → Pick one',
+    goto: 'main',
+    done: () => {
+      if (!(window.HS && window.HS.catalog && window.HS.catalog.plans)) return false;
+      return window.HS.catalog.plans.list().some((p) => p.origin === 'auto-scheduler');
+    },
+  },
+];
+
+function onbHasWelcomed() {
+  try { return localStorage.getItem(ONB_KEYS.WELCOMED) === 'true'; } catch { return true; }
+}
+function onbMarkWelcomed() {
+  try { localStorage.setItem(ONB_KEYS.WELCOMED, 'true'); } catch {}
+}
+function onbHideWelcome() {
+  const ov = document.getElementById('onb-overlay');
+  if (ov) ov.hidden = true;
+}
+function onbShowWelcome() {
+  const ov = document.getElementById('onb-overlay');
+  if (ov) ov.hidden = false;
+}
+
+function onbChecklistShouldShow() {
+  // Hidden permanently?
+  try {
+    if (localStorage.getItem(ONB_KEYS.CHECKLIST_DISMISSED) === 'true') return false;
+  } catch {}
+  // All tasks done? Auto-hide so we don't pester finished users.
+  if (ONB_TASKS.every((t) => safeDone(t))) return false;
+  return true;
+}
+function safeDone(task) {
+  try { return !!task.done(); } catch { return false; }
+}
+
+function onbRenderChecklist() {
+  const root = document.getElementById('onb-checklist');
+  if (!root) return;
+  if (!onbChecklistShouldShow()) {
+    root.hidden = true;
+    return;
+  }
+  root.hidden = false;
+  // Collapsed?
+  let collapsed = false;
+  try { collapsed = localStorage.getItem(ONB_KEYS.CHECKLIST_COLLAPSED) === 'true'; } catch {}
+  root.setAttribute('data-collapsed', collapsed ? 'true' : 'false');
+
+  // Tasks
+  const list = document.getElementById('onb-checklist-list');
+  if (!list) return;
+  let doneCount = 0;
+  list.innerHTML = ONB_TASKS.map((task) => {
+    const done = safeDone(task);
+    if (done) doneCount++;
+    return '<li data-done="' + done + '" data-task-id="' + task.id + '">' +
+      '<span class="onb-task-mark">' + (done ? '✓' : '') + '</span>' +
+      '<span><span class="onb-task-text">' + _brEscape(task.text) + '</span>' +
+      '<span class="onb-task-hint">' + _brEscape(task.hint) + '</span></span>' +
+    '</li>';
+  }).join('');
+  // Wire row clicks → switch tab + run action
+  list.querySelectorAll('[data-task-id]').forEach((li) => {
+    li.addEventListener('click', () => {
+      const tid = li.getAttribute('data-task-id');
+      const task = ONB_TASKS.find((t) => t.id === tid);
+      if (!task) return;
+      if (task.goto && typeof switchTab === 'function') switchTab(task.goto);
+      setTimeout(() => { if (typeof task.action === 'function') task.action(); }, 100);
+    });
+  });
+  const total = ONB_TASKS.length;
+  const numEl = document.getElementById('onb-checklist-tab-num');
+  const progressEl = document.getElementById('onb-checklist-progress');
+  if (numEl) numEl.textContent = String(doneCount);
+  if (progressEl) progressEl.textContent = doneCount + ' of ' + total + ' done';
+}
+
+function onbBoot() {
+  // Welcome card wiring
+  const ov = document.getElementById('onb-overlay');
+  if (!ov) return;
+  document.getElementById('onb-walk').addEventListener('click', () => {
+    onbMarkWelcomed();
+    onbHideWelcome();
+    // "Walk me through" → expand checklist + jump to Catalog tab.
+    try { localStorage.removeItem(ONB_KEYS.CHECKLIST_COLLAPSED); } catch {}
+    try { localStorage.removeItem(ONB_KEYS.CHECKLIST_DISMISSED); } catch {}
+    onbRenderChecklist();
+    if (typeof switchTab === 'function') switchTab('catalog');
+  });
+  document.getElementById('onb-explore').addEventListener('click', () => {
+    onbMarkWelcomed();
+    onbHideWelcome();
+    onbRenderChecklist();
+  });
+  document.getElementById('onb-close').addEventListener('click', () => {
+    onbMarkWelcomed();
+    onbHideWelcome();
+    onbRenderChecklist();
+  });
+  // Esc closes the welcome card
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !ov.hidden) {
+      onbMarkWelcomed();
+      onbHideWelcome();
+      onbRenderChecklist();
+    }
+  });
+
+  // Checklist wiring
+  const tab = document.getElementById('onb-checklist-tab');
+  const collapseBtn = document.getElementById('onb-checklist-collapse');
+  const dismissBtn = document.getElementById('onb-checklist-dismiss');
+  if (tab) tab.addEventListener('click', () => {
+    try { localStorage.removeItem(ONB_KEYS.CHECKLIST_COLLAPSED); } catch {}
+    onbRenderChecklist();
+  });
+  if (collapseBtn) collapseBtn.addEventListener('click', () => {
+    try { localStorage.setItem(ONB_KEYS.CHECKLIST_COLLAPSED, 'true'); } catch {}
+    onbRenderChecklist();
+  });
+  if (dismissBtn) dismissBtn.addEventListener('click', () => {
+    try { localStorage.setItem(ONB_KEYS.CHECKLIST_DISMISSED, 'true'); } catch {}
+    onbRenderChecklist();
+  });
+
+  // Subscribe to catalog mutations so the checklist auto-checks tasks
+  // as the user does them. Throttle to one paint per task change.
+  if (window.HS && window.HS.catalog && window.HS.catalog.subscribe) {
+    let raf = null;
+    window.HS.catalog.subscribe(() => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => { raf = null; onbRenderChecklist(); });
+    });
+  }
+
+  // First paint
+  onbRenderChecklist();
+
+  // Show welcome on first run.
+  if (!onbHasWelcomed()) {
+    onbShowWelcome();
+  }
+}
+window.addEventListener('horarium:ready', onbBoot);
+</script>
+
+<aside class="onb-checklist" id="onb-checklist" hidden>
+  <button type="button" class="onb-checklist-tab" id="onb-checklist-tab" title="Show progress">
+    <span class="onb-checklist-tab-num" id="onb-checklist-tab-num">0</span>
+    <span class="onb-checklist-tab-of">/ 5</span>
+  </button>
+  <div class="onb-checklist-body" id="onb-checklist-body">
+    <header class="onb-checklist-head">
+      <div>
+        <div class="onb-checklist-tag">Get started</div>
+        <div class="onb-checklist-progress" id="onb-checklist-progress">0 of 5 done</div>
+      </div>
+      <div class="onb-checklist-tools">
+        <button type="button" class="onb-checklist-collapse" id="onb-checklist-collapse" title="Hide">›</button>
+        <button type="button" class="onb-checklist-dismiss" id="onb-checklist-dismiss" title="Dismiss permanently">×</button>
+      </div>
+    </header>
+    <ol class="onb-checklist-list" id="onb-checklist-list"></ol>
+  </div>
+</aside>
 
 </body>
 </html>
