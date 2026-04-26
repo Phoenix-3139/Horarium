@@ -1,4 +1,4 @@
-// Custom modal component (Piece 5a/3 polish). Replaces every native
+// Custom modal component Replaces every native
 // confirm() / alert() / prompt() in the app. The whole rationale for
 // rolling this by hand instead of using a library is the project's
 // "zero dependencies" rule and the modest API surface — three call

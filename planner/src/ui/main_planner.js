@@ -1,4 +1,4 @@
-// Pure helpers for the Main-tab planner UI (Piece 5a/2). DOM rendering
+// Pure helpers for the Main-tab planner UI DOM rendering
 // and event wiring live in planner/index.html; this module owns the
 // testable bits — picker filtering, conflict detection, color
 // assignment, legend row construction, time conversions.

@@ -242,7 +242,7 @@ export function createPersistence(catalog, options = {}) {
       return r;
     };
   }
-  // Plans namespace (Piece 5a): every mutator on catalog.plans.* should
+  // Plans namespace : every mutator on catalog.plans.* should
   // also schedule a save. Read-only methods (list, get, getActive) skip
   // wrapping so they don't fire spurious saves on render passes.
   if (catalog.plans) {

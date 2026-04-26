@@ -14,9 +14,8 @@
 // new warning types become visible immediately rather than silently
 // rendering as raw type strings.
 //
-// This module is shared between Piece 3b (Browse) and the Paste module's
-// preview in Piece 3a. When 3c / 3d add more warning surfaces, they
-// should import from here too — don't duplicate copy.
+// Shared by Browse and the Paste preview. New warning surfaces should
+// import from here — don't duplicate copy.
 
 export const WARNING_COPY = {
   // --- section-level, routine ---

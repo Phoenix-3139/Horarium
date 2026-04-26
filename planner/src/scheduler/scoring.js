@@ -1,4 +1,4 @@
-// Piece 6 — pure scoring of a candidate schedule against soft user
+// pure scoring of a candidate schedule against soft user
 // preferences. Lower score = better candidate.
 //
 // All preferences contribute additively with no weighting in v1
@@ -136,7 +136,8 @@ export function _scoreCompressed(blocks) {
  *
  * sections: array of effective-catalog section objects (with
  *   meetings[].{days, start_time, end_time}).
- * preferences: PreferencesObject as described in Piece 6 spec.
+ * preferences: PreferencesObject — see DEFAULT_PREFERENCES in
+ *   ../scheduler/requirements.js for the schema.
  *
  * Returns total score. Lower = better. Empty schedules score 0.
  * Empty/null preferences still score 0; caller can sort safely.

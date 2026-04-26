@@ -23,7 +23,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400;1,9..144,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=JetBrains+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <style>
-  /* ===== THEME SYSTEM =====
+  /* theme system
      Each theme provides:
        (1) Canonical theme tokens (--bg, --surface, --ink, --accent,
            --warning, --success, --error, --border, --radius-*, etc.)
@@ -94,7 +94,7 @@
     --font-heading: var(--font-display);
   }
 
-  /* ===== Dark theme — editorial after dark =====
+  /* dark theme — editorial after dark
      Warm coffee-charcoal canvas with the same Fraunces serif voice.
      Ink is a warm cream (NOT cool grey), accent is a refined honey
      amber, film grain mirrors the editorial paper texture so the
@@ -193,7 +193,7 @@
     background: color-mix(in srgb, var(--accent) 8%, transparent);
   }
 
-  /* ===== Futuristic theme — phosphor terminal =====
+  /* futuristic theme — phosphor terminal
      A monitor's worth of dark space, phosphor cyan that earns its
      glow, scanline overlay (replaces editorial's paper grain). Text
      gets a subtle cyan halo so headings read as illuminated rather
@@ -354,7 +354,7 @@
     text-shadow: 0 0 8px rgba(94, 229, 229, 0.3);
   }
 
-  /* ===== Nature theme ===== */
+  /* nature theme */
   :root[data-theme="nature"] {
     --bg: #f4f7f1;
     --surface: #fafcf8;
@@ -467,7 +467,7 @@
     z-index: 1;
   }
 
-  /* ============ HEADER ============ */
+  /* header */
   header {
     display: grid;
     grid-template-columns: 1fr auto;
@@ -549,7 +549,7 @@
     color: var(--rust);
   }
 
-  /* ============ OPTION TABS ============ */
+  /* option tabs */
   .options-row {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -612,7 +612,7 @@
     background: var(--ochre);
   }
 
-  /* ============ DESC + METRICS ============ */
+  /* desc + metrics */
   .option-detail {
     display: grid;
     grid-template-columns: 1.4fr 1fr;
@@ -671,7 +671,7 @@
     letter-spacing: 0.05em;
   }
 
-  /* ============ HALF TITLE ============ */
+  /* half title */
   .half-row {
     display: grid;
     grid-template-columns: auto 1fr;
@@ -706,7 +706,7 @@
     align-self: center;
   }
 
-  /* ============ GRID ============ */
+  /* grid */
   .grid-wrap {
     background: var(--cream);
     border: 1px solid var(--ink);
@@ -945,7 +945,7 @@
     to { opacity: 0.88; transform: translateY(0); }
   }
 
-  /* ============ LEGEND ============ */
+  /* legend */
   .legend {
     display: flex;
     flex-wrap: wrap;
@@ -1080,7 +1080,7 @@
     background: color-mix(in srgb, var(--accent, var(--ochre)) 14%, transparent);
   }
 
-  /* ============ SELECTED ============ */
+  /* selected */
   .selected-row {
     display: flex;
     align-items: center;
@@ -1161,7 +1161,7 @@
     color: var(--cream);
   }
 
-  /* ============ PICKER ============ */
+  /* picker */
   .picker {
     margin-top: 3.5rem;
     padding-top: 2rem;
@@ -1240,7 +1240,7 @@
   .cat-tab.active .cat-count { color: rgba(243, 239, 229, 0.6); }
   .cat-tab.active .cat-count .avail { color: var(--ochre); }
 
-  /* ============ COURSE LIST ============ */
+  /* course list */
   .course-list {
     display: flex;
     flex-direction: column;
@@ -1367,7 +1367,7 @@
     display: block;
   }
 
-  /* ============ MODAL ============ */
+  /* modal */
   .modal-bg {
     position: fixed;
     inset: 0;
@@ -1472,7 +1472,7 @@
   }
   .modal .close-btn:hover { background: var(--rust); }
 
-  /* ============ FOOTER DIVIDER ============ */
+  /* footer divider */
   .footer-mark {
     margin-top: 4rem;
     text-align: center;
@@ -1488,7 +1488,7 @@
     font-style: normal;
   }
 
-  /* ============ RESPONSIVE ============ */
+  /* responsive */
   @media (max-width: 900px) {
     .container { padding: 2rem 1rem; }
     header { grid-template-columns: 1fr; }
@@ -1506,7 +1506,7 @@
     .grid .cell { padding: 7px 8px; }
   }
 
-  /* ============ EXPORT BAR ============ */
+  /* export bar */
   .export-bar {
     display: flex;
     justify-content: flex-end;
@@ -1591,7 +1591,7 @@
     color: var(--ink-faint);
   }
 
-  /* ============ EXPORT STAGE (off-screen for PNG render) ============ */
+  /* export stage (off-screen for png render) */
   .export-stage {
     position: fixed;
     top: -10000px;
@@ -1757,7 +1757,7 @@
     border-top: 1px solid var(--rule);
   }
 
-  /* ============ FRIEND COMPARISON ============ */
+  /* friend comparison */
   .friend-compare {
     margin-top: 3.5rem;
     padding-top: 2rem;
@@ -1999,7 +1999,7 @@
     border-left: 3px solid var(--rust);
   }
 
-  /* ============ FRIEND OVERLAY — strong visibility ============ */
+  /* friend overlay — strong visibility */
 
   /* Overlay status banner — appears above grids when overlay is on */
   .overlay-banner {
@@ -2136,7 +2136,7 @@
     display: none;
   }
 
-  /* ============ PERSONAL TIME FILTERS ============ */
+  /* personal time filters */
   .filter-section {
     margin-top: 3.5rem;
     padding-top: 2rem;
@@ -2370,7 +2370,7 @@
   .ff-cancel { background: transparent; color: var(--ink); }
   .ff-cancel:hover { background: var(--cream); }
 
-  /* === Filter cell patterns on the grid === */
+  /* filter cell patterns on the grid */
   .grid .cell.filter-cell {
     position: relative;
     color: rgba(0,0,0,0.75);
@@ -2441,7 +2441,7 @@
     font-weight: 500;
   }
 
-  /* ============ VIEW TOGGLE ============ */
+  /* view toggle */
   .view-toggle {
     display: inline-flex;
     gap: 0;
@@ -2502,7 +2502,7 @@
     transform: translateY(6px);
   }
 
-  /* ============ TABLE VIEW ============ */
+  /* table view */
   .schedule-table { }
   .schedule-table .tg-card {
     background: var(--cream);
@@ -2695,9 +2695,7 @@
     .schedule-table .td-room { display: none; }
   }
 
-  /* =========================================================
-     FLOATING ISLAND NAVIGATION
-     ========================================================= */
+  /* floating island navigation */
   body {
     padding-top: 86px;
   }
@@ -2778,9 +2776,7 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
-  /* =========================================================
-     RIGHT-SIDE DRAWER (Filters)
-     ========================================================= */
+  /* right-side drawer (filters) */
   .drawer-flag {
     position: fixed;
     right: 0;
@@ -2921,9 +2917,7 @@
     pointer-events: auto;
   }
 
-  /* =========================================================
-     EXPORT TAB (replaces the dropdown)
-     ========================================================= */
+  /* export tab (replaces the dropdown) */
   .export-options {
     margin-top: 1.25rem;
     padding: 0.85rem 1rem;
@@ -3070,9 +3064,7 @@
     .drawer-flag { top: 140px; }
   }
 
-  /* =========================================================
-     MODULAR TAB SYSTEM
-     ========================================================= */
+  /* modular tab system */
 
   /* Modules wrap sections and can move between tabs */
   .module {
@@ -3263,9 +3255,7 @@
     display: block;
   }
 
-  /* =========================================================
-     CONFIG MODAL (visual module organiser)
-     ========================================================= */
+  /* config modal (visual module organiser) */
   .config-overlay {
     position: fixed;
     inset: 0;
@@ -3572,9 +3562,7 @@
     line-height: 1;
   }
 
-  /* =========================================================
-     DRAG-TO-REORDER (tile insertion indicators)
-     ========================================================= */
+  /* drag-to-reorder (tile insertion indicators) */
   .ct-tile {
     position: relative;
     transition: all 0.15s ease, margin 0.2s ease;
@@ -3609,7 +3597,7 @@
     margin-bottom: 8px;
   }
 
-  /* ========== CATALOG / PASTE MODULE (Piece 3a) ========== */
+  /* catalog / paste module (piece 3a) */
   .cat-intro {
     margin-bottom: 1.5rem;
   }
@@ -3865,7 +3853,7 @@
     line-height: 1.55;
   }
 
-  /* ========== CONSENT OVERLAY ========== */
+  /* consent overlay */
   .consent-overlay {
     position: fixed;
     inset: 0;
@@ -3952,7 +3940,7 @@
     line-height: 1.45;
   }
 
-  /* ========== BROWSE MODULE (Piece 3b) ========== */
+  /* browse module (piece 3b) */
   .browse-empty { margin-top: 1.25rem; }
   .browse-layout {
     display: grid;
@@ -4260,7 +4248,7 @@
     }
   }
 
-  /* ========== IDENTITY FORM (Manage) ========== */
+  /* identity form (manage) */
   .ident-form {
     display: flex;
     flex-direction: column;
@@ -4313,7 +4301,7 @@
     min-height: 1.2em;
   }
 
-  /* ========== TOAST ========== */
+  /* toast */
   .cat-toast {
     position: fixed;
     bottom: 2rem;
@@ -4337,7 +4325,7 @@
     transform: translateX(-50%) translateY(0);
   }
 
-  /* ====================== Workshop toolbar ============================ */
+  /* workshop toolbar */
   .wk-toolbar {
     display: flex;
     align-items: center;
@@ -4451,7 +4439,7 @@
     padding-top: 0.2rem;
   }
 
-  /* ====================== Edit module (Piece 3c) ====================== */
+  /* edit module (piece 3c) */
   .ed-empty {
     padding: 2rem 0;
     max-width: 44rem;
@@ -4919,7 +4907,7 @@
     color: color-mix(in srgb, var(--ochre) 95%, transparent);
   }
 
-  /* ====================== Main planner (Piece 5a/2) ====================== */
+  /* main planner (piece 5a/2) */
   .mp-strip {
     display: flex;
     flex-wrap: wrap;
@@ -5084,7 +5072,7 @@
   .mp-course.is-user-authored {
     border-left: 2px dashed color-mix(in srgb, var(--accent, var(--ochre)) 50%, transparent);
   }
-  /* Piece 6 — "+ Req / ✓ Req" affordance on each course header. */
+  /* "+ Req / ✓ Req" affordance on each course header. */
   .mp-req-tag {
     display: inline-block;
     margin-left: 0.5rem;
@@ -5224,7 +5212,7 @@
     margin-top: 0.75rem;
   }
 
-  /* ====================== Custom modal (Piece 5a/3) ====================== */
+  /* custom modal (piece 5a/3) */
   .mdl-backdrop {
     position: fixed;
     inset: 0;
@@ -5324,7 +5312,7 @@
   }
   .mdl-btn-danger:hover { filter: brightness(0.9); }
 
-  /* ====================== Picker drill-down (Piece 5a/3) ====================== */
+  /* picker drill-down (piece 5a/3) */
   .mp-search {
     flex: 1;
   }
@@ -6018,7 +6006,7 @@
     white-space: nowrap;
   }
 
-  /* ====================== Manage module (Piece 3d) ====================== */
+  /* manage module (piece 3d) */
   .mn-section-h {
     font-family: var(--font-heading, 'Fraunces', serif);
     font-size: 1.1rem;
@@ -6101,12 +6089,9 @@
     accent-color: var(--accent);
   }
 
-  /* ===== Auto-scheduler — bottom logic sheet, plus an in-flow
-     controls + results section docked below the calendar. The
-     small "logic" tab sits at the bottom-right corner; tap it to
-     slide the sheet up from the bottom. The sheet is short,
-     horizontal, and renders the wanted expression as one inline
-     line of colored brackets. Easy to glance, easy to dismiss. */
+  /* Auto-scheduler. Logic-maker sheet slides from the bottom; the
+     controls + results section lives in the page flow below the
+     calendar. */
   .scheduler-flag {
     position: fixed;
     right: 1.25rem;
@@ -7240,7 +7225,7 @@
   .sch-preview-pick:hover { filter: brightness(0.95); }
   .sch-preview-cancel:hover { background: color-mix(in srgb, var(--ink) 5%, transparent); }
 
-  /* ===== Component-warning floating notification (Piece 5b) =====
+  /* component-warning floating notification (piece 5b)
      Top-right card that surfaces when a multi-component course has
      uncovered components. Theme-aware via standard tokens; the
      accent stripe + icon use --warning so it reads as advisory, not
@@ -7370,11 +7355,9 @@
     color: var(--ink-faint);
   }
 
-  /* =========================================================
-     ONBOARDING
-     Welcome overlay (first-run) + floating progress checklist.
-     Both share a paper-soft palette and editorial typography.
-     ========================================================= */
+  /* onboarding
+     welcome overlay (first-run) + floating progress checklist.
+     both share a paper-soft palette and editorial typography. */
   .onb-overlay[hidden] { display: none; }
   .fg-overlay[hidden] { display: none; }
   .onb-overlay {
@@ -7579,7 +7562,7 @@
     color: var(--cream, #faf6ec);
   }
 
-  /* ============== FIELD GUIDE ==============
+  /* field guide
      A flashcard-style learning panel. TOC on the left, active card
      on the right. Walk through with prev/next or jump topics. */
   .fg-overlay {
@@ -7817,7 +7800,7 @@
   }
 
 
-  /* ===== Empty-state utility =====
+  /* empty-state utility
      For surfaces that LOOK like they should have content but don't —
      stats with no data yet, the empty schedule grid, browse panes
      before a selection. A hatched stripe pattern + a soft "no data
@@ -8173,7 +8156,7 @@
     border-radius: 4px;
   }
 
-  /* ====================== Pack import / pack selector (Piece 4) ====================== */
+  /* pack import / pack selector (piece 4) */
   .pk-import-row {
     display: flex;
     gap: 0.7rem;
@@ -8316,10 +8299,10 @@
 
 <div id="tab-container">
 
-  <!-- ========== TAB: Catalog (Piece 3a — Paste; 3b/c/d add Browse/Edit/Manage) ========== -->
+  <!-- TAB: Catalog -->
   <div class="tab-pane" data-tab-id="catalog">
 
-    <!-- Module: Catalog (Piece 3a — Paste submodule) -->
+    <!-- Module: Catalog -->
     <section class="module" data-module-id="catalog">      <div class="section-label"><span class="num">◆</span> Catalog · <em>paste</em></div>
       <h2>Feed Horarium the <em>catalog</em>.</h2>
       <p class="picker-sub cat-intro">
@@ -8356,7 +8339,7 @@
       </div>
     </section>
 
-    <!-- Module: Import pack (Piece 4 — non-destructive named-overlay import) -->
+    <!-- Module: Import pack -->
     <section class="module" data-module-id="catalog-import">
       <div class="section-label"><span class="num">◆</span> Catalog · <em>import pack</em></div>
       <h2>Import a Horarium <em>pack</em>.</h2>
@@ -8371,7 +8354,7 @@
       <div id="pk-import-result" class="pk-import-result" hidden></div>
     </section>
 
-    <!-- Module: Browse (Piece 3b — read-only inspection of pasted catalog) -->
+    <!-- Module: Browse -->
     <section class="module" data-module-id="browse">      <div class="section-label"><span class="num">◆</span> Catalog · <em>browse</em></div>
       <h2>See what's <em>in your catalog</em>.</h2>
       <p class="picker-sub">Three-panel view: subjects on the left, courses in the middle, section detail on the right. Warnings surface inline where they apply.</p>
@@ -8398,10 +8381,10 @@
   </div>
   <!-- end tab-pane "catalog" -->
 
-  <!-- ========== DEFAULT TAB: MAIN (Plan+Schedule+Cores together) ========== -->
+  <!-- DEFAULT TAB: MAIN (Plan+Schedule+Cores together) -->
   <div class="tab-pane active" data-tab-id="main">
 
-  <!-- Module: Plan strip (Piece 5a/2) — top of Main. One pill per plan,
+  <!-- Module: Plan strip — top of Main. One pill per plan,
        active visually distinguished, kebab menu per pill, "+ New plan"
        on the right. -->
   <section class="module" data-module-id="plan">    <div class="section-label"><span class="num">01</span> Your plans</div>
@@ -8496,7 +8479,7 @@
        shelves. -->
   <section class="sch-fill-in" id="sch-fill-in" hidden></section>
 
-  <!-- ========== Docked auto-scheduler section (below the table) ==========
+  <!-- Docked auto-scheduler section (below the table)
        Collapsed by default to keep the page short. Toggle to expand
        prefs + results. The right-edge flag opens the logic maker. -->
   <section class="module sch-dock" data-module-id="auto-scheduler" data-collapsed="true" id="sch-dock">
@@ -8568,7 +8551,7 @@
   </div>
   <!-- end tab-pane "main" -->
 
-  <!-- ========== TAB: COMPARE (default pane) ========== -->
+  <!-- TAB: COMPARE (default pane) -->
   <div class="tab-pane" data-tab-id="compare">
 
   <!-- Module: Compare -->
@@ -8592,7 +8575,7 @@
   </div>
   <!-- end tab-pane "compare" -->
 
-  <!-- ========== TAB: EXPORT (default pane) ========== -->
+  <!-- TAB: EXPORT (default pane) -->
   <div class="tab-pane" data-tab-id="export">
 
   <!-- Module: Export -->
@@ -8644,7 +8627,7 @@
   </div>
   <!-- end tab-pane "export" -->
 
-  <!-- ========== TAB: Manage (Piece 3d placeholder — identity form only for now) ========== -->
+  <!-- TAB: Manage -->
   <div class="tab-pane" data-tab-id="manage">
     <section class="module" data-module-id="manage">      <div class="section-label"><span class="num">◆</span> Manage · <em>identity</em></div>
       <h2>Tell Horarium <em>who you are</em>.</h2>
@@ -8683,7 +8666,7 @@
         <p class="ident-help" id="ident-help"></p>
       </form>
 
-      <!-- ===== Storage consent ===== -->
+      <!-- Storage consent -->
       <h3 class="mn-section-h" data-i18n="manage.consent.heading">Storage consent</h3>
       <p class="picker-sub mn-section-lead">
         Controls whether Horarium remembers your catalog and identity across browser sessions. Stored locally only — Horarium has no server.
@@ -8713,7 +8696,7 @@
       </div>
       <div class="mn-last-saved" id="mn-last-saved" hidden></div>
 
-      <!-- ===== Theme ===== -->
+      <!-- Theme -->
       <h3 class="mn-section-h" data-i18n="manage.theme.heading">Theme</h3>
       <p class="picker-sub mn-section-lead">
         Visual register and copy. Editorial keeps the cream-paper Shakespearean feel; Dark goes neutral on a black canvas; Futuristic is monospace + cyan; Nature is sage greens with softer corners.
@@ -8749,15 +8732,15 @@
         </label>
       </div>
 
-      <!-- ===== Storage stats ===== -->
+      <!-- Storage stats -->
       <h3 class="mn-section-h">Storage stats</h3>
       <div class="mn-stats" id="mn-stats"></div>
 
-      <!-- ===== Per-subject overview ===== -->
+      <!-- Per-subject overview -->
       <h3 class="mn-section-h">Subjects in catalog</h3>
       <div class="mn-subjects" id="mn-subjects"></div>
 
-      <!-- ===== Clear data ===== -->
+      <!-- Clear data -->
       <h3 class="mn-section-h" data-i18n="manage.clear.heading">Clear data</h3>
       <p class="picker-sub mn-section-lead">
         Three scoped clears. Picking the right one is the difference between "start over with my edits" and "wipe everything."
@@ -8780,7 +8763,7 @@
         </button>
       </div>
 
-      <!-- ===== Export ===== -->
+      <!-- Export -->
       <h3 class="mn-section-h" data-i18n="manage.export.heading">Export</h3>
       <p class="picker-sub mn-section-lead">
         Two options. <strong>Edits-only</strong> is for sharing your room/instructor corrections with someone who already has the same catalog. <strong>Full pack</strong> bundles your catalog + edits + identity so a friend can browse what you have.
@@ -8790,14 +8773,14 @@
         <button type="button" class="mn-btn" id="mn-export-pack">Export full pack…</button>
       </div>
 
-      <!-- ===== Imported packs ===== -->
+      <!-- Imported packs -->
       <h3 class="mn-section-h">Imported packs</h3>
       <p class="picker-sub mn-section-lead">
         Packs other users have shared with you. Read-only — they don't blend into your own catalog. Switch between packs in Browse via the pack selector. Delete from here when you're done with one.
       </p>
       <div class="mn-imports" id="mn-imports"></div>
 
-      <!-- ===== Async-save warnings (only rendered when non-empty) ===== -->
+      <!-- Async-save warnings (only rendered when non-empty) -->
       <div id="mn-warnings-wrap" hidden>
         <h3 class="mn-section-h mn-section-h-warn">Save warnings</h3>
         <div class="mn-warnings" id="mn-warnings"></div>
@@ -8806,7 +8789,7 @@
   </div>
   <!-- end tab-pane "manage" -->
 
-  <!-- ========== TAB: Edit (Piece 3c — repair tool) ========== -->
+  <!-- TAB: Edit -->
   <div class="tab-pane" data-tab-id="edit">
     <section class="module" data-module-id="edit">      <div class="section-label"><span class="num">◆</span> Workshop · <em>repair &amp; create</em></div>
       <h2 data-i18n="workshop.title" data-i18n-html="true">Repair, refine, or <em>build from scratch</em>.</h2>
@@ -8845,10 +8828,10 @@
   <div class="footer-mark" data-i18n="footer">Final registration happens in Albert.</div>
 </div>
 
-<!-- ========== FLOATING ISLAND NAV (dynamically populated) ========== -->
+<!-- FLOATING ISLAND NAV (dynamically populated) -->
 <nav class="floating-nav" id="floating-nav"></nav>
 
-<!-- ========== DRAWER FLAG BUTTON ========== -->
+<!-- DRAWER FLAG BUTTON -->
 <button class="drawer-flag" id="drawer-flag" onclick="toggleDrawer()" title="Open personal time filters">
   <span class="flag-tip"></span>
   <span class="flag-body">
@@ -8857,10 +8840,10 @@
   </span>
 </button>
 
-<!-- ========== DRAWER BACKDROP ========== -->
+<!-- DRAWER BACKDROP -->
 <div class="drawer-backdrop" id="drawer-backdrop" onclick="toggleDrawer()"></div>
 
-<!-- ========== SIDE DRAWER (Personal time filters) ========== -->
+<!-- SIDE DRAWER (Personal time filters) -->
 <aside class="side-drawer" id="filter-drawer" aria-hidden="true">
   <div class="drawer-header">
     <div>
@@ -8954,7 +8937,7 @@
   <div class="modal" id="modal-body"></div>
 </div>
 
-<!-- Floating component-warning notification (Piece 5b). Hidden by
+<!-- Floating component-warning notification Hidden by
      default; populated and toggled by _renderComponentNotification(). -->
 <aside id="component-notif" class="comp-notif" role="status" aria-live="polite" hidden>
   <div class="comp-notif-head">
@@ -8968,7 +8951,7 @@
   </div>
 </aside>
 
-<!-- ========== AUTO-SCHEDULER (Piece 6) — LEFT-EDGE FLAG + DRAWER ==========
+<!-- AUTO-SCHEDULER — LEFT-EDGE FLAG + DRAWER
      Mirror of the personal-time filter flag on the right edge: a
      small flag pokes out the left side, click to open a side drawer
      where requirements + preferences live. Generate produces ranked
@@ -9275,7 +9258,7 @@ window.dispatchEvent(new CustomEvent('horarium:ready'));
 
 <script>
 
-// ============ STATE ============
+// state
 // All plan state lives in the catalog store under catalog.plans.* —
 // read via getActive() / get(id) / list(). No globals, no shim.
 //
@@ -9285,7 +9268,7 @@ window.dispatchEvent(new CustomEvent('horarium:ready'));
 // plan — viewing a candidate doesn't promote it.
 let currentViewPlanId = null;
 
-// Native-dialog replacements (Piece 5a/3 polish). All native confirm /
+// Native-dialog replacements. All native confirm /
 // alert / prompt have been rewritten to use the custom modal. These
 // thin helpers exist so the call-site rewrites stay terse and so the
 // modal lookup is defensive against early-fire calls before the
@@ -9332,7 +9315,7 @@ function _hsPrompt(msg, defaultValue, opts) {
   return Promise.resolve(null);
 }
 
-// ===== THEME / i18n GLUE =====
+// theme / i18n glue
 // Returns the active-theme string for `key`, falling back through
 // editorial → key. Defensive against the deferred themes module not
 // yet loading at parse time.
@@ -9376,7 +9359,7 @@ function _applyThemeText() {
 window.addEventListener('horarium:ready', _applyThemeText);
 window.addEventListener('horarium:theme-changed', _applyThemeText);
 
-// ===== COMPONENT NOTIFICATION (Piece 5b) =====
+// component notification (piece 5b)
 // Surfaces a top-right card when a multi-component course has uncovered
 // components in the active plan. Stays visible until dismissed; dismissal
 // is hashed and stored on the plan so equivalent states stay quiet but
@@ -9468,7 +9451,7 @@ window.addEventListener('horarium:ready', function () {
 // our own custom event.
 window.addEventListener('horarium:plan-view-changed', _renderComponentNotification);
 
-// ============ AUTO-SCHEDULER (Piece 6) ============
+// auto-scheduler (piece 6)
 // State for the auto-scheduler UI. Lives in module scope so the
 // drawer's open/close, the results panel, the preview state, and
 // the catalog subscriber can all coordinate.
@@ -9493,7 +9476,7 @@ function toggleSchedulerDrawer() {
     drawer.classList.add('open');
     drawer.setAttribute('aria-hidden', 'false');
     document.body.classList.add('sch-drawer-open');
-    _schRenderZones();
+    _schRenderTree();
     _schSyncPreferencesFromPlan();
   } else {
     drawer.classList.remove('open');
@@ -9869,11 +9852,6 @@ document.addEventListener('click', (e) => {
   // Anywhere else → cancel.
   _schClearPending();
 }, true);
-
-// Compatibility shim: the old _schRenderZones name is referenced from
-// the toggleSchedulerDrawer + catalog subscriber. Route it to the
-// tree renderer so we don't have to chase every callsite.
-function _schRenderZones() { _schRenderTree(); }
 
 // The auto-scheduler always reads/writes the ACTIVE plan's
 // requirements + preferences. The "viewed" plan can be a candidate or
@@ -10295,7 +10273,7 @@ window.addEventListener('horarium:ready', function () {
   // touches requirements/locks.
   window.HS.catalog.subscribe(function (e) {
     if (!e || e.reason !== 'plan_mutation') return;
-    if (_schDrawerOpen) _schRenderZones();
+    if (_schDrawerOpen) _schRenderTree();
     // When the wanted tree changes, the picker's + Want / ✓ Want
     // pill needs to flip — re-render so the next paint reflects it.
     const action = e.plan_event || '';
@@ -10518,7 +10496,7 @@ function romanize(n) {
   return map[n] || String(n);
 }
 
-// ============ PLAN STRIP (Piece 5a/2) ============
+// plan strip (piece 5a/2)
 // One pill per plan from catalog.plans.list(). Active plan first +
 // visually emphasized; candidates after; "+ New plan" at the end.
 // Per-pill kebab opens a small menu (rename, duplicate, promote,
@@ -10676,7 +10654,7 @@ function _planMenuDelete(planId) {
   });
 }
 
-// ============ PLAN DETAIL (replaces buildOptionDetail) ============
+// plan detail (replaces buildoptiondetail)
 // Slim detail strip below the plan pills: shows the viewed plan's
 // notes and a "Promote to active" button when viewing a candidate.
 // Metrics that used to live here (lunch squeeze / long days / Friday
@@ -10707,7 +10685,7 @@ function _planPromoteViewed() {
   render();
 }
 
-// ============ GRID ============
+// grid
 // Reads from catalog.plans (the viewed plan) + catalog.getEffective().
 // Output event shape unchanged so buildGrid / buildScheduleTable work
 // without modification: { day, start, end, course, label, ghost, secKey }.
@@ -10816,7 +10794,7 @@ function buildGrid(gridId, half) {
   });
 }
 
-// ============ LEGEND (dynamic; reads viewed plan) ============
+// legend (dynamic; reads viewed plan)
 // Two sections: filters on top (with visibility toggle), staged sections
 // on bottom (clicking scrolls to that section's first meeting in the
 // grid). Driven entirely by the new plan + effective-catalog model.
@@ -10895,7 +10873,7 @@ function buildLegend() {
   });
 }
 
-// ===== Section linking (Piece 5b) =====
+// section linking (piece 5b)
 // Module-level link-mode state. When set to a class_number, the legend
 // renders other section rows with a highlight, and clicking one of them
 // commits the link.
@@ -10973,7 +10951,7 @@ window.addEventListener('keydown', function (e) {
   }
 });
 
-// ============ MODAL ============
+// modal
 // Section detail modal — reads the section + its course from the
 // effective catalog. Stage / unstage button surfaced inline so the user
 // can act without leaving the modal.
@@ -11029,8 +11007,7 @@ function _planUnstageFromActive(classNumber) {
   if (!id) return;
   closeModal();
   // Route through the link-aware unstage flow so the prompt fires if
-  // the section has a linked partner (Piece 5b).
-  _unstageWithLinkPrompt(id, classNumber);
+  // the section has a linked partner _unstageWithLinkPrompt(id, classNumber);
 }
 
 function closeModal() {
@@ -11041,7 +11018,7 @@ document.getElementById('modal-bg').addEventListener('click', (e) => {
 });
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
 
-// ============ RENDER ============
+// render
 function render() {
   buildTabs();
   buildOptionDetail();
@@ -11060,7 +11037,7 @@ render();
 // before the deferred module script fires horarium:ready.
 if (typeof renderHeader === 'function') renderHeader();
 
-// ============ EXPORT: MENU TOGGLE (legacy no-ops since dropdown is replaced by Export tab) ============
+// export: menu toggle (legacy no-ops since dropdown is replaced by export tab)
 function toggleExportMenu(e) {
   if (e && e.stopPropagation) e.stopPropagation();
   // No-op: dropdown has been replaced by an Export tab with cards.
@@ -11149,7 +11126,7 @@ function _optSlug(planId) {
   return (p ? p.name : 'plan').replace(/[^a-zA-Z0-9]/g, '_') || 'plan';
 }
 
-// ============ EXPORT: IMAGE (PNG) ============
+// export: image (png)
 // Lazy-load html2canvas on first PNG export. Cached in a module-scoped
 // promise so concurrent exports share the load. Removes the boot-time
 // SVG `enable-background` warning the lib fires when its embedded
@@ -11370,7 +11347,7 @@ async function exportAsImage(planId) {
   }
 }
 
-// ============ EXPORT: iCAL (.ics) ============
+// export: ical (.ics)
 const SESSION_DATES = {
   'A71': { start: '20260831', end: '20261016' },
   'A72': { start: '20261026', end: '20261214' },
@@ -11525,7 +11502,7 @@ function exportAsICS(planId) {
   }
 }
 
-// ============ EXPORT: JSON ============
+// export: json
 function exportAsJSON(planId) {
   _exportCardState('ec-json', 'Building', '⏳');
 
@@ -11632,7 +11609,7 @@ function exportAsJSON(planId) {
 
 
 
-// ============ FRIEND COMPARISON ============
+// friend comparison
 let friendData = null;
 let friendOverlayOn = false;
 
@@ -11967,8 +11944,7 @@ function _buildOwnCell(evt, extraClass) {
   cell.style.setProperty('--cell-ink', meta.color.ink);
   const typeNote = evt.label === 'Lecture' ? '' : ' <em>' + _escHtml(String(evt.label || '').toLowerCase()) + '</em>';
   const titleLine = meta.title ? '<div class="title-sub">' + _escHtml(meta.title) + '</div>' : '';
-  // Chain icon when the section is linked to another (Piece 5b).
-  const plan = (typeof _viewedPlan === 'function') ? _viewedPlan() : null;
+  // Chain icon when the section is linked to another const plan = (typeof _viewedPlan === 'function') ? _viewedPlan() : null;
   const linkSet = _buildLinkSet(plan);
   const linkBadge = (evt.secKey && linkSet.has(String(evt.secKey)))
     ? '<span class="cell-link-icon" title="Linked to another section">⛓</span>' : '';
@@ -12138,8 +12114,8 @@ renderComparison();
 
 
 
-// ============ PERSONAL TIME FILTERS ============
-// Per Piece 5a/2: filters live on the plan, not globally. We keep the
+// personal time filters
+// Per filters live on the plan, not globally. We keep the
 // `filters[]` global as a hot view of the viewed plan's filter set —
 // every render call resyncs it. Form save / delete also writes through
 // to catalog.plans.{addFilter,updateFilter,removeFilter} so the plan
@@ -12521,7 +12497,7 @@ window.addEventListener('resize', () => {
 
 
 
-// ============ AUTHOR FORM (Workshop tab) ============
+// author form (workshop tab)
 // Modal-driven form that lets the user create a course + section from
 // scratch. Persists through window.HS.author (see src/ui/author.js)
 // and re-ingests into the catalog so the course appears in Browse,
@@ -12702,7 +12678,7 @@ function _auSubmit() {
   return true;
 }
 
-// ============ ROOM DATA ============
+// room data
 // Rooms come from each meeting's `room` / `building` / `room_number`
 // fields on the section in catalog.getEffective(). No legacy ROOM_DATA
 // table; "—" is shown when the catalog has no data for a meeting.
@@ -12819,7 +12795,7 @@ function buildScheduleTable() {
     '<div class="ts-stat"><div class="ts-label">Second half · A72</div><div class="ts-value">' + halfA72Count + '</div><div class="ts-detail">Oct 26 – Dec 14</div></div>';
 }
 
-// ============ VIEW TOGGLE ============
+// view toggle
 let currentView = 'calendar';
 
 function switchView(view, btn) {
@@ -12875,7 +12851,7 @@ buildScheduleTable();
 
 
 
-// ============ MODULAR TAB SYSTEM ============
+// modular tab system
 // Modules are atomic content blocks (plan, schedule, cores, compare, export).
 // Tabs are user-defined containers that hold one or more modules.
 // Default: Main tab contains plan+schedule+cores; Compare and Export get their own tabs.
@@ -13142,7 +13118,7 @@ function renameTab(tabId, btnEl) {
   });
 }
 
-// ============ MODULE MENU (move to tab) ============
+// module menu (move to tab)
 function openModuleMenu(event, moduleId) {
   event.stopPropagation();
   closeModuleMenus();
@@ -13204,7 +13180,7 @@ document.addEventListener('keydown', (e) => {
 
 
 
-// ============ CONFIG MODAL (visual drag-and-drop organiser) ============
+// config modal (visual drag-and-drop organiser)
 function openConfigModal() {
   renderConfigBoard();
   document.getElementById('config-overlay').classList.add('show');
@@ -13470,7 +13446,7 @@ document.addEventListener('keydown', (e) => {
 renderNav();
 updateEmptyStates();
 
-// ============ DRAWER TOGGLE ============
+// drawer toggle
 let drawerOpen = false;
 function toggleDrawer() {
   drawerOpen = !drawerOpen;
@@ -13512,7 +13488,7 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && drawerOpen) toggleDrawer();
 });
 
-// ============ USER IDENTITY (depersonalized header + exports) ============
+// user identity (depersonalized header + exports)
 // Identity lives in memory as window.HS.user. Gated by persistence consent:
 // save_always → writes to localStorage.horarium.user_identity; session_only
 // / never / null → in-memory only. Header / export chrome / ICS use these
@@ -13670,7 +13646,7 @@ function renderHeader() {
   }
 }
 
-// ============ BROWSE MODULE (Piece 3b) ============
+// browse module (piece 3b)
 // Read-only three-panel inspector for the catalog store. Lives inside the
 // Catalog tab beneath Paste. Pure helpers + warning translations live in
 // src/ui/browse.js and src/ui/warning_copy.js respectively and are
@@ -14131,7 +14107,7 @@ function _bootBrowse() {
 
 window.addEventListener('horarium:ready', _bootBrowse);
 
-// ============ EDIT MODULE (Piece 3c) ============
+// edit module (piece 3c)
 // Repair-tool UI. Two entry points:
 //   (1) Warning-anchored: user clicks "Fix this" on a Browse warning chip,
 //       lands on Edit with the affected section loaded, the relevant field
@@ -14954,7 +14930,7 @@ function _renderEditCourseForm(ctx) {
 
 window.addEventListener('horarium:ready', _bootEdit);
 
-// ============ MANAGE MODULE (Piece 3d) ============
+// manage module (piece 3d)
 // Data control surface. Identity, consent, storage stats, per-subject
 // staleness, scoped clears, edits export, async-save warnings.
 //
@@ -15294,7 +15270,7 @@ function _renderManageWarnings() {
 
 window.addEventListener('horarium:ready', _bootManage);
 
-// ============ PACK MODULE (Piece 4) ============
+// pack module (piece 4)
 // Export/import .horarium.json packs. Imports are non-destructive: a
 // pack arrives as a named overlay in catalog.imports[], browseable
 // alongside the user's own catalog but never blended automatically.
@@ -15345,7 +15321,7 @@ function _bootPack() {
 }
 window.addEventListener('horarium:ready', _bootPack);
 
-// ============ MAIN-TAB PICKER (Piece 5a/3 — drill-down) ============
+// main-tab picker (piece 5a/3 — drill-down)
 // Hierarchical course-staging surface. Three primary modes:
 //
 //   1. Directory mode (no search): subjects collapsed by default.
@@ -15873,7 +15849,7 @@ function _pkRenderCourseRow(c, sections, stagedSet, hydratedStaged) {
     : '';
   const userBadge = c._user_authored ? '<span class="mp-user-tag">USER</span>' : '';
   const stagedClass = stagedCount > 0 ? ' has-staged' : '';
-  // Piece 6 rework v2 — "+ WANT" pill picks the course up onto the
+  // "+ WANT" pill picks the course up onto the
   // cursor. Click it onto any group in the wanted-tree drawer. The
   // pill flips to ✓ once the course is anywhere in the tree.
   const planForReq = (typeof _schScopePlan === 'function') ? _schScopePlan() : null;
@@ -15995,7 +15971,7 @@ function _pkWireAll(root) {
       renderPicker();
     });
   });
-  // Piece 6 rework v2 — + WANT picks up the course onto the cursor.
+  // + WANT picks up the course onto the cursor.
   // ✓ WANT (already in tree) removes every occurrence. The drawer
   // only auto-opens if it's currently closed AND no pending course
   // is already on the cursor (so repeat-clicks don't keep toggling).
@@ -16150,7 +16126,7 @@ function _pkExecStage(action, classNumber, subject) {
   _unstageWithLinkPrompt(planId, classNumber);
 }
 
-// Piece 5b: unstage flow that respects user-defined section links.
+// unstage flow that respects user-defined section links.
 // If the staged section has any linked partners, the user picks one of
 // three outcomes:
 //   Yes → unstage both, drop the link
@@ -16462,7 +16438,7 @@ function _renderBrowsePackBar() {
   });
 }
 
-// ============ INITIAL TAB STATE ============
+// initial tab state
 // Start on Plan tab; grids will build once schedule tab is opened.
 // But we still build them once so they're ready when user clicks Schedule.
 requestAnimationFrame(() => {
@@ -16470,7 +16446,7 @@ requestAnimationFrame(() => {
   if (document.getElementById('grid-a72')) buildGrid('grid-a72', 'A72');
 });
 
-// ============ CATALOG — PASTE MODULE (Piece 3a) ============
+// catalog — paste module (piece 3a)
 // Human-readable hints per ingester warning type. Fallback to the raw
 // type string with a "report to developer" hint if unknown.
 const CAT_WARNING_INFO = {
@@ -16792,7 +16768,7 @@ function _catUpdateEmptyState() {
 
 </script>
 
-<!-- ========== CONFIG MODAL (visual module organiser) ========== -->
+<!-- CONFIG MODAL (visual module organiser) -->
 <div class="config-overlay" id="config-overlay" onclick="_configBackdropClick(event)">
   <div class="config-modal" onclick="event.stopPropagation()">
     <div class="config-header">
@@ -16815,7 +16791,7 @@ function _catUpdateEmptyState() {
   </div>
 </div>
 
-<!-- ========== CONSENT OVERLAY (first-paste storage choice) ========== -->
+<!-- CONSENT OVERLAY (first-paste storage choice) -->
 <div class="consent-overlay" id="consent-overlay" hidden>
   <div class="consent-modal">
     <div class="consent-kicker">First-time setup</div>
@@ -16840,10 +16816,10 @@ function _catUpdateEmptyState() {
   </div>
 </div>
 
-<!-- ========== TOAST (save feedback) ========== -->
+<!-- TOAST (save feedback) -->
 <div class="cat-toast" id="cat-toast" role="status" aria-live="polite"></div>
 
-<!-- ========== ONBOARDING — first-run welcome card ==========
+<!-- ONBOARDING — first-run welcome card
      Editorial-style overlay shown on first load (when localStorage
      flag absent). Two outs: "walk me through" or "let me explore".
      Replayable via the ? button in the nav. -->
@@ -16890,7 +16866,7 @@ function _catUpdateEmptyState() {
   </article>
 </div>
 
-<!-- ========== FIELD GUIDE — flashcard-style help / onboarding ==========
+<!-- FIELD GUIDE — flashcard-style help / onboarding
      Browseable encyclopedia of features. TOC on the left, the active
      card on the right. Prev/next walks through every card; clicking
      a TOC item jumps. -->
@@ -16916,17 +16892,16 @@ function _catUpdateEmptyState() {
 </div>
 
 <script>
-// =========================================================
-// ONBOARDING — welcome card + Field Guide
+// // onboarding — welcome card + field guide
 //
-// Flow:
-//   First run → welcome card appears (one-shot, gated by
-//     localStorage flag horarium.onboarding.welcomed).
-//   "Open the field guide" → closes welcome, opens Field Guide.
-//   "Let me explore" → closes welcome, no Field Guide.
-//   Nav "? Guide" button → re-opens the Field Guide any time.
-//   Welcome can also be re-shown via onbShowWelcome() in console.
-// =========================================================
+// flow:
+//   first run → welcome card appears (one-shot, gated by
+//     localstorage flag horarium.onboarding.welcomed).
+//   "open the field guide" → closes welcome, opens field guide.
+//   "let me explore" → closes welcome, no field guide.
+//   nav "? guide" button → re-opens the field guide any time.
+//   welcome can also be re-shown via onbshowwelcome() in console.
+//
 const ONB_KEYS = {
   WELCOMED: 'horarium.onboarding.welcomed',
 };

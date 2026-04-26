@@ -1,4 +1,4 @@
-// Pure helpers for the Manage module (Piece 3d). DOM rendering is in
+// Pure helpers for the Manage module DOM rendering is in
 // planner/index.html; this file owns the testable bits — formatters and
 // the export-payload builder.
 

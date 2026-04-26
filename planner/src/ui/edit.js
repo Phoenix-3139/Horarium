@@ -1,4 +1,4 @@
-// Pure helpers for the Edit module (Piece 3c). All DOM-rendering glue is
+// Pure helpers for the Edit module All DOM-rendering glue is
 // in planner/index.html; this file owns the bits that can be unit-tested
 // without a DOM: hash routing, field-definition tables, parsed-vs-effective
 // derivation, and the form-to-edits diff that produces store.setEdit calls

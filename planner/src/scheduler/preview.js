@@ -1,4 +1,4 @@
-// Piece 6 — pure data builder for the small candidate-preview grids
+// pure data builder for the small candidate-preview grids
 // that show in the auto-scheduler results sidebar. Each candidate
 // has a tiny grid (~80×120 px in DOM) showing day-columns and
 // time-blocks. The DOM rendering itself happens in index.html; this

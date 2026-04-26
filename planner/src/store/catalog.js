@@ -143,13 +143,13 @@ export function createCatalog() {
     autoPruneLog: [], // {class_number?, course_code?, field_path, reason, at}
     migrationWarnings: [],
     subjectMetadata: new Map(),
-    // Imported packs (Piece 4). Map<pack_id, {pack, imported_at}>.
+    // Imported packs Map<pack_id, {pack, imported_at}>.
     // Imports never blend into `parsed` / `edits` — they live in a
     // separate namespace the UI can read for browse/compare but never
     // mutates from. Use copySectionFromImport to materialize a section
     // from an import as an edit in the user's primary overlay.
     imports: new Map(),
-    // Plans namespace (Piece 5a). One plan is `kind:'active'` at any
+    // Plans namespace One plan is `kind:'active'` at any
     // time; the rest are candidates. Each plan carries staged section
     // refs and personal-time filters. The `origin` field exists for the
     // disposable principle: scheduler-generated plans can be cleared
@@ -413,7 +413,7 @@ export function createCatalog() {
     };
   }
 
-  // --- Imports namespace (Piece 4) -----------------------------------
+  // --- Imports namespace -----------------------------------
   // addImport: stores a validated pack under its pack_id. If a pack with
   // the same id already exists, replaces it (re-import = update). Fires
   // one notify with reason:'import'.
@@ -509,7 +509,7 @@ export function createCatalog() {
     return n;
   }
 
-  // --- Plans namespace (Piece 5a) ------------------------------------
+  // --- Plans namespace ------------------------------------
   // All plans API methods live on the returned object's `plans` field,
   // grouped to keep the catalog API surface readable. Mutations fire
   // _notify with reason: 'plan_mutation' so subscribers can filter for
@@ -586,24 +586,24 @@ export function createCatalog() {
       sections: [],
       filters: [],
       notes: "",
-      // Piece 5b: a stable hash of the current incomplete-components
+      // a stable hash of the current incomplete-components
       // state at the time the user last dismissed the floating
       // notification. Banner reappears whenever the actual incomplete
       // state hashes to something different.
       dismissed_component_warning_hash: null,
-      // Piece 5b: user-defined section links — pairs the user has
+      // user-defined section links — pairs the user has
       // explicitly tied together (e.g. lecture + a particular lab).
       // Stored once per pair, undirected. Both unstage modal and the
       // chain icon read from this list.
       linked_sections: [],
-      // Piece 6: auto-scheduler inputs. Requirements are the slots
+      // auto-scheduler inputs. Requirements are the slots
       // the user wants filled (single course or OR-group), each with
       // an optional locked section. Preferences are the soft scoring
       // knobs (no_starts_before, lunch break, etc.). Both survive
       // toJSON/fromJSON and default to empty/sensible-defaults so
       // existing plans without these fields load cleanly.
       requirements: [],
-      // Piece 6 rework v2 — wanted is a free-form boolean expression
+      // wanted is a free-form boolean expression
       // tree. Root is null (nothing wanted) or an ExprNode of shape
       // { id, op:'AND'|'OR', children: Array<ExprNode | { type:'course', code }> }.
       // Translated to CNF requirements[] at solver call time.
@@ -673,7 +673,7 @@ export function createCatalog() {
       // has its own incomplete-components story to tell.
       dismissed_component_warning_hash: null,
       linked_sections: (src.linked_sections || []).map((l) => ({ a: l.a, b: l.b })),
-      // Piece 6: copy requirements + preferences so a duplicated
+      // copy requirements + preferences so a duplicated
       // plan can be re-generated from the same auto-scheduler inputs.
       requirements: (src.requirements || []).map((r) => Object.assign({}, r,
         { courses: (r.courses || []).slice() },
@@ -712,7 +712,7 @@ export function createCatalog() {
     plan.sections = plan.sections.filter((s) => s.class_number !== classNumber);
     if (plan.sections.length === before) return false;
     // Drop any links involving this section so the link list never
-    // references absent sections (Piece 5b).
+    // references absent sections.
     if (Array.isArray(plan.linked_sections) && plan.linked_sections.length > 0) {
       const cn = String(classNumber);
       plan.linked_sections = plan.linked_sections.filter(
@@ -759,7 +759,7 @@ export function createCatalog() {
     _planNotify("remove_filter", planId, { filter_id: filterId });
     return true;
   }
-  // Piece 5b: dismissal hash setter for the floating component-warning
+  // dismissal hash setter for the floating component-warning
   // notification. Stored on the plan so dismissal is per-plan.
   function _planSetDismissedComponentHash(planId, hash) {
     const plan = state.plans.byId.get(planId);
@@ -768,7 +768,7 @@ export function createCatalog() {
     plan.modified_at = _nowISO();
     _planNotify("set_dismissed_component_hash", planId);
   }
-  // Piece 5b: section-link plumbing. Pairs are stored once per plan,
+  // section-link plumbing. Pairs are stored once per plan,
   // undirected — adding {a, b} when {b, a} already exists is a no-op,
   // removing either direction wipes the pair. Self-links are rejected.
   function _planAddLink(planId, classA, classB) {
@@ -821,7 +821,7 @@ export function createCatalog() {
     }
     return removed;
   }
-  // Piece 6 — plan-mutation wrappers around the pure requirements
+  // plan-mutation wrappers around the pure requirements
   // helpers. Each takes (planId, ...args), applies the helper
   // function to a snapshot of the plan, copies the resulting
   // requirements/preferences back onto the live plan, and notifies.
@@ -855,7 +855,7 @@ export function createCatalog() {
   function _planUpdatePreferences(planId, partial) {
     return _applyPlanUpdate(planId, (p) => _reqHelpers.updatePreferences(p, partial), "update_scheduler_preferences");
   }
-  // Piece 6 rework v2 — wanted is a boolean expression tree. The
+  // wanted is a boolean expression tree. The
   // catalog stores it; the solver-time call converts to CNF.
   //
   // Path semantics: an array of integer indices that walks from the
@@ -1254,7 +1254,7 @@ export function createCatalog() {
                   .filter((l) => l && l.a && l.b && l.a !== l.b)
                   .map((l) => ({ a: String(l.a), b: String(l.b) }))
               : [],
-            // Piece 6 — defensive restore. Pre-Piece-6 plans hit the
+            // defensive restore. older plans hit the
             // empty defaults; ill-shaped requirements (missing id /
             // courses) get filtered.
             requirements: Array.isArray(plan.requirements)

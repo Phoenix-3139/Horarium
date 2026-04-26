@@ -1,4 +1,4 @@
-// Piece 5b — component-aware staging detection.
+// component-aware staging detection.
 //
 // Pure helpers that read a plan + the catalog's effective view and
 // surface "this course has uncovered components" warnings. The UI

@@ -1,4 +1,4 @@
-// Pure helpers for the Browse module (Piece 3b). The DOM-rendering
+// Pure helpers for the Browse module The DOM-rendering
 // glue lives inline in planner/index.html; this file is just the bits
 // that can be unit-tested without a DOM.
 

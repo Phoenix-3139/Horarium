@@ -688,7 +688,7 @@ describe("createCatalog — metadata", () => {
   });
 });
 
-describe("createCatalog — plans namespace (Piece 5a)", () => {
+describe("createCatalog — plans namespace ", () => {
   it("seeds a default active plan on construction", () => {
     const cat = createCatalog();
     const plans = cat.plans.list();
@@ -860,7 +860,7 @@ describe("createCatalog — plans namespace (Piece 5a)", () => {
   });
 });
 
-describe("createCatalog — imports namespace (Piece 4)", () => {
+describe("createCatalog — imports namespace ", () => {
   it("addImport stores a pack and surfaces it via listImports", () => {
     const cat = createCatalog();
     const pack = {

@@ -1,4 +1,4 @@
-// Piece 6 — pure helpers for the auto-scheduler's requirements list.
+// pure helpers for the auto-scheduler's requirements list.
 //
 // A "requirement" is a single must-have slot the user is asking the
 // solver to fill — either with one specific course (single chip) or

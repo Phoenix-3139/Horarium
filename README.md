@@ -1,33 +1,45 @@
 # Horarium
 
-A course scheduling tool for NYU Abu Dhabi students. Ingests course data
-pasted from NYU Albert, feeds clean JSON into a schedule planner, and
-auto-generates valid schedule combinations subject to your constraints.
+A schedule planner for NYU Abu Dhabi students. Local-first, browser-only,
+no accounts.
 
-Built because NYU Albert is painful and [Schedge](https://github.com/BUGS-NYU/schedge)
-is deprecated as of ~Summer 2023.
+You paste your search results from NYU Albert; Horarium parses them, lets
+you stage sections onto a calendar, and (optionally) generates schedule
+combinations from a wanted-expression you build in a small logic UI.
 
 ## Why not scrape?
 
-We tried. NYU's public catalog at `bulletins.nyu.edu/class-search/` is
-backed by a clean JSON API — but that API intentionally strips the fields
-that make scheduling possible: no instructors, no rooms, no seat counts,
-no per-section statuses. All of that lives only in Albert, which requires
-login.
-
-So Horarium meets the user where the data is. You copy-paste Albert's
-search results page into the planner; a parser extracts it; the rest of
-the tool works on clean structured data.
+NYU's public catalog API at `bulletins.nyu.edu/class-search/` is clean
+JSON, but intentionally strips the fields scheduling needs — instructors,
+rooms, seat counts, per-section statuses. All of that lives only in
+Albert, which requires login. Credentialed scraping is off-limits, so we
+meet the user where the data is: copy-paste preserves everything.
 
 ## What it does
 
-1. **Ingester** — a browser-side parser that turns pasted Albert search
-   results into structured course/section records.
-2. **Planner** — an interactive schedule editor. Load the catalog, stage
-   courses, see conflicts, export to `.ics` / PNG / JSON.
-3. **Scheduler** — given a list of required courses and preferences (times,
-   instructors, session balance), generates ranked valid schedule
-   combinations.
+- **Paste from Albert** → parser turns the page into structured
+  course/section records (`planner/src/ingester/`).
+- **Browse and stage** → a picker (subjects → courses → sections) with
+  type, status, day, and time filters. Click `Stage` on a section to add
+  it to the active plan; the calendar fills in immediately.
+- **Multiple plans** → sandbox different arrangements side-by-side.
+  Promote a candidate to active when you're sure.
+- **Section linking** → tie a Lecture to a particular Lab so they move
+  together when picking.
+- **Personal-time filters** → block out hours (workout, meals) the
+  auto-scheduler should avoid.
+- **Auto-scheduler** → declare a wanted expression (`A AND (B OR C)`-style
+  with rainbow-bracket nesting), shelve whole subjects to defer ("any
+  course from CSTS"), generate ranked candidates, preview, pick.
+- **Workshop** → author your own custom courses for one-offs that
+  aren't in Albert.
+- **Compare with friend** → import their schedule pack, see shared free
+  hours.
+- **Export** → PNG (calendar or table view) with privacy toggles, JSON
+  data dump.
+- **Themes** → Editorial / Coffee / Futuristic / Nature.
+- **Field Guide** → in-app encyclopedia explaining every feature
+  (`? Guide` button in the nav).
 
 ## Architecture
 
@@ -47,32 +59,50 @@ the tool works on clean structured data.
 ```
 
 All of this runs in your browser. No Node runtime, no server, no auth, no
-cloud. Paste in, plan, export.
+cloud. Storage is opt-in (localStorage with a one-time consent prompt).
 
 ## Hosting
 
-**Runs entirely on your laptop.** Open `planner/index.html` or serve the
-folder locally. Share by zipping the repo plus your saved plans.
-
-The only future feature that would need a real server is seat-availability
-monitoring (Phase 4). Until then, laptop-local is correct.
-
-## Quick start
-
-See [docs/SETUP.md](docs/SETUP.md).
+Open `planner/index.html` directly, or serve the folder locally:
 
 ```bash
 git clone <repo-url> horarium
 cd horarium
-npx serve planner   # or just open planner/index.html
+npx serve planner
 ```
 
-Then in the planner: open the **Paste from Albert** panel, paste a subject
-search result from Albert, click **Parse**. Repeat for every subject you
-care about.
+Then in the planner: hit the **Catalog** tab, paste a subject's Albert
+search results (the entire page including the `1 – N results for: ENGR-UH`
+header), and let it parse. Repeat per subject.
+
+## Data model
+
+Plans store section references by `class_number` only. The actual section
+data — meeting times, instructors, rooms, status — lives in the catalog
+and is resolved live on every render. Re-pasting a subject updates the
+plan view automatically; if a section's class number disappears, the
+plan still tracks the ref but the calendar quietly drops the tile.
+
+See [docs/DATA_SCHEMA.md](docs/DATA_SCHEMA.md) for the full schema
+contract.
+
+## Development
+
+```bash
+cd planner
+npm install
+npx vitest run        # full unit + integration suite
+npx serve .           # local server on port 3000
+```
+
+The codebase is intentionally framework-free. The planner is a single
+`index.html` plus ES modules under `planner/src/`. Tests use Vitest; the
+parser is exercised against real Albert paste fixtures under
+`planner/src/ingester/fixtures/`.
 
 ## Documentation
 
+- [planner/README.md](planner/README.md) — module map, conventions
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — system design, decisions, tradeoffs
 - [docs/SETUP.md](docs/SETUP.md) — install and run
 - [docs/DATA_SCHEMA.md](docs/DATA_SCHEMA.md) — the JSON contract between modules
@@ -80,5 +110,6 @@ care about.
 
 ## Status
 
-Phase 1 (paste ingester) in progress. Planner exists in legacy single-file
-form and will be migrated to consume ingester output.
+Functionally complete for personal use. Auto-scheduler with category
+shelving, fill-in flow, and full preview/pick pipeline. Onboarding via
+welcome card + 16-card Field Guide. 484 unit/integration tests passing.

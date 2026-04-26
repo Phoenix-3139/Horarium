@@ -1,4 +1,4 @@
-// Piece 6 — pure CSP backtracking solver.
+// pure CSP backtracking solver.
 //
 // Variables: requirements (one per requirement)
 // Domains:   per-requirement arrays of "bundles." Each bundle is one

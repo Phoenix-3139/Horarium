@@ -1,4 +1,4 @@
-// Pure helpers for the redesigned Main-tab picker (Piece 5a/3 polish).
+// Pure helpers for the redesigned Main-tab picker
 // Covers fuzzy search, instructor indexing, filter composition, level
 // bucketing, and (re-exported) deterministic course coloring.
 
