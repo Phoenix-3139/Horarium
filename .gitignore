@@ -3,12 +3,8 @@ node_modules/
 .pnp/
 .pnp.js
 
-# Nomenclature-harvester scraper scratch (ephemeral, regeneratable).
-# The scraped result files (nomenclature-raw.json, nomenclature-reduced.md,
-# scrape.js) stay; only the fetch cache and its own node_modules are
-# ignored so the scraper's ~100 MB of cached HTML doesn't bloat the repo.
-_scrapedData */cache/
-_scrapedData */node_modules/
+# Local scrape scratch — ephemeral, regeneratable, never published.
+_scrapedData */
 
 # TypeScript build output
 dist/

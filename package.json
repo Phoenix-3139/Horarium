@@ -3,10 +3,11 @@
   "version": "0.2.0",
   "private": true,
   "description": "Local-first, browser-only course scheduler for NYU Abu Dhabi",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "planner": "npx serve planner -p 3000",
-    "test": "node --test planner/src/**/*.test.js"
+    "test": "npm --prefix planner run test"
   },
   "engines": {
     "node": ">=20.0.0"
