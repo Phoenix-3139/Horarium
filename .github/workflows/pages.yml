@@ -15,6 +15,11 @@ concurrency:
   group: pages
   cancel-in-progress: false
 
+env:
+  # Opt into the Node.js 24 runtime ahead of GitHub's June-2026 forced
+  # switch. Silences the deprecation warning the job otherwise prints.
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
 jobs:
   deploy:
     environment:

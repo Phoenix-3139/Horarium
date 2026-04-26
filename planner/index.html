@@ -3,6 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--
+  Content-Security-Policy: defense-in-depth against XSS. The app inlines
+  scripts and styles by design (single-file shell), hence 'unsafe-inline'.
+  External scripts are pinned to cdnjs (html2canvas, lazy-loaded with SRI);
+  fonts come from Google. Blob/data URIs are needed for html2canvas PNG
+  export. base-uri 'none' blocks <base href> rewriting tricks; frame-ancestors
+  'none' prevents clickjacking.
+-->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none';">
 <title>Horarium</title>
 <script>
   // Sync theme attribute as early as possible so the page paints in
@@ -11484,6 +11493,10 @@ function _ensureHtml2canvas() {
   _html2canvasPromise = new Promise(function (resolve, reject) {
     const s = document.createElement('script');
     s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+    // SRI pin: if cdnjs is compromised the browser refuses the script
+    // rather than executing attacker-supplied bytes inside our origin.
+    s.integrity = 'sha384-ZZ1pncU3bQe8y31yfZdMFdSpttDoPmOZg2wguVK9almUodir1PghgT0eY7Mrty8H';
+    s.crossOrigin = 'anonymous';
     s.async = true;
     s.onload = function () { resolve(window.html2canvas); };
     s.onerror = function () { reject(new Error('Failed to load html2canvas from CDN')); };
@@ -11981,7 +11994,7 @@ function importFriend(fileInput) {
       }
     } catch (err) {
       const el = document.getElementById('friend-content');
-      el.innerHTML = '<div class="friend-error">Could not read that file: ' + err.message + '</div>';
+      el.innerHTML = '<div class="friend-error">Could not read that file: ' + _brEscape(err.message) + '</div>';
       console.error(err);
     }
   };
@@ -12158,8 +12171,8 @@ function renderComparison() {
   let out = '<div class="friend-card">';
   out += '<div class="friend-meta">';
   out += '<div>';
-  out += '<div class="friend-name"><em>' + fn + '</em></div>';
-  out += '<div class="friend-sub">' + [fterm, fplan, fnid].filter(Boolean).join(' · ') + '</div>';
+  out += '<div class="friend-name"><em>' + _brEscape(fn) + '</em></div>';
+  out += '<div class="friend-sub">' + _brEscape([fterm, fplan, fnid].filter(Boolean).join(' · ')) + '</div>';
   out += '</div>';
   out += '<div class="friend-actions">';
   out += '<button class="friend-toggle' + (friendOverlayOn ? ' active' : '') + '" onclick="toggleFriendOverlay()">' + (friendOverlayOn ? '◉ Overlay on' : '○ Show on grid') + '</button>';
@@ -12174,8 +12187,8 @@ function renderComparison() {
     out += '<ul class="class-list">';
     classmates.forEach(c => {
       out += '<li class="shared">';
-      out += '<span class="course-title">' + c.course_name + '</span>';
-      out += '<span class="course-detail">Class #' + (c.class_numbers || []).join(' / ') + ' · ' + (c.instructor || '') + '</span>';
+      out += '<span class="course-title">' + _brEscape(c.course_name) + '</span>';
+      out += '<span class="course-detail">Class #' + _brEscape((c.class_numbers || []).join(' / ')) + ' · ' + _brEscape(c.instructor || '') + '</span>';
       out += '</li>';
     });
     out += '</ul>';
@@ -12191,10 +12204,10 @@ function renderComparison() {
     out += '<ul class="class-list">';
     sameCourseDiff.forEach(({theirs, mine}) => {
       out += '<li>';
-      out += '<span class="course-title">' + theirs.course_name + '</span>';
+      out += '<span class="course-title">' + _brEscape(theirs.course_name) + '</span>';
       out += '<span class="course-detail">';
-      out += 'you: #' + (mine ? mine.class_numbers.join('/') : '?');
-      out += ' · they: #' + (theirs.class_numbers || []).join('/') + ' (' + (theirs.instructor || 'TBA') + ')';
+      out += 'you: #' + _brEscape(mine ? mine.class_numbers.join('/') : '?');
+      out += ' · they: #' + _brEscape((theirs.class_numbers || []).join('/')) + ' (' + _brEscape(theirs.instructor || 'TBA') + ')';
       out += '</span>';
       out += '</li>';
     });
@@ -12378,8 +12391,8 @@ buildGrid = function(gridId, half) {
         const theirCell = document.createElement('div');
         theirCell.className = 'cell friend-band';
         const theirName = theirs.name && theirs.name.length > 18 ? theirs.name.slice(0,16)+'…' : (theirs.name || 'friend');
-        theirCell.innerHTML = '<span class="name">' + theirName + '</span>';
-        theirCell.title = 'Friend also has class: ' + (theirs.code || theirs.name);
+        theirCell.innerHTML = '<span class="name">' + _brEscape(theirName) + '</span>';
+        theirCell.title = 'Friend also has class: ' + (theirs.code || theirs.name);  // .title is text, not HTML — safe as-is
         cellSlot.appendChild(theirCell);
       }
       // ---- CASE B: classmate (both have same class here) ----
@@ -12397,7 +12410,7 @@ buildGrid = function(gridId, half) {
         const cell = document.createElement('div');
         cell.className = 'cell c-' + myGhost.course + ' ghost';
         const shortName = myGhost.name && myGhost.name.length > 22 ? myGhost.name.slice(0,20)+'…' : (myGhost.name || '');
-        cell.innerHTML = '<div class="name">' + shortName + '</div><div class="time-sub">' + (myGhost.code || '') + ' · ' + fmtShort(myGhost.start) + '–' + fmtShort(myGhost.end) + '</div>';
+        cell.innerHTML = '<div class="name">' + _brEscape(shortName) + '</div><div class="time-sub">' + _brEscape(myGhost.code || '') + ' · ' + _brEscape(fmtShort(myGhost.start)) + '–' + _brEscape(fmtShort(myGhost.end)) + '</div>';
         cell.addEventListener('click', () => showCoreModal(myGhost.coreId));
         cellSlot.appendChild(cell);
       }
@@ -12407,8 +12420,8 @@ buildGrid = function(gridId, half) {
         const cell = document.createElement('div');
         cell.className = 'cell friend-cell';
         const shortName = theirs.name && theirs.name.length > 22 ? theirs.name.slice(0,20)+'…' : (theirs.name || 'friend');
-        cell.innerHTML = '<div class="name">' + shortName + '</div><div class="time-sub">' + fmtShort(theirs.start) + '–' + fmtShort(theirs.end) + '</div>';
-        cell.title = theirs.code || theirs.name;
+        cell.innerHTML = '<div class="name">' + _brEscape(shortName) + '</div><div class="time-sub">' + _brEscape(fmtShort(theirs.start)) + '–' + _brEscape(fmtShort(theirs.end)) + '</div>';
+        cell.title = theirs.code || theirs.name;  // .title is text — safe
         cellSlot.appendChild(cell);
       }
       grid.appendChild(cellSlot);
@@ -12442,7 +12455,7 @@ function _updateOverlayBanner() {
     const s = _overlayStats[half];
     const friendName = friendData.student?.name?.split(' ')[0] || 'friend';
     banner.innerHTML =
-      '<span class="label">Overlay with <em>' + friendName + '</em> · ' + half + '</span>' +
+      '<span class="label">Overlay with <em>' + _brEscape(friendName) + '</em> · ' + half + '</span>' +
       '<span class="stats">' +
         '<span class="stat green"><strong>' + s.classmates + '</strong> classmate</span>' +
         '<span class="stat"><strong>' + s.bothClass + '</strong> both busy</span>' +
