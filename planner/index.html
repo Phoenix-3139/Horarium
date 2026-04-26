@@ -7545,29 +7545,39 @@
     font-family: var(--font-mono);
     font-weight: 600;
   }
-  /* Help / Field-guide button — sits in the nav. Made distinct so
-     it's discoverable: tinted accent background + label. */
+  /* Help / Field-guide button — solid-filled pill on the dark nav.
+     The previous tinted version blended into the dark backdrop;
+     filled accent + cream text reads at a glance. */
   .fn-item.fn-help {
-    background: color-mix(in srgb, var(--accent, var(--ochre)) 14%, transparent);
-    border: 1px solid color-mix(in srgb, var(--accent, var(--ochre)) 38%, transparent);
-    color: var(--accent, var(--ochre));
+    background: var(--accent, var(--ochre));
+    color: var(--cream, #faf6ec);
+    border: 0;
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
-    padding-left: 0.65rem;
-    padding-right: 0.7rem;
+    gap: 0.4rem;
+    padding-left: 0.85rem;
+    padding-right: 0.95rem;
+    margin-left: 4px;
+    font-weight: 700;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--cream, #fff) 25%, transparent);
+    transition: filter 0.15s, box-shadow 0.15s;
   }
   .fn-item.fn-help:hover {
-    background: color-mix(in srgb, var(--accent, var(--ochre)) 22%, transparent);
-    border-color: var(--accent, var(--ochre));
+    filter: brightness(1.1);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--cream, #fff) 50%, transparent), 0 2px 8px rgba(0,0,0,0.2);
   }
   .fn-item.fn-help .fn-icon {
     font-family: var(--font-display, 'Fraunces', serif);
     font-style: italic;
-    font-size: 1.05rem;
+    font-size: 1.1rem;
     line-height: 1;
+    color: var(--cream, #faf6ec);
   }
-  .fn-item.fn-help .fn-label { font-weight: 600; }
+  .fn-item.fn-help .fn-label {
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: var(--cream, #faf6ec);
+  }
 
   /* ============== FIELD GUIDE ==============
      A flashcard-style learning panel. TOC on the left, active card
