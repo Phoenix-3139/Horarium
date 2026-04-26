@@ -24,6 +24,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
+        with:
+          # Auto-enable Pages on first run so the user doesn't have to
+          # toggle it in repo settings before the workflow can deploy.
+          enablement: true
       - name: Upload planner/ as the site
         uses: actions/upload-pages-artifact@v3
         with:
