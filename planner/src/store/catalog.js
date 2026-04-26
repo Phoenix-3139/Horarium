@@ -540,6 +540,17 @@ export function createCatalog() {
       sections: [],
       filters: [],
       notes: "",
+      dismissed_component_warning_hash: null,
+      linked_sections: [],
+      requirements: [],
+      wanted: { root: null },
+      scheduler_preferences: {
+        no_starts_before: null,
+        no_ends_after: null,
+        lunch_break: false,
+        day_distribution: "ignore",
+        include_closed_waitlisted: false,
+      },
     });
     state.plans.active = id;
   }
@@ -592,13 +603,11 @@ export function createCatalog() {
       // toJSON/fromJSON and default to empty/sensible-defaults so
       // existing plans without these fields load cleanly.
       requirements: [],
-      // Piece 6 rework — visual AND/OR zones the user drops course
-      // codes into. AND = include all of these (each becomes a
-      // single-course requirement at solver time). OR = pick at
-      // least one (single OR-group requirement). Storage is a thin
-      // direct shape; requirements[] is computed on the way to the
-      // solver. Empty arrays = no constraints.
-      wanted: { and: [], or: [] },
+      // Piece 6 rework v2 — wanted is a free-form boolean expression
+      // tree. Root is null (nothing wanted) or an ExprNode of shape
+      // { id, op:'AND'|'OR', children: Array<ExprNode | { type:'course', code }> }.
+      // Translated to CNF requirements[] at solver call time.
+      wanted: { root: null },
       scheduler_preferences: {
         no_starts_before: null,
         no_ends_after: null,
@@ -671,8 +680,7 @@ export function createCatalog() {
         r.locked_section ? { locked_section: Object.assign({}, r.locked_section) } : {},
       )),
       wanted: {
-        and: ((src.wanted && src.wanted.and) || []).slice(),
-        or: ((src.wanted && src.wanted.or) || []).slice(),
+        root: _wantedCloneNode((src.wanted && src.wanted.root) || null),
       },
       scheduler_preferences: Object.assign({},
         src.scheduler_preferences || {
@@ -847,38 +855,270 @@ export function createCatalog() {
   function _planUpdatePreferences(planId, partial) {
     return _applyPlanUpdate(planId, (p) => _reqHelpers.updatePreferences(p, partial), "update_scheduler_preferences");
   }
-  // Piece 6 rework — AND/OR-zone wanted manipulation. Pure mutations
-  // on the plan's `wanted` field; no requirements[] involvement here
-  // (those are computed at solver-call time).
-  function _planAddToWanted(planId, zone, code) {
+  // Piece 6 rework v2 — wanted is a boolean expression tree. The
+  // catalog stores it; the solver-time call converts to CNF.
+  //
+  // Path semantics: an array of integer indices that walks from the
+  // root to a target group. [] = root group itself. [1, 0] = first
+  // child of the root's index-1 child (which must be a group).
+  //
+  // Mutators normalize on every write:
+  //   - Empty groups collapse upward (nothing to satisfy).
+  //   - A group with one child is unwrapped (it's just that child).
+  //   - The root, if reduced to a single course, gets wrapped back
+  //     into a 1-child AND group so the UI always has a stable root
+  //     handle to interact with.
+  let _wantedNextId = 0;
+  function _wantedNewId() { return "w_" + (_wantedNextId++); }
+  function _wantedCloneNode(node) {
+    if (!node) return null;
+    if (node.type === "course") {
+      return { type: "course", code: String(node.code || "") };
+    }
+    if (node.type === "shelf") {
+      return { type: "shelf", subject: String(node.subject || "") };
+    }
+    if (node.op === "AND" || node.op === "OR") {
+      return {
+        id: typeof node.id === "string" && node.id ? node.id : _wantedNewId(),
+        op: node.op,
+        children: Array.isArray(node.children)
+          ? node.children
+              .map(_wantedCloneNode)
+              .filter((c) => !!c)
+          : [],
+      };
+    }
+    return null;
+  }
+  function _wantedNormalize(node) {
+    if (!node) return null;
+    if (node.type === "course") {
+      const code = String(node.code || "").trim();
+      if (!code) return null;
+      return { type: "course", code };
+    }
+    if (node.type === "shelf") {
+      const subject = String(node.subject || "").trim();
+      if (!subject) return null;
+      return { type: "shelf", subject };
+    }
+    if (node.op !== "AND" && node.op !== "OR") return null;
+    const kids = (node.children || [])
+      .map(_wantedNormalize)
+      .filter((c) => !!c);
+    if (kids.length === 0) return null;
+    // Collapse same-op grandchildren up: AND(AND(a,b), c) => AND(a,b,c).
+    // Note: we deliberately do NOT collapse a single-child group to its
+    // bare leaf here. A user-created group is a stable handle they
+    // intend to add more siblings into; tearing it down behind their
+    // back leaves them unable to drop into the (now-vanished) path.
+    const merged = [];
+    for (const k of kids) {
+      if (k.type !== "course" && k.op === node.op) {
+        for (const gk of k.children) merged.push(gk);
+      } else {
+        merged.push(k);
+      }
+    }
+    return {
+      id: typeof node.id === "string" && node.id ? node.id : _wantedNewId(),
+      op: node.op,
+      children: merged,
+    };
+  }
+  function _wantedNodeAtPath(root, path) {
+    let cur = root;
+    for (const idx of path) {
+      if (!cur || cur.type === "course") return null;
+      cur = cur.children[idx];
+    }
+    if (!cur || cur.type === "course") return null;
+    return cur;
+  }
+  function _wantedFindCode(node, code) {
+    // Returns true iff `code` appears anywhere in the tree.
+    if (!node) return false;
+    if (node.type === "course") return node.code === code;
+    if (node.type === "shelf") return false;
+    return (node.children || []).some((c) => _wantedFindCode(c, code));
+  }
+  function _wantedRemoveCodeAll(node, code) {
+    // Mutates: removes every course leaf with this code, returns the
+    // (possibly pruned) node or null if the whole subtree is now empty.
+    if (!node) return null;
+    if (node.type === "course") return node.code === code ? null : node;
+    if (node.type === "shelf") return node;
+    const kids = node.children
+      .map((c) => _wantedRemoveCodeAll(c, code))
+      .filter((c) => !!c);
+    if (kids.length === 0) return null;
+    return Object.assign({}, node, { children: kids });
+  }
+  function _wantedFinish(planId, plan, root, reason, payload) {
+    let normalized = _wantedNormalize(root);
+    // Keep the root stable as a group: if normalization collapsed it
+    // down to a bare course leaf, wrap it back into an AND group of
+    // one so the UI always has a header to interact with.
+    if (normalized && normalized.type === "course") {
+      normalized = { id: _wantedNewId(), op: "AND", children: [normalized] };
+    }
+    plan.wanted = { root: normalized };
+    plan.modified_at = _nowISO();
+    _planNotify(reason, planId, payload || {});
+  }
+
+  function _planWantedAddCourse(planId, path, code) {
     const plan = state.plans.byId.get(planId);
     if (!plan) throw new Error(`Unknown plan ${planId}`);
-    if (zone !== "and" && zone !== "or") return;
-    if (!plan.wanted) plan.wanted = { and: [], or: [] };
-    const list = plan.wanted[zone];
     const c = String(code || "").trim();
     if (!c) return;
-    if (list.includes(c)) return;
-    list.push(c);
-    plan.modified_at = _nowISO();
-    _planNotify("add_to_wanted", planId, { zone, code: c });
+    let root = _wantedCloneNode(plan.wanted && plan.wanted.root);
+    if (!root) {
+      // First add: build a one-child AND group around the new course.
+      root = { id: _wantedNewId(), op: "AND", children: [{ type: "course", code: c }] };
+      _wantedFinish(planId, plan, root, "wanted_add_course", { path, code: c });
+      return;
+    }
+    // Idempotent: don't duplicate the same code in the same group.
+    const target = _wantedNodeAtPath(root, path || []);
+    if (!target) return;
+    if (target.children.some((k) => k.type === "course" && k.code === c)) return;
+    target.children.push({ type: "course", code: c });
+    _wantedFinish(planId, plan, root, "wanted_add_course", { path, code: c });
   }
-  function _planRemoveFromWanted(planId, zone, code) {
+
+  function _planWantedAddShelf(planId, path, subject) {
+    // Shelf node = "any course from this subject, picked later". Solver
+    // skips it; the under-table fill-in panel lets the user pin the
+    // course after preview/pick.
     const plan = state.plans.byId.get(planId);
     if (!plan) throw new Error(`Unknown plan ${planId}`);
-    if (!plan.wanted || (zone !== "and" && zone !== "or")) return;
-    const before = plan.wanted[zone].length;
-    plan.wanted[zone] = plan.wanted[zone].filter((c) => c !== code);
-    if (plan.wanted[zone].length === before) return;
-    plan.modified_at = _nowISO();
-    _planNotify("remove_from_wanted", planId, { zone, code });
+    const s = String(subject || "").trim();
+    if (!s) return;
+    let root = _wantedCloneNode(plan.wanted && plan.wanted.root);
+    if (!root) {
+      root = { id: _wantedNewId(), op: "AND", children: [{ type: "shelf", subject: s }] };
+      _wantedFinish(planId, plan, root, "wanted_add_shelf", { path, subject: s });
+      return;
+    }
+    const target = _wantedNodeAtPath(root, path || []);
+    if (!target) return;
+    if (target.children.some((k) => k.type === "shelf" && k.subject === s)) return;
+    target.children.push({ type: "shelf", subject: s });
+    _wantedFinish(planId, plan, root, "wanted_add_shelf", { path, subject: s });
   }
-  function _planClearWanted(planId) {
+
+  function _planWantedRemoveShelf(planId, subject) {
     const plan = state.plans.byId.get(planId);
     if (!plan) throw new Error(`Unknown plan ${planId}`);
-    plan.wanted = { and: [], or: [] };
+    const s = String(subject || "").trim();
+    if (!s) return;
+    let root = _wantedCloneNode(plan.wanted && plan.wanted.root);
+    if (!root) return;
+    function strip(node) {
+      if (!node) return null;
+      if (node.type === "shelf") return node.subject === s ? null : node;
+      if (node.type === "course") return node;
+      const kids = (node.children || []).map(strip).filter((c) => c !== null);
+      return Object.assign({}, node, { children: kids });
+    }
+    root = strip(root);
+    _wantedFinish(planId, plan, root, "wanted_remove_shelf", { subject: s });
+  }
+
+  function _planWantedAddGroup(planId, path, op) {
+    const plan = state.plans.byId.get(planId);
+    if (!plan) throw new Error(`Unknown plan ${planId}`);
+    if (op !== "AND" && op !== "OR") return;
+    let root = _wantedCloneNode(plan.wanted && plan.wanted.root);
+    if (!root) {
+      root = { id: _wantedNewId(), op, children: [] };
+      // Empty roots normalize away — but for the brand-new "create an
+      // empty group" UX we want it to stick. Set directly.
+      plan.wanted = { root };
+      plan.modified_at = _nowISO();
+      _planNotify("wanted_add_group", planId, { path, op });
+      return;
+    }
+    const target = _wantedNodeAtPath(root, path || []);
+    if (!target) return;
+    target.children.push({ id: _wantedNewId(), op, children: [] });
+    plan.wanted = { root };
     plan.modified_at = _nowISO();
-    _planNotify("clear_wanted", planId);
+    _planNotify("wanted_add_group", planId, { path, op });
+  }
+
+  function _planWantedRemove(planId, path, idx) {
+    const plan = state.plans.byId.get(planId);
+    if (!plan) throw new Error(`Unknown plan ${planId}`);
+    let root = _wantedCloneNode(plan.wanted && plan.wanted.root);
+    if (!root) return;
+    if ((path || []).length === 0 && idx == null) {
+      _wantedFinish(planId, plan, null, "wanted_clear");
+      return;
+    }
+    const target = _wantedNodeAtPath(root, path || []);
+    if (!target) return;
+    if (idx < 0 || idx >= target.children.length) return;
+    target.children.splice(idx, 1);
+    _wantedFinish(planId, plan, root, "wanted_remove", { path, idx });
+  }
+
+  function _planWantedRemoveCode(planId, code) {
+    // Convenience used by the picker's "click ✓ WANT to remove" flow:
+    // strip every occurrence of this course code from the tree.
+    const plan = state.plans.byId.get(planId);
+    if (!plan) throw new Error(`Unknown plan ${planId}`);
+    let root = _wantedCloneNode(plan.wanted && plan.wanted.root);
+    if (!root) return;
+    root = _wantedRemoveCodeAll(root, code);
+    _wantedFinish(planId, plan, root, "wanted_remove_code", { code });
+  }
+
+  function _planWantedToggleOp(planId, path) {
+    const plan = state.plans.byId.get(planId);
+    if (!plan) throw new Error(`Unknown plan ${planId}`);
+    let root = _wantedCloneNode(plan.wanted && plan.wanted.root);
+    if (!root) return;
+    const target = _wantedNodeAtPath(root, path || []);
+    if (!target) return;
+    target.op = target.op === "AND" ? "OR" : "AND";
+    _wantedFinish(planId, plan, root, "wanted_toggle_op", { path });
+  }
+
+  function _planWantedWrap(planId, path, idx, op) {
+    // Wrap the child at (path, idx) in a new group of `op`, so the
+    // child becomes that group's only child. The user can then drop
+    // more siblings into the new group.
+    const plan = state.plans.byId.get(planId);
+    if (!plan) throw new Error(`Unknown plan ${planId}`);
+    if (op !== "AND" && op !== "OR") return;
+    let root = _wantedCloneNode(plan.wanted && plan.wanted.root);
+    if (!root) return;
+    const target = _wantedNodeAtPath(root, path || []);
+    if (!target) return;
+    if (idx < 0 || idx >= target.children.length) return;
+    const child = target.children[idx];
+    target.children[idx] = {
+      id: _wantedNewId(),
+      op,
+      children: [child],
+    };
+    // No normalize here — single-child groups normally collapse, but
+    // the wrap is a deliberate user action (they want a placeholder
+    // sub-group to drop into). Keep it.
+    plan.wanted = { root };
+    plan.modified_at = _nowISO();
+    _planNotify("wanted_wrap", planId, { path, idx, op });
+  }
+
+  function _planWantedClear(planId) {
+    const plan = state.plans.byId.get(planId);
+    if (!plan) throw new Error(`Unknown plan ${planId}`);
+    plan.wanted = { root: null };
+    plan.modified_at = _nowISO();
+    _planNotify("wanted_clear", planId);
   }
   // The pure helpers live in src/scheduler/requirements.js but the
   // catalog can't import them at module-load time (would create a
@@ -1030,10 +1270,34 @@ export function createCatalog() {
               : [],
             wanted: (() => {
               const w = plan.wanted || {};
-              return {
-                and: Array.isArray(w.and) ? w.and.filter(c => typeof c === 'string') : [],
-                or: Array.isArray(w.or) ? w.or.filter(c => typeof c === 'string') : [],
-              };
+              // New shape: { root: ExprNode | null }
+              if (w.root !== undefined) {
+                return { root: _wantedNormalize(_wantedCloneNode(w.root)) };
+              }
+              // Legacy shape: { and: [...], or: [...] }. Build an
+              // equivalent tree, then normalize.
+              const andList = Array.isArray(w.and) ? w.and.filter(c => typeof c === 'string') : [];
+              const orList = Array.isArray(w.or) ? w.or.filter(c => typeof c === 'string') : [];
+              const andLeaves = andList.map((c) => ({ type: "course", code: c }));
+              const orLeaves = orList.map((c) => ({ type: "course", code: c }));
+              let root = null;
+              if (andLeaves.length === 0 && orLeaves.length === 0) {
+                root = null;
+              } else if (orLeaves.length === 0) {
+                root = { id: _wantedNewId(), op: "AND", children: andLeaves };
+              } else if (andLeaves.length === 0) {
+                root = { id: _wantedNewId(), op: "OR", children: orLeaves };
+              } else {
+                root = {
+                  id: _wantedNewId(),
+                  op: "AND",
+                  children: [
+                    ...andLeaves,
+                    { id: _wantedNewId(), op: "OR", children: orLeaves },
+                  ],
+                };
+              }
+              return { root: _wantedNormalize(root) };
             })(),
             scheduler_preferences: (() => {
               const p = plan.scheduler_preferences || {};
@@ -1140,9 +1404,15 @@ export function createCatalog() {
       lockRequirementSection: _planLockSection,
       unlockRequirementSection: _planUnlockSection,
       updatePreferences: _planUpdatePreferences,
-      addToWanted: _planAddToWanted,
-      removeFromWanted: _planRemoveFromWanted,
-      clearWanted: _planClearWanted,
+      wantedAddCourse: _planWantedAddCourse,
+      wantedAddShelf: _planWantedAddShelf,
+      wantedAddGroup: _planWantedAddGroup,
+      wantedRemove: _planWantedRemove,
+      wantedRemoveCode: _planWantedRemoveCode,
+      wantedRemoveShelf: _planWantedRemoveShelf,
+      wantedToggleOp: _planWantedToggleOp,
+      wantedWrap: _planWantedWrap,
+      clearWanted: _planWantedClear,
       _injectRequirementsHelpers: _injectRequirementsHelpers,
       clearByOrigin: _planClearByOrigin,
     },

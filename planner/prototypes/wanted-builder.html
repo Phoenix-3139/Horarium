@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Wanted-builder UI prototypes — Horarium</title>
+<style>
+  /* Theme tokens (lifted from the Editorial palette so prototypes match
+     the running app). */
+  :root {
+    --paper:      #f6f1e7;
+    --paper-soft: #f0e9da;
+    --cream:      #faf6ec;
+    --ink:        #2b2a26;
+    --ink-soft:   #4a4942;
+    --ink-faint:  #8a8678;
+    --rule:       #d6cfbe;
+    --ochre:      #b07b34;
+    --rust:       #8c4a3a;
+    --mossy:      #5d6b3d;
+    --teal:       #4a6f7e;
+    --plum:       #6b5379;
+    --accent:     var(--ochre);
+    --radius-sm:  2px;
+    --radius-md:  4px;
+    --font-sans:  'Inter', system-ui, sans-serif;
+    --font-mono:  'JetBrains Mono', ui-monospace, monospace;
+    --font-display: 'Fraunces', 'Times New Roman', serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 2.5rem 3rem;
+    font-family: var(--font-sans);
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 14px;
+    line-height: 1.45;
+  }
+  h1 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 2.2rem;
+    margin: 0 0 0.4rem;
+    letter-spacing: -0.01em;
+  }
+  h1 em { color: var(--accent); font-style: italic; }
+  .blurb { color: var(--ink-soft); max-width: 60ch; margin: 0 0 2rem; }
+  .blurb strong { color: var(--ink); }
+
+  .proto {
+    margin-top: 3rem;
+    border-top: 1px solid var(--rule);
+    padding-top: 1.5rem;
+  }
+  .proto-head {
+    display: flex;
+    align-items: baseline;
+    gap: 1.2rem;
+    margin-bottom: 0.4rem;
+  }
+  .proto-name {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .proto-title {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 1.4rem;
+    color: var(--ink);
+  }
+  .proto-meta {
+    color: var(--ink-faint);
+    font-size: 0.84rem;
+    max-width: 70ch;
+    margin-bottom: 1.2rem;
+  }
+  .proto-canvas {
+    background: var(--paper-soft);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-md);
+    padding: 1.4rem;
+    overflow-x: auto;
+  }
+  .proto-notes {
+    margin-top: 0.7rem;
+    color: var(--ink-soft);
+    font-size: 0.82rem;
+  }
+  .proto-notes ul { margin: 0.3rem 0 0; padding-left: 1.1rem; }
+  .proto-notes li + li { margin-top: 0.18rem; }
+
+  /* ==========================================================
+     A — Math-formula one-liner
+     ========================================================== */
+  .a-line {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    flex-wrap: wrap;
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    color: var(--ink);
+  }
+  .a-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.7rem;
+    background: var(--cream);
+    border: 1px solid var(--rule);
+    border-bottom: 2px solid var(--accent);
+    border-radius: var(--radius-sm);
+    font-size: 0.86rem;
+    cursor: pointer;
+  }
+  .a-chip:hover { border-bottom-color: var(--rust); }
+  .a-op {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.4rem;
+    color: var(--accent);
+    user-select: none;
+    cursor: pointer;
+    padding: 0 0.15rem;
+  }
+  .a-op:hover { color: var(--rust); }
+  .a-paren {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    color: var(--ink-faint);
+    user-select: none;
+  }
+  .a-add {
+    background: transparent;
+    border: 1px dashed var(--ink-faint);
+    color: var(--ink-faint);
+    padding: 0.25rem 0.6rem;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .a-add:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ==========================================================
+     B — Kanban columns: each AND requirement is a column;
+     stacked alternatives inside = OR
+     ========================================================== */
+  .b-cols {
+    display: flex;
+    gap: 0.75rem;
+    align-items: stretch;
+    overflow-x: auto;
+  }
+  .b-col {
+    flex: 0 0 11rem;
+    background: var(--cream);
+    border: 1px solid var(--rule);
+    border-top: 3px solid var(--accent);
+    border-radius: var(--radius-md);
+    padding: 0.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+  .b-col-head {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 0.1rem;
+  }
+  .b-card {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
+    padding: 0.4rem 0.55rem;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    cursor: grab;
+  }
+  .b-or {
+    text-align: center;
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--accent);
+    font-size: 0.92rem;
+    margin: -0.15rem 0;
+  }
+  .b-add-card {
+    background: transparent;
+    border: 1px dashed var(--ink-faint);
+    color: var(--ink-faint);
+    padding: 0.3rem 0.4rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .b-add-card:hover { color: var(--accent); border-color: var(--accent); }
+  .b-and-link {
+    align-self: center;
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--ink-faint);
+    font-size: 1.1rem;
+    padding: 0 0.2rem;
+  }
+  .b-add-col {
+    flex: 0 0 8rem;
+    align-self: stretch;
+    border: 1px dashed var(--ink-faint);
+    border-radius: var(--radius-md);
+    color: var(--ink-faint);
+    background: transparent;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .b-add-col:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* ==========================================================
+     C — Sentence builder: prose + inline pills
+     ========================================================== */
+  .c-line {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    line-height: 1.7;
+    color: var(--ink);
+  }
+  .c-pill {
+    display: inline-block;
+    padding: 0.1rem 0.55rem;
+    margin: 0 0.05rem;
+    background: var(--cream);
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: 0.84rem;
+    cursor: pointer;
+    vertical-align: 2px;
+  }
+  .c-pill:hover { border-color: var(--accent); }
+  .c-conn { color: var(--ink-faint); font-style: italic; }
+  .c-or-grp {
+    background: color-mix(in srgb, var(--accent) 14%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+    padding: 0.05rem 0.5rem 0.1rem;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.84rem;
+  }
+  .c-or-grp .c-pill { background: var(--paper); }
+  .c-or-grp .c-or { color: var(--accent); font-style: italic; padding: 0 0.2rem; }
+
+  /* ==========================================================
+     D — Branching diagram: vertical "tree" with elbow lines
+     ========================================================== */
+  .d-tree { display: flex; flex-direction: column; gap: 0; }
+  .d-node {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.25rem 0;
+  }
+  .d-rail {
+    width: 1.4rem;
+    flex: 0 0 1.4rem;
+    border-left: 1px solid var(--rule);
+    align-self: stretch;
+    margin-left: 0.5rem;
+  }
+  .d-rail-elbow {
+    width: 1.4rem;
+    flex: 0 0 1.4rem;
+    height: 1.1rem;
+    border-left: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    border-bottom-left-radius: 6px;
+    margin-left: 0.5rem;
+    align-self: flex-start;
+  }
+  .d-op {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 0.82rem;
+    color: var(--ink-faint);
+    background: var(--paper-soft);
+    padding: 0 0.5rem;
+    border-radius: 999px;
+    border: 1px solid var(--rule);
+    cursor: pointer;
+  }
+  .d-op[data-op="OR"] { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 35%, transparent); }
+  .d-leaf {
+    background: var(--cream);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
+    padding: 0.32rem 0.6rem;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .d-children {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .d-add {
+    margin-left: 1.9rem;
+    background: transparent;
+    border: 1px dashed var(--ink-faint);
+    color: var(--ink-faint);
+    padding: 0.18rem 0.55rem;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    align-self: flex-start;
+    margin-top: 0.2rem;
+  }
+  .d-add:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* ==========================================================
+     E — Pretty-printed code block (monospace formula)
+     ========================================================== */
+  .e-block {
+    font-family: var(--font-mono);
+    font-size: 0.92rem;
+    line-height: 1.7;
+    color: var(--ink);
+    background: var(--cream);
+    border: 1px solid var(--rule);
+    padding: 1.1rem 1.3rem;
+    border-radius: var(--radius-md);
+    white-space: pre;
+  }
+  .e-tok {
+    display: inline-block;
+    padding: 0.05rem 0.4rem;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+  }
+  .e-tok:hover { border-color: var(--accent); }
+  .e-op {
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--accent);
+    cursor: pointer;
+  }
+  .e-comment { color: var(--ink-faint); font-style: italic; }
+</style>
+</head>
+<body>
+  <h1>Wanted-builder <em>prototypes</em></h1>
+  <p class="blurb">
+    Five takes on the same expression: <strong>ENGR-UH 1000</strong> AND
+    (<strong>ENGR-UH 2010</strong> OR <strong>ENGR-UH 2011</strong>) AND
+    <strong>CORE-UH 1234</strong> AND (<strong>CHEM-UH 1</strong> OR
+    <strong>CHEM-UH 2</strong>). All variants share the same data shape,
+    same drag/click affordances, and assume the picker's <code>+ Want</code> pill is the
+    primary entry point. Pick the one you want and we'll wire it.
+  </p>
+
+  <!-- ============================================================ -->
+  <div class="proto">
+    <div class="proto-head">
+      <span class="proto-name">A · Formula</span>
+      <span class="proto-title">Math-expression one-liner</span>
+    </div>
+    <p class="proto-meta">
+      Reads left-to-right like an equation. Chips are courses, italic
+      ∧/∨ are operators, parentheses bracket a sub-group. Click any
+      operator to flip it; click a paren to expand the group inline.
+    </p>
+    <div class="proto-canvas">
+      <div class="a-line">
+        <span class="a-chip">ENGR-UH 1000</span>
+        <span class="a-op" title="Click to flip">∧</span>
+        <span class="a-paren">(</span>
+          <span class="a-chip">ENGR-UH 2010</span>
+          <span class="a-op" title="Click to flip">∨</span>
+          <span class="a-chip">ENGR-UH 2011</span>
+        <span class="a-paren">)</span>
+        <span class="a-op">∧</span>
+        <span class="a-chip">CORE-UH 1234</span>
+        <span class="a-op">∧</span>
+        <span class="a-paren">(</span>
+          <span class="a-chip">CHEM-UH 1</span>
+          <span class="a-op">∨</span>
+          <span class="a-chip">CHEM-UH 2</span>
+        <span class="a-paren">)</span>
+        <button type="button" class="a-add">+ ∧ chip</button>
+        <button type="button" class="a-add">+ ( ∨ group )</button>
+      </div>
+    </div>
+    <div class="proto-notes">
+      <strong>Strengths:</strong> compact; the formula is unambiguous;
+      operator symbols carry meaning at a glance.
+      <br><strong>Risks:</strong> ∧/∨ glyphs may be unfamiliar to non-CS
+      students; long expressions wrap and lose the linear feel; paren
+      drop-targets are small.
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <div class="proto">
+    <div class="proto-head">
+      <span class="proto-name">B · Columns</span>
+      <span class="proto-title">Kanban: one column per requirement</span>
+    </div>
+    <p class="proto-meta">
+      Each column = one thing the schedule must satisfy (an AND clause).
+      Stacked cards inside a column = alternatives (OR). To pick one,
+      drop a course in. Wide layout naturally fills horizontal space
+      below the calendar.
+    </p>
+    <div class="proto-canvas">
+      <div class="b-cols">
+        <div class="b-col">
+          <div class="b-col-head">REQUIRED #1</div>
+          <div class="b-card">ENGR-UH 1000</div>
+        </div>
+        <span class="b-and-link">and</span>
+        <div class="b-col">
+          <div class="b-col-head">REQUIRED #2 · pick one</div>
+          <div class="b-card">ENGR-UH 2010</div>
+          <div class="b-or">or</div>
+          <div class="b-card">ENGR-UH 2011</div>
+          <button type="button" class="b-add-card">+ alt</button>
+        </div>
+        <span class="b-and-link">and</span>
+        <div class="b-col">
+          <div class="b-col-head">REQUIRED #3</div>
+          <div class="b-card">CORE-UH 1234</div>
+        </div>
+        <span class="b-and-link">and</span>
+        <div class="b-col">
+          <div class="b-col-head">REQUIRED #4 · pick one</div>
+          <div class="b-card">CHEM-UH 1</div>
+          <div class="b-or">or</div>
+          <div class="b-card">CHEM-UH 2</div>
+          <button type="button" class="b-add-card">+ alt</button>
+        </div>
+        <button type="button" class="b-add-col">+ another<br>required</button>
+      </div>
+    </div>
+    <div class="proto-notes">
+      <strong>Strengths:</strong> intuitive (kanban metaphor); horizontal
+      by design; deep nesting is impossible — that's a feature, not a
+      bug, since 99% of real degree planning is just AND-of-OR.
+      <br><strong>Risks:</strong> can't express OR-of-ANDs without
+      flattening; a hard ceiling on logic complexity (we'd document this
+      explicitly: "for richer expressions, switch to formula mode").
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <div class="proto">
+    <div class="proto-head">
+      <span class="proto-name">C · Sentence</span>
+      <span class="proto-title">Plain-English with inline pills</span>
+    </div>
+    <p class="proto-meta">
+      Reads as a sentence. The expression is rendered into prose with
+      operator words in italics and OR-groups bracketed by a tinted
+      box. Friendliest for first-timers; least visual for power users.
+    </p>
+    <div class="proto-canvas">
+      <div class="c-line">
+        I want
+        <span class="c-pill">ENGR-UH 1000</span>
+        <span class="c-conn">and</span>
+        <span class="c-or-grp">
+          <span class="c-pill">ENGR-UH 2010</span>
+          <span class="c-or">or</span>
+          <span class="c-pill">ENGR-UH 2011</span>
+        </span>
+        <span class="c-conn">and</span>
+        <span class="c-pill">CORE-UH 1234</span>
+        <span class="c-conn">and</span>
+        <span class="c-or-grp">
+          <span class="c-pill">CHEM-UH 1</span>
+          <span class="c-or">or</span>
+          <span class="c-pill">CHEM-UH 2</span>
+        </span>
+        <span class="c-conn">…</span>
+      </div>
+    </div>
+    <div class="proto-notes">
+      <strong>Strengths:</strong> zero learning curve; reads like what
+      it means.
+      <br><strong>Risks:</strong> long expressions wrap awkwardly; less
+      structurally clear when you have many parallel ORs; "and" /
+      "or" words look like prose, not affordances — discoverability
+      cost.
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <div class="proto">
+    <div class="proto-head">
+      <span class="proto-name">D · Tree</span>
+      <span class="proto-title">Branching diagram with rails</span>
+    </div>
+    <p class="proto-meta">
+      A literal tree. The root op pill controls the whole expression;
+      each child has an elbow rail leading to it. OR groups indent
+      one more level. Closer to a file-tree or a logic diagram.
+    </p>
+    <div class="proto-canvas">
+      <div class="d-tree">
+        <div class="d-node"><span class="d-op" data-op="AND">and</span> <span class="d-leaf"><strong>Schedule must satisfy all of these</strong></span></div>
+        <div class="d-children">
+          <div class="d-node"><span class="d-rail-elbow"></span><span class="d-leaf">ENGR-UH 1000</span></div>
+          <div class="d-node"><span class="d-rail-elbow"></span><span class="d-op" data-op="OR">or</span><span class="d-leaf"><em>(pick one)</em></span></div>
+          <div class="d-children" style="padding-left: 1.9rem;">
+            <div class="d-node"><span class="d-rail-elbow"></span><span class="d-leaf">ENGR-UH 2010</span></div>
+            <div class="d-node"><span class="d-rail-elbow"></span><span class="d-leaf">ENGR-UH 2011</span></div>
+          </div>
+          <div class="d-node"><span class="d-rail-elbow"></span><span class="d-leaf">CORE-UH 1234</span></div>
+          <div class="d-node"><span class="d-rail-elbow"></span><span class="d-op" data-op="OR">or</span><span class="d-leaf"><em>(pick one)</em></span></div>
+          <div class="d-children" style="padding-left: 1.9rem;">
+            <div class="d-node"><span class="d-rail-elbow"></span><span class="d-leaf">CHEM-UH 1</span></div>
+            <div class="d-node"><span class="d-rail-elbow"></span><span class="d-leaf">CHEM-UH 2</span></div>
+          </div>
+        </div>
+        <button class="d-add">+ another</button>
+      </div>
+    </div>
+    <div class="proto-notes">
+      <strong>Strengths:</strong> structure is unambiguous; works at any
+      nesting depth; familiar metaphor (file tree, json viewer).
+      <br><strong>Risks:</strong> vertical-heavy → eats the horizontal
+      space; rails feel CS-y; lots of visual lines.
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <div class="proto">
+    <div class="proto-head">
+      <span class="proto-name">E · Block</span>
+      <span class="proto-title">Pretty-printed code-block formula</span>
+    </div>
+    <p class="proto-meta">
+      Like a programming editor. Indented, monospaced, with the
+      operators as italic keywords. Useful if the user thinks in code.
+    </p>
+    <div class="proto-canvas">
+      <div class="e-block"><span class="e-comment"># Schedule must satisfy:</span>
+<span class="e-op">and</span> [
+    <span class="e-tok">ENGR-UH 1000</span>,
+    <span class="e-op">or</span> [<span class="e-tok">ENGR-UH 2010</span>, <span class="e-tok">ENGR-UH 2011</span>],
+    <span class="e-tok">CORE-UH 1234</span>,
+    <span class="e-op">or</span> [<span class="e-tok">CHEM-UH 1</span>, <span class="e-tok">CHEM-UH 2</span>],
+]</div>
+    </div>
+    <div class="proto-notes">
+      <strong>Strengths:</strong> exact and unambiguous; nesting is
+      instantly readable for engineers; copyable as a "saved query".
+      <br><strong>Risks:</strong> intimidates non-coders; doesn't feel
+      like part of the rest of the app; brackets and commas are syntax
+      noise.
+    </div>
+  </div>
+
+  <p class="blurb" style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--rule);">
+    <strong>My pick:</strong> B (Kanban columns) feels like the best
+    match for the actual problem — most NYUAD scheduling cases really
+    are AND-of-OR ("I need 1000, one of these labs, the writing seminar,
+    and one of these electives") and column metaphor maps directly
+    onto that. Variant A is the runner-up if you want to allow the
+    occasional weird nested case.
+  </p>
+</body>
+</html>

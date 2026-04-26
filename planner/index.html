@@ -5624,7 +5624,40 @@
     margin-bottom: 0.35rem;
     background: var(--cream);
     overflow: hidden;
+    position: relative;
   }
+  /* Subject "+ Want any" pill. Mirrors the course-level + Want pill,
+     visible only when the logic-maker drawer is open so it doesn't
+     clutter the picker the rest of the time. */
+  .mp-subj-want {
+    position: absolute;
+    top: 0.55rem;
+    right: 4.4rem;
+    z-index: 2;
+    background: transparent;
+    border: 1px solid color-mix(in srgb, var(--plum, var(--ochre)) 38%, transparent);
+    color: var(--plum, var(--ochre));
+    border-radius: 999px;
+    padding: 0.1rem 0.55rem;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: none;
+    line-height: 1.4;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+  }
+  .mp-subj-want:hover {
+    background: color-mix(in srgb, var(--plum, var(--ochre)) 14%, transparent);
+    border-color: var(--plum, var(--ochre));
+  }
+  .mp-subj-want.is-on {
+    background: color-mix(in srgb, var(--plum, var(--ochre)) 18%, transparent);
+    border-color: var(--plum, var(--ochre));
+    color: var(--plum, var(--ochre));
+  }
+  body.sch-drawer-open .mp-subj-want { display: inline-block; }
   .mp-subject.is-open { border-color: color-mix(in srgb, var(--ochre) 40%, transparent); }
   .mp-subject-head {
     display: flex;
@@ -6068,96 +6101,165 @@
     accent-color: var(--accent);
   }
 
-  /* ===== Auto-scheduler (Piece 6) — flag, drawer, results, preview banner =====
-     The scheduler-flag mirrors the personal-time filter flag: same
-     wedge silhouette but on the LEFT edge so the page reads as
-     symmetric. Tap to slide a drawer in from the left holding the
-     requirements + preferences form. Generated candidates render in
-     a separate right-anchored panel that's expandable. */
+  /* ===== Auto-scheduler — bottom logic sheet, plus an in-flow
+     controls + results section docked below the calendar. The
+     small "logic" tab sits at the bottom-right corner; tap it to
+     slide the sheet up from the bottom. The sheet is short,
+     horizontal, and renders the wanted expression as one inline
+     line of colored brackets. Easy to glance, easy to dismiss. */
   .scheduler-flag {
     position: fixed;
-    left: 0;
-    top: 180px;
+    right: 1.25rem;
+    bottom: 0;
     border: none;
-    padding: 0;
+    padding: 0.55rem 0.95rem 0.6rem;
     cursor: pointer;
     z-index: 90;
-    display: flex;
-    align-items: stretch;
-    background: transparent;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    font-family: var(--font-mono);
-  }
-  .scheduler-flag .flag-body {
     background: var(--accent, var(--ochre));
-    color: var(--cream);
-    padding: 12px 6px 12px 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 2px;
-    box-shadow: 4px 3px 14px rgba(0, 0, 0, 0.18);
-    order: 1;
-  }
-  .scheduler-flag .flag-tip {
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: 25px 0 25px 14px;
-    border-color: transparent transparent transparent var(--accent, var(--ochre));
-    flex-shrink: 0;
-    order: 2;
-  }
-  .scheduler-flag .flag-count {
-    font-size: 9.5px;
-    letter-spacing: 0.2em;
-    opacity: 0.85;
-  }
-  .scheduler-flag .flag-label {
-    font-size: 11.5px;
-    letter-spacing: 0.22em;
+    color: var(--cream, #fff);
+    border-radius: 6px 6px 0 0;
+    box-shadow: 0 -3px 14px rgba(0, 0, 0, 0.16);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s;
+    font-size: 0.7rem;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
     font-weight: 600;
   }
-  .scheduler-flag:hover { transform: translateX(5px); }
-  .scheduler-flag.hidden { transform: translateX(-110%); }
+  .scheduler-flag .flag-body { display: contents; }
+  .scheduler-flag .flag-tip { display: none; }
+  .scheduler-flag .flag-count {
+    font-size: 0.6rem;
+    letter-spacing: 0.18em;
+    opacity: 0.85;
+    font-weight: 500;
+  }
+  .scheduler-flag .flag-label { font-size: 0.7rem; letter-spacing: 0.16em; }
+  .scheduler-flag:hover { transform: translateY(-3px); }
+  body.sch-drawer-open .scheduler-flag { transform: translateY(-200px); }
+  .scheduler-flag.hidden { transform: translateY(120%); }
 
-  /* No backdrop dim — drawer pushes the page instead. */
+  /* No backdrop dim — sheet floats over the bottom of the page. */
   .scheduler-backdrop {
     display: none;
   }
-  /* When the drawer is open, the main container slides right to make
-     room. When the results panel is open it slides left. Together
-     they can squeeze the calendar a bit, which is intended. */
-  body.sch-drawer-open .container {
-    transform: translateX(440px);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  body.sch-drawer-open.sch-results-open .container {
-    transform: translateX(220px);
-  }
+  /* No body push needed for a short bottom sheet — it floats over
+     the bottom region and the user can still see the calendar. */
+  body.sch-drawer-open .container,
   body:not(.sch-drawer-open) .container {
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   .scheduler-drawer {
     position: fixed;
-    top: 0;
     left: 0;
+    right: 0;
     bottom: 0;
-    width: 480px;
-    max-width: 90vw;
+    /* Height is the inline-styled value the user sets via the size
+       toggle or drag handle — see _schSheetSetHeight. Default seeds
+       at 260px when first opened. */
+    height: 260px;
+    max-height: 85vh;
+    min-height: 140px;
     z-index: 101;
     background: var(--surface, var(--paper-soft));
     color: var(--ink);
-    border-right: 1px solid var(--border, var(--rule));
-    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.18);
-    transform: translateX(-110%);
+    border-top: 1px solid var(--border, var(--rule));
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.16);
+    transform: translateY(100%);
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow-y: auto;
-    padding: 0 0 1.5rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
   }
+  /* Disable height-transition while user is dragging the top edge
+     so the sheet feels responsive. */
+  .scheduler-drawer.is-resizing { transition: none; }
   .scheduler-drawer.open {
-    transform: translateX(0);
+    transform: translateY(0);
+  }
+  /* Drag handle: thin grip on the very top edge of the sheet. */
+  .sch-drag-handle {
+    flex: 0 0 auto;
+    height: 10px;
+    width: 100%;
+    cursor: ns-resize;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid color-mix(in srgb, var(--ink) 6%, transparent);
+    user-select: none;
+    background: transparent;
+    transition: background 0.15s;
+  }
+  .sch-drag-handle::before {
+    content: '';
+    width: 36px;
+    height: 3px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--ink) 22%, transparent);
+    transition: background 0.15s, width 0.15s;
+  }
+  .sch-drag-handle:hover { background: color-mix(in srgb, var(--ink) 4%, transparent); }
+  .sch-drag-handle:hover::before { background: var(--accent, var(--ochre)); width: 64px; }
+  .scheduler-drawer .drawer-header {
+    flex: 0 0 auto;
+    padding: 0.45rem 1.25rem 0.45rem;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+  }
+  .scheduler-drawer .drawer-header h3 {
+    font-size: 0.95rem;
+    margin: 0;
+    line-height: 1.2;
+  }
+  .scheduler-drawer .drawer-tag {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 0.05rem;
+  }
+  .scheduler-drawer .drawer-tools {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  .sch-size-toggle {
+    background: transparent;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-sm, 2px);
+    padding: 0.2rem 0.55rem;
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    cursor: pointer;
+  }
+  .sch-size-toggle:hover { border-color: var(--accent, var(--ochre)); color: var(--accent, var(--ochre)); }
+  .scheduler-drawer .drawer-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.7rem 1.25rem 1.1rem;
+  }
+  .scheduler-drawer .sch-section-h {
+    margin: 0 0 0.5rem;
+    padding: 0;
+  }
+  .scheduler-drawer .sch-pending-hint {
+    margin: 0 0 0.7rem;
+    font-size: 0.78rem;
+  }
+  .scheduler-drawer .sch-tree-wrap {
+    margin: 0;
   }
 
   /* Section heading inside the drawer. */
@@ -6171,131 +6273,662 @@
     text-transform: uppercase;
     color: var(--ink-faint);
   }
-  /* Pending-selection pill: shows the course the user has clicked in
-     the picker but hasn't yet placed in one of the zones. */
-  .sch-pending-row {
-    margin: 0 1.25rem 0.75rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.45rem 0.65rem;
-    background: var(--cream);
-    border: 1px dashed color-mix(in srgb, var(--ink) 18%, transparent);
-    border-radius: var(--radius-sm, 2px);
+  /* Pending hint blurb above the kanban strip. */
+  .sch-pending-hint {
+    margin: 0 1.25rem 0.85rem;
   }
-  .sch-pending-label {
-    font-family: var(--font-mono);
-    font-size: 0.66rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--ink-faint);
-  }
-  .sch-pending-pill {
-    flex: 1;
-    font-family: var(--font-mono);
-    font-size: 0.84rem;
-    color: var(--ink-soft);
-  }
-  .sch-pending-pill.is-set {
-    color: var(--accent, var(--ochre));
-    font-weight: 600;
-  }
-  .sch-pending-clear {
-    background: transparent;
-    border: 0;
-    cursor: pointer;
-    color: var(--ink-faint);
-    padding: 0 0.35rem;
-    font-size: 0.95rem;
-    line-height: 1;
-  }
-  .sch-pending-clear:hover { color: var(--error, var(--rust)); }
-
-  /* AND / OR drop zones. Two shaded boxes side by side, become an
-     active "drop target" while a course is pending selection. */
-  .sch-zones {
-    margin: 0 1.25rem;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.65rem;
-  }
-  .sch-zone {
-    background: color-mix(in srgb, var(--ink) 4%, transparent);
-    border: 1px solid var(--rule);
-    border-radius: var(--radius-md, 4px);
-    padding: 0.6rem 0.7rem 0.7rem;
-    min-height: 7rem;
-    cursor: default;
-    transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
-    outline: none;
-  }
-  .sch-zone-head {
+  /* Toolbar inside the section header. */
+  .sch-section-h {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    margin-bottom: 0.4rem;
   }
-  .sch-zone-label {
-    font-family: var(--font-display, 'Fraunces', serif);
-    font-style: italic;
-    font-weight: 500;
-    font-size: 1.05rem;
-    color: var(--ink);
+  .sch-wanted-tools {
+    display: inline-flex;
+    gap: 0.4rem;
   }
-  .sch-zone-help {
+  .sch-display-toggle, .sch-clear-all {
+    background: transparent;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-sm, 2px);
+    padding: 0.15rem 0.45rem;
     font-family: var(--font-mono);
     font-size: 0.62rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--ink-faint);
+    color: var(--ink-soft);
+    cursor: pointer;
   }
-  .sch-zone-body {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-  }
-  .sch-zone-empty {
-    font-size: 0.78rem;
-    color: var(--ink-faint);
-    font-style: italic;
-    padding: 0.25rem 0;
-  }
-  /* When a course is pending, both zones glow as drop targets. */
-  body.sch-has-pending .sch-zone {
-    cursor: copy;
-    background: color-mix(in srgb, var(--accent, var(--ochre)) 8%, transparent);
-    border-color: color-mix(in srgb, var(--accent, var(--ochre)) 35%, transparent);
-    box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent, var(--ochre)) 20%, transparent);
-  }
-  body.sch-has-pending .sch-zone:hover,
-  body.sch-has-pending .sch-zone:focus {
-    background: color-mix(in srgb, var(--accent, var(--ochre)) 14%, transparent);
+  .sch-display-toggle:hover, .sch-clear-all:hover {
     border-color: var(--accent, var(--ochre));
+    color: var(--accent, var(--ochre));
   }
-  /* Each course chip inside a zone. */
-  .sch-zone-item {
+  .sch-clear-all:hover { border-color: var(--error, var(--rust)); color: var(--error, var(--rust)); }
+
+  /* ---- Rainbow-bracket nested AND/OR expression tree ----
+     Each nesting depth gets its own accent color so the structure
+     is legible at a glance. Brackets are real characters set in
+     the display serif so they carry the same weight as the op
+     labels. */
+  .sch-tree-wrap {
+    margin: 0 1.25rem;
+  }
+  .sch-tree-empty {
+    padding: 1.6rem 1rem;
+    text-align: center;
+    color: var(--ink-faint);
+    font-size: 0.84rem;
+    background-image: repeating-linear-gradient(
+      -45deg,
+      color-mix(in srgb, var(--ink) 6%, transparent) 0,
+      color-mix(in srgb, var(--ink) 6%, transparent) 5px,
+      transparent 5px, transparent 12px
+    );
+    border: 1px dashed color-mix(in srgb, var(--ink) 18%, transparent);
+    border-radius: var(--radius-sm, 2px);
+    cursor: default;
+    transition: background-image 0.15s, border-color 0.15s, color 0.15s;
+  }
+  body.sch-has-pending .sch-tree-empty {
+    cursor: copy;
+    border-color: var(--accent, var(--ochre));
+    color: var(--accent, var(--ochre));
+    background-image: repeating-linear-gradient(
+      -45deg,
+      color-mix(in srgb, var(--accent, var(--ochre)) 14%, transparent) 0,
+      color-mix(in srgb, var(--accent, var(--ochre)) 14%, transparent) 5px,
+      transparent 5px, transparent 12px
+    );
+  }
+  /* Group: inline horizontal expression. The whole tree renders on
+     one line (with wrapping) — colored brackets carry scope, italic
+     op labels separate children, chips sit inline like tokens. */
+  .sch-grp {
+    --grp-color: var(--ochre);
+    font-family: var(--font-mono);
+    font-size: 0.84rem;
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
-    padding: 0.3rem 0.55rem;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+    padding: 0.1rem 0.15rem;
+    border-radius: var(--radius-sm, 2px);
+    transition: background 0.15s, box-shadow 0.15s;
+  }
+  .sch-grp[data-depth="0"] { --grp-color: var(--ochre); }
+  .sch-grp[data-depth="1"] { --grp-color: var(--teal); }
+  .sch-grp[data-depth="2"] { --grp-color: var(--mossy); }
+  .sch-grp[data-depth="3"] { --grp-color: var(--plum); }
+  .sch-grp[data-depth="4"] { --grp-color: var(--rust); }
+  .sch-grp[data-depth="5"] { --grp-color: var(--ink-soft); }
+  body.sch-has-pending .sch-grp {
+    cursor: copy;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--grp-color) 25%, transparent);
+  }
+  body.sch-has-pending .sch-grp:hover {
+    background: color-mix(in srgb, var(--grp-color) 10%, transparent);
+    box-shadow: inset 0 0 0 1px var(--grp-color);
+  }
+  .sch-bracket {
+    color: var(--grp-color);
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    font-weight: 600;
+    user-select: none;
+    line-height: 1;
+  }
+  .sch-op-tag {
+    font-family: var(--font-display, 'Fraunces', serif);
+    font-style: italic;
+    font-size: 0.85rem;
+    color: var(--grp-color);
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    padding: 0 0.1rem;
+    line-height: 1;
+    user-select: none;
+  }
+  .sch-op-tag:hover { text-decoration: underline; }
+  /* Inline separator label between siblings ("and" / "or"). Renders
+     as a faint italic so the chips dominate visually. */
+  .sch-conn-inline {
+    font-family: var(--font-display, 'Fraunces', serif);
+    font-style: italic;
+    font-size: 0.78rem;
+    color: var(--grp-color);
+    opacity: 0.7;
+    user-select: none;
+  }
+  .sch-grp-tool, .sch-grp-add {
+    background: transparent;
+    border: 0;
+    color: var(--ink-faint);
+    cursor: pointer;
+    padding: 0 0.3rem;
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    line-height: 1;
+    border-radius: var(--radius-sm, 2px);
+    opacity: 0;
+    transition: opacity 0.12s, color 0.12s;
+    letter-spacing: 0.06em;
+  }
+  .sch-grp:hover > .sch-grp-tool,
+  .sch-grp:hover > .sch-grp-add { opacity: 0.85; }
+  .sch-grp-tool:hover { opacity: 1; color: var(--rust, var(--accent)); }
+  .sch-grp-add:hover { opacity: 1; color: var(--grp-color); }
+  .sch-tree-wrap {
+    line-height: 1.9;
+  }
+  .sch-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.14rem 0.45rem;
     background: var(--cream);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-sm, 2px);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--ink);
+    transition: background 0.12s, border-color 0.12s;
+    white-space: nowrap;
+  }
+  .sch-chip:hover { border-color: color-mix(in srgb, var(--accent, var(--ochre)) 50%, var(--rule)); }
+  .sch-chip-text { white-space: nowrap; }
+  .sch-chip-tools { display: inline-flex; gap: 0.1rem; }
+  .sch-chip-tool {
+    background: transparent;
+    border: 0;
+    color: var(--ink-faint);
+    cursor: pointer;
+    padding: 0 0.25rem;
+    font-size: 0.74rem;
+    line-height: 1;
+    opacity: 0;
+    transition: opacity 0.12s, color 0.12s;
+    border-radius: var(--radius-sm, 2px);
+  }
+  .sch-chip:hover .sch-chip-tool { opacity: 0.85; }
+  .sch-chip-tool:hover { opacity: 1; color: var(--accent, var(--ochre)); }
+  .sch-chip-tool.is-danger:hover { color: var(--rust, var(--accent)); }
+  /* Shelf chips: visually distinct from course chips so the user
+     reads them as "TBD, fill in later" not "fixed course". */
+  .sch-chip-shelf {
+    background: color-mix(in srgb, var(--plum, var(--ochre)) 8%, transparent);
+    border: 1px dashed color-mix(in srgb, var(--plum, var(--ochre)) 35%, transparent);
+    padding: 0.16rem 0.45rem 0.16rem 0.3rem;
+  }
+  .sch-chip-shelf:hover { background: color-mix(in srgb, var(--plum, var(--ochre)) 14%, transparent); }
+  .sch-chip-shelf-tag {
+    font-family: var(--font-display, 'Fraunces', serif);
+    font-style: italic;
+    font-size: 0.78rem;
+    color: var(--plum, var(--ochre));
+    margin-right: 0.3rem;
+    user-select: none;
+  }
+
+  /* ---- Auto-scheduler dock (below the calendar) ---- */
+  .sch-dock { padding-top: 1.5rem; }
+  .sch-dock-toggle {
+    background: transparent;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    cursor: pointer;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+  }
+  .sch-dock-toggle .section-label { flex: 1; pointer-events: none; }
+  .sch-dock-toggle-caret {
+    font-family: var(--font-display, 'Fraunces', serif);
+    font-style: italic;
+    font-size: 1.5rem;
+    color: var(--ink-faint);
+    transition: transform 0.2s ease;
+    line-height: 1;
+    transform: rotate(90deg);
+  }
+  .sch-dock[data-collapsed="false"] .sch-dock-toggle-caret { transform: rotate(-90deg); }
+  .sch-dock-toggle:hover .sch-dock-toggle-caret { color: var(--accent, var(--ochre)); }
+  .sch-dock-h2 {
+    margin-top: 0.5rem;
+    margin-bottom: 0.4rem;
+  }
+  .sch-dock-blurb { margin-bottom: 1rem; }
+  .sch-dock[data-collapsed="true"] .sch-dock-h2,
+  .sch-dock[data-collapsed="true"] .sch-dock-blurb,
+  .sch-dock[data-collapsed="true"] .sch-dock-body { display: none; }
+  .sch-dock-grid {
+    display: grid;
+    grid-template-columns: minmax(220px, 1fr) minmax(280px, 1.6fr);
+    gap: 1.5rem;
+    margin: 1rem 0 1.4rem;
+  }
+  @media (max-width: 720px) {
+    .sch-dock-grid { grid-template-columns: 1fr; }
+  }
+  .sch-dock-summary {
+    background: var(--surface, var(--paper-soft));
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-md, 4px);
+    padding: 0.75rem 0.95rem 0.85rem;
+  }
+  .sch-dock-summary .sch-section-h {
+    margin: 0 0 0.45rem;
+    padding: 0;
+  }
+  .sch-dock-summary-body {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    min-height: 3rem;
+  }
+  .sch-dock-summary-body em {
+    color: var(--ink-faint);
+    font-style: italic;
+  }
+  .sch-dock-summary-body .sch-summary-code {
+    display: inline-block;
+    padding: 0.05rem 0.35rem;
+    background: var(--cream);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-sm, 2px);
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  .sch-dock-summary-body .sch-summary-shelf {
+    display: inline-block;
+    padding: 0.05rem 0.35rem;
+    background: color-mix(in srgb, var(--plum, var(--ochre)) 8%, transparent);
+    border: 1px dashed color-mix(in srgb, var(--plum, var(--ochre)) 35%, transparent);
+    border-radius: var(--radius-sm, 2px);
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  .sch-dock-summary-body .sch-summary-shelf em {
+    color: var(--plum, var(--ochre));
+    font-style: italic;
+    margin-right: 0.2rem;
+  }
+  .sch-dock-edit {
+    background: transparent;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-sm, 2px);
+    padding: 0.18rem 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    cursor: pointer;
+  }
+  .sch-dock-edit:hover {
+    color: var(--accent, var(--ochre));
+    border-color: var(--accent, var(--ochre));
+  }
+  .sch-dock-prefs {
+    background: var(--surface, var(--paper-soft));
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-md, 4px);
+    padding: 0.75rem 0.95rem 0.85rem;
+  }
+  .sch-dock-prefs .sch-section-h { margin: 0 0 0.55rem; padding: 0; }
+  .sch-dock-prefs .sch-pref-row,
+  .sch-dock-prefs .sch-pref-radio,
+  .sch-dock-prefs .sch-pref-check,
+  .sch-dock-prefs .sch-actions { padding-left: 0; padding-right: 0; }
+  .sch-dock-results {
+    margin-top: 1rem;
+  }
+  .sch-dock-results-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+  }
+  .sch-dock-results-title {
+    font-family: var(--font-display, 'Fraunces', serif);
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--ink);
+  }
+  .sch-dock-results-tools {
+    display: inline-flex;
+    gap: 0.85rem;
+  }
+  .sch-dock .sch-results-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.7rem;
+    padding: 0;
+  }
+
+  /* Kanban legacy compat: keep references valid (older fallback). */
+  .sch-kanban-wrap {
+    margin: 0 1.25rem;
+  }
+
+  /* Fill-in panel: shelved-subject status under the calendar. */
+  .sch-fill-in {
+    margin-top: 1.25rem;
+    padding: 0.8rem 1rem 0.9rem;
+    background: var(--surface, var(--paper-soft));
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--plum, var(--ochre));
+    border-radius: var(--radius-md, 4px);
+  }
+  .sch-fill-in-h {
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+  .sch-fill-in-h em {
+    font-family: var(--font-display, 'Fraunces', serif);
+    font-style: italic;
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+  }
+  .sch-fill-row {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.4rem 0.1rem;
+    border-bottom: 1px dashed color-mix(in srgb, var(--ink) 8%, transparent);
+  }
+  .sch-fill-row:last-child { border-bottom: 0; }
+  .sch-fill-subject {
+    font-family: var(--font-mono);
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: var(--ink);
+    min-width: 5rem;
+  }
+  .sch-fill-status {
+    flex: 1;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+  }
+  .sch-fill-status.is-unfilled { color: var(--rust, var(--accent)); }
+  .sch-fill-status.is-filled { color: var(--mossy, var(--accent)); }
+  .sch-fill-actions { display: inline-flex; gap: 0.4rem; }
+  .sch-fill-btn {
+    background: transparent;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-sm, 2px);
+    padding: 0.22rem 0.65rem;
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    cursor: pointer;
+  }
+  .sch-fill-btn:hover {
+    color: var(--accent, var(--ochre));
+    border-color: var(--accent, var(--ochre));
+  }
+  .sch-fill-btn.is-danger:hover {
+    color: var(--rust, var(--accent));
+    border-color: var(--rust, var(--accent));
+  }
+  .sch-kanban {
+    display: flex;
+    align-items: stretch;
+    gap: 0.55rem;
+    overflow-x: auto;
+    padding: 0.25rem 0.1rem 0.6rem;
+    scrollbar-color: var(--rule) transparent;
+  }
+  .sch-kanban::-webkit-scrollbar { height: 8px; }
+  .sch-kanban::-webkit-scrollbar-thumb {
+    background: var(--rule);
+    border-radius: 4px;
+  }
+  .sch-kanban-empty {
+    padding: 1.6rem 1rem;
+    text-align: center;
+    color: var(--ink-faint);
+    font-size: 0.84rem;
+    background-image: repeating-linear-gradient(
+      -45deg,
+      color-mix(in srgb, var(--ink) 6%, transparent) 0,
+      color-mix(in srgb, var(--ink) 6%, transparent) 5px,
+      transparent 5px, transparent 12px
+    );
+    border: 1px dashed color-mix(in srgb, var(--ink) 18%, transparent);
+    border-radius: var(--radius-md, 4px);
+    cursor: default;
+    transition: background-image 0.15s, border-color 0.15s, color 0.15s;
+  }
+  body.sch-has-pending .sch-kanban-empty {
+    cursor: copy;
+    border-color: var(--accent, var(--ochre));
+    color: var(--accent, var(--ochre));
+    background-image: repeating-linear-gradient(
+      -45deg,
+      color-mix(in srgb, var(--accent, var(--ochre)) 14%, transparent) 0,
+      color-mix(in srgb, var(--accent, var(--ochre)) 14%, transparent) 5px,
+      transparent 5px, transparent 12px
+    );
+  }
+  /* Column. Top accent bar reads as "this group of cards is one
+     thing the schedule must satisfy". */
+  .sch-col {
+    flex: 0 0 11.5rem;
+    display: flex;
+    flex-direction: column;
+    background: var(--cream);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-md, 4px);
+    padding: 0.55rem 0.6rem 0.55rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+  }
+  .sch-col::before {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; top: 0;
+    height: 3px;
+    background: var(--accent, var(--ochre));
+    opacity: 0.85;
+  }
+  .sch-col[data-kind="or"]::before {
+    background: linear-gradient(90deg, var(--accent, var(--ochre)) 0%, color-mix(in srgb, var(--accent, var(--ochre)) 60%, var(--mossy, #5d6b3d)) 100%);
+  }
+  .sch-col-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.4rem;
+    margin: 0.15rem 0 0.45rem;
+  }
+  .sch-col-label {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    user-select: none;
+  }
+  .sch-col-label strong { color: var(--ink-soft); font-weight: 600; }
+  .sch-col-tool {
+    background: transparent;
+    border: 0;
+    color: var(--ink-faint);
+    cursor: pointer;
+    padding: 0 0.25rem;
+    font-size: 0.85rem;
+    line-height: 1;
+    border-radius: var(--radius-sm, 2px);
+  }
+  .sch-col-tool:hover { color: var(--rust, var(--accent)); background: color-mix(in srgb, var(--rust, var(--accent)) 10%, transparent); }
+  .sch-col-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.18rem;
+    flex: 1;
+  }
+  .sch-card {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.55rem;
+    background: var(--paper, #fff);
     border: 1px solid var(--rule);
     border-left: 3px solid var(--accent, var(--ochre));
     border-radius: var(--radius-sm, 2px);
     font-family: var(--font-mono);
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     color: var(--ink);
+    line-height: 1.25;
+    transition: transform 0.12s, box-shadow 0.12s, border-color 0.12s;
   }
-  .sch-zone-item-x {
+  .sch-card:hover {
+    box-shadow: 0 1px 0 color-mix(in srgb, var(--ink) 8%, transparent);
+    border-color: color-mix(in srgb, var(--accent, var(--ochre)) 50%, var(--rule));
+  }
+  .sch-card-text { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sch-card-x {
     background: transparent;
     border: 0;
     color: var(--ink-faint);
     cursor: pointer;
     padding: 0 0.2rem;
-    font-size: 0.85rem;
+    font-size: 0.78rem;
     line-height: 1;
+    opacity: 0;
+    transition: opacity 0.12s, color 0.12s;
   }
-  .sch-zone-item-x:hover { color: var(--error, var(--rust)); }
+  .sch-card:hover .sch-card-x { opacity: 1; }
+  .sch-card-x:hover { color: var(--rust, var(--accent)); }
+  .sch-or-sep {
+    align-self: center;
+    font-family: var(--font-display, 'Fraunces', serif);
+    font-style: italic;
+    font-size: 0.78rem;
+    color: var(--ink-faint);
+    padding: 0.05rem 0;
+    user-select: none;
+    letter-spacing: 0.04em;
+  }
+  .sch-col-foot {
+    margin-top: 0.45rem;
+    display: flex;
+    justify-content: center;
+  }
+  .sch-col-add {
+    background: transparent;
+    border: 1px dashed color-mix(in srgb, var(--ink) 22%, transparent);
+    border-radius: var(--radius-sm, 2px);
+    padding: 0.22rem 0.6rem;
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    cursor: pointer;
+  }
+  .sch-col-add:hover {
+    color: var(--accent, var(--ochre));
+    border-color: var(--accent, var(--ochre));
+    background: color-mix(in srgb, var(--accent, var(--ochre)) 6%, transparent);
+  }
+  .sch-and-link {
+    align-self: center;
+    font-family: var(--font-display, 'Fraunces', serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 0.95rem;
+    color: var(--ink-faint);
+    padding: 0 0.1rem;
+    user-select: none;
+  }
+  /* "Add another required" tile at the end of the strip. */
+  .sch-col-new {
+    flex: 0 0 8.5rem;
+    align-self: stretch;
+    border: 1px dashed color-mix(in srgb, var(--ink) 22%, transparent);
+    border-radius: var(--radius-md, 4px);
+    background: transparent;
+    color: var(--ink-faint);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.5rem;
+    line-height: 1.4;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+  }
+  .sch-col-new:hover {
+    color: var(--accent, var(--ochre));
+    border-color: var(--accent, var(--ochre));
+    background: color-mix(in srgb, var(--accent, var(--ochre)) 6%, transparent);
+  }
+  /* Pending highlight: every column + the "+ another" tile glows as
+     a drop target. */
+  body.sch-has-pending .sch-col,
+  body.sch-has-pending .sch-col-new {
+    cursor: copy;
+    border-color: color-mix(in srgb, var(--accent, var(--ochre)) 55%, transparent);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent, var(--ochre)) 18%, transparent);
+  }
+  body.sch-has-pending .sch-col:hover,
+  body.sch-has-pending .sch-col-new:hover {
+    background: color-mix(in srgb, var(--accent, var(--ochre)) 10%, transparent);
+    border-color: var(--accent, var(--ochre));
+    transform: translateY(-1px);
+  }
+
+  /* Cursor-follower chip when a course is pending. Mirrors the linker
+     behavior (cursor → object) the user liked. */
+  .sch-cursor-follow {
+    position: fixed;
+    z-index: 200;
+    pointer-events: none;
+    transform: translate(14px, 14px);
+    padding: 0.32rem 0.6rem 0.34rem;
+    background: var(--accent, var(--ochre));
+    color: var(--paper, #fff);
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.04em;
+    box-shadow: 0 6px 18px color-mix(in srgb, var(--ink) 30%, transparent);
+    opacity: 0;
+    transition: opacity 0.12s;
+  }
+  .sch-cursor-follow.is-on { opacity: 1; }
+  body.sch-has-pending {
+    cursor: copy;
+  }
+  body.sch-has-pending .sch-chip-tool,
+  body.sch-has-pending .sch-group-tool,
+  body.sch-has-pending .sch-op-pill { cursor: pointer; }
 
   .sch-req-list {
     padding: 0 1.25rem;
@@ -7625,6 +8258,81 @@
     </div>
   </section>
 
+  <!-- Fill-in panel: surfaces shelved subjects from the wanted tree
+       that haven't been satisfied yet by the active plan's staged
+       sections. Shows below the schedule, hidden if there are no
+       shelves. -->
+  <section class="sch-fill-in" id="sch-fill-in" hidden></section>
+
+  <!-- ========== Docked auto-scheduler section (below the table) ==========
+       Collapsed by default to keep the page short. Toggle to expand
+       prefs + results. The right-edge flag opens the logic maker. -->
+  <section class="module sch-dock" data-module-id="auto-scheduler" data-collapsed="true" id="sch-dock">
+    <button type="button" class="sch-dock-toggle" id="sch-dock-toggle" aria-expanded="false" title="Expand auto-scheduler">
+      <span class="section-label"><span class="num">06</span> Auto-scheduler</span>
+      <span class="sch-dock-toggle-caret" aria-hidden="true">›</span>
+    </button>
+    <h2 class="sch-dock-h2">Build a schedule <em>from your wanted</em>.</h2>
+    <p class="picker-sub sch-dock-blurb" style="max-width:65ch;">Open the <strong>logic maker</strong> on the right to declare what you want. Tune preferences below, then generate. Results appear in the strip at the bottom — click one to preview on the calendar.</p>
+
+    <div class="sch-dock-body" id="sch-dock-body">
+    <div class="sch-dock-grid">
+      <div class="sch-dock-summary" id="sch-dock-summary">
+        <div class="sch-section-h"><span>Wanted</span><button type="button" class="sch-dock-edit" id="sch-dock-edit">Edit logic</button></div>
+        <div class="sch-dock-summary-body" id="sch-dock-summary-body"></div>
+      </div>
+      <div class="sch-dock-prefs">
+        <div class="sch-section-h"><span>Preferences</span></div>
+        <div class="sch-pref-row">
+          <label class="sch-pref">No starts before
+            <input type="time" id="sch-no-starts-before" step="900">
+          </label>
+          <label class="sch-pref">No ends after
+            <input type="time" id="sch-no-ends-after" step="900">
+          </label>
+        </div>
+        <label class="sch-pref-check"><input type="checkbox" id="sch-lunch-break"><span>Lunch break preferred (30+ min between 11:30–14:00)</span></label>
+        <div class="sch-pref-radio">
+          <span class="sch-pref-label">Day distribution</span>
+          <label><input type="radio" name="sch-day-dist" value="ignore" checked><span>Don't care</span></label>
+          <label><input type="radio" name="sch-day-dist" value="balanced"><span>Balanced</span></label>
+          <label><input type="radio" name="sch-day-dist" value="compressed"><span>Compressed</span></label>
+        </div>
+        <label class="sch-pref-check"><input type="checkbox" id="sch-include-closed"><span>Include closed / waitlisted sections</span></label>
+        <div class="sch-actions">
+          <button type="button" class="sch-generate-btn" onclick="_schGenerate()">Generate schedules</button>
+          <span class="sch-results-count" id="sch-results-count"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sch-dock-results" id="sch-dock-results">
+      <div class="sch-dock-results-head">
+        <div class="sch-dock-results-title" id="sch-results-title">Results</div>
+        <div class="sch-dock-results-tools">
+          <label class="sch-results-control">
+            <span>Sort</span>
+            <select id="sch-sort">
+              <option value="score">Best score</option>
+              <option value="earliest">Earliest start</option>
+              <option value="fewest">Fewest days</option>
+            </select>
+          </label>
+          <label class="sch-results-control">
+            <span>Filter</span>
+            <select id="sch-filter">
+              <option value="all">All</option>
+              <option value="no-friday">No Fridays</option>
+              <option value="morning">Mornings only (no class after 14:00)</option>
+            </select>
+          </label>
+        </div>
+      </div>
+      <div class="sch-results-list" id="sch-results-list"></div>
+    </div>
+    </div><!-- /.sch-dock-body -->
+  </section>
+
   </div>
   <!-- end tab-pane "main" -->
 
@@ -8045,94 +8753,28 @@
 <div class="scheduler-backdrop" id="scheduler-backdrop" onclick="toggleSchedulerDrawer()"></div>
 
 <aside class="scheduler-drawer" id="scheduler-drawer" aria-hidden="true">
+  <div class="sch-drag-handle" id="sch-drag-handle" title="Drag to resize"></div>
   <div class="drawer-header">
     <div>
-      <div class="drawer-tag">Auto-scheduler</div>
-      <h3>Build a schedule <em>from your wanted</em></h3>
+      <div class="drawer-tag">Logic maker</div>
+      <h3>Declare <em>what you want</em></h3>
     </div>
-    <button class="drawer-close" onclick="toggleSchedulerDrawer()" aria-label="Close drawer">×</button>
+    <div class="drawer-tools">
+      <button type="button" class="sch-size-toggle" id="sch-size-toggle" data-size="small" title="Toggle compact / tall">tall</button>
+      <button class="drawer-close" onclick="toggleSchedulerDrawer()" aria-label="Close drawer">×</button>
+    </div>
   </div>
   <div class="drawer-body">
-    <p class="picker-sub">Click <strong>+ Want</strong> on a course in the picker, then drop it into one of the zones below. <em>And</em> = include all of these. <em>Or</em> = at least one of these.</p>
-
-    <div class="sch-section-h">Wanted</div>
-    <div class="sch-pending-row" id="sch-pending-row">
-      <span class="sch-pending-label">Selected for adding</span>
-      <span class="sch-pending-pill" id="sch-pending-pill">— pick a course in the picker —</span>
-      <button type="button" class="sch-pending-clear" id="sch-pending-clear" hidden onclick="_schClearPending()">×</button>
+    <div class="sch-section-h">
+      <span>Wanted</span>
+      <span class="sch-wanted-tools">
+        <button type="button" class="sch-display-toggle" id="sch-display-toggle" data-mode="code" title="Toggle course code / title display">code</button>
+        <button type="button" class="sch-clear-all" id="sch-clear-all" title="Clear the entire expression">clear</button>
+      </span>
     </div>
-    <div class="sch-zones">
-      <div class="sch-zone sch-zone-and" id="sch-zone-and" data-sch-zone="and" tabindex="0">
-        <div class="sch-zone-head">
-          <span class="sch-zone-label">And</span>
-          <span class="sch-zone-help">include all of these</span>
-        </div>
-        <div class="sch-zone-body" id="sch-zone-and-body"></div>
-      </div>
-      <div class="sch-zone sch-zone-or" id="sch-zone-or" data-sch-zone="or" tabindex="0">
-        <div class="sch-zone-head">
-          <span class="sch-zone-label">Or</span>
-          <span class="sch-zone-help">at least one of these</span>
-        </div>
-        <div class="sch-zone-body" id="sch-zone-or-body"></div>
-      </div>
-    </div>
-
-    <div class="sch-section-h">Preferences</div>
-    <div class="sch-pref-row">
-      <label class="sch-pref">No starts before
-        <input type="time" id="sch-no-starts-before" step="900">
-      </label>
-      <label class="sch-pref">No ends after
-        <input type="time" id="sch-no-ends-after" step="900">
-      </label>
-    </div>
-    <label class="sch-pref-check"><input type="checkbox" id="sch-lunch-break"><span>Lunch break preferred (30+ min between 11:30–14:00)</span></label>
-    <div class="sch-pref-radio">
-      <span class="sch-pref-label">Day distribution</span>
-      <label><input type="radio" name="sch-day-dist" value="ignore" checked><span>Don't care</span></label>
-      <label><input type="radio" name="sch-day-dist" value="balanced"><span>Balanced</span></label>
-      <label><input type="radio" name="sch-day-dist" value="compressed"><span>Compressed</span></label>
-    </div>
-    <label class="sch-pref-check"><input type="checkbox" id="sch-include-closed"><span>Include closed / waitlisted sections</span></label>
-
-    <div class="sch-actions">
-      <button type="button" class="sch-generate-btn" onclick="_schGenerate()">Generate schedules</button>
-      <span class="sch-results-count" id="sch-results-count"></span>
-    </div>
+    <p class="picker-sub sch-pending-hint" id="sch-pending-hint">Click <strong>+ Want</strong> on a course in the picker. Drop into a bracket to nest it under that group; drop on the empty tile to add a new top-level chip. Click an op label to flip <em>and</em> ↔ <em>or</em>. ESC cancels.</p>
+    <div class="sch-tree-wrap" id="sch-tree-wrap"></div>
   </div>
-</aside>
-
-<!-- Right-side results panel. Slides in from the right when the user
-     has generated candidates. Independent of the scheduler drawer
-     so users can close the drawer and keep results visible. -->
-<aside class="scheduler-results" id="scheduler-results" aria-hidden="true">
-  <button type="button" class="sch-results-toggle" id="sch-results-toggle" onclick="_schToggleResultsExpanded()" title="Expand / collapse">
-    <span class="sch-results-toggle-icon">›</span>
-  </button>
-  <div class="sch-results-head">
-    <div class="sch-results-title" id="sch-results-title">Results</div>
-    <button type="button" class="sch-results-close" onclick="_schCloseResults()" aria-label="Close results">×</button>
-  </div>
-  <div class="sch-results-controls" id="sch-results-controls">
-    <label class="sch-results-control">
-      <span>Sort</span>
-      <select id="sch-sort">
-        <option value="score">Best score</option>
-        <option value="earliest">Earliest start</option>
-        <option value="fewest">Fewest days</option>
-      </select>
-    </label>
-    <label class="sch-results-control">
-      <span>Filter</span>
-      <select id="sch-filter">
-        <option value="all">All</option>
-        <option value="no-friday">No Fridays</option>
-        <option value="morning">Mornings only (no class after 14:00)</option>
-      </select>
-    </label>
-  </div>
-  <div class="sch-results-list" id="sch-results-list"></div>
 </aside>
 
 <!-- Preview banner: appears across the top of the calendar when a
@@ -8628,85 +9270,414 @@ function toggleSchedulerDrawer() {
   }
 }
 
-// The active plan's wanted bucket: { and: [...], or: [...] }. Single
-// source of truth for the drop-zone UI. Solver-time mapping happens
-// in _schGenerate.
-function _schWantedFromPlan() {
+// Display mode for course chips inside the wanted tree: 'code' shows
+// the course code (default), 'title' shows the course title.
+let _schDisplayMode = 'code';
+
+function _schWantedRoot() {
   const plan = _schScopePlan();
-  const w = (plan && plan.wanted) || { and: [], or: [] };
-  return { and: (w.and || []).slice(), or: (w.or || []).slice() };
+  return (plan && plan.wanted && plan.wanted.root) || null;
 }
 
-function _schRenderZones() {
-  const andEl = document.getElementById('sch-zone-and-body');
-  const orEl = document.getElementById('sch-zone-or-body');
-  if (!andEl || !orEl) return;
-  const w = _schWantedFromPlan();
+function _schCourseTitle(code) {
+  const eff = window.HS && window.HS.catalog && window.HS.catalog.getEffective();
+  if (!eff) return code;
+  const c = (eff.courses || []).find((x) => x.code === code);
+  return (c && c.title) ? c.title : code;
+}
 
-  // Render the pending pill.
-  const pill = document.getElementById('sch-pending-pill');
-  const clearBtn = document.getElementById('sch-pending-clear');
-  if (pill) {
-    if (_schPendingCourse) {
-      pill.textContent = _schPendingCourse;
-      pill.classList.add('is-set');
-      if (clearBtn) clearBtn.hidden = false;
-      document.body.classList.add('sch-has-pending');
-    } else {
-      pill.textContent = '— pick a course in the picker —';
-      pill.classList.remove('is-set');
-      if (clearBtn) clearBtn.hidden = true;
-      document.body.classList.remove('sch-has-pending');
+function _schChipLabel(code) {
+  if (_schDisplayMode === 'title') return _schCourseTitle(code);
+  return code;
+}
+
+// Walk the tree and collect every course code present (used so the
+// picker's + Want pill can flip to ✓ Want).
+function _schAllCodes(node, out) {
+  out = out || new Set();
+  if (!node) return out;
+  if (node.type === 'course') { out.add(node.code); return out; }
+  if (node.type === 'shelf') return out;
+  for (const c of (node.children || [])) _schAllCodes(c, out);
+  return out;
+}
+// Walk the tree and collect every shelved subject. Used by the
+// picker's subject button (✓ Want any state) and by the under-table
+// fill-in panel.
+function _schAllShelvedSubjects(node, out) {
+  out = out || new Set();
+  if (!node) return out;
+  if (node.type === 'shelf') { out.add(node.subject); return out; }
+  if (node.type === 'course') return out;
+  for (const c of (node.children || [])) _schAllShelvedSubjects(c, out);
+  return out;
+}
+
+// (Kanban projection retained as a legacy helper, but unused by the
+// rainbow-bracket renderer below. Keeping the function around in case
+// anything else still calls it; the new tree just iterates the
+// underlying ExprNode shape directly.)
+function _schKanbanColumns() {
+  const root = _schWantedRoot();
+  if (!root) return [];
+  // Already flat AND-of-OR? Render direct so paths line up with the
+  // catalog's child indices.
+  function isLeaf(n) { return n && n.type === 'course'; }
+  function isFlatOr(n) {
+    return n && n.type !== 'course' && n.op === 'OR' &&
+      (n.children || []).every(isLeaf);
+  }
+  const flat = root.type !== 'course' && root.op === 'AND' &&
+    (root.children || []).every((c) => isLeaf(c) || isFlatOr(c));
+  if (flat) {
+    return (root.children || []).map((c, i) => {
+      if (isLeaf(c)) {
+        return { kind: 'required', codes: [c.code], colIdx: i, fromTree: true };
+      }
+      return { kind: 'pickone', codes: c.children.map((k) => k.code), colIdx: i, fromTree: true };
+    });
+  }
+  // Fallback projection: distribute through CNF, render clauses as
+  // columns. Edits won't write back through this path — see _schEdit
+  // helpers; they're disabled in projected mode.
+  let clauses;
+  try { clauses = _schToCNF(root); } catch (_) { clauses = []; }
+  return clauses.map((cl, i) => ({
+    kind: cl.length === 1 ? 'required' : 'pickone',
+    codes: cl.slice(),
+    colIdx: i,
+    fromTree: false,
+  }));
+}
+
+// Render the full wanted expression as a rainbow-bracket nested
+// AND/OR tree. Each depth gets its own accent color so the
+// structure is legible at a glance — same idea as IDE rainbow
+// braces.
+function _schRenderTree() {
+  const wrap = document.getElementById('sch-tree-wrap');
+  if (!wrap) return;
+  const root = _schWantedRoot();
+  if (!root) {
+    wrap.innerHTML = '<div class="sch-tree-empty" data-sch-drop-empty="1">' +
+      'Empty. Click <strong>+ Want</strong> on a course in the picker. This area becomes your top-level group.' +
+    '</div>';
+    _schWireTree(wrap);
+    _schSyncPendingClass();
+    _schRenderDockSummary();
+    return;
+  }
+  wrap.innerHTML = _schRenderNode(root, [], 0);
+  _schWireTree(wrap);
+  _schSyncPendingClass();
+  _schRenderDockSummary();
+}
+
+function _schRenderNode(node, path, depth) {
+  if (node && node.type === 'course') return _schRenderChip(node, path);
+  if (node && node.type === 'shelf') return _schRenderShelf(node, path);
+  const op = node.op === 'OR' ? 'OR' : 'AND';
+  const label = op === 'OR' ? 'or' : 'and';
+  const conn = op === 'OR' ? 'or' : 'and';
+  const pathAttr = _brEscape(JSON.stringify(path));
+  const isRoot = path.length === 0;
+  let html = '<span class="sch-grp" data-depth="' + depth + '" data-op="' + op + '" data-sch-path=\'' + pathAttr + '\' data-sch-drop-group=\'' + pathAttr + '\'>';
+  html += '<span class="sch-bracket" aria-hidden="true">[</span>';
+  html += '<button type="button" class="sch-op-tag" data-sch-toggle-op=\'' + pathAttr + '\' title="Click to flip ' + (op === 'AND' ? 'and → or' : 'or → and') + '">' + label + '</button>';
+  const kids = node.children || [];
+  if (kids.length === 0) {
+    html += '<span class="sch-conn-inline" style="opacity:0.5;">— drop a course here —</span>';
+  } else {
+    for (let i = 0; i < kids.length; i++) {
+      if (i > 0) html += '<span class="sch-conn-inline">' + conn + '</span>';
+      html += _schRenderNode(kids[i], path.concat([i]), depth + 1);
     }
   }
-
-  function renderList(zoneEl, codes, zone) {
-    if (codes.length === 0) {
-      zoneEl.innerHTML = '<div class="sch-zone-empty">empty</div>';
-      return;
-    }
-    zoneEl.innerHTML = codes.map((c) =>
-      '<span class="sch-zone-item">' + _brEscape(c) +
-      '<button type="button" class="sch-zone-item-x" data-sch-zone-rm="' + zone +
-      '" data-sch-code="' + _brEscape(c) + '" title="Remove">×</button>' +
-      '</span>'
-    ).join('');
+  html += '<button type="button" class="sch-grp-add" data-sch-add-group=\'' + _brEscape(JSON.stringify({path:path, op: op === 'AND' ? 'OR' : 'AND'})) + '\' title="Add a nested ' + (op === 'AND' ? 'or' : 'and') + ' group">+ group</button>';
+  if (!isRoot) {
+    html += '<button type="button" class="sch-grp-tool" data-sch-remove-self=\'' + pathAttr + '\' title="Delete this group">×</button>';
   }
-  renderList(andEl, w.and, 'and');
-  renderList(orEl, w.or, 'or');
+  html += '<span class="sch-bracket" aria-hidden="true">]</span>';
+  html += '</span>';
+  return html;
+}
 
-  // Wire remove buttons.
-  document.querySelectorAll('[data-sch-zone-rm]').forEach((b) => {
-    b.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const zone = b.getAttribute('data-sch-zone-rm');
-      const code = b.getAttribute('data-sch-code');
-      window.HS.catalog.plans.removeFromWanted(_schScopePlanId(), zone, code);
+function _schRenderChip(leaf, path) {
+  const code = leaf.code;
+  const label = _schChipLabel(code);
+  const parentPath = path.slice(0, -1);
+  const idx = path[path.length - 1];
+  const ctxAttr = _brEscape(JSON.stringify({path: parentPath, idx: idx, code: code}));
+  let html = '<div class="sch-chip" data-sch-chip-path=\'' + _brEscape(JSON.stringify(path)) + '\' title="' + _brEscape(code) + '">';
+  html += '<span class="sch-chip-text">' + _brEscape(label) + '</span>';
+  html += '<span class="sch-chip-tools">';
+  html += '<button type="button" class="sch-chip-tool" data-sch-wrap-or=\'' + ctxAttr + '\' title="Wrap in or group (alternatives)">⌥</button>';
+  html += '<button type="button" class="sch-chip-tool is-danger" data-sch-rm-chip=\'' + ctxAttr + '\' title="Remove">×</button>';
+  html += '</span></div>';
+  return html;
+}
+function _schRenderShelf(leaf, path) {
+  const subject = leaf.subject;
+  const parentPath = path.slice(0, -1);
+  const idx = path[path.length - 1];
+  const ctxAttr = _brEscape(JSON.stringify({path: parentPath, idx: idx, subject: subject}));
+  let html = '<div class="sch-chip sch-chip-shelf" title="Shelved — pick a course from ' + _brEscape(subject) + ' after generating">';
+  html += '<span class="sch-chip-shelf-tag">any</span>';
+  html += '<span class="sch-chip-text">' + _brEscape(subject) + '</span>';
+  html += '<span class="sch-chip-tools">';
+  html += '<button type="button" class="sch-chip-tool is-danger" data-sch-rm-chip=\'' + ctxAttr + '\' title="Remove">×</button>';
+  html += '</span></div>';
+  return html;
+}
+
+function _schWireTree(root) {
+  // Drop the pending course onto a group body.
+  root.querySelectorAll('[data-sch-drop-group]').forEach((el) => {
+    el.addEventListener('click', (e) => {
+      if (e.target.closest('.sch-chip, .sch-op-pill, .sch-grp-tool, .sch-grp-add, .sch-chip-tool')) return;
+      if (!_schPendingCourse) return;
+      const path = JSON.parse(el.getAttribute('data-sch-drop-group'));
+      _schDropPending(path);
     });
   });
-  // Wire the zone drop targets — only when a course is pending.
-  ['and', 'or'].forEach((zoneType) => {
-    const zone = document.getElementById('sch-zone-' + zoneType);
-    if (!zone) return;
-    zone.onclick = (e) => {
-      if (e.target.closest('[data-sch-zone-rm], .sch-zone-item-x')) return;
+  const empty = root.querySelector('[data-sch-drop-empty]');
+  if (empty) {
+    empty.addEventListener('click', () => {
       if (!_schPendingCourse) return;
-      window.HS.catalog.plans.addToWanted(_schScopePlanId(), zoneType, _schPendingCourse);
-      _schPendingCourse = null;
-      _schRenderZones();
-    };
+      _schDropPending([]);
+    });
+  }
+  root.querySelectorAll('[data-sch-toggle-op]').forEach((b) => {
+    b.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const path = JSON.parse(b.getAttribute('data-sch-toggle-op'));
+      window.HS.catalog.plans.wantedToggleOp(_schScopePlanId(), path);
+    });
   });
+  root.querySelectorAll('[data-sch-add-group]').forEach((b) => {
+    b.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const v = JSON.parse(b.getAttribute('data-sch-add-group'));
+      window.HS.catalog.plans.wantedAddGroup(_schScopePlanId(), v.path, v.op);
+    });
+  });
+  root.querySelectorAll('[data-sch-remove-self]').forEach((b) => {
+    b.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const path = JSON.parse(b.getAttribute('data-sch-remove-self'));
+      const parent = path.slice(0, -1);
+      const idx = path[path.length - 1];
+      window.HS.catalog.plans.wantedRemove(_schScopePlanId(), parent, idx);
+    });
+  });
+  root.querySelectorAll('[data-sch-rm-chip]').forEach((b) => {
+    b.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const v = JSON.parse(b.getAttribute('data-sch-rm-chip'));
+      window.HS.catalog.plans.wantedRemove(_schScopePlanId(), v.path, v.idx);
+    });
+  });
+  root.querySelectorAll('[data-sch-wrap-or]').forEach((b) => {
+    b.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const v = JSON.parse(b.getAttribute('data-sch-wrap-or'));
+      window.HS.catalog.plans.wantedWrap(_schScopePlanId(), v.path, v.idx, 'OR');
+    });
+  });
+}
+
+function _schDropPending(path) {
+  const code = _schPendingCourse;
+  if (!code) return;
+  window.HS.catalog.plans.wantedAddCourse(_schScopePlanId(), path, code);
+  _schPendingCourse = null;
+  _schSyncPendingClass();
+  _schUpdateCursorFollow();
+  if (typeof renderPicker === 'function') renderPicker();
+}
+
+// One-line summary of the wanted expression for the dock card.
+// Mirrors what the rainbow-bracket renderer would produce, just
+// flattened to text. Empty state nudges the user to open the
+// drawer.
+function _schRenderDockSummary() {
+  const el = document.getElementById('sch-dock-summary-body');
+  if (!el) return;
+  const root = _schWantedRoot();
+  if (!root) {
+    el.innerHTML = '<em>Nothing wanted yet.</em> Click <strong>Edit logic</strong> to declare what you want.';
+    return;
+  }
+  el.innerHTML = _schSummaryNode(root);
+}
+// --- Fill-in panel: shelved-subject status under the calendar.
+// Shows one row per shelf in the active plan's wanted tree. Each row
+// reports whether the shelf is satisfied (a section from that subject
+// is staged) and offers a button that scrolls the picker to the
+// subject so the user can pick a course.
+function _schSubjectFromCode(code) {
+  const m = String(code || '').match(/^([A-Z][A-Z0-9-]*?)\s/);
+  return m ? m[1] : '';
+}
+function _schStagedCoursesBySubject(plan) {
+  // Returns Map<subject, Array<{course_code, class_number}>>.
+  const eff = (window.HS && window.HS.catalog && window.HS.catalog.getEffective)
+    ? window.HS.catalog.getEffective() : null;
+  const out = new Map();
+  if (!plan || !eff) return out;
+  for (const ref of (plan.sections || [])) {
+    // Find the course for this class_number in the effective view.
+    let foundCourse = null;
+    for (const c of (eff.courses || [])) {
+      if ((c.sections || []).some((s) => s.class_number === ref.class_number)) {
+        foundCourse = c;
+        break;
+      }
+    }
+    if (!foundCourse) continue;
+    const subject = _schSubjectFromCode(foundCourse.code);
+    if (!subject) continue;
+    if (!out.has(subject)) out.set(subject, []);
+    out.get(subject).push({ course_code: foundCourse.code, class_number: ref.class_number });
+  }
+  return out;
+}
+function _schRenderFillIn() {
+  const el = document.getElementById('sch-fill-in');
+  if (!el) return;
+  const plan = (typeof _viewedPlan === 'function') ? _viewedPlan() : null;
+  if (!plan) { el.hidden = true; return; }
+  const root = (plan.wanted && plan.wanted.root) || null;
+  const shelves = _schAllShelves(root, []);
+  if (shelves.length === 0) { el.hidden = true; return; }
+  const stagedBySubject = _schStagedCoursesBySubject(plan);
+  let html = '<div class="sch-fill-in-h"><span>Fill-in</span><em>shelved subjects from your wanted</em></div>';
+  for (const subject of shelves) {
+    const filled = stagedBySubject.get(subject) || [];
+    html += '<div class="sch-fill-row">';
+    html += '<span class="sch-fill-subject">' + _brEscape(subject) + '</span>';
+    if (filled.length > 0) {
+      html += '<span class="sch-fill-status is-filled">✓ filled with ' +
+        filled.map((x) => _brEscape(x.course_code)).join(', ') +
+        '</span>';
+      html += '<span class="sch-fill-actions">';
+      html += '<button type="button" class="sch-fill-btn" data-sch-fill-pick="' + _brEscape(subject) + '" title="Pick a different course from this subject">change</button>';
+      html += '</span>';
+    } else {
+      html += '<span class="sch-fill-status is-unfilled">— pick a course from this subject —</span>';
+      html += '<span class="sch-fill-actions">';
+      html += '<button type="button" class="sch-fill-btn" data-sch-fill-pick="' + _brEscape(subject) + '" title="Open the picker filtered to this subject">pick</button>';
+      html += '</span>';
+    }
+    html += '</div>';
+  }
+  el.innerHTML = html;
+  el.hidden = false;
+  // Wire the pick buttons. Expand the subject in the picker, set the
+  // search query, and scroll into view.
+  el.querySelectorAll('[data-sch-fill-pick]').forEach((b) => {
+    b.addEventListener('click', () => {
+      const subj = b.getAttribute('data-sch-fill-pick');
+      // Expand the subject so its courses show.
+      if (typeof _pkExpandedSubjects !== 'undefined') {
+        _pkExpandedSubjects.add(subj);
+      }
+      // Drop search to ensure we're in directory mode (subject row visible).
+      const searchEl = document.getElementById('mp-search');
+      if (searchEl) searchEl.value = '';
+      if (typeof renderPicker === 'function') renderPicker();
+      const subjEl = document.querySelector('[data-subject="' + subj.replace(/"/g, '\\"') + '"]');
+      if (subjEl) subjEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  });
+}
+
+function _schSummaryNode(node, depth) {
+  depth = depth || 0;
+  if (!node) return '';
+  if (node.type === 'course') {
+    return '<span class="sch-summary-code">' + _brEscape(_schChipLabel(node.code)) + '</span>';
+  }
+  if (node.type === 'shelf') {
+    return '<span class="sch-summary-shelf"><em>any</em> ' + _brEscape(node.subject) + '</span>';
+  }
+  const op = node.op === 'OR' ? 'or' : 'and';
+  const kids = (node.children || []).map((k) => _schSummaryNode(k, depth + 1));
+  if (kids.length === 0) return '<em>(empty)</em>';
+  const colors = ['var(--ochre)', 'var(--teal)', 'var(--mossy)', 'var(--plum)', 'var(--rust)'];
+  const color = colors[depth % colors.length];
+  // Outermost group: don't draw brackets — it's always implicit AND.
+  if (depth === 0) {
+    return kids.join(' <em style="color:' + color + ';">' + op + '</em> ');
+  }
+  return '<span style="color:' + color + '; font-weight:600;">[</span> ' +
+    kids.join(' <em style="color:' + color + ';">' + op + '</em> ') +
+    ' <span style="color:' + color + '; font-weight:600;">]</span>';
 }
 
 function _schSetPendingCourse(code) {
   _schPendingCourse = code;
-  _schRenderZones();
+  _schSyncPendingClass();
+  _schUpdateCursorFollow();
 }
 
 function _schClearPending() {
   _schPendingCourse = null;
-  _schRenderZones();
+  _schSyncPendingClass();
+  _schUpdateCursorFollow();
 }
+
+function _schSyncPendingClass() {
+  if (_schPendingCourse) document.body.classList.add('sch-has-pending');
+  else document.body.classList.remove('sch-has-pending');
+}
+
+// --- Cursor-follower chip: shows pending course attached to the
+// cursor, mirroring the section-link cursor flow. ---
+let _schCursorEl = null;
+function _schEnsureCursorEl() {
+  if (_schCursorEl) return _schCursorEl;
+  _schCursorEl = document.createElement('div');
+  _schCursorEl.className = 'sch-cursor-follow';
+  document.body.appendChild(_schCursorEl);
+  return _schCursorEl;
+}
+function _schUpdateCursorFollow() {
+  const el = _schEnsureCursorEl();
+  if (_schPendingCourse) {
+    el.textContent = _schChipLabel(_schPendingCourse);
+    el.classList.add('is-on');
+  } else {
+    el.classList.remove('is-on');
+  }
+}
+document.addEventListener('mousemove', (e) => {
+  if (!_schPendingCourse) return;
+  const el = _schEnsureCursorEl();
+  el.style.left = e.clientX + 'px';
+  el.style.top = e.clientY + 'px';
+});
+// ESC cancels a pending course.
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && _schPendingCourse) {
+    _schClearPending();
+  }
+});
+// Click anywhere outside the drawer / picker tree drops the pending.
+// (Inside the drawer, the click handlers above route to the right
+// place; outside, the user is bailing.)
+document.addEventListener('click', (e) => {
+  if (!_schPendingCourse) return;
+  // Inside the drawer or on a + WANT pill in the picker → ignore.
+  if (e.target.closest('#scheduler-drawer, [data-pkwant]')) return;
+  // Anywhere else → cancel.
+  _schClearPending();
+}, true);
+
+// Compatibility shim: the old _schRenderZones name is referenced from
+// the toggleSchedulerDrawer + catalog subscriber. Route it to the
+// tree renderer so we don't have to chase every callsite.
+function _schRenderZones() { _schRenderTree(); }
 
 // The auto-scheduler always reads/writes the ACTIVE plan's
 // requirements + preferences. The "viewed" plan can be a candidate or
@@ -8747,28 +9718,113 @@ function _schReadPreferencesFromForm() {
   };
 }
 
-// Build requirements[] for the solver from plan.wanted at call time.
-// Each AND code → one single-course requirement. The OR list (if
-// non-empty) → one OR-group requirement with all courses.
-function _schRequirementsFromWanted(wanted) {
-  const out = [];
-  let n = 0;
-  for (const code of (wanted.and || [])) {
-    out.push({ id: 'and-' + (n++), courses: [code] });
+// Convert the wanted expression tree to CNF — a flat list of
+// requirements (each requirement is a clause = OR of courses; all
+// requirements must be satisfied = AND across them).
+//
+// Distributive law:
+//   leaf c          -> [[c]]
+//   AND(a,b,...)    -> concat(cnf(a), cnf(b), ...)
+//   OR(a,b,...)     -> cartesian product where each result is the
+//                       UNION of one clause from each child
+// Cap the explosion at 64 clauses. Beyond that we throw — the user
+// has built something pathological and the UI surfaces an error.
+//
+// Shelf nodes (TBD subject placeholders) are stripped before CNF.
+// Inside AND they vanish; inside OR they make the OR trivially
+// satisfied (the whole branch drops).
+const _SCH_CNF_CAP = 64;
+function _schPruneShelves(node) {
+  if (!node) return null;
+  if (node.type === 'shelf') return 'TRUE';
+  if (node.type === 'course') return node;
+  if (node.op === 'AND') {
+    const kids = (node.children || []).map(_schPruneShelves);
+    const filtered = kids.filter((k) => k !== 'TRUE' && k !== null);
+    if (filtered.length === 0) return 'TRUE';
+    if (filtered.length === 1) return filtered[0];
+    return Object.assign({}, node, { children: filtered });
   }
-  if ((wanted.or || []).length > 0) {
-    out.push({ id: 'or-' + (n++), courses: (wanted.or || []).slice() });
+  // OR
+  const kids = (node.children || []).map(_schPruneShelves);
+  if (kids.some((k) => k === 'TRUE')) return 'TRUE';
+  const filtered = kids.filter((k) => k !== null);
+  if (filtered.length === 0) return null;
+  if (filtered.length === 1) return filtered[0];
+  return Object.assign({}, node, { children: filtered });
+}
+// Walk the tree and collect every shelf subject (deduped) so the
+// fill-in panel knows what to ask the user to pick after preview.
+function _schAllShelves(node, out) {
+  out = out || [];
+  if (!node) return out;
+  if (node.type === 'shelf') {
+    if (out.indexOf(node.subject) === -1) out.push(node.subject);
+    return out;
   }
+  if (node.type === 'course') return out;
+  for (const c of (node.children || [])) _schAllShelves(c, out);
   return out;
+}
+function _schToCNF(node) {
+  if (!node) return [];
+  if (node.type === 'course') return [[node.code]];
+  if (node.type === 'shelf') return []; // stripped earlier; defensive
+  if (node.op === 'AND') {
+    const out = [];
+    for (const c of (node.children || [])) {
+      const clauses = _schToCNF(c);
+      for (const cl of clauses) out.push(cl);
+    }
+    return out;
+  }
+  // OR
+  const kids = node.children || [];
+  if (kids.length === 0) return [];
+  let result = [[]];
+  for (const child of kids) {
+    const childCNF = _schToCNF(child);
+    if (childCNF.length === 0) continue;
+    const next = [];
+    for (const a of result) {
+      for (const b of childCNF) {
+        const seen = new Set(a);
+        const merged = a.slice();
+        for (const x of b) if (!seen.has(x)) { seen.add(x); merged.push(x); }
+        next.push(merged);
+        if (next.length > _SCH_CNF_CAP) {
+          throw new Error('Wanted expression is too complex to schedule (>' + _SCH_CNF_CAP + ' CNF clauses). Try simplifying.');
+        }
+      }
+    }
+    result = next;
+  }
+  return result;
+}
+
+function _schRequirementsFromWanted(wanted) {
+  const root = (wanted && wanted.root) || null;
+  if (!root) return [];
+  // Strip shelves first — they're TBDs that don't constrain the solver.
+  const pruned = _schPruneShelves(root);
+  if (!pruned || pruned === 'TRUE') return [];
+  const clauses = _schToCNF(pruned);
+  return clauses.map((cl, i) => ({ id: 'r-' + i, courses: cl.slice() }));
 }
 
 function _schGenerate() {
   const plan = _schScopePlan();
   if (!plan) return;
-  const wanted = (plan.wanted) || { and: [], or: [] };
-  const reqs = _schRequirementsFromWanted(wanted);
+  const wanted = (plan.wanted) || { root: null };
+  let reqs;
+  try {
+    reqs = _schRequirementsFromWanted(wanted);
+  } catch (e) {
+    _hsAlert(e.message || String(e), 'Expression too complex');
+    return;
+  }
   if (reqs.length === 0) {
-    _hsAlert('Drop at least one course in the And or Or zone before generating.', 'Nothing to schedule');
+    _hsAlert('Add at least one course to your wanted expression before generating.', 'Nothing to schedule');
     return;
   }
   // Persist the form's preferences to the plan first.
@@ -8806,30 +9862,12 @@ function _schGenerate() {
   }
 }
 
-function _schOpenResults() {
-  _schResultsOpen = true;
-  const el = document.getElementById('scheduler-results');
-  if (el) {
-    el.classList.add('open');
-    el.setAttribute('aria-hidden', 'false');
-  }
-}
-
-function _schCloseResults() {
-  _schResultsOpen = false;
-  _schCancelPreview();
-  const el = document.getElementById('scheduler-results');
-  if (el) {
-    el.classList.remove('open');
-    el.setAttribute('aria-hidden', 'true');
-  }
-}
-
-function _schToggleResultsExpanded() {
-  _schResultsExpanded = !_schResultsExpanded;
-  const el = document.getElementById('scheduler-results');
-  if (el) el.classList.toggle('is-expanded', _schResultsExpanded);
-}
+// The slide-in results panel was retired in favour of a permanent
+// docked list below the table. These helpers stay as no-ops so the
+// existing call sites (pick/preview/cancel) don't have to change.
+function _schOpenResults() { _schResultsOpen = true; }
+function _schCloseResults() { _schResultsOpen = false; _schCancelPreview(); }
+function _schToggleResultsExpanded() { /* no-op */ }
 
 // Filter + sort the rendered list based on the controls.
 function _schFilteredCandidates() {
@@ -9069,15 +10107,138 @@ window.addEventListener('horarium:ready', function () {
   // Re-render the requirements list whenever a plan_mutation
   // touches requirements/locks.
   window.HS.catalog.subscribe(function (e) {
-    if (e && e.reason === 'plan_mutation' && _schDrawerOpen) {
-      _schRenderZones();
+    if (!e || e.reason !== 'plan_mutation') return;
+    if (_schDrawerOpen) _schRenderZones();
+    // When the wanted tree changes, the picker's + Want / ✓ Want
+    // pill needs to flip — re-render so the next paint reflects it.
+    const action = e.plan_event || '';
+    if (action.indexOf('wanted_') === 0 || action === 'clear_wanted') {
+      if (typeof renderPicker === 'function') renderPicker();
+      _schRenderDockSummary();
+      _schRenderFillIn();
+    }
+    // Stage/unstage also bear on fill-in's "filled vs unfilled" status.
+    if (action === 'stage_section' || action === 'unstage_section') {
+      _schRenderFillIn();
     }
   });
+  // First paint of the dock summary + fill-in so they're not blank
+  // on load.
+  _schRenderDockSummary();
+  _schRenderFillIn();
   // Wire the sort/filter dropdowns.
   const sortEl = document.getElementById('sch-sort');
   const filterEl = document.getElementById('sch-filter');
   if (sortEl) sortEl.addEventListener('change', _schRenderResults);
   if (filterEl) filterEl.addEventListener('change', _schRenderResults);
+
+  // Display-mode toggle (code ↔ title) and clear-all button inside
+  // the wanted tree. horarium:ready fires twice during boot — guard
+  // so we only wire each once.
+  const dispBtn = document.getElementById('sch-display-toggle');
+  if (dispBtn && !dispBtn._schWired) {
+    dispBtn._schWired = true;
+    dispBtn.addEventListener('click', () => {
+      _schDisplayMode = _schDisplayMode === 'code' ? 'title' : 'code';
+      dispBtn.textContent = _schDisplayMode;
+      dispBtn.setAttribute('data-mode', _schDisplayMode);
+      _schRenderTree();
+      _schUpdateCursorFollow();
+    });
+  }
+  const clearBtn = document.getElementById('sch-clear-all');
+  if (clearBtn && !clearBtn._schWired) {
+    clearBtn._schWired = true;
+    clearBtn.addEventListener('click', () => {
+      const planId = _schScopePlanId();
+      if (!planId) return;
+      window.HS.catalog.plans.clearWanted(planId);
+      _schPendingCourse = null;
+      _schSyncPendingClass();
+      _schUpdateCursorFollow();
+      if (typeof renderPicker === 'function') renderPicker();
+    });
+  }
+  // Dock "Edit logic" → opens the right-edge drawer.
+  const dockEdit = document.getElementById('sch-dock-edit');
+  if (dockEdit && !dockEdit._schWired) {
+    dockEdit._schWired = true;
+    dockEdit.addEventListener('click', () => {
+      if (typeof toggleSchedulerDrawer === 'function' && !_schDrawerOpen) {
+        toggleSchedulerDrawer();
+      }
+    });
+  }
+  // Collapse / expand the dock section.
+  const dockToggle = document.getElementById('sch-dock-toggle');
+  const dockEl = document.getElementById('sch-dock');
+  if (dockToggle && dockEl && !dockToggle._schWired) {
+    dockToggle._schWired = true;
+    dockToggle.addEventListener('click', () => {
+      const collapsed = dockEl.getAttribute('data-collapsed') === 'true';
+      dockEl.setAttribute('data-collapsed', collapsed ? 'false' : 'true');
+      dockToggle.setAttribute('aria-expanded', collapsed ? 'true' : 'false');
+    });
+  }
+  // Bottom-sheet resize: drag handle + size-toggle button.
+  const sheet = document.getElementById('scheduler-drawer');
+  const sizeBtn = document.getElementById('sch-size-toggle');
+  const dragHandle = document.getElementById('sch-drag-handle');
+  function _schSheetSetHeight(px) {
+    const min = 140;
+    const max = Math.round(window.innerHeight * 0.85);
+    const clamped = Math.max(min, Math.min(max, px));
+    sheet.style.height = clamped + 'px';
+    // Update size-toggle label so it reflects the next action.
+    if (sizeBtn) {
+      const tall = clamped > Math.round(window.innerHeight * 0.45);
+      sizeBtn.setAttribute('data-size', tall ? 'tall' : 'small');
+      sizeBtn.textContent = tall ? 'compact' : 'tall';
+    }
+  }
+  if (sizeBtn && !sizeBtn._schWired) {
+    sizeBtn._schWired = true;
+    sizeBtn.addEventListener('click', () => {
+      const cur = sheet.getBoundingClientRect().height;
+      const tallTarget = Math.round(window.innerHeight * 0.65);
+      const smallTarget = 260;
+      _schSheetSetHeight(cur > Math.round(window.innerHeight * 0.45) ? smallTarget : tallTarget);
+    });
+  }
+  if (dragHandle && !dragHandle._schWired) {
+    dragHandle._schWired = true;
+    let dragging = false;
+    let startY = 0;
+    let startH = 0;
+    const onMove = (e) => {
+      if (!dragging) return;
+      const y = (e.touches ? e.touches[0].clientY : e.clientY);
+      const delta = startY - y;
+      _schSheetSetHeight(startH + delta);
+    };
+    const onUp = () => {
+      if (!dragging) return;
+      dragging = false;
+      sheet.classList.remove('is-resizing');
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+      document.removeEventListener('touchmove', onMove);
+      document.removeEventListener('touchend', onUp);
+    };
+    const onDown = (e) => {
+      dragging = true;
+      startY = (e.touches ? e.touches[0].clientY : e.clientY);
+      startH = sheet.getBoundingClientRect().height;
+      sheet.classList.add('is-resizing');
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
+      document.addEventListener('touchmove', onMove, { passive: true });
+      document.addEventListener('touchend', onUp);
+      e.preventDefault();
+    };
+    dragHandle.addEventListener('mousedown', onDown);
+    dragHandle.addEventListener('touchstart', onDown, { passive: false });
+  }
 });
 
 function _activePlanId() {
@@ -14386,6 +15547,20 @@ function _pkRenderDirectory(el, allCourses, stagedSet, hydratedStaged) {
     html += '<span class="mp-subject-meta">' + courses.length + ' course' + (courses.length === 1 ? '' : 's') +
       '<span class="mp-chevron">›</span></span>';
     html += '</button>';
+    // "+ Want any" pill — only visible when the logic-maker drawer
+    // is open. Toggles a shelf for this subject in the wanted tree.
+    {
+      const planForReq = (typeof _schScopePlan === 'function') ? _schScopePlan() : null;
+      const wantedRoot = (planForReq && planForReq.wanted && planForReq.wanted.root) || null;
+      const shelves = (typeof _schAllShelvedSubjects === 'function')
+        ? _schAllShelvedSubjects(wantedRoot)
+        : new Set();
+      const onShelf = shelves.has(subj);
+      const subjBadge = onShelf
+        ? '<button type="button" class="mp-subj-want is-on" data-pksubj-want="' + _escHtml(subj) + '" title="Click to remove this shelf — fill in this subject after preview/pick">✓ ANY</button>'
+        : '<button type="button" class="mp-subj-want" data-pksubj-want="' + _escHtml(subj) + '" title="Shelve this subject — solver skips it; pick a course after generating">+ ANY</button>';
+      html += subjBadge;
+    }
     if (isOpen) {
       // Bucket by level and emit each level as a header + course list.
       const buckets = window.HS.picker.bucketByLevel(courses);
@@ -14501,16 +15676,17 @@ function _pkRenderCourseRow(c, sections, stagedSet, hydratedStaged) {
     : '';
   const userBadge = c._user_authored ? '<span class="mp-user-tag">USER</span>' : '';
   const stagedClass = stagedCount > 0 ? ' has-staged' : '';
-  // Piece 6 rework — "+ WANT" pill selects the course as pending in
-  // the auto-scheduler drawer. The user then drops it into the And
-  // or Or zone there. If the course is already in either zone the
-  // pill flips to ✓ to show it's wired up.
+  // Piece 6 rework v2 — "+ WANT" pill picks the course up onto the
+  // cursor. Click it onto any group in the wanted-tree drawer. The
+  // pill flips to ✓ once the course is anywhere in the tree.
   const planForReq = (typeof _schScopePlan === 'function') ? _schScopePlan() : null;
-  const w = (planForReq && planForReq.wanted) || { and: [], or: [] };
-  const inWanted = (w.and || []).includes(c.code) || (w.or || []).includes(c.code);
+  const wantedRoot = (planForReq && planForReq.wanted && planForReq.wanted.root) || null;
+  const inWanted = (typeof _schAllCodes === 'function')
+    ? _schAllCodes(wantedRoot).has(c.code)
+    : false;
   const reqBadge = inWanted
-    ? '<button type="button" class="mp-req-tag is-on" data-pkwant="' + _escHtml(c.code) + '" title="Already in auto-scheduler — click to remove from both zones">✓ WANT</button>'
-    : '<button type="button" class="mp-req-tag" data-pkwant="' + _escHtml(c.code) + '" title="Mark as pending; click And or Or zone to drop in">+ WANT</button>';
+    ? '<button type="button" class="mp-req-tag is-on" data-pkwant="' + _escHtml(c.code) + '" title="In your wanted expression — click to remove">✓ WANT</button>'
+    : '<button type="button" class="mp-req-tag" data-pkwant="' + _escHtml(c.code) + '" title="Pick up; click a group in the auto-scheduler drawer to drop">+ WANT</button>';
   let html = '<div class="mp-course' + (isExpanded ? ' is-open' : '') + stagedClass + (c._user_authored ? ' is-user-authored' : '') + '" data-course-code="' + _escHtml(c.code) + '">';
   html += '<button type="button" class="mp-course-head" data-pkcourse="' + _escHtml(c.code) + '">';
   html += '<span class="mp-course-head-text">';
@@ -14622,25 +15798,48 @@ function _pkWireAll(root) {
       renderPicker();
     });
   });
-  // Piece 6 rework — + WANT click sets the pending course on the
-  // auto-scheduler. If already in either zone, click removes from
-  // both. If drawer is closed, opens it so the user sees where the
-  // pending pill landed.
+  // Piece 6 rework v2 — + WANT picks up the course onto the cursor.
+  // ✓ WANT (already in tree) removes every occurrence. The drawer
+  // only auto-opens if it's currently closed AND no pending course
+  // is already on the cursor (so repeat-clicks don't keep toggling).
   root.querySelectorAll('[data-pkwant]').forEach(function (btn) {
     btn.addEventListener('click', function (e) {
       e.stopPropagation();
       const code = btn.getAttribute('data-pkwant');
       const plan = (typeof _schScopePlan === 'function') ? _schScopePlan() : null;
       if (!plan) return;
-      const w = plan.wanted || { and: [], or: [] };
-      const inAnd = (w.and || []).includes(code);
-      const inOr = (w.or || []).includes(code);
-      if (inAnd || inOr) {
-        if (inAnd) window.HS.catalog.plans.removeFromWanted(plan.id, 'and', code);
-        if (inOr) window.HS.catalog.plans.removeFromWanted(plan.id, 'or', code);
+      const allCodes = (typeof _schAllCodes === 'function')
+        ? _schAllCodes((plan.wanted && plan.wanted.root) || null)
+        : new Set();
+      if (allCodes.has(code)) {
+        // Already in tree: strip every occurrence.
+        window.HS.catalog.plans.wantedRemoveCode(plan.id, code);
+        return;
+      }
+      // Pick up onto the cursor.
+      if (typeof _schSetPendingCourse === 'function') _schSetPendingCourse(code);
+      // Open drawer once if closed, then leave it alone.
+      if (!_schDrawerOpen && typeof toggleSchedulerDrawer === 'function') {
+        toggleSchedulerDrawer();
+      }
+    });
+  });
+  // Subject "+ Any" pill — toggles a shelf for that subject. The
+  // solver skips shelves; the under-table fill-in panel surfaces
+  // them post-generate so the user picks a specific course.
+  root.querySelectorAll('[data-pksubj-want]').forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      const subj = btn.getAttribute('data-pksubj-want');
+      const plan = (typeof _schScopePlan === 'function') ? _schScopePlan() : null;
+      if (!plan) return;
+      const shelves = (typeof _schAllShelvedSubjects === 'function')
+        ? _schAllShelvedSubjects((plan.wanted && plan.wanted.root) || null)
+        : new Set();
+      if (shelves.has(subj)) {
+        window.HS.catalog.plans.wantedRemoveShelf(plan.id, subj);
       } else {
-        if (typeof _schSetPendingCourse === 'function') _schSetPendingCourse(code);
-        if (!_schDrawerOpen) toggleSchedulerDrawer();
+        window.HS.catalog.plans.wantedAddShelf(plan.id, [], subj);
       }
     });
   });

@@ -1,0 +1,589 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Section-pairing UI prototypes — Horarium</title>
+<style>
+  :root {
+    --paper:      #f6f1e7;
+    --paper-soft: #f0e9da;
+    --cream:      #faf6ec;
+    --ink:        #2b2a26;
+    --ink-soft:   #4a4942;
+    --ink-faint:  #8a8678;
+    --rule:       #d6cfbe;
+    --ochre:      #b07b34;
+    --rust:       #8c4a3a;
+    --mossy:      #5d6b3d;
+    --teal:       #4a6f7e;
+    --plum:       #6b5379;
+    --accent:     var(--ochre);
+    --radius-sm:  2px;
+    --radius-md:  4px;
+    --font-sans:  'Inter', system-ui, sans-serif;
+    --font-mono:  'JetBrains Mono', ui-monospace, monospace;
+    --font-display: 'Fraunces', 'Times New Roman', serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 2.5rem 3rem;
+    font-family: var(--font-sans);
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 14px;
+    line-height: 1.45;
+  }
+  h1 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 2.2rem;
+    margin: 0 0 0.4rem;
+    letter-spacing: -0.01em;
+  }
+  h1 em { color: var(--accent); font-style: italic; }
+  .blurb { color: var(--ink-soft); max-width: 60ch; margin: 0 0 2rem; }
+  .blurb strong { color: var(--ink); }
+  .scenario {
+    background: var(--paper-soft);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-md);
+    padding: 0.85rem 1.1rem;
+    margin-bottom: 2rem;
+    font-family: var(--font-mono);
+    font-size: 0.84rem;
+  }
+  .scenario .label {
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 0.3rem;
+  }
+  .proto {
+    margin-top: 3rem;
+    border-top: 1px solid var(--rule);
+    padding-top: 1.5rem;
+  }
+  .proto-head {
+    display: flex;
+    align-items: baseline;
+    gap: 1.2rem;
+    margin-bottom: 0.4rem;
+  }
+  .proto-name {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .proto-title {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 1.4rem;
+    color: var(--ink);
+  }
+  .proto-meta {
+    color: var(--ink-faint);
+    font-size: 0.84rem;
+    max-width: 70ch;
+    margin-bottom: 1.2rem;
+  }
+  .proto-canvas {
+    background: var(--paper-soft);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-md);
+    padding: 1.4rem;
+  }
+  .proto-notes {
+    margin-top: 0.7rem;
+    color: var(--ink-soft);
+    font-size: 0.82rem;
+  }
+
+  /* Shared kanban column shell so each variant feels in-context. */
+  .kcol {
+    width: 16rem;
+    background: var(--cream);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-md);
+    padding: 0.55rem 0.6rem 0.6rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .kcol::before {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; top: 0;
+    height: 3px;
+    background: var(--accent);
+    opacity: 0.85;
+  }
+  .kcol-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.4rem;
+    margin: 0.15rem 0 0.5rem;
+  }
+  .kcol-label {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .kcol-label strong { color: var(--ink-soft); font-weight: 600; }
+  .kcol-mode {
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+    border-radius: 999px;
+    padding: 0.05rem 0.4rem;
+    background: color-mix(in srgb, var(--accent) 8%, transparent);
+  }
+  .kcol-tool {
+    background: transparent;
+    border: 0;
+    color: var(--ink-faint);
+    cursor: pointer;
+    padding: 0 0.25rem;
+    font-size: 0.85rem;
+  }
+
+  /* ============================================================
+     Variant A — Combo cards (each pairing = one card)
+     ============================================================ */
+  .a-combo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .a-card {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius-sm);
+    padding: 0.45rem 0.55rem;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+  }
+  .a-card .a-row { display: flex; align-items: center; gap: 0.3rem; }
+  .a-card .a-row + .a-row { margin-top: 0.18rem; padding-top: 0.18rem; border-top: 1px dashed color-mix(in srgb, var(--ink) 12%, transparent); }
+  .a-tag {
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    width: 2.4rem;
+  }
+  .a-section-id { color: var(--ink); }
+  .a-meta { color: var(--ink-faint); font-size: 0.7rem; margin-left: auto; }
+  .a-or {
+    align-self: center;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 0.78rem;
+    color: var(--ink-faint);
+    padding: 0.05rem 0;
+  }
+  .a-add {
+    background: transparent;
+    border: 1px dashed color-mix(in srgb, var(--ink) 22%, transparent);
+    border-radius: var(--radius-sm);
+    padding: 0.3rem 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    cursor: pointer;
+    margin-top: 0.45rem;
+    width: 100%;
+  }
+
+  /* ============================================================
+     Variant B — Two-axis grid (component rows × alternatives cols)
+     ============================================================ */
+  .b-grid {
+    display: grid;
+    grid-template-columns: 4rem repeat(2, 1fr);
+    gap: 0.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+  }
+  .b-grid .b-axis-h, .b-grid .b-row-label {
+    color: var(--ink-faint);
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    align-self: center;
+  }
+  .b-grid .b-axis-h { text-align: center; }
+  .b-cell {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-sm);
+    padding: 0.3rem 0.35rem;
+    text-align: center;
+  }
+  .b-cell.is-pick {
+    border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    border-left: 3px solid var(--accent);
+  }
+  .b-cell.is-empty {
+    background: transparent;
+    border: 1px dashed color-mix(in srgb, var(--ink) 18%, transparent);
+    color: var(--ink-faint);
+  }
+  .b-grid-h {
+    grid-column: 2 / -1;
+    text-align: center;
+    color: var(--accent);
+    font-style: italic;
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+  }
+  .b-add-col {
+    margin-top: 0.45rem;
+    align-self: stretch;
+    border: 1px dashed color-mix(in srgb, var(--ink) 22%, transparent);
+    border-radius: var(--radius-sm);
+    padding: 0.3rem 0.4rem;
+    background: transparent;
+    color: var(--ink-faint);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    width: 100%;
+  }
+
+  /* ============================================================
+     Variant C — Mini expression tree inside the column
+     (similar to the old nested-boxes UI but section-scoped)
+     ============================================================ */
+  .c-tree { display: flex; flex-direction: column; gap: 0.3rem; }
+  .c-grp {
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-sm);
+    background: color-mix(in srgb, var(--ink) 4%, transparent);
+    padding: 0.4rem 0.5rem;
+  }
+  .c-grp[data-op="OR"] { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+  .c-grp-head {
+    display: flex; align-items: center; gap: 0.3rem;
+    margin-bottom: 0.3rem;
+  }
+  .c-pill {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 0.78rem;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    padding: 0.05rem 0.45rem;
+    cursor: pointer;
+  }
+  .c-card {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius-sm);
+    padding: 0.32rem 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.76rem;
+  }
+  .c-children { display: flex; flex-direction: column; gap: 0.2rem; }
+  .c-conn {
+    align-self: center;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  /* ============================================================
+     Variant D — Stitched chips (drag pills onto each other to fuse)
+     ============================================================ */
+  .d-stack { display: flex; flex-direction: column; gap: 0.4rem; }
+  .d-pair {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius-sm);
+    padding: 0.35rem 0.4rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.18rem;
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: 0.76rem;
+  }
+  .d-chip {
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+    border-radius: 999px;
+    padding: 0.1rem 0.45rem;
+    color: var(--ink);
+  }
+  .d-amp {
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--ink-faint);
+    padding: 0 0.05rem;
+  }
+  .d-or {
+    align-self: center;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 0.78rem;
+    color: var(--ink-faint);
+  }
+  .d-empty {
+    border: 1px dashed color-mix(in srgb, var(--ink) 22%, transparent);
+    border-radius: var(--radius-sm);
+    padding: 0.6rem;
+    text-align: center;
+    color: var(--ink-faint);
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+  <h1>Section-pairing <em>prototypes</em></h1>
+  <p class="blurb">
+    Same scenario in four shapes. The outer Kanban column is unchanged
+    — what differs is how a single column expresses section-level
+    nesting (e.g. "Lec 001 paired with Lab 003" vs "Lec 002 paired with
+    Lab 005"). Pick which feels right to live inside one Kanban column.
+  </p>
+
+  <div class="scenario">
+    <div class="label">Scenario</div>
+    Course = <strong>ENGR-UH 1000</strong>. The user wants either
+    pairing <strong>(Lec 001 AND Lab 003)</strong> or
+    <strong>(Lec 002 AND Lab 005)</strong>. Other combinations
+    (e.g. Lec 001 + Lab 005) are not acceptable.
+  </div>
+
+  <!-- ====================================================== -->
+  <div class="proto">
+    <div class="proto-head">
+      <span class="proto-name">A · Combo cards</span>
+      <span class="proto-title">Each pairing = one stacked card</span>
+    </div>
+    <p class="proto-meta">
+      A combo card lists every component of one valid pairing, stacked
+      with thin dividers. Multiple cards stack as alternatives,
+      separated by italic <em>or</em>. New combo via "+ pairing" button
+      opens a builder.
+    </p>
+    <div class="proto-canvas">
+      <div class="kcol">
+        <div class="kcol-head">
+          <span class="kcol-label"><strong>Pick</strong> one of</span>
+          <span class="kcol-mode">sections</span>
+          <button class="kcol-tool">×</button>
+        </div>
+        <div class="kcol-label" style="margin-bottom: 0.4rem; font-family: var(--font-mono); font-size: 0.66rem;">ENGR-UH 1000</div>
+
+        <div class="a-combo">
+          <div class="a-card">
+            <div class="a-row"><span class="a-tag">Lec</span><span class="a-section-id">§ 001</span><span class="a-meta">M/W 10:00</span></div>
+            <div class="a-row"><span class="a-tag">Lab</span><span class="a-section-id">§ 003</span><span class="a-meta">F 14:00</span></div>
+          </div>
+          <div class="a-or">or</div>
+          <div class="a-card">
+            <div class="a-row"><span class="a-tag">Lec</span><span class="a-section-id">§ 002</span><span class="a-meta">T/Th 11:00</span></div>
+            <div class="a-row"><span class="a-tag">Lab</span><span class="a-section-id">§ 005</span><span class="a-meta">W 15:00</span></div>
+          </div>
+        </div>
+        <button class="a-add">+ Pairing</button>
+      </div>
+    </div>
+    <div class="proto-notes">
+      <strong>Strengths:</strong> the unit of meaning is "one valid
+      schedule slice" — easy to read; matches how students think
+      ("either this combo or that combo"); compact.
+      <br><strong>Risks:</strong> editing inside a card is awkward
+      (modal? inline?); duplicates verbose if many combos share a
+      lecture; doesn't naturally express "any lab works" inside a card.
+    </div>
+  </div>
+
+  <!-- ====================================================== -->
+  <div class="proto">
+    <div class="proto-head">
+      <span class="proto-name">B · Pairings grid</span>
+      <span class="proto-title">Two-axis matrix: components × picks</span>
+    </div>
+    <p class="proto-meta">
+      Rows = component types (Lec, Lab, Rec). Columns = each acceptable
+      pairing. Each cell holds the chosen section for that
+      component-in-that-pairing. Add a new column to add another
+      pairing.
+    </p>
+    <div class="proto-canvas">
+      <div class="kcol">
+        <div class="kcol-head">
+          <span class="kcol-label"><strong>Pick</strong> one of</span>
+          <span class="kcol-mode">sections</span>
+          <button class="kcol-tool">×</button>
+        </div>
+        <div class="kcol-label" style="margin-bottom: 0.4rem; font-family: var(--font-mono); font-size: 0.66rem;">ENGR-UH 1000</div>
+
+        <div class="b-grid">
+          <div></div>
+          <div class="b-axis-h">PAIR 1</div>
+          <div class="b-axis-h">PAIR 2</div>
+
+          <div class="b-row-label">Lec</div>
+          <div class="b-cell is-pick">§ 001</div>
+          <div class="b-cell is-pick">§ 002</div>
+
+          <div class="b-row-label">Lab</div>
+          <div class="b-cell is-pick">§ 003</div>
+          <div class="b-cell is-pick">§ 005</div>
+
+          <div class="b-row-label">Rec</div>
+          <div class="b-cell is-empty">any</div>
+          <div class="b-cell is-empty">any</div>
+        </div>
+        <button class="b-add-col">+ Pairing column</button>
+      </div>
+    </div>
+    <div class="proto-notes">
+      <strong>Strengths:</strong> rigid structure forces complete
+      pairings; "any" is a first-class option per cell; easy to skim
+      multiple combos at once.
+      <br><strong>Risks:</strong> grids feel heavy; gets cramped in a
+      narrow column; assumes you know all component types upfront.
+    </div>
+  </div>
+
+  <!-- ====================================================== -->
+  <div class="proto">
+    <div class="proto-head">
+      <span class="proto-name">C · Mini tree</span>
+      <span class="proto-title">Recursive AND/OR boxes, scoped to one column</span>
+    </div>
+    <p class="proto-meta">
+      The same nested-boxes UI from earlier, miniaturized and confined
+      to one Kanban column. Top-level group is <em>or</em>; each child
+      is either a single section or an <em>and</em>-group of sections
+      that must all be picked together.
+    </p>
+    <div class="proto-canvas">
+      <div class="kcol">
+        <div class="kcol-head">
+          <span class="kcol-label"><strong>Pick</strong> one of</span>
+          <span class="kcol-mode">sections</span>
+          <button class="kcol-tool">×</button>
+        </div>
+        <div class="kcol-label" style="margin-bottom: 0.4rem; font-family: var(--font-mono); font-size: 0.66rem;">ENGR-UH 1000</div>
+
+        <div class="c-tree">
+          <div class="c-grp" data-op="OR">
+            <div class="c-grp-head">
+              <span class="c-pill">Or</span>
+              <span class="c-conn">at least one</span>
+            </div>
+            <div class="c-children">
+              <div class="c-grp" data-op="AND">
+                <div class="c-grp-head"><span class="c-pill">And</span><span class="c-conn">both</span></div>
+                <div class="c-children">
+                  <div class="c-card">Lec § 001</div>
+                  <div class="c-card">Lab § 003</div>
+                </div>
+              </div>
+              <div class="c-conn">or</div>
+              <div class="c-grp" data-op="AND">
+                <div class="c-grp-head"><span class="c-pill">And</span><span class="c-conn">both</span></div>
+                <div class="c-children">
+                  <div class="c-card">Lec § 002</div>
+                  <div class="c-card">Lab § 005</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="proto-notes">
+      <strong>Strengths:</strong> arbitrary expressions; consistent
+      mental model with the earlier prototype; flexible for edge cases
+      ("(A and B) or (C and any lab)").
+      <br><strong>Risks:</strong> visually busier per column; the very
+      thing we just stepped back from. Best if section-pairing is rare
+      and isolated — Kanban for the common case, mini-tree for the
+      one weird course.
+    </div>
+  </div>
+
+  <!-- ====================================================== -->
+  <div class="proto">
+    <div class="proto-head">
+      <span class="proto-name">D · Stitched chips</span>
+      <span class="proto-title">Drag pills together; fused = AND, stack = OR</span>
+    </div>
+    <p class="proto-meta">
+      Each pill is one section. Drag a pill onto another to fuse
+      them — they become one "pair card" joined by <em>+</em>. Stack
+      pair cards vertically to express alternatives. Single unfused
+      pills = "any pairing that includes this section is OK".
+    </p>
+    <div class="proto-canvas">
+      <div class="kcol">
+        <div class="kcol-head">
+          <span class="kcol-label"><strong>Pick</strong> one of</span>
+          <span class="kcol-mode">sections</span>
+          <button class="kcol-tool">×</button>
+        </div>
+        <div class="kcol-label" style="margin-bottom: 0.4rem; font-family: var(--font-mono); font-size: 0.66rem;">ENGR-UH 1000</div>
+
+        <div class="d-stack">
+          <div class="d-pair">
+            <span class="d-chip">Lec § 001</span>
+            <span class="d-amp">+</span>
+            <span class="d-chip">Lab § 003</span>
+          </div>
+          <div class="d-or">or</div>
+          <div class="d-pair">
+            <span class="d-chip">Lec § 002</span>
+            <span class="d-amp">+</span>
+            <span class="d-chip">Lab § 005</span>
+          </div>
+          <div class="d-empty">drop a section here</div>
+        </div>
+      </div>
+    </div>
+    <div class="proto-notes">
+      <strong>Strengths:</strong> tactile metaphor (literally stick
+      sections together); compact horizontal pairs; visual language is
+      different from the outer Kanban so users don't conflate scopes.
+      <br><strong>Risks:</strong> drag-onto-pill may not be obvious
+      (needs onboarding); harder to express deeper nesting (3+
+      components in a pair gets crowded).
+    </div>
+  </div>
+
+  <p class="blurb" style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--rule);">
+    <strong>My pick:</strong> A (Combo cards) for clarity, with D
+    (Stitched chips) as a close second if you want a more playful
+    interaction model. C is most powerful but visually heavy; B is
+    rigid and the "any" semantics feel awkward in practice.
+  </p>
+</body>
+</html>
