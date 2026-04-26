@@ -110,28 +110,36 @@
     --font-body: 'DM Sans', system-ui, sans-serif;
     --font-mono: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
     --font-heading: var(--font-display);
+
+    /* Splash: warm ink slab drains over cream paper. Title in
+       cream so it reads on the dark slab (the dominant area). */
+    --splash-bg: var(--paper);
+    --splash-fill: var(--ink);
+    --splash-title: var(--paper);
   }
 
-  /* Splash. A solid dark slab over a paper backdrop; on boot the
-     dark fill drains down like a liquid container emptying. */
+  /* Splash. A solid slab over a paper backdrop; on boot the slab
+     drains down like a liquid container emptying. Per-theme tokens:
+     --splash-bg sits underneath, --splash-fill is the draining slab.
+     Defaults work for editorial; dark themes override to keep the
+     slab darker than the bg (so the page reveal feels right). */
   .splash {
     position: fixed;
     inset: 0;
     z-index: 999;
-    background: var(--paper, #f6f1e7);
+    background: var(--splash-bg, var(--paper, #f6f1e7));
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
     transition: opacity 0.5s ease 1.9s, visibility 0s linear 2.4s;
   }
-  /* The "liquid" itself. Starts full (the splash is visible as a
-     solid dark slab); drains to 0% when the page is ready. */
+  /* The "liquid" itself. Starts full; drains to 0% on ready. */
   .splash-fill {
     position: absolute;
     left: 0; right: 0; bottom: 0;
     height: 100%;
-    background: var(--ink, #2b2a26);
+    background: var(--splash-fill, var(--ink, #2b2a26));
     will-change: height;
   }
   .splash.is-out .splash-fill { animation: splash-drain 1.9s cubic-bezier(0.55, 0.05, 0.4, 1) forwards; }
@@ -149,7 +157,7 @@
     bottom: 100%;
     height: 24px;
     transform: translateY(1px);
-    fill: var(--ink, #2b2a26);
+    fill: var(--splash-fill, var(--ink, #2b2a26));
     animation: splash-slosh 2.4s ease-in-out infinite;
   }
   @keyframes splash-slosh {
@@ -161,15 +169,15 @@
     visibility: hidden;
     pointer-events: none;
   }
-  /* The title and tagline are layered above the fill. As the fill
-     rises past the text, blend-mode "difference" inverts the text
-     against the dark fill so it stays readable on both backgrounds. */
+  /* Title sits above the fill. Per-theme tokens drive the color so
+     it always contrasts with the slab (which dominates the screen
+     until the drain). Fallback is the paper color, which works for
+     the editorial dark-on-cream pattern. */
   .splash-mark {
     position: relative;
     text-align: center;
     z-index: 1;
-    mix-blend-mode: difference;
-    color: var(--paper, #f6f1e7);
+    color: var(--splash-title, var(--paper, #f6f1e7));
   }
   .splash-title {
     font-family: var(--font-display, 'Fraunces', serif);
@@ -315,6 +323,13 @@
     --ochre: #d4a574;
     --indigo: #8ba3c8;
     --font-heading: var(--font-display);
+
+    /* Splash: warm-cream slab drains over the deep-coffee bg.
+       Inverse of the theme — light slab, dark page reveal. Title
+       in dark coffee for strong contrast on the cream slab. */
+    --splash-bg: #14110d;
+    --splash-fill: #ede4d3;
+    --splash-title: #14110d;
   }
   /* Dark gets its own grain — slightly more visible than editorial's
      so the warm dark surface reads as paper, not glass. */
@@ -341,7 +356,7 @@
      var(--surface) (the warm dark) instead of transparent so lower
      intensity reads as a deeper warm card, not a washed-out ghost. */
   :root[data-theme="coffee"] .grid .cell.c-dynamic {
-    background: color-mix(in srgb, var(--cell-bg, var(--paper-soft)) var(--tile-intensity, 70%), var(--surface)) !important;
+    background: color-mix(in srgb, var(--cell-bg, var(--paper-soft)) var(--tile-intensity, 85%), var(--surface)) !important;
     color: var(--cell-ink, var(--ink)) !important;
     border-left-color: var(--cell-bg, var(--accent)) !important;
     border-left-width: 3px;
@@ -416,6 +431,13 @@
     --font-heading: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
     --font-body: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
     --font-display: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+
+    /* Splash: phosphor-white slab over the near-black bg. Inverse
+       of the theme — light slab, dark page reveal. Title in deep
+       phosphor-near-black for strong contrast on the slab. */
+    --splash-bg: #04070d;
+    --splash-fill: #e8f4ff;
+    --splash-title: #04070d;
   }
   /* Scanline overlay replaces the paper grain. Two stacked gradients:
      a faint horizontal band repeat (CRT scanlines) plus a darker
@@ -461,7 +483,7 @@
      stay rich); blend partner is var(--surface). Soft cyan outer
      glow + 1px ring ties them to the phosphor terminal aesthetic. */
   :root[data-theme="futuristic"] .grid .cell.c-dynamic {
-    background: color-mix(in srgb, var(--cell-bg, var(--paper-soft)) var(--tile-intensity, 90%), var(--surface)) !important;
+    background: color-mix(in srgb, var(--cell-bg, var(--paper-soft)) var(--tile-intensity, 85%), var(--surface)) !important;
     color: var(--cell-ink, var(--ink)) !important;
     border-left-color: var(--cell-ink, var(--ink-faint)) !important;
     border-left-width: 3px;
@@ -569,6 +591,13 @@
     --ochre: #b8853a;
     --indigo: #4a6f9c;
     --font-heading: var(--font-display);
+
+    /* Splash: deep forest slab drains over parchment. Reads as
+       moss receding from a leaf. Title in parchment for contrast
+       on the dark moss slab. */
+    --splash-bg: #f4f7f1;
+    --splash-fill: #2f4a2b;
+    --splash-title: #f4f7f1;
   }
   /* Nature uses a softer page wash — replace the editorial paper grain
      with a faint leaf-green wash so the bg breathes without feeling
@@ -585,7 +614,7 @@
      so warm tiles desaturate slightly. Respects --tile-intensity
      (default 80%), surface is the soft pale-green. */
   :root[data-theme="nature"] .grid .cell.c-dynamic {
-    background: color-mix(in srgb, var(--cell-bg, var(--paper-soft)) var(--tile-intensity, 80%), var(--surface)) !important;
+    background: color-mix(in srgb, var(--cell-bg, var(--paper-soft)) var(--tile-intensity, 85%), var(--surface)) !important;
   }
   /* Filter flag in leaf green — keeps the nature voice. */
   :root[data-theme="nature"] .drawer-flag .flag-tip {
@@ -1076,9 +1105,17 @@
      toward transparent so the cream paper shows through. The user
      adjusts via the slider in the search-options cog popover. */
   .grid .cell.c-dynamic {
-    background: color-mix(in srgb, var(--cell-bg, var(--paper-soft)) var(--tile-intensity, 70%), transparent) !important;
+    background: color-mix(in srgb, var(--cell-bg, var(--paper-soft)) var(--tile-intensity, 85%), transparent) !important;
     color: var(--cell-ink, var(--ink)) !important;
     border-left-color: var(--cell-ink, var(--ink-faint)) !important;
+  }
+  /* When intensity drops below the readability threshold the tile
+     bg fades into the page bg, so the saturated cell-ink no longer
+     contrasts. Fall back to the page's main ink (theme-aware: dark
+     on light themes, light on dark themes). */
+  body.tile-low-ink .grid .cell.c-dynamic {
+    color: var(--ink) !important;
+    border-left-color: color-mix(in srgb, var(--cell-bg, var(--ink-faint)) 50%, var(--ink)) !important;
   }
   .grid .cell.c-stat { background: var(--c-stat-bg); color: var(--c-stat-ink); border-left-color: var(--c-stat-ink); }
   .grid .cell.c-cons { background: var(--c-cons-bg); color: var(--c-cons-ink); border-left-color: var(--c-cons-ink); }
@@ -15709,15 +15746,24 @@ let _pkFuzzy = false;
 // in localStorage independent of the catalog-consent gate — it's a
 // purely visual preference, no user data. Read-and-apply runs once on
 // boot below so the page renders at the user's preferred intensity
-// even before the cog popover is opened.
+// even before the cog popover is opened. When intensity drops below
+// the readable-contrast threshold the body picks up `tile-low-ink`
+// so CSS can switch the tile font to the page's main --ink.
 const _PK_INTENSITY_KEY = 'horarium.tileIntensity';
+const _PK_INTENSITY_DEFAULT = 85;
+const _PK_INTENSITY_LOW_THRESHOLD = 55;
+function _pkApplyTileIntensity(v) {
+  document.documentElement.style.setProperty('--tile-intensity', v + '%');
+  document.body && document.body.classList.toggle('tile-low-ink', v < _PK_INTENSITY_LOW_THRESHOLD);
+}
 let _pkTileIntensity = (function () {
   try {
-    const v = parseInt(localStorage.getItem(_PK_INTENSITY_KEY) || '70', 10);
-    return (v >= 30 && v <= 100) ? v : 70;
-  } catch { return 70; }
+    const stored = localStorage.getItem(_PK_INTENSITY_KEY);
+    const v = parseInt(stored == null ? String(_PK_INTENSITY_DEFAULT) : stored, 10);
+    return (v >= 30 && v <= 100) ? v : _PK_INTENSITY_DEFAULT;
+  } catch { return _PK_INTENSITY_DEFAULT; }
 })();
-document.documentElement.style.setProperty('--tile-intensity', _pkTileIntensity + '%');
+_pkApplyTileIntensity(_pkTileIntensity);
 
 function _bootPicker() {
   const inp = document.getElementById('mp-search');
@@ -15835,7 +15881,7 @@ function _bootPicker() {
       const v = Number(slider.value);
       _pkTileIntensity = v;
       if (valueEl) valueEl.textContent = v + '%';
-      document.documentElement.style.setProperty('--tile-intensity', v + '%');
+      _pkApplyTileIntensity(v);
     });
     slider.addEventListener('change', function () {
       try { localStorage.setItem(_PK_INTENSITY_KEY, String(_pkTileIntensity)); } catch {}
@@ -15849,7 +15895,7 @@ function _bootPicker() {
     // (clicking the calendar cog wouldn't change a fuzzy-on dot, and
     // vice versa).
     if (cogBtn) cogBtn.classList.toggle('is-active', _pkFuzzy);
-    if (cogBtnCal) cogBtnCal.classList.toggle('is-active', _pkTileIntensity !== 70);
+    if (cogBtnCal) cogBtnCal.classList.toggle('is-active', _pkTileIntensity !== _PK_INTENSITY_DEFAULT);
   }
   _syncCogActiveState();
   function _wireCog(btn) {

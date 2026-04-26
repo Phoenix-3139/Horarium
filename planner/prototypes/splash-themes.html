@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Splash colorway test — Horarium</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', system-ui, sans-serif;
+    background: #d8d4c8;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    min-height: 100vh;
+  }
+  .panel {
+    position: relative;
+    overflow: hidden;
+    min-height: 50vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .label {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    z-index: 10;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    background: rgba(0,0,0,0.5);
+    color: #fff;
+    padding: 0.3rem 0.6rem;
+    border-radius: 3px;
+  }
+  .splash-fill {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 100%;
+    z-index: 1;
+  }
+  /* Mid-drain variant: 50% to see the title against both bg and fill. */
+  .splash-fill.mid { height: 50%; }
+  .mark {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    mix-blend-mode: difference;
+  }
+  .title {
+    font-family: 'Fraunces', 'Iowan Old Style', Georgia, serif;
+    font-weight: 500;
+    font-size: 3rem;
+    letter-spacing: -0.015em;
+    line-height: 1;
+  }
+  .mark-cream { color: #faf6ec; }
+
+  /* Theme bgs */
+  .e-bg { background: #F3EFE5; }
+  .c-bg { background: #14110d; }
+  .f-bg { background: #04070d; }
+  .n-bg { background: #f4f7f1; }
+
+  /* Coffee fill options */
+  .c-fill-warm-ink   { background: #ede4d3; }   /* matches --ink */
+  .c-fill-honey      { background: #d4a574; }
+  .c-fill-deep-warm  { background: #3a2818; }   /* warmer near-black */
+
+  /* Futuristic fill options */
+  .f-fill-phosphor   { background: #e8f4ff; }   /* matches --ink */
+  .f-fill-cyan       { background: #5ee5e5; }
+  .f-fill-deep-navy  { background: #001a26; }
+  .f-fill-mid-navy   { background: #0a2f4a; }   /* readable yet themed */
+</style>
+</head>
+<body>
+
+  <div class="panel e-bg">
+    <span class="label">editorial · current (full)</span>
+    <div class="splash-fill" style="background:#1C1A17;"></div>
+    <div class="mark mark-cream"><div class="title">Horarium</div></div>
+  </div>
+  <div class="panel n-bg">
+    <span class="label">nature · current (full)</span>
+    <div class="splash-fill" style="background:#2f4a2b;"></div>
+    <div class="mark mark-cream"><div class="title">Horarium</div></div>
+  </div>
+
+  <div class="panel c-bg">
+    <span class="label">coffee · honey fill (current)</span>
+    <div class="splash-fill c-fill-honey"></div>
+    <div class="mark mark-cream"><div class="title">Horarium</div></div>
+  </div>
+  <div class="panel c-bg">
+    <span class="label">coffee · warm-ink fill</span>
+    <div class="splash-fill c-fill-warm-ink"></div>
+    <div class="mark mark-cream"><div class="title">Horarium</div></div>
+  </div>
+  <div class="panel c-bg">
+    <span class="label">coffee · deep-warm fill</span>
+    <div class="splash-fill c-fill-deep-warm"></div>
+    <div class="mark mark-cream"><div class="title">Horarium</div></div>
+  </div>
+
+  <div class="panel f-bg">
+    <span class="label">futuristic · phosphor fill</span>
+    <div class="splash-fill f-fill-phosphor"></div>
+    <div class="mark mark-cream"><div class="title">Horarium</div></div>
+  </div>
+  <div class="panel f-bg">
+    <span class="label">futuristic · cyan fill</span>
+    <div class="splash-fill f-fill-cyan"></div>
+    <div class="mark mark-cream"><div class="title">Horarium</div></div>
+  </div>
+  <div class="panel f-bg">
+    <span class="label">futuristic · deep navy fill (current)</span>
+    <div class="splash-fill f-fill-deep-navy"></div>
+    <div class="mark mark-cream"><div class="title">Horarium</div></div>
+  </div>
+  <div class="panel f-bg">
+    <span class="label">futuristic · mid navy fill</span>
+    <div class="splash-fill f-fill-mid-navy"></div>
+    <div class="mark mark-cream"><div class="title">Horarium</div></div>
+  </div>
+
+</body>
+</html>
