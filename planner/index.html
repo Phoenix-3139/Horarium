@@ -18,6 +18,24 @@
       }
     } catch (_) { /* private mode */ }
   })();
+
+  // Splash drain. Trigger when boot is done; small minimum so it
+  // doesn't disappear before the eye registers it on instant loads.
+  (function () {
+    var loaded = false;
+    var minShownAt = Date.now();
+    function drain() {
+      if (loaded) return;
+      loaded = true;
+      var wait = Math.max(0, 400 - (Date.now() - minShownAt));
+      setTimeout(function () {
+        var el = document.getElementById('splash');
+        if (el) el.classList.add('is-out');
+      }, wait);
+    }
+    window.addEventListener('horarium:ready', drain, { once: true });
+    setTimeout(drain, 4000);
+  })();
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -94,6 +112,100 @@
     --font-heading: var(--font-display);
   }
 
+  /* Splash. A solid dark slab over a paper backdrop; on boot the
+     dark fill drains down like a liquid container emptying. */
+  .splash {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    background: var(--paper, #f6f1e7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: opacity 0.4s ease 1.2s, visibility 0s linear 1.6s;
+  }
+  /* The "liquid" itself. Starts full (the splash is visible as a
+     solid dark slab); drains to 0% when the page is ready. */
+  .splash-fill {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 100%;
+    background: var(--ink, #2b2a26);
+    will-change: height;
+  }
+  .splash.is-out .splash-fill { animation: splash-drain 1.4s cubic-bezier(0.65, 0, 0.35, 1) forwards; }
+  @keyframes splash-drain {
+    0%   { height: 100%; }
+    100% { height: 0%; }
+  }
+  /* The wave path that rides on top of the fill. Subtle motion so the
+     "liquid" reads as a surface, not a hard edge. */
+  .splash-wave {
+    position: absolute;
+    left: -10%;
+    right: -10%;
+    width: 120%;
+    bottom: 100%;
+    height: 24px;
+    transform: translateY(1px);
+    fill: var(--ink, #2b2a26);
+    animation: splash-slosh 2.4s ease-in-out infinite;
+  }
+  @keyframes splash-slosh {
+    0%, 100% { transform: translateX(-3%) translateY(1px); }
+    50%      { transform: translateX(3%)  translateY(1px); }
+  }
+  .splash.is-out {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  /* The title and tagline are layered above the fill. As the fill
+     rises past the text, blend-mode "difference" inverts the text
+     against the dark fill so it stays readable on both backgrounds. */
+  .splash-mark {
+    position: relative;
+    text-align: center;
+    z-index: 1;
+    mix-blend-mode: difference;
+    color: var(--paper, #f6f1e7);
+  }
+  .splash-title {
+    font-family: var(--font-display, 'Fraunces', serif);
+    font-weight: 500;
+    font-size: clamp(2.6rem, 6vw, 3.8rem);
+    letter-spacing: -0.015em;
+    line-height: 1;
+  }
+  .splash-title span {
+    display: inline-block;
+    animation: splash-rise-text 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .splash-sub {
+    margin-top: 0.85rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    opacity: 0.75;
+    animation: splash-fade-text 0.8s ease 0.15s both;
+  }
+  @keyframes splash-rise-text {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: none; }
+  }
+  @keyframes splash-fade-text {
+    from { opacity: 0; }
+    to   { opacity: 0.75; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .splash:not(.is-out) .splash-fill,
+    .splash.is-out .splash-fill { animation: none; height: 100%; }
+    .splash-wave { display: none; }
+    .splash-title span, .splash-sub { animation: none; }
+  }
+
   /* Themed scrollbars. Thin track, ink-tinted thumb at rest, accent
      on hover. The padding-box border trick gives the thumb a small
      inset so it doesn't touch the edge — reads more refined than the
@@ -149,17 +261,16 @@
     background: var(--mossy);
     background-clip: padding-box;
   }
-  /* Futuristic — phosphor cyan thumb that reads as glowing. */
+  /* Futuristic — phosphor cyan thumb, no glow (blends into the dark
+     panel like a flat indicator). */
   :root[data-theme="futuristic"]::-webkit-scrollbar-thumb {
-    background: color-mix(in srgb, var(--accent) 35%, transparent);
+    background: color-mix(in srgb, var(--accent) 32%, transparent);
     border: 2px solid transparent;
     background-clip: padding-box;
-    box-shadow: 0 0 6px color-mix(in srgb, var(--accent) 40%, transparent);
   }
   :root[data-theme="futuristic"]::-webkit-scrollbar-thumb:hover {
-    background: var(--accent);
+    background: color-mix(in srgb, var(--accent) 70%, transparent);
     background-clip: padding-box;
-    box-shadow: 0 0 12px var(--accent);
   }
   /* Coffee already uses the default ink-22%/accent-65% formula —
      the warm cream ink against the dark backdrop reads well as-is. */
@@ -5693,7 +5804,7 @@
     overflow: hidden;
     position: relative;
   }
-  /* Subject "+ Want any" pill. Mirrors the course-level + Want pill,
+  /* Subject "+ Want any" pill. Mirrors the course-level + Select pill,
      visible only when the logic-maker drawer is open so it doesn't
      clutter the picker the rest of the time. */
   .mp-subj-want {
@@ -8179,6 +8290,29 @@
     cursor: default;
   }
   .mn-btn-ghost { background: transparent; }
+  .mn-term-row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+  }
+  .mn-input {
+    background: var(--cream, var(--paper-soft));
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-sm, 2px);
+    padding: 0.42rem 0.6rem;
+    font-family: var(--font-mono);
+    font-size: 0.84rem;
+    color: var(--ink);
+  }
+  .mn-input:focus {
+    outline: none;
+    border-color: var(--accent, var(--ochre));
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent, var(--ochre)) 20%, transparent);
+  }
+  #mn-term-year { width: 7rem; }
+  #mn-term-season { min-width: 8rem; }
   .mn-btn-danger {
     border-color: color-mix(in srgb, var(--rust) 40%, transparent);
     color: color-mix(in srgb, var(--rust) 95%, transparent);
@@ -8393,6 +8527,21 @@
      we don't need it until the user actually clicks "Export PNG." -->
 </head>
 <body>
+
+<!-- Splash. The dark fill rises from the bottom like liquid filling
+     a container; the title sits in the middle and stays put. When
+     the page is ready, the fill drains back down. -->
+<div class="splash" id="splash">
+  <div class="splash-fill" aria-hidden="true">
+    <svg class="splash-wave" viewBox="0 0 1440 80" preserveAspectRatio="none">
+      <path d="M0,40 C240,80 480,0 720,40 C960,80 1200,0 1440,40 L1440,80 L0,80 Z"></path>
+    </svg>
+  </div>
+  <div class="splash-mark">
+    <div class="splash-title"><span>Horarium</span></div>
+  </div>
+</div>
+
 <div class="container">
 
   <header>
@@ -8598,13 +8747,13 @@
       <span class="sch-dock-toggle-hint">Tap to open</span>
       <span class="sch-dock-toggle-caret" aria-hidden="true">▾</span>
     </button>
-    <h2 class="sch-dock-h2">Build a schedule <em>from your wanted</em>.</h2>
+    <h2 class="sch-dock-h2">Build a schedule <em>from your selection</em>.</h2>
     <p class="picker-sub sch-dock-blurb" style="max-width:65ch;">Open the <strong>logic maker</strong> on the right to declare what you want. Tune preferences below, then generate. Results appear in the strip at the bottom — click one to preview on the calendar.</p>
 
     <div class="sch-dock-body" id="sch-dock-body">
     <div class="sch-dock-grid">
       <div class="sch-dock-summary" id="sch-dock-summary">
-        <div class="sch-section-h"><span>Wanted</span><button type="button" class="sch-dock-edit" id="sch-dock-edit">Edit logic</button></div>
+        <div class="sch-section-h"><span>Selected</span><button type="button" class="sch-dock-edit" id="sch-dock-edit">Edit logic</button></div>
         <div class="sch-dock-summary-body" id="sch-dock-summary-body"></div>
       </div>
       <div class="sch-dock-prefs">
@@ -8806,6 +8955,23 @@
         </label>
       </div>
       <div class="mn-last-saved" id="mn-last-saved" hidden></div>
+
+      <!-- Term -->
+      <h3 class="mn-section-h">Term</h3>
+      <p class="picker-sub mn-section-lead">
+        The term shown in the header and used in exports. Auto-detected from your Albert paste; falls back to the current month if nothing's loaded. Override here.
+      </p>
+      <div class="mn-term-row" id="mn-term-row">
+        <select id="mn-term-season" class="mn-input">
+          <option value="">Auto</option>
+          <option value="Winter">Winter</option>
+          <option value="Spring">Spring</option>
+          <option value="Summer">Summer</option>
+          <option value="Fall">Fall</option>
+        </select>
+        <input type="number" id="mn-term-year" class="mn-input" min="2020" max="2099" step="1" placeholder="Year">
+        <button type="button" class="mn-btn-ghost" id="mn-term-clear">Reset</button>
+      </div>
 
       <!-- Theme -->
       <h3 class="mn-section-h" data-i18n="manage.theme.heading">Theme</h3>
@@ -9092,7 +9258,7 @@
   </div>
   <div class="drawer-body">
     <div class="sch-section-h">
-      <span>Wanted</span>
+      <span>Selected</span>
       <span class="sch-wanted-tools">
         <button type="button" class="sch-display-toggle" id="sch-display-toggle" data-mode="code" title="Toggle course code / title display">code</button>
         <button type="button" class="sch-clear-all" id="sch-clear-all" title="Clear the entire expression">clear</button>
@@ -9577,7 +9743,7 @@ let _schPickedPlanIds = new Set(); // tracks the auto-scheduler plans we've crea
 const _schAutoOrigin = 'auto-scheduler';
 
 // _schPendingCourse holds a course code the user has clicked the
-// + Want pill on, but hasn't yet placed in the AND or OR zone.
+// + Select pill on, but hasn't yet placed in the AND or OR zone.
 let _schPendingCourse = null;
 
 function toggleSchedulerDrawer() {
@@ -9596,9 +9762,26 @@ function toggleSchedulerDrawer() {
   }
 }
 
+// Tiny persisted UI settings store. Survives across sessions in
+// localStorage, independent of the catalog consent gate. These are
+// preferences (theme is saved this way too via themes.js); not
+// personal data, so it doesn't need the consent treatment.
+const UI_SETTINGS_KEY = 'horarium.ui_settings';
+let _uiSettings = (() => {
+  try { return JSON.parse(localStorage.getItem(UI_SETTINGS_KEY) || '{}') || {}; }
+  catch { return {}; }
+})();
+function _uiSet(key, value) {
+  _uiSettings[key] = value;
+  try { localStorage.setItem(UI_SETTINGS_KEY, JSON.stringify(_uiSettings)); } catch {}
+}
+function _uiGet(key, fallback) {
+  return Object.prototype.hasOwnProperty.call(_uiSettings, key) ? _uiSettings[key] : fallback;
+}
+
 // Display mode for course chips inside the wanted tree: 'code' shows
 // the course code (default), 'title' shows the course title.
-let _schDisplayMode = 'code';
+let _schDisplayMode = _uiGet('schDisplayMode', 'code');
 
 function _schWantedRoot() {
   const plan = _schScopePlan();
@@ -9618,7 +9801,7 @@ function _schChipLabel(code) {
 }
 
 // Walk the tree and collect every course code present (used so the
-// picker's + Want pill can flip to ✓ Want).
+// picker's + Select pill can flip to ✓ Want).
 function _schAllCodes(node, out) {
   out = out || new Set();
   if (!node) return out;
@@ -9640,7 +9823,7 @@ function _schAllShelvedSubjects(node, out) {
 }
 
 
-// Render the full wanted expression as a rainbow-bracket nested
+// Render the full selection as a rainbow-bracket nested
 // AND/OR tree. Each depth gets its own accent color so the
 // structure is legible at a glance — same idea as IDE rainbow
 // braces.
@@ -9786,7 +9969,7 @@ function _schDropPending(path) {
   if (typeof renderPicker === 'function') renderPicker();
 }
 
-// One-line summary of the wanted expression for the dock card.
+// One-line summary of the selection for the dock card.
 // Mirrors what the rainbow-bracket renderer would produce, just
 // flattened to text. Empty state nudges the user to open the
 // drawer.
@@ -9795,7 +9978,7 @@ function _schRenderDockSummary() {
   if (!el) return;
   const root = _schWantedRoot();
   if (!root) {
-    el.innerHTML = '<em>Nothing wanted yet.</em> Click <strong>Edit logic</strong> to declare what you want.';
+    el.innerHTML = '<em>Nothing selected yet.</em> Click <strong>Edit logic</strong> to declare what you want.';
     return;
   }
   el.innerHTML = _schSummaryNode(root);
@@ -9841,7 +10024,7 @@ function _schRenderFillIn() {
   const shelves = _schAllShelvedSubjects(root);
   if (shelves.size === 0) { el.hidden = true; return; }
   const stagedBySubject = _schStagedCoursesBySubject(plan);
-  let html = '<div class="sch-fill-in-h"><span>Fill-in</span><em>shelved subjects from your wanted</em></div>';
+  let html = '<div class="sch-fill-in-h"><span>Fill-in</span><em>shelved subjects from your selection</em></div>';
   for (const subject of shelves) {
     const filled = stagedBySubject.get(subject) || [];
     html += '<div class="sch-fill-row">';
@@ -9958,7 +10141,7 @@ document.addEventListener('keydown', (e) => {
 // place; outside, the user is bailing.)
 document.addEventListener('click', (e) => {
   if (!_schPendingCourse) return;
-  // Inside the drawer or on a + WANT pill in the picker → ignore.
+  // Inside the drawer or on a + SELECT pill in the picker → ignore.
   if (e.target.closest('#scheduler-drawer, [data-pkwant]')) return;
   // Anywhere else → cancel.
   _schClearPending();
@@ -10003,7 +10186,7 @@ function _schReadPreferencesFromForm() {
   };
 }
 
-// Convert the wanted expression tree to CNF — a flat list of
+// Convert the selection tree to CNF — a flat list of
 // requirements (each requirement is a clause = OR of courses; all
 // requirements must be satisfied = AND across them).
 //
@@ -10065,7 +10248,7 @@ function _schToCNF(node) {
         for (const x of b) if (!seen.has(x)) { seen.add(x); merged.push(x); }
         next.push(merged);
         if (next.length > _SCH_CNF_CAP) {
-          throw new Error('Wanted expression is too complex to schedule (>' + _SCH_CNF_CAP + ' CNF clauses). Try simplifying.');
+          throw new Error('Selection is too complex to schedule (>' + _SCH_CNF_CAP + ' CNF clauses). Try simplifying.');
         }
       }
     }
@@ -10096,7 +10279,7 @@ function _schGenerate() {
     return;
   }
   if (reqs.length === 0) {
-    _hsAlert('Add at least one course to your wanted expression before generating.', 'Nothing to schedule');
+    _hsAlert('Add at least one course to your selection before generating.', 'Nothing to schedule');
     return;
   }
   // Persist the form's preferences to the plan first.
@@ -10414,8 +10597,12 @@ window.addEventListener('horarium:ready', function () {
   const dispBtn = document.getElementById('sch-display-toggle');
   if (dispBtn && !dispBtn._schWired) {
     dispBtn._schWired = true;
+    // Sync to the persisted setting on first paint.
+    dispBtn.textContent = _schDisplayMode;
+    dispBtn.setAttribute('data-mode', _schDisplayMode);
     dispBtn.addEventListener('click', () => {
       _schDisplayMode = _schDisplayMode === 'code' ? 'title' : 'code';
+      _uiSet('schDisplayMode', _schDisplayMode);
       dispBtn.textContent = _schDisplayMode;
       dispBtn.setAttribute('data-mode', _schDisplayMode);
       _schRenderTree();
@@ -10445,32 +10632,43 @@ window.addEventListener('horarium:ready', function () {
       }
     });
   }
-  // Collapse / expand the dock section.
+  // Collapse / expand the dock section. State persists.
   const dockToggle = document.getElementById('sch-dock-toggle');
   const dockEl = document.getElementById('sch-dock');
   if (dockToggle && dockEl && !dockToggle._schWired) {
     dockToggle._schWired = true;
+    // Restore last collapsed state on first paint (default = collapsed).
+    const initCollapsed = _uiGet('schDockCollapsed', true);
+    dockEl.setAttribute('data-collapsed', initCollapsed ? 'true' : 'false');
+    dockToggle.setAttribute('aria-expanded', initCollapsed ? 'false' : 'true');
     dockToggle.addEventListener('click', () => {
       const collapsed = dockEl.getAttribute('data-collapsed') === 'true';
       dockEl.setAttribute('data-collapsed', collapsed ? 'false' : 'true');
       dockToggle.setAttribute('aria-expanded', collapsed ? 'true' : 'false');
+      _uiSet('schDockCollapsed', !collapsed);
     });
   }
   // Bottom-sheet resize: drag handle + size-toggle button.
   const sheet = document.getElementById('scheduler-drawer');
   const sizeBtn = document.getElementById('sch-size-toggle');
   const dragHandle = document.getElementById('sch-drag-handle');
-  function _schSheetSetHeight(px) {
+  function _schSheetSetHeight(px, opts) {
     const min = 140;
     const max = Math.round(window.innerHeight * 0.85);
     const clamped = Math.max(min, Math.min(max, px));
     sheet.style.height = clamped + 'px';
-    // Update size-toggle label so it reflects the next action.
     if (sizeBtn) {
       const tall = clamped > Math.round(window.innerHeight * 0.45);
       sizeBtn.setAttribute('data-size', tall ? 'tall' : 'small');
       sizeBtn.textContent = tall ? 'compact' : 'tall';
     }
+    if (opts && opts.persist !== false) _uiSet('schSheetHeight', clamped);
+  }
+  // Restore the last sheet height the user set.
+  const savedH = _uiGet('schSheetHeight', null);
+  if (typeof savedH === 'number' && savedH >= 140) {
+    // Defer so the sheet has its layout applied first.
+    setTimeout(() => _schSheetSetHeight(savedH, { persist: false }), 0);
   }
   if (sizeBtn && !sizeBtn._schWired) {
     sizeBtn._schWired = true;
@@ -13644,28 +13842,39 @@ function _clearIdentityFromStorage() {
   try { localStorage.removeItem(_IDENT_KEY); } catch {}
 }
 
-// Derive the active term from the catalog store. If no subject has been
-// ingested yet, returns ''. If multiple subjects are loaded we assume they
-// share a term (they should, in practice) and return the first non-empty.
+// Compute a sensible default term from today's date. NYU AD calendar:
+//   Jan        → Winter (J-term)
+//   Feb–May    → Spring
+//   Jun–Aug    → Summer
+//   Sep–Dec    → Fall
+function _defaultTermFromDate(d) {
+  d = d || new Date();
+  const m = d.getMonth();
+  const y = d.getFullYear();
+  if (m === 0) return 'Winter ' + y;
+  if (m >= 1 && m <= 4) return 'Spring ' + y;
+  if (m >= 5 && m <= 7) return 'Summer ' + y;
+  return 'Fall ' + y;
+}
+
+// Active term resolution order:
+//   1. user override (set in Manage → Term),
+//   2. parsed Albert header (whatever the user pasted says),
+//   3. date-based default (so the page reads "Fall 2026" even with
+//      no catalog loaded yet, as long as today's date is sensible).
 function _activeTerm() {
+  const override = (typeof _uiGet === 'function') ? _uiGet('termOverride', null) : null;
+  if (override) return override;
   try {
-    const meta = window.HS && window.HS.persistence
-      ? (window.HS.catalog.getSubjectMetadata ? window.HS.catalog.getSubjectMetadata() : {})
-      : {};
-    for (const subj of Object.keys(meta)) {
-      // subjectMetadata doesn't carry term directly; inspect the parsed
-      // store via catalog's internal state. Fallback: peek into the
-      // parsed courses via getEffective — Course objects don't carry term
-      // either, so we reach into catalog.toJSON().parsed.
-      const dump = window.HS.catalog.toJSON ? window.HS.catalog.toJSON() : {};
-      const parsed = (dump && dump.parsed) || {};
-      for (const k of Object.keys(parsed)) {
-        const t = parsed[k] && parsed[k].header && parsed[k].header.term;
-        if (t) return t;
-      }
+    const dump = window.HS && window.HS.catalog && window.HS.catalog.toJSON
+      ? window.HS.catalog.toJSON() : {};
+    const parsed = (dump && dump.parsed) || {};
+    for (const k of Object.keys(parsed)) {
+      const t = parsed[k] && parsed[k].header && parsed[k].header.term;
+      if (t) return t;
     }
   } catch {}
-  return '';
+  return _defaultTermFromDate();
 }
 
 // Filename stem for export downloads. Uses the user's display name if set,
@@ -15074,6 +15283,35 @@ function _bindManageEvents() {
   for (var i = 0; i < radios.length; i++) {
     radios[i].addEventListener('change', _onManageConsentChange);
   }
+  // Term override (season + year). Empty season = follow auto-detect.
+  var seasonEl = document.getElementById('mn-term-season');
+  var yearEl = document.getElementById('mn-term-year');
+  var resetBtn = document.getElementById('mn-term-clear');
+  if (seasonEl && yearEl) {
+    var saved = (typeof _uiGet === 'function') ? _uiGet('termOverride', '') : '';
+    if (saved) {
+      var m = String(saved).match(/^(Winter|Spring|Summer|Fall)\s+(\d{4})$/);
+      if (m) { seasonEl.value = m[1]; yearEl.value = m[2]; }
+    }
+    if (!yearEl.value) yearEl.value = String(new Date().getFullYear());
+    var commit = function () {
+      var s = seasonEl.value;
+      var y = parseInt(yearEl.value, 10);
+      if (s && y >= 2020 && y <= 2099) {
+        _uiSet('termOverride', s + ' ' + y);
+      } else {
+        _uiSet('termOverride', null);
+      }
+      if (typeof renderHeader === 'function') renderHeader();
+    };
+    seasonEl.addEventListener('change', commit);
+    yearEl.addEventListener('change', commit);
+    if (resetBtn) resetBtn.addEventListener('click', function () {
+      seasonEl.value = '';
+      yearEl.value = String(new Date().getFullYear());
+      commit();
+    });
+  }
   // Clear buttons
   var ce = document.getElementById('mn-clear-edits');
   if (ce) ce.addEventListener('click', _manageClearEdits);
@@ -15960,8 +16198,8 @@ function _pkRenderCourseRow(c, sections, stagedSet, hydratedStaged) {
     : '';
   const userBadge = c._user_authored ? '<span class="mp-user-tag">USER</span>' : '';
   const stagedClass = stagedCount > 0 ? ' has-staged' : '';
-  // "+ WANT" pill picks the course up onto the
-  // cursor. Click it onto any group in the wanted-tree drawer. The
+  // "+ SELECT" pill picks the course up onto the
+  // cursor. Click it onto any group in the drawer. The
   // pill flips to ✓ once the course is anywhere in the tree.
   const planForReq = (typeof _schScopePlan === 'function') ? _schScopePlan() : null;
   const wantedRoot = (planForReq && planForReq.wanted && planForReq.wanted.root) || null;
@@ -15969,8 +16207,8 @@ function _pkRenderCourseRow(c, sections, stagedSet, hydratedStaged) {
     ? _schAllCodes(wantedRoot).has(c.code)
     : false;
   const reqBadge = inWanted
-    ? '<button type="button" class="mp-req-tag is-on" data-pkwant="' + _escHtml(c.code) + '" title="In your wanted expression — click to remove">✓ WANT</button>'
-    : '<button type="button" class="mp-req-tag" data-pkwant="' + _escHtml(c.code) + '" title="Pick up; click a group in the auto-scheduler drawer to drop">+ WANT</button>';
+    ? '<button type="button" class="mp-req-tag is-on" data-pkwant="' + _escHtml(c.code) + '" title="In your selection — click to remove">✓ SELECTED</button>'
+    : '<button type="button" class="mp-req-tag" data-pkwant="' + _escHtml(c.code) + '" title="Pick up; click a group in the auto-scheduler drawer to drop">+ SELECT</button>';
   let html = '<div class="mp-course' + (isExpanded ? ' is-open' : '') + stagedClass + (c._user_authored ? ' is-user-authored' : '') + '" data-course-code="' + _escHtml(c.code) + '">';
   html += '<button type="button" class="mp-course-head" data-pkcourse="' + _escHtml(c.code) + '">';
   html += '<span class="mp-course-head-text">';
@@ -16082,8 +16320,8 @@ function _pkWireAll(root) {
       renderPicker();
     });
   });
-  // + WANT picks up the course onto the cursor.
-  // ✓ WANT (already in tree) removes every occurrence. The drawer
+  // + SELECT picks up the course onto the cursor.
+  // ✓ SELECTED (already in tree) removes every occurrence. The drawer
   // only auto-opens if it's currently closed AND no pending course
   // is already on the cursor (so repeat-clicks don't keep toggling).
   root.querySelectorAll('[data-pkwant]').forEach(function (btn) {
@@ -17038,7 +17276,7 @@ const FG_CARDS = [
   // -------- Basics --------
   { id: 'overview', section: 'Basics', title: 'What is <em>Horarium</em>?',
     lede: 'A schedule planner for NYU Abu Dhabi students. Local-first, browser-only, no accounts.',
-    body: '<p>Horarium reads your Albert search results and turns them into something you can plan against. Stage sections to see them on the calendar; build a wanted expression and let the auto-scheduler find arrangements that fit.</p><p>Everything stays in <strong>this browser tab</strong>. Nothing is uploaded. Storage is opt-in (Catalog → Manage).</p>' },
+    body: '<p>Horarium reads your Albert search results and turns them into something you can plan against. Stage sections to see them on the calendar; build a selection and let the auto-scheduler find arrangements that fit.</p><p>Everything stays in <strong>this browser tab</strong>. Nothing is uploaded. Storage is opt-in (Catalog → Manage).</p>' },
   { id: 'paste', section: 'Basics', title: 'Paste from <em>Albert</em>',
     lede: 'You bring the catalog data. Horarium parses it.',
     body: '<p>Open Albert, run a class search filtered by a single subject (ENGR-UH, MATH-UH, &amp;c.), then <kbd>Ctrl+A</kbd> / <kbd>⌘A</kbd>, copy, and paste into the <strong>Catalog</strong> tab.</p><p>Subjects accumulate. Re-pasting the same subject replaces it.</p>',
@@ -17078,7 +17316,7 @@ const FG_CARDS = [
     body: '<p>While the logic maker is open, every subject in the picker grows a <kbd>+ ANY</kbd> pill. Click it to <strong>shelve</strong> the subject — the solver will skip it (so it doesn\'t multiply candidates by every CSTS course).</p><p>Shelves render as dashed plum chips in the expression and the dock summary.</p>' },
   { id: 'generate', section: 'Auto-scheduler', title: 'Generate, preview, <em>pick</em>',
     lede: 'The dock below the calendar drives the pipeline.',
-    body: '<p>The <strong>Auto-scheduler</strong> section under the calendar shows your wanted summary, preferences (no-starts-before, lunch break, day distribution), and the <kbd>Generate schedules</kbd> button.</p><p>Results are ranked. Click <strong>Preview</strong> on any candidate to see it on the calendar; <strong>Pick</strong> commits it as a candidate plan.</p>' },
+    body: '<p>The <strong>Auto-scheduler</strong> section under the calendar shows your selection summary, preferences (no-starts-before, lunch break, day distribution), and the <kbd>Generate schedules</kbd> button.</p><p>Results are ranked. Click <strong>Preview</strong> on any candidate to see it on the calendar; <strong>Pick</strong> commits it as a candidate plan.</p>' },
   { id: 'fillin', section: 'Auto-scheduler', title: 'Fill-in <em>shelves</em>',
     lede: 'After preview/pick, the under-table panel asks you to fill in shelved subjects.',
     body: '<p>If you shelved CSTS, after picking a schedule you\'ll see a <strong>Fill-in</strong> panel beneath the calendar listing every shelved subject. Click <kbd>Pick</kbd> to jump to that subject in the picker; staging anything from it flips the row to <em>✓ filled</em>.</p>' },
