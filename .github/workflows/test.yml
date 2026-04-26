@@ -20,7 +20,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          # Node 24 (current LTS as of late 2025). Same major version
+          # the FORCE_JAVASCRIPT_ACTIONS_TO_NODE24 flag pins the action
+          # runtimes to, so test + deploy live on the same Node.
+          node-version: 24
           cache: npm
           cache-dependency-path: planner/package-lock.json
       - run: npm ci
