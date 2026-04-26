@@ -571,7 +571,7 @@ export function createCatalog() {
       kind: isActive ? "active" : "candidate",
       created_at: _nowISO(),
       modified_at: _nowISO(),
-      origin: origin === "auto-scheduler" ? "auto-scheduler" : "user",
+      origin: (origin === "auto-scheduler" || origin === "scheduler-preview") ? origin : "user",
       sections: [],
       filters: [],
       notes: "",
@@ -585,6 +585,20 @@ export function createCatalog() {
       // Stored once per pair, undirected. Both unstage modal and the
       // chain icon read from this list.
       linked_sections: [],
+      // Piece 6: auto-scheduler inputs. Requirements are the slots
+      // the user wants filled (single course or OR-group), each with
+      // an optional locked section. Preferences are the soft scoring
+      // knobs (no_starts_before, lunch break, etc.). Both survive
+      // toJSON/fromJSON and default to empty/sensible-defaults so
+      // existing plans without these fields load cleanly.
+      requirements: [],
+      scheduler_preferences: {
+        no_starts_before: null,
+        no_ends_after: null,
+        lunch_break: false,
+        day_distribution: "ignore",
+        include_closed_waitlisted: false,
+      },
     };
     state.plans.byId.set(id, plan);
     if (isActive) state.plans.active = id;
@@ -643,6 +657,18 @@ export function createCatalog() {
       // has its own incomplete-components story to tell.
       dismissed_component_warning_hash: null,
       linked_sections: (src.linked_sections || []).map((l) => ({ a: l.a, b: l.b })),
+      // Piece 6: copy requirements + preferences so a duplicated
+      // plan can be re-generated from the same auto-scheduler inputs.
+      requirements: (src.requirements || []).map((r) => Object.assign({}, r,
+        { courses: (r.courses || []).slice() },
+        r.locked_section ? { locked_section: Object.assign({}, r.locked_section) } : {},
+      )),
+      scheduler_preferences: Object.assign({},
+        src.scheduler_preferences || {
+          no_starts_before: null, no_ends_after: null, lunch_break: false,
+          day_distribution: "ignore", include_closed_waitlisted: false,
+        }
+      ),
     });
     _planNotify("duplicate", id, { source_plan_id: planId });
     return id;
@@ -776,6 +802,49 @@ export function createCatalog() {
     }
     return removed;
   }
+  // Piece 6 — plan-mutation wrappers around the pure requirements
+  // helpers. Each takes (planId, ...args), applies the helper
+  // function to a snapshot of the plan, copies the resulting
+  // requirements/preferences back onto the live plan, and notifies.
+  function _applyPlanUpdate(planId, mutator, reasonName) {
+    const plan = state.plans.byId.get(planId);
+    if (!plan) throw new Error(`Unknown plan ${planId}`);
+    const updated = mutator(plan);
+    if (Array.isArray(updated.requirements)) plan.requirements = updated.requirements;
+    if (updated.scheduler_preferences) plan.scheduler_preferences = updated.scheduler_preferences;
+    plan.modified_at = _nowISO();
+    _planNotify(reasonName, planId);
+  }
+  function _planAddRequirement(planId, courses) {
+    return _applyPlanUpdate(planId, (p) => _reqHelpers.addRequirement(p, courses), "add_requirement");
+  }
+  function _planRemoveRequirement(planId, requirementId) {
+    return _applyPlanUpdate(planId, (p) => _reqHelpers.removeRequirement(p, requirementId), "remove_requirement");
+  }
+  function _planAddAlternative(planId, requirementId, courseCode) {
+    return _applyPlanUpdate(planId, (p) => _reqHelpers.addAlternativeToRequirement(p, requirementId, courseCode), "add_alternative");
+  }
+  function _planRemoveAlternative(planId, requirementId, courseCode) {
+    return _applyPlanUpdate(planId, (p) => _reqHelpers.removeAlternativeFromRequirement(p, requirementId, courseCode), "remove_alternative");
+  }
+  function _planLockSection(planId, requirementId, classNumber, courseCode) {
+    return _applyPlanUpdate(planId, (p) => _reqHelpers.lockSectionToRequirement(p, requirementId, classNumber, courseCode), "lock_requirement_section");
+  }
+  function _planUnlockSection(planId, requirementId) {
+    return _applyPlanUpdate(planId, (p) => _reqHelpers.unlockSectionFromRequirement(p, requirementId), "unlock_requirement_section");
+  }
+  function _planUpdatePreferences(planId, partial) {
+    return _applyPlanUpdate(planId, (p) => _reqHelpers.updatePreferences(p, partial), "update_scheduler_preferences");
+  }
+  // The pure helpers live in src/scheduler/requirements.js but the
+  // catalog can't import them at module-load time (would create a
+  // cycle since the index.html boot wires both via the same module
+  // graph). The host (planner/index.html) injects them onto
+  // catalog.plans._injectRequirementsHelpers after import — see
+  // there for the boot wiring.
+  let _reqHelpers = null;
+  function _injectRequirementsHelpers(helpers) { _reqHelpers = helpers; }
+
   function _planClearByOrigin(origin) {
     let removed = 0;
     let activeRemoved = false;
@@ -884,7 +953,7 @@ export function createCatalog() {
             kind: plan.kind === "active" ? "active" : "candidate",
             created_at: plan.created_at || _nowISO(),
             modified_at: plan.modified_at || _nowISO(),
-            origin: plan.origin === "auto-scheduler" ? "auto-scheduler" : "user",
+            origin: (plan.origin === "auto-scheduler" || plan.origin === "scheduler-preview") ? plan.origin : "user",
             sections: Array.isArray(plan.sections) ? plan.sections : [],
             filters: Array.isArray(plan.filters) ? plan.filters : [],
             notes: typeof plan.notes === "string" ? plan.notes : "",
@@ -897,6 +966,35 @@ export function createCatalog() {
                   .filter((l) => l && l.a && l.b && l.a !== l.b)
                   .map((l) => ({ a: String(l.a), b: String(l.b) }))
               : [],
+            // Piece 6 — defensive restore. Pre-Piece-6 plans hit the
+            // empty defaults; ill-shaped requirements (missing id /
+            // courses) get filtered.
+            requirements: Array.isArray(plan.requirements)
+              ? plan.requirements
+                  .filter((r) => r && typeof r.id === "string" && Array.isArray(r.courses))
+                  .map((r) => {
+                    const out = { id: r.id, courses: r.courses.filter((c) => typeof c === "string" && c) };
+                    if (r.locked_section && r.locked_section.class_number) {
+                      out.locked_section = { class_number: String(r.locked_section.class_number) };
+                      if (r.locked_section._course_code) {
+                        out.locked_section._course_code = String(r.locked_section._course_code);
+                      }
+                    }
+                    return out;
+                  })
+                  .filter((r) => r.courses.length > 0)
+              : [],
+            scheduler_preferences: (() => {
+              const p = plan.scheduler_preferences || {};
+              return {
+                no_starts_before: typeof p.no_starts_before === "string" ? p.no_starts_before : null,
+                no_ends_after: typeof p.no_ends_after === "string" ? p.no_ends_after : null,
+                lunch_break: !!p.lunch_break,
+                day_distribution: p.day_distribution === "balanced" || p.day_distribution === "compressed"
+                  ? p.day_distribution : "ignore",
+                include_closed_waitlisted: !!p.include_closed_waitlisted,
+              };
+            })(),
           });
         }
       }
@@ -984,6 +1082,14 @@ export function createCatalog() {
       addLink: _planAddLink,
       removeLink: _planRemoveLink,
       clearLinksForSection: _planClearLinksForSection,
+      addRequirement: _planAddRequirement,
+      removeRequirement: _planRemoveRequirement,
+      addAlternative: _planAddAlternative,
+      removeAlternative: _planRemoveAlternative,
+      lockRequirementSection: _planLockSection,
+      unlockRequirementSection: _planUnlockSection,
+      updatePreferences: _planUpdatePreferences,
+      _injectRequirementsHelpers: _injectRequirementsHelpers,
       clearByOrigin: _planClearByOrigin,
     },
     toJSON,

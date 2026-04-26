@@ -5084,6 +5084,33 @@
   .mp-course.is-user-authored {
     border-left: 2px dashed color-mix(in srgb, var(--accent, var(--ochre)) 50%, transparent);
   }
+  /* Piece 6 — "+ Req / ✓ Req" affordance on each course header. */
+  .mp-req-tag {
+    display: inline-block;
+    margin-left: 0.5rem;
+    padding: 0.1rem 0.45rem;
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    background: transparent;
+    border: 1px dashed color-mix(in srgb, var(--ink) 25%, transparent);
+    border-radius: 2px;
+    cursor: pointer;
+    line-height: 1.3;
+  }
+  .mp-req-tag:hover {
+    color: var(--accent, var(--ochre));
+    border-color: color-mix(in srgb, var(--accent, var(--ochre)) 50%, transparent);
+    background: color-mix(in srgb, var(--accent, var(--ochre)) 8%, transparent);
+  }
+  .mp-req-tag.is-on {
+    color: var(--success, var(--forest));
+    background: color-mix(in srgb, var(--success, var(--forest)) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--success, var(--forest)) 35%, transparent);
+  }
   .mp-course-head {
     width: 100%;
     display: flex;
@@ -6040,6 +6067,630 @@
     margin-top: 0.2rem;
     accent-color: var(--accent);
   }
+
+  /* ===== Auto-scheduler (Piece 6) — flag, drawer, results, preview banner =====
+     The scheduler-flag mirrors the personal-time filter flag: same
+     wedge silhouette but on the LEFT edge so the page reads as
+     symmetric. Tap to slide a drawer in from the left holding the
+     requirements + preferences form. Generated candidates render in
+     a separate right-anchored panel that's expandable. */
+  .scheduler-flag {
+    position: fixed;
+    left: 0;
+    top: 180px;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    z-index: 90;
+    display: flex;
+    align-items: stretch;
+    background: transparent;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: var(--font-mono);
+  }
+  .scheduler-flag .flag-body {
+    background: var(--accent, var(--ochre));
+    color: var(--cream);
+    padding: 12px 6px 12px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    box-shadow: 4px 3px 14px rgba(0, 0, 0, 0.18);
+    order: 1;
+  }
+  .scheduler-flag .flag-tip {
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 25px 0 25px 14px;
+    border-color: transparent transparent transparent var(--accent, var(--ochre));
+    flex-shrink: 0;
+    order: 2;
+  }
+  .scheduler-flag .flag-count {
+    font-size: 9.5px;
+    letter-spacing: 0.2em;
+    opacity: 0.85;
+  }
+  .scheduler-flag .flag-label {
+    font-size: 11.5px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .scheduler-flag:hover { transform: translateX(5px); }
+  .scheduler-flag.hidden { transform: translateX(-110%); }
+
+  .scheduler-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(0, 0, 0, 0.35);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+  }
+  .scheduler-backdrop.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .scheduler-drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 480px;
+    max-width: 90vw;
+    z-index: 101;
+    background: var(--surface, var(--paper-soft));
+    color: var(--ink);
+    border-right: 1px solid var(--border, var(--rule));
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.18);
+    transform: translateX(-110%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+    padding: 0 0 1.5rem;
+  }
+  .scheduler-drawer.open {
+    transform: translateX(0);
+  }
+
+  /* Section heading inside the drawer. */
+  .sch-section-h {
+    margin-top: 1.25rem;
+    margin-bottom: 0.45rem;
+    padding: 0 1.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .sch-req-list {
+    padding: 0 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+  .sch-req-empty {
+    padding: 0.85rem 1rem;
+    font-size: 0.84rem;
+    color: var(--ink-faint);
+    background-image: repeating-linear-gradient(
+      -45deg,
+      color-mix(in srgb, var(--ink) 6%, transparent) 0,
+      color-mix(in srgb, var(--ink) 6%, transparent) 5px,
+      transparent 5px, transparent 12px
+    );
+    border: 1px dashed color-mix(in srgb, var(--ink) 18%, transparent);
+    border-radius: var(--radius-sm, 2px);
+    text-align: center;
+  }
+
+  /* Requirement chip — single course form. */
+  .sch-req-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.55rem 0.4rem 0.75rem;
+    background: var(--cream);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent, var(--ochre));
+    border-radius: var(--radius-sm, 2px);
+    font-size: 0.88rem;
+    flex-wrap: wrap;
+  }
+  .sch-req-chip-code {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .sch-req-chip-locked {
+    margin-left: 0.35rem;
+    font-size: 0.78rem;
+    color: var(--ink-faint);
+    font-style: italic;
+  }
+  .sch-req-chip-actions {
+    margin-left: auto;
+    display: inline-flex;
+    gap: 0.2rem;
+  }
+  .sch-req-chip-actions button {
+    background: transparent;
+    border: 0;
+    padding: 0.15rem 0.4rem;
+    cursor: pointer;
+    color: var(--ink-faint);
+    font-size: 0.85rem;
+    border-radius: 2px;
+  }
+  .sch-req-chip-actions button:hover {
+    background: color-mix(in srgb, var(--ink) 5%, transparent);
+    color: var(--ink);
+  }
+  .sch-req-chip-actions button.is-danger:hover {
+    color: var(--error, var(--rust));
+    background: color-mix(in srgb, var(--error, var(--rust)) 8%, transparent);
+  }
+
+  /* OR-group: parentheses and pipe dividers as visible glyphs. */
+  .sch-req-orgroup {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+  }
+  .sch-req-paren {
+    font-family: var(--font-display, 'Fraunces', serif);
+    font-style: italic;
+    font-weight: 600;
+    font-size: 1.15rem;
+    color: var(--accent, var(--ochre));
+    line-height: 1;
+  }
+  .sch-req-pipe {
+    width: 1px;
+    height: 1.05em;
+    background: color-mix(in srgb, var(--ink) 25%, transparent);
+    display: inline-block;
+  }
+  .sch-req-alt {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 0.86rem;
+  }
+  .sch-req-alt-x {
+    background: transparent;
+    border: 0;
+    padding: 0 0.15rem;
+    cursor: pointer;
+    color: var(--ink-faint);
+    font-size: 0.78rem;
+    line-height: 1;
+  }
+  .sch-req-alt-x:hover { color: var(--error, var(--rust)); }
+  .sch-req-add-alt {
+    background: transparent;
+    border: 1px dashed color-mix(in srgb, var(--ink) 22%, transparent);
+    border-radius: 2px;
+    padding: 0.1rem 0.4rem;
+    cursor: pointer;
+    color: var(--ink-faint);
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.04em;
+  }
+  .sch-req-add-alt:hover {
+    color: var(--accent, var(--ochre));
+    border-color: var(--accent, var(--ochre));
+  }
+
+  /* Add-input row at the bottom of requirements. */
+  .sch-add-row {
+    margin-top: 0.65rem;
+    padding: 0 1.25rem;
+    display: flex;
+    gap: 0.4rem;
+  }
+  .sch-add-input {
+    flex: 1;
+    padding: 0.45rem 0.65rem;
+    background: var(--cream);
+    color: var(--ink);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-sm, 2px);
+    font-family: inherit;
+    font-size: 0.88rem;
+  }
+  .sch-add-input::placeholder {
+    color: var(--ink-faint);
+    opacity: 1;
+  }
+  .sch-add-btn {
+    padding: 0.45rem 0.85rem;
+    background: var(--ink);
+    color: var(--cream);
+    border: 1px solid var(--ink);
+    border-radius: var(--radius-sm, 2px);
+    font-family: inherit;
+    font-size: 0.86rem;
+    cursor: pointer;
+  }
+  .sch-add-btn:hover { opacity: 0.9; }
+
+  /* Preferences */
+  .sch-pref-row {
+    display: flex;
+    gap: 0.85rem;
+    padding: 0 1.25rem;
+    flex-wrap: wrap;
+  }
+  .sch-pref {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.82rem;
+    color: var(--ink-faint);
+    flex: 1 1 9rem;
+  }
+  .sch-pref input[type="time"] {
+    padding: 0.35rem 0.5rem;
+    background: var(--cream);
+    color: var(--ink);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-sm, 2px);
+    font-family: inherit;
+    font-size: 0.86rem;
+  }
+  .sch-pref-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0.65rem 1.25rem 0;
+    font-size: 0.86rem;
+    color: var(--ink);
+  }
+  .sch-pref-check input { accent-color: var(--accent, var(--ochre)); }
+  .sch-pref-radio {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    flex-wrap: wrap;
+    margin: 0.65rem 1.25rem 0;
+    font-size: 0.86rem;
+  }
+  .sch-pref-radio .sch-pref-label {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-right: 0.25rem;
+  }
+  .sch-pref-radio label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--ink);
+  }
+  .sch-pref-radio input { accent-color: var(--accent, var(--ochre)); }
+
+  .sch-actions {
+    margin: 1.25rem 1.25rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+  }
+  .sch-generate-btn {
+    padding: 0.55rem 1.1rem;
+    background: var(--accent, var(--ochre));
+    color: var(--cream);
+    border: 1px solid var(--accent, var(--ochre));
+    border-radius: var(--radius-sm, 2px);
+    font-family: inherit;
+    font-size: 0.92rem;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .sch-generate-btn:hover { filter: brightness(0.95); }
+  .sch-generate-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .sch-results-count {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--ink-faint);
+  }
+
+  /* Right-edge results panel — slides in once Generate completes. */
+  .scheduler-results {
+    position: fixed;
+    top: 86px;
+    right: 0;
+    bottom: 0;
+    width: 360px;
+    max-width: 95vw;
+    z-index: 88;
+    background: var(--surface, var(--paper-soft));
+    color: var(--ink);
+    border-left: 1px solid var(--border, var(--rule));
+    box-shadow: -4px 0 24px rgba(0, 0, 0, 0.18);
+    transform: translateX(110%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.25s;
+    overflow-y: auto;
+    padding-bottom: 1rem;
+  }
+  .scheduler-results.open {
+    transform: translateX(0);
+  }
+  .scheduler-results.is-expanded {
+    width: 720px;
+  }
+  .sch-results-toggle {
+    position: sticky;
+    top: 0;
+    float: left;
+    margin: 8px 0 0 -22px;
+    width: 22px;
+    height: 36px;
+    background: var(--surface);
+    color: var(--ink-faint);
+    border: 1px solid var(--rule);
+    border-right: 0;
+    border-radius: var(--radius-sm, 2px) 0 0 var(--radius-sm, 2px);
+    cursor: pointer;
+    z-index: 2;
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+  }
+  .sch-results-toggle-icon {
+    display: inline-block;
+    transition: transform 0.2s;
+  }
+  .scheduler-results.is-expanded .sch-results-toggle-icon { transform: rotate(180deg); }
+  .sch-results-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 1rem 0.5rem;
+    border-bottom: 1px solid var(--rule);
+    position: sticky;
+    top: 0;
+    background: var(--surface);
+    z-index: 1;
+  }
+  .sch-results-title {
+    font-family: var(--font-display, 'Fraunces', serif);
+    font-size: 1.1rem;
+    color: var(--ink);
+  }
+  .sch-results-close {
+    background: transparent;
+    border: 0;
+    color: var(--ink-faint);
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 0.15rem 0.4rem;
+    border-radius: 2px;
+  }
+  .sch-results-close:hover { background: color-mix(in srgb, var(--ink) 5%, transparent); }
+  .sch-results-controls {
+    display: flex;
+    gap: 0.85rem;
+    padding: 0.65rem 1rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .sch-results-control {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-faint);
+  }
+  .sch-results-control select {
+    background: var(--cream);
+    color: var(--ink);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-sm, 2px);
+    font-family: inherit;
+    font-size: 0.8rem;
+    padding: 0.25rem 0.4rem;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .sch-results-list {
+    padding: 0.65rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  /* Individual candidate card. */
+  .sch-cand {
+    background: var(--cream);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-sm, 2px);
+    padding: 0.6rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+  .sch-cand.is-previewing {
+    border-color: var(--accent, var(--ochre));
+    box-shadow: 0 0 0 1px var(--accent, var(--ochre));
+  }
+  .sch-cand-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .sch-cand-rank {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .sch-cand-violation {
+    margin: 0.15rem 0 0;
+    font-size: 0.74rem;
+    color: var(--warning, var(--ochre));
+    font-style: italic;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .sch-cand-grid {
+    height: 130px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1px;
+    background: color-mix(in srgb, var(--ink) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+    border-radius: var(--radius-sm, 2px);
+    overflow: hidden;
+    position: relative;
+  }
+  .sch-cand-day {
+    position: relative;
+    background: var(--paper-soft);
+  }
+  .sch-cand-day-label {
+    position: absolute;
+    top: 2px;
+    left: 4px;
+    font-family: var(--font-mono);
+    font-size: 8px;
+    letter-spacing: 0.1em;
+    color: var(--ink-faint);
+    z-index: 1;
+  }
+  .sch-cand-block {
+    position: absolute;
+    left: 0; right: 0;
+    border-left: 2px solid var(--ink);
+    font-family: var(--font-mono);
+    font-size: 8px;
+    text-transform: uppercase;
+    line-height: 1;
+    padding: 1px 2px;
+    overflow: hidden;
+    color: var(--ink);
+  }
+  .sch-cand-actions {
+    display: flex;
+    gap: 0.4rem;
+    margin-top: 0.2rem;
+  }
+  .sch-cand-btn {
+    flex: 1;
+    padding: 0.3rem 0.5rem;
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-sm, 2px);
+    font-family: inherit;
+    font-size: 0.78rem;
+    cursor: pointer;
+  }
+  .sch-cand-btn:hover { background: color-mix(in srgb, var(--ink) 5%, transparent); }
+  .sch-cand-btn.is-primary {
+    background: var(--accent, var(--ochre));
+    color: var(--cream);
+    border-color: var(--accent, var(--ochre));
+  }
+  .sch-cand-btn.is-primary:hover { filter: brightness(0.95); }
+
+  /* Diagnosis (no valid solutions) panel. */
+  .sch-diag {
+    background: color-mix(in srgb, var(--warning, var(--ochre)) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--warning, var(--ochre)) 30%, transparent);
+    border-left: 3px solid var(--warning, var(--ochre));
+    border-radius: var(--radius-sm, 2px);
+    padding: 0.7rem 0.85rem;
+    margin: 0.65rem;
+  }
+  .sch-diag-h {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--warning, var(--ochre));
+    margin-bottom: 0.35rem;
+  }
+  .sch-diag-item {
+    font-size: 0.85rem;
+    line-height: 1.4;
+    margin-bottom: 0.45rem;
+  }
+  .sch-diag-item code {
+    font-family: var(--font-mono);
+    background: color-mix(in srgb, var(--ink) 6%, transparent);
+    padding: 0 0.25rem;
+    border-radius: 2px;
+  }
+  .sch-diag-suggestion {
+    font-size: 0.8rem;
+    color: var(--ink-faint);
+    font-style: italic;
+  }
+
+  /* Preview banner across the top of the calendar. */
+  .sch-preview-banner {
+    position: sticky;
+    top: 86px;
+    margin: 0 0 0.65rem;
+    padding: 0.5rem 0.85rem;
+    background: color-mix(in srgb, var(--accent, var(--ochre)) 14%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent, var(--ochre)) 40%, transparent);
+    border-radius: var(--radius-sm, 2px);
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    z-index: 5;
+  }
+  .sch-preview-banner[hidden] { display: none; }
+  .sch-preview-icon {
+    color: var(--accent, var(--ochre));
+    font-size: 1rem;
+  }
+  .sch-preview-text {
+    flex: 1;
+    font-size: 0.86rem;
+    color: var(--ink);
+  }
+  .sch-preview-actions { display: flex; gap: 0.4rem; }
+  .sch-preview-pick, .sch-preview-cancel {
+    padding: 0.3rem 0.7rem;
+    border-radius: var(--radius-sm, 2px);
+    font-family: inherit;
+    font-size: 0.8rem;
+    cursor: pointer;
+    border: 1px solid var(--rule);
+    background: var(--surface);
+    color: var(--ink);
+  }
+  .sch-preview-pick {
+    background: var(--accent, var(--ochre));
+    color: var(--cream);
+    border-color: var(--accent, var(--ochre));
+  }
+  .sch-preview-pick:hover { filter: brightness(0.95); }
+  .sch-preview-cancel:hover { background: color-mix(in srgb, var(--ink) 5%, transparent); }
 
   /* ===== Component-warning floating notification (Piece 5b) =====
      Top-right card that surfaces when a multi-component course has
@@ -7247,6 +7898,110 @@
   </div>
 </aside>
 
+<!-- ========== AUTO-SCHEDULER (Piece 6) — LEFT-EDGE FLAG + DRAWER ==========
+     Mirror of the personal-time filter flag on the right edge: a
+     small flag pokes out the left side, click to open a side drawer
+     where requirements + preferences live. Generate produces ranked
+     candidates which appear in the right-aligned results panel.
+-->
+<button class="scheduler-flag" id="scheduler-flag" onclick="toggleSchedulerDrawer()" title="Auto-scheduler">
+  <span class="flag-body">
+    <span class="flag-count" id="sch-flag-count">Auto</span>
+    <span class="flag-label" id="sch-flag-label">⚙ Schedule</span>
+  </span>
+  <span class="flag-tip"></span>
+</button>
+
+<div class="scheduler-backdrop" id="scheduler-backdrop" onclick="toggleSchedulerDrawer()"></div>
+
+<aside class="scheduler-drawer" id="scheduler-drawer" aria-hidden="true">
+  <div class="drawer-header">
+    <div>
+      <div class="drawer-tag">Auto-scheduler</div>
+      <h3>Build a schedule <em>from your requirements</em></h3>
+    </div>
+    <button class="drawer-close" onclick="toggleSchedulerDrawer()" aria-label="Close drawer">×</button>
+  </div>
+  <div class="drawer-body">
+    <p class="picker-sub">Pick the courses you need and the soft preferences. The solver enumerates valid combinations, scores them, and lists the best candidates on the right.</p>
+
+    <div class="sch-section-h">Required</div>
+    <div class="sch-req-list" id="sch-req-list"></div>
+    <div class="sch-add-row">
+      <input type="text" class="sch-add-input" id="sch-add-input" placeholder="e.g. ENGR-UH 1000" autocomplete="off">
+      <button type="button" class="sch-add-btn" onclick="_schAddFromInput()">+ Add</button>
+    </div>
+
+    <div class="sch-section-h">Preferences</div>
+    <div class="sch-pref-row">
+      <label class="sch-pref">No starts before
+        <input type="time" id="sch-no-starts-before" step="900">
+      </label>
+      <label class="sch-pref">No ends after
+        <input type="time" id="sch-no-ends-after" step="900">
+      </label>
+    </div>
+    <label class="sch-pref-check"><input type="checkbox" id="sch-lunch-break"><span>Lunch break preferred (30+ min between 11:30–14:00)</span></label>
+    <div class="sch-pref-radio">
+      <span class="sch-pref-label">Day distribution</span>
+      <label><input type="radio" name="sch-day-dist" value="ignore" checked><span>Don't care</span></label>
+      <label><input type="radio" name="sch-day-dist" value="balanced"><span>Balanced</span></label>
+      <label><input type="radio" name="sch-day-dist" value="compressed"><span>Compressed</span></label>
+    </div>
+    <label class="sch-pref-check"><input type="checkbox" id="sch-include-closed"><span>Include closed / waitlisted sections</span></label>
+
+    <div class="sch-actions">
+      <button type="button" class="sch-generate-btn" onclick="_schGenerate()">Generate schedules</button>
+      <span class="sch-results-count" id="sch-results-count"></span>
+    </div>
+  </div>
+</aside>
+
+<!-- Right-side results panel. Slides in from the right when the user
+     has generated candidates. Independent of the scheduler drawer
+     so users can close the drawer and keep results visible. -->
+<aside class="scheduler-results" id="scheduler-results" aria-hidden="true">
+  <button type="button" class="sch-results-toggle" id="sch-results-toggle" onclick="_schToggleResultsExpanded()" title="Expand / collapse">
+    <span class="sch-results-toggle-icon">›</span>
+  </button>
+  <div class="sch-results-head">
+    <div class="sch-results-title" id="sch-results-title">Results</div>
+    <button type="button" class="sch-results-close" onclick="_schCloseResults()" aria-label="Close results">×</button>
+  </div>
+  <div class="sch-results-controls" id="sch-results-controls">
+    <label class="sch-results-control">
+      <span>Sort</span>
+      <select id="sch-sort">
+        <option value="score">Best score</option>
+        <option value="earliest">Earliest start</option>
+        <option value="fewest">Fewest days</option>
+      </select>
+    </label>
+    <label class="sch-results-control">
+      <span>Filter</span>
+      <select id="sch-filter">
+        <option value="all">All</option>
+        <option value="no-friday">No Fridays</option>
+        <option value="morning">Mornings only (no class after 14:00)</option>
+      </select>
+    </label>
+  </div>
+  <div class="sch-results-list" id="sch-results-list"></div>
+</aside>
+
+<!-- Preview banner: appears across the top of the calendar when a
+     candidate is being previewed. Pick commits as a candidate plan;
+     Cancel restores whatever was being viewed before preview started.
+-->
+<div class="sch-preview-banner" id="sch-preview-banner" hidden>
+  <span class="sch-preview-icon">⤴</span>
+  <span class="sch-preview-text" id="sch-preview-text">Previewing candidate</span>
+  <span class="sch-preview-actions">
+    <button type="button" class="sch-preview-pick" onclick="_schPickPreview()">Pick this</button>
+    <button type="button" class="sch-preview-cancel" onclick="_schCancelPreview()">Cancel preview</button>
+  </span>
+</div>
+
 <!-- Initialize the HS namespace so the deferred module script below can
      attach catalog/persistence/etc. to it. -->
 <script>
@@ -7362,6 +8117,10 @@ import {
   shouldShowNotification,
   summarizeIncomplete,
 } from './src/ui/components.js';
+import * as _schedulerRequirements from './src/scheduler/requirements.js';
+import { scoreCandidate } from './src/scheduler/scoring.js';
+import { buildPreviewGrid } from './src/scheduler/preview.js';
+import { generateSchedules } from './src/scheduler/solver.js';
 bootTheme();
 const catalog = createCatalog();
 const persistence = createPersistence(catalog);
@@ -7451,6 +8210,18 @@ window.HS.components = {
   shouldShowNotification,
   summarizeIncomplete,
 };
+window.HS.scheduler = {
+  requirements: _schedulerRequirements,
+  scoreCandidate,
+  buildPreviewGrid,
+  generateSchedules,
+};
+// Inject the pure requirements helpers into the catalog so its
+// plan-mutation wrappers (addRequirement, etc.) can call them.
+if (window.HS.catalog && window.HS.catalog.plans &&
+    typeof window.HS.catalog.plans._injectRequirementsHelpers === 'function') {
+  window.HS.catalog.plans._injectRequirementsHelpers(_schedulerRequirements);
+}
 // Replay any persisted user-authored courses so they appear in the
 // catalog right away — before the first horarium:ready listener fires
 // and renders Browse.
@@ -7677,6 +8448,473 @@ window.addEventListener('horarium:ready', function () {
 // our own custom event.
 window.addEventListener('horarium:plan-view-changed', _renderComponentNotification);
 
+// ============ AUTO-SCHEDULER (Piece 6) ============
+// State for the auto-scheduler UI. Lives in module scope so the
+// drawer's open/close, the results panel, the preview state, and
+// the catalog subscriber can all coordinate.
+let _schDrawerOpen = false;
+let _schResultsOpen = false;
+let _schResultsExpanded = false;
+let _schCandidates = [];
+let _schConflicts = [];
+let _schPreviewIndex = -1;        // -1 = no preview active
+let _schSavedViewPlanId = null;   // restored on cancel-preview
+let _schPickedPlanIds = new Set(); // tracks the auto-scheduler plans we've created so we can clean up on regen
+const _schAutoOrigin = 'auto-scheduler';
+
+function toggleSchedulerDrawer() {
+  _schDrawerOpen = !_schDrawerOpen;
+  const drawer = document.getElementById('scheduler-drawer');
+  const backdrop = document.getElementById('scheduler-backdrop');
+  if (_schDrawerOpen) {
+    drawer.classList.add('open');
+    backdrop.classList.add('open');
+    drawer.setAttribute('aria-hidden', 'false');
+    _schRenderRequirements();
+    _schSyncPreferencesFromPlan();
+  } else {
+    drawer.classList.remove('open');
+    backdrop.classList.remove('open');
+    drawer.setAttribute('aria-hidden', 'true');
+  }
+}
+
+// The auto-scheduler always reads/writes the ACTIVE plan's
+// requirements + preferences. The "viewed" plan can be a candidate or
+// auto-scheduler-generated plan that doesn't carry the user's intent.
+function _schScopePlan() {
+  if (!(window.HS && window.HS.catalog && window.HS.catalog.plans)) return null;
+  return window.HS.catalog.plans.getActive();
+}
+function _schScopePlanId() {
+  const p = _schScopePlan();
+  return p ? p.id : null;
+}
+
+function _schSyncPreferencesFromPlan() {
+  const plan = _schScopePlan();
+  if (!plan) return;
+  const p = plan.scheduler_preferences || {};
+  const $ = (id) => document.getElementById(id);
+  if ($('sch-no-starts-before')) $('sch-no-starts-before').value = p.no_starts_before || '';
+  if ($('sch-no-ends-after')) $('sch-no-ends-after').value = p.no_ends_after || '';
+  if ($('sch-lunch-break')) $('sch-lunch-break').checked = !!p.lunch_break;
+  if ($('sch-include-closed')) $('sch-include-closed').checked = !!p.include_closed_waitlisted;
+  const dist = p.day_distribution || 'ignore';
+  document.querySelectorAll('input[name="sch-day-dist"]').forEach(function (r) {
+    r.checked = (r.value === dist);
+  });
+}
+
+function _schReadPreferencesFromForm() {
+  const $ = (id) => document.getElementById(id);
+  const dist = (document.querySelector('input[name="sch-day-dist"]:checked') || {}).value || 'ignore';
+  return {
+    no_starts_before: ($('sch-no-starts-before') && $('sch-no-starts-before').value) || null,
+    no_ends_after: ($('sch-no-ends-after') && $('sch-no-ends-after').value) || null,
+    lunch_break: !!($('sch-lunch-break') && $('sch-lunch-break').checked),
+    day_distribution: dist,
+    include_closed_waitlisted: !!($('sch-include-closed') && $('sch-include-closed').checked),
+  };
+}
+
+function _schRenderRequirements() {
+  const list = document.getElementById('sch-req-list');
+  if (!list) return;
+  const plan = _schScopePlan();
+  const reqs = (plan && plan.requirements) || [];
+  if (reqs.length === 0) {
+    list.innerHTML = '<div class="sch-req-empty">No requirements yet — add a course code below or click + Req on a picker row.</div>';
+    return;
+  }
+  let html = '';
+  for (const r of reqs) {
+    if (r.courses.length === 1) {
+      const lockText = r.locked_section ? ' · locked #' + _brEscape(r.locked_section.class_number) : '';
+      html += '<div class="sch-req-chip" data-req-id="' + _brEscape(r.id) + '">';
+      html += '<span class="sch-req-chip-code">' + _brEscape(r.courses[0]) + '</span>';
+      if (r.locked_section) html += '<span class="sch-req-chip-locked">🔒' + lockText + '</span>';
+      html += '<span class="sch-req-chip-actions">';
+      html += '<button type="button" data-sch-action="add-alt" data-req-id="' + _brEscape(r.id) + '" title="Add alternative">+</button>';
+      if (r.locked_section) {
+        html += '<button type="button" data-sch-action="unlock" data-req-id="' + _brEscape(r.id) + '" title="Unlock">⊘</button>';
+      }
+      html += '<button type="button" class="is-danger" data-sch-action="remove" data-req-id="' + _brEscape(r.id) + '" title="Remove">×</button>';
+      html += '</span></div>';
+    } else {
+      // OR-group
+      html += '<div class="sch-req-chip" data-req-id="' + _brEscape(r.id) + '">';
+      html += '<div class="sch-req-orgroup"><span class="sch-req-paren">(</span>';
+      r.courses.forEach(function (c, i) {
+        if (i > 0) html += '<span class="sch-req-pipe"></span>';
+        html += '<span class="sch-req-alt">' + _brEscape(c) +
+          '<button type="button" class="sch-req-alt-x" data-sch-action="remove-alt" data-req-id="' +
+          _brEscape(r.id) + '" data-course="' + _brEscape(c) + '" title="Remove alternative">×</button>' +
+          '</span>';
+      });
+      html += '<button type="button" class="sch-req-add-alt" data-sch-action="add-alt" data-req-id="' +
+        _brEscape(r.id) + '">+ alt</button>';
+      html += '<span class="sch-req-paren">)</span></div>';
+      html += '<span class="sch-req-chip-actions">';
+      html += '<button type="button" class="is-danger" data-sch-action="remove" data-req-id="' + _brEscape(r.id) + '" title="Remove">×</button>';
+      html += '</span></div>';
+    }
+  }
+  list.innerHTML = html;
+  list.querySelectorAll('[data-sch-action]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      const action = btn.getAttribute('data-sch-action');
+      const id = btn.getAttribute('data-req-id');
+      const planId = _schScopePlanId();
+      if (action === 'remove') {
+        window.HS.catalog.plans.removeRequirement(planId, id);
+      } else if (action === 'add-alt') {
+        _hsPrompt('Add alternative course', '', { title: 'Add alternative', placeholder: 'e.g. STAT-UH 1101' })
+          .then(function (code) {
+            if (code && String(code).trim()) {
+              window.HS.catalog.plans.addAlternative(planId, id, String(code).trim());
+            }
+          });
+      } else if (action === 'remove-alt') {
+        const c = btn.getAttribute('data-course');
+        window.HS.catalog.plans.removeAlternative(planId, id, c);
+      } else if (action === 'unlock') {
+        window.HS.catalog.plans.unlockRequirementSection(planId, id);
+      }
+    });
+  });
+}
+
+function _schAddFromInput() {
+  const inp = document.getElementById('sch-add-input');
+  if (!inp) return;
+  const v = (inp.value || '').trim();
+  if (!v) return;
+  try {
+    window.HS.catalog.plans.addRequirement(_schScopePlanId(), [v]);
+    inp.value = '';
+  } catch (err) {
+    _hsAlert((err && err.message) || String(err), 'Could not add');
+  }
+}
+
+function _schGenerate() {
+  const plan = _schScopePlan();
+  if (!plan) return;
+  const reqs = plan.requirements || [];
+  if (reqs.length === 0) {
+    _hsAlert('Add at least one required course before generating.', 'No requirements');
+    return;
+  }
+  // Persist the form's preferences to the plan first.
+  const prefs = _schReadPreferencesFromForm();
+  window.HS.catalog.plans.updatePreferences(plan.id, prefs);
+  // Tear down any prior auto-scheduler candidate plans so the strip
+  // doesn't accumulate auto plans across regenerations.
+  for (const candPlan of window.HS.catalog.plans.list()) {
+    if (candPlan.origin === _schAutoOrigin) {
+      try { window.HS.catalog.plans.delete(candPlan.id); } catch (_) {}
+    }
+  }
+  _schPickedPlanIds.clear();
+
+  const eff = window.HS.catalog.getEffective();
+  const out = window.HS.scheduler.generateSchedules({
+    requirements: reqs,
+    preferences: prefs,
+    catalog: eff,
+    filters: filters || [],
+    linkedSections: plan.linked_sections || [],
+    max_candidates: 50,
+  });
+  _schCandidates = out.candidates || [];
+  _schConflicts = out.conflicts || [];
+  _schOpenResults();
+  _schRenderResults();
+  const countEl = document.getElementById('sch-results-count');
+  if (countEl) {
+    if (_schConflicts.length > 0) {
+      countEl.textContent = _schConflicts.length + ' conflict' + (_schConflicts.length === 1 ? '' : 's');
+    } else {
+      countEl.textContent = _schCandidates.length + ' result' + (_schCandidates.length === 1 ? '' : 's');
+    }
+  }
+}
+
+function _schOpenResults() {
+  _schResultsOpen = true;
+  const el = document.getElementById('scheduler-results');
+  if (el) {
+    el.classList.add('open');
+    el.setAttribute('aria-hidden', 'false');
+  }
+}
+
+function _schCloseResults() {
+  _schResultsOpen = false;
+  _schCancelPreview();
+  const el = document.getElementById('scheduler-results');
+  if (el) {
+    el.classList.remove('open');
+    el.setAttribute('aria-hidden', 'true');
+  }
+}
+
+function _schToggleResultsExpanded() {
+  _schResultsExpanded = !_schResultsExpanded;
+  const el = document.getElementById('scheduler-results');
+  if (el) el.classList.toggle('is-expanded', _schResultsExpanded);
+}
+
+// Filter + sort the rendered list based on the controls.
+function _schFilteredCandidates() {
+  const filterVal = (document.getElementById('sch-filter') || {}).value || 'all';
+  const sortVal = (document.getElementById('sch-sort') || {}).value || 'score';
+  const eff = window.HS.catalog.getEffective();
+  const items = _schCandidates.map(function (c, i) { return { c, originalIndex: i }; });
+  function gridFor(c) {
+    return window.HS.scheduler.buildPreviewGrid(
+      { sections: c.sections },
+      eff,
+      { colorFor: window.HS.mainPlanner.colorForCourse },
+    );
+  }
+  const filtered = items.filter(function (item) {
+    const grid = gridFor(item.c);
+    if (filterVal === 'no-friday') {
+      return grid.blocks.every(b => b.day !== 'Fri');
+    }
+    if (filterVal === 'morning') {
+      return grid.blocks.every(b => b.end_min <= 14 * 60);
+    }
+    return true;
+  });
+  filtered.sort(function (a, b) {
+    if (sortVal === 'score') return a.c.score - b.c.score;
+    if (sortVal === 'earliest') {
+      const ga = gridFor(a.c), gb = gridFor(b.c);
+      const aMin = ga.blocks.length ? Math.min.apply(null, ga.blocks.map(x => x.start_min)) : Infinity;
+      const bMin = gb.blocks.length ? Math.min.apply(null, gb.blocks.map(x => x.start_min)) : Infinity;
+      return aMin - bMin;
+    }
+    if (sortVal === 'fewest') {
+      const ga = gridFor(a.c), gb = gridFor(b.c);
+      return new Set(ga.blocks.map(x => x.day)).size - new Set(gb.blocks.map(x => x.day)).size;
+    }
+    return 0;
+  });
+  return filtered;
+}
+
+function _schRenderResults() {
+  const list = document.getElementById('sch-results-list');
+  const titleEl = document.getElementById('sch-results-title');
+  if (!list) return;
+  if (titleEl) {
+    titleEl.textContent = 'Results · ' + _schCandidates.length;
+  }
+  let html = '';
+  if (_schConflicts.length > 0) {
+    html += '<div class="sch-diag">';
+    html += '<div class="sch-diag-h">⚠ Cannot satisfy all requirements</div>';
+    for (const d of _schConflicts) {
+      html += '<div class="sch-diag-item"><code>' + _brEscape(d.course_code) + '</code>: ' +
+        _brEscape(d.reason) + '</div>';
+    }
+    html += '<div class="sch-diag-suggestion">→ Relax a filter, drop the requirement, or unlock a section.</div>';
+    html += '</div>';
+  }
+  if (_schCandidates.length === 0 && _schConflicts.length === 0) {
+    html += '<div class="sch-req-empty">No candidates yet — add requirements and Generate.</div>';
+    list.innerHTML = html;
+    return;
+  }
+  const items = _schFilteredCandidates();
+  for (let n = 0; n < items.length; n++) {
+    const item = items[n];
+    const c = item.c;
+    const idx = item.originalIndex;
+    const isPreviewing = _schPreviewIndex === idx;
+    const eff = window.HS.catalog.getEffective();
+    const grid = window.HS.scheduler.buildPreviewGrid(
+      { sections: c.sections }, eff,
+      { colorFor: window.HS.mainPlanner.colorForCourse },
+    );
+    html += '<div class="sch-cand' + (isPreviewing ? ' is-previewing' : '') + '" data-cand-idx="' + idx + '">';
+    html += '<div class="sch-cand-head"><span class="sch-cand-rank">#' + (n + 1) + '</span>';
+    html += '<span>score ' + (c.score | 0) + (c.partial ? ' · partial' : '') + '</span></div>';
+    if (c.partial) {
+      html += '<div class="sch-cand-violation">Partial schedule — may violate hard constraints.</div>';
+    }
+    html += _schRenderMiniGrid(grid);
+    html += '<div class="sch-cand-actions">';
+    html += '<button type="button" class="sch-cand-btn" data-sch-cand="' + idx + '" data-sch-cand-action="preview">Preview</button>';
+    html += '<button type="button" class="sch-cand-btn is-primary" data-sch-cand="' + idx + '" data-sch-cand-action="pick">Pick</button>';
+    html += '</div>';
+    html += '</div>';
+  }
+  list.innerHTML = html;
+  list.querySelectorAll('[data-sch-cand]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      const idx = Number(btn.getAttribute('data-sch-cand'));
+      const action = btn.getAttribute('data-sch-cand-action');
+      if (action === 'preview') _schStartPreview(idx);
+      else if (action === 'pick') _schPickCandidate(idx);
+    });
+  });
+}
+
+function _schRenderMiniGrid(grid) {
+  const days = grid.days;
+  const startMin = (typeof grid.time_range.start === 'string')
+    ? (Number(grid.time_range.start.slice(0, 2)) * 60 + Number(grid.time_range.start.slice(3, 5)))
+    : grid.time_range.start;
+  const endMin = (typeof grid.time_range.end === 'string')
+    ? (Number(grid.time_range.end.slice(0, 2)) * 60 + Number(grid.time_range.end.slice(3, 5)))
+    : grid.time_range.end;
+  const range = Math.max(60, endMin - startMin);
+  let html = '<div class="sch-cand-grid">';
+  for (const d of days) {
+    html += '<div class="sch-cand-day"><div class="sch-cand-day-label">' + d.slice(0, 1) + '</div>';
+    for (const b of grid.blocks) {
+      if (b.day !== d) continue;
+      const top = ((b.start_min - startMin) / range) * 100;
+      const height = Math.max(8, ((b.end_min - b.start_min) / range) * 100);
+      html += '<div class="sch-cand-block" style="top:' + top + '%; height:' + height + '%; background:' +
+        b.color.bg + '; border-left-color:' + b.color.ink + '">' + _brEscape(b.label) + '</div>';
+    }
+    html += '</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function _schStartPreview(idx) {
+  const c = _schCandidates[idx];
+  if (!c) return;
+  // Save the currently-viewed plan so we can restore on cancel.
+  if (_schPreviewIndex === -1) {
+    _schSavedViewPlanId = currentViewPlanId;
+  }
+  _schPreviewIndex = idx;
+  // Create a temporary preview plan in the catalog with origin
+  // 'scheduler-preview'. Stage the candidate's sections. View it.
+  // We delete this plan on cancel/pick to keep the strip clean.
+  let previewPlanId = null;
+  for (const p of window.HS.catalog.plans.list()) {
+    if (p.origin === 'scheduler-preview') { previewPlanId = p.id; break; }
+  }
+  if (!previewPlanId) {
+    previewPlanId = window.HS.catalog.plans.create({
+      name: 'Preview', kind: 'candidate', origin: 'scheduler-preview',
+    });
+  }
+  // Reset its sections to match the candidate.
+  const preview = window.HS.catalog.plans.get(previewPlanId);
+  for (const ref of preview.sections.slice()) {
+    window.HS.catalog.plans.unstageSection(previewPlanId, ref.class_number);
+  }
+  for (const ref of c.sections) {
+    window.HS.catalog.plans.stageSection(previewPlanId, {
+      class_number: ref.class_number,
+      subject: ref.subject || null,
+    });
+  }
+  currentViewPlanId = previewPlanId;
+  window.dispatchEvent(new CustomEvent('horarium:plan-view-changed'));
+  render();
+  _schRenderResults();
+  _schUpdatePreviewBanner();
+}
+
+function _schUpdatePreviewBanner() {
+  const banner = document.getElementById('sch-preview-banner');
+  const text = document.getElementById('sch-preview-text');
+  if (!banner) return;
+  if (_schPreviewIndex < 0) { banner.hidden = true; return; }
+  banner.hidden = false;
+  if (text) text.textContent = 'Previewing candidate #' + (_schPreviewIndex + 1) + ' (auto-scheduler)';
+}
+
+function _schCancelPreview() {
+  if (_schPreviewIndex === -1) return;
+  // Drop the preview plan + restore the saved view.
+  for (const p of window.HS.catalog.plans.list()) {
+    if (p.origin === 'scheduler-preview') {
+      try { window.HS.catalog.plans.delete(p.id); } catch (_) {}
+    }
+  }
+  _schPreviewIndex = -1;
+  if (_schSavedViewPlanId) {
+    currentViewPlanId = _schSavedViewPlanId;
+    _schSavedViewPlanId = null;
+  } else {
+    currentViewPlanId = null;
+  }
+  window.dispatchEvent(new CustomEvent('horarium:plan-view-changed'));
+  render();
+  _schRenderResults();
+  _schUpdatePreviewBanner();
+}
+
+function _schPickPreview() {
+  if (_schPreviewIndex < 0) return;
+  _schPickCandidate(_schPreviewIndex);
+}
+
+function _schPickCandidate(idx) {
+  const c = _schCandidates[idx];
+  if (!c) return;
+  // Cancel any active preview first so the temp plan is dropped.
+  const wasPreview = _schPreviewIndex;
+  if (wasPreview >= 0) {
+    for (const p of window.HS.catalog.plans.list()) {
+      if (p.origin === 'scheduler-preview') {
+        try { window.HS.catalog.plans.delete(p.id); } catch (_) {}
+      }
+    }
+    _schPreviewIndex = -1;
+    _schUpdatePreviewBanner();
+  }
+  // Create a real candidate plan with origin 'auto-scheduler' so
+  // regenerate can clean it up later.
+  const planId = window.HS.catalog.plans.create({
+    name: 'Auto #' + (idx + 1),
+    kind: 'candidate',
+    origin: _schAutoOrigin,
+  });
+  for (const ref of c.sections) {
+    window.HS.catalog.plans.stageSection(planId, {
+      class_number: ref.class_number,
+      subject: ref.subject || null,
+    });
+  }
+  _schPickedPlanIds.add(planId);
+  currentViewPlanId = planId;
+  _schSavedViewPlanId = null;
+  window.dispatchEvent(new CustomEvent('horarium:plan-view-changed'));
+  render();
+  _schRenderResults();
+}
+
+// Wire form change → live preferences sync (optional, persists on
+// Generate so this isn't load-bearing, but handy).
+window.addEventListener('horarium:ready', function () {
+  if (!(window.HS && window.HS.catalog && window.HS.catalog.subscribe)) return;
+  // Re-render the requirements list whenever a plan_mutation
+  // touches requirements/locks.
+  window.HS.catalog.subscribe(function (e) {
+    if (e && e.reason === 'plan_mutation' && _schDrawerOpen) {
+      _schRenderRequirements();
+    }
+  });
+  // Wire the sort/filter dropdowns.
+  const sortEl = document.getElementById('sch-sort');
+  const filterEl = document.getElementById('sch-filter');
+  if (sortEl) sortEl.addEventListener('change', _schRenderResults);
+  if (filterEl) filterEl.addEventListener('change', _schRenderResults);
+});
+
 function _activePlanId() {
   if (!(window.HS && window.HS.catalog && window.HS.catalog.plans)) return null;
   const a = window.HS.catalog.plans.getActive();
@@ -7774,8 +9012,11 @@ function buildTabs() {
   const t = document.getElementById('mp-strip');
   if (!t) return;
   t.innerHTML = '';
-  const plans = (window.HS && window.HS.catalog && window.HS.catalog.plans)
-    ? window.HS.catalog.plans.list() : [];
+  const plans = ((window.HS && window.HS.catalog && window.HS.catalog.plans)
+    ? window.HS.catalog.plans.list() : [])
+    // Hide ephemeral preview plans from the strip — they're a UI
+    // implementation detail of the auto-scheduler preview flow.
+    .filter(p => p.origin !== 'scheduler-preview');
   if (plans.length === 0) {
     t.innerHTML = '<div class="mp-strip-empty">No plans. Reload to seed the default.</div>';
     return;
@@ -13095,6 +14336,14 @@ function _pkRenderCourseRow(c, sections, stagedSet, hydratedStaged) {
     : '';
   const userBadge = c._user_authored ? '<span class="mp-user-tag">USER</span>' : '';
   const stagedClass = stagedCount > 0 ? ' has-staged' : '';
+  // Piece 6 — "+ Req" affordance: shows whether this course is
+  // already a requirement on the active plan, click to toggle.
+  const planForReq = (typeof _schScopePlan === 'function') ? _schScopePlan() : null;
+  const reqs = (planForReq && planForReq.requirements) || [];
+  const inReqs = reqs.some(r => (r.courses || []).includes(c.code));
+  const reqBadge = inReqs
+    ? '<button type="button" class="mp-req-tag is-on" data-pkreq-toggle="' + _escHtml(c.code) + '" title="Remove from auto-scheduler requirements">✓ REQ</button>'
+    : '<button type="button" class="mp-req-tag" data-pkreq-toggle="' + _escHtml(c.code) + '" title="Add to auto-scheduler requirements">+ REQ</button>';
   let html = '<div class="mp-course' + (isExpanded ? ' is-open' : '') + stagedClass + (c._user_authored ? ' is-user-authored' : '') + '" data-course-code="' + _escHtml(c.code) + '">';
   html += '<button type="button" class="mp-course-head" data-pkcourse="' + _escHtml(c.code) + '">';
   html += '<span class="mp-course-head-text">';
@@ -13106,6 +14355,7 @@ function _pkRenderCourseRow(c, sections, stagedSet, hydratedStaged) {
     ' section' + (sections.length === 1 ? '' : 's') +
     ' · ' + _escHtml(String(unitsStr)) + ' unit' + (unitsStr === 1 ? '' : 's') +
     (stagedCount > 0 ? ' · <strong>' + stagedCount + ' staged</strong>' : '') +
+    ' ' + reqBadge +
     '<span class="mp-chevron">›</span></span>';
   html += '</button>';
   if (isExpanded) {
@@ -13203,6 +14453,27 @@ function _pkWireAll(root) {
       if (_pkExpandedSubjects.has(subj)) _pkExpandedSubjects.delete(subj);
       else _pkExpandedSubjects.add(subj);
       renderPicker();
+    });
+  });
+  // Piece 6 — "+ Req / ✓ Req" toggle on each course header.
+  // Always targets the ACTIVE plan so requirements live in one place
+  // even if the user is currently viewing a candidate.
+  root.querySelectorAll('[data-pkreq-toggle]').forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      const code = btn.getAttribute('data-pkreq-toggle');
+      const plan = (typeof _schScopePlan === 'function') ? _schScopePlan() : null;
+      if (!plan) return;
+      const existing = (plan.requirements || []).find(r => (r.courses || []).includes(code));
+      if (existing) {
+        if (existing.courses.length === 1) {
+          window.HS.catalog.plans.removeRequirement(plan.id, existing.id);
+        } else {
+          window.HS.catalog.plans.removeAlternative(plan.id, existing.id, code);
+        }
+      } else {
+        window.HS.catalog.plans.addRequirement(plan.id, [code]);
+      }
     });
   });
   // Search-result group collapse/expand (default = expanded).
