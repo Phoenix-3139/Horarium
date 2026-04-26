@@ -7376,7 +7376,7 @@
      Both share a paper-soft palette and editorial typography.
      ========================================================= */
   .onb-overlay[hidden] { display: none; }
-  .onb-checklist[hidden] { display: none; }
+  .fg-overlay[hidden] { display: none; }
   .onb-overlay {
     position: fixed;
     inset: 0;
@@ -7545,152 +7545,267 @@
     font-family: var(--font-mono);
     font-weight: 600;
   }
-  /* Help (?) button — sits in the nav as the last sibling of gear. */
+  /* Help / Field-guide button — sits in the nav. Made distinct so
+     it's discoverable: tinted accent background + label. */
   .fn-item.fn-help {
-    color: var(--ink-soft);
+    background: color-mix(in srgb, var(--accent, var(--ochre)) 14%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent, var(--ochre)) 38%, transparent);
+    color: var(--accent, var(--ochre));
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding-left: 0.65rem;
+    padding-right: 0.7rem;
+  }
+  .fn-item.fn-help:hover {
+    background: color-mix(in srgb, var(--accent, var(--ochre)) 22%, transparent);
+    border-color: var(--accent, var(--ochre));
   }
   .fn-item.fn-help .fn-icon {
     font-family: var(--font-display, 'Fraunces', serif);
     font-style: italic;
-    font-size: 1rem;
+    font-size: 1.05rem;
+    line-height: 1;
   }
+  .fn-item.fn-help .fn-label { font-weight: 600; }
 
-  /* ===== Floating progress checklist ===== */
-  .onb-checklist {
+  /* ============== FIELD GUIDE ==============
+     A flashcard-style learning panel. TOC on the left, active card
+     on the right. Walk through with prev/next or jump topics. */
+  .fg-overlay {
     position: fixed;
-    left: 0;
-    bottom: 0;
-    z-index: 95;
+    inset: 0;
+    z-index: 200;
     display: flex;
-    align-items: flex-end;
-    pointer-events: none;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: color-mix(in srgb, var(--ink) 35%, transparent);
+    backdrop-filter: blur(6px) saturate(110%);
+    -webkit-backdrop-filter: blur(6px) saturate(110%);
+    animation: onb-fade 0.3s ease;
   }
-  .onb-checklist > * { pointer-events: auto; }
-  .onb-checklist-tab {
-    display: none;
-    background: var(--accent, var(--ochre));
-    color: var(--cream, #fff);
-    border: 0;
-    border-radius: 0 6px 0 0;
-    padding: 0.55rem 0.95rem 0.6rem;
-    cursor: pointer;
-    box-shadow: 3px -3px 14px rgba(0, 0, 0, 0.16);
-    font-family: var(--font-mono);
-    transition: transform 0.2s;
-  }
-  .onb-checklist-tab:hover { transform: translateY(-3px); }
-  .onb-checklist-tab-num {
-    font-size: 1.1rem;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-  }
-  .onb-checklist-tab-of {
-    font-size: 0.7rem;
-    opacity: 0.85;
-    letter-spacing: 0.14em;
-    margin-left: 0.15rem;
-  }
-  .onb-checklist[data-collapsed="true"] .onb-checklist-tab { display: inline-flex; align-items: baseline; gap: 0.1rem; }
-  .onb-checklist[data-collapsed="true"] .onb-checklist-body { display: none; }
-
-  .onb-checklist-body {
-    width: 280px;
-    margin-left: 1rem;
-    margin-bottom: 1rem;
-    background: var(--surface, var(--paper-soft));
+  .fg-modal {
+    width: min(960px, 100%);
+    height: min(640px, calc(100vh - 4rem));
+    background: var(--paper, #f6f1e7);
     border: 1px solid var(--rule);
     border-radius: 6px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    overflow: hidden;
-  }
-  .onb-checklist-head {
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+    color: var(--ink);
     display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    padding: 0.7rem 0.9rem 0.55rem;
-    border-bottom: 1px solid var(--rule);
+    flex-direction: column;
+    overflow: hidden;
+    animation: onb-rise 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   }
-  .onb-checklist-tag {
+  .fg-header {
+    flex: 0 0 auto;
+    padding: 1.1rem 1.5rem 0.95rem;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .fg-tag {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent, var(--ochre));
+  }
+  .fg-title {
+    font-family: var(--font-display, 'Fraunces', serif);
+    font-weight: 500;
+    font-size: 1.55rem;
+    margin: 0.15rem 0 0;
+    letter-spacing: -0.01em;
+  }
+  .fg-close {
+    background: transparent;
+    border: 0;
+    color: var(--ink-faint);
+    font-size: 1.5rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0.1rem 0.45rem;
+    border-radius: 4px;
+  }
+  .fg-close:hover { color: var(--ink); background: color-mix(in srgb, var(--ink) 6%, transparent); }
+  .fg-body {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    min-height: 0;
+  }
+  @media (max-width: 700px) {
+    .fg-body { grid-template-columns: 1fr; }
+    .fg-toc { display: none; }
+  }
+  .fg-toc {
+    border-right: 1px solid var(--rule);
+    overflow-y: auto;
+    padding: 0.75rem 0.4rem 0.75rem 0.6rem;
+    background: color-mix(in srgb, var(--ink) 2%, transparent);
+  }
+  .fg-toc-section {
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0.85rem 0.55rem 0.3rem;
+  }
+  .fg-toc-section:first-child { margin-top: 0.2rem; }
+  .fg-toc-item {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: 0;
+    border-left: 2px solid transparent;
+    padding: 0.42rem 0.6rem 0.42rem 0.55rem;
+    cursor: pointer;
+    color: var(--ink-soft);
+    font-family: inherit;
+    font-size: 0.84rem;
+    line-height: 1.3;
+    border-radius: 0 3px 3px 0;
+    transition: background 0.12s, color 0.12s, border-color 0.12s;
+  }
+  .fg-toc-item:hover {
+    color: var(--ink);
+    background: color-mix(in srgb, var(--ink) 4%, transparent);
+  }
+  .fg-toc-item.is-active {
+    color: var(--ink);
+    background: color-mix(in srgb, var(--accent, var(--ochre)) 12%, transparent);
+    border-left-color: var(--accent, var(--ochre));
+    font-weight: 600;
+  }
+  .fg-card-pane {
+    overflow-y: auto;
+    padding: 1.6rem 2rem 1.2rem;
+  }
+  .fg-card-num {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 0.4rem;
+  }
+  .fg-card-num em {
+    color: var(--accent, var(--ochre));
+    font-style: normal;
+  }
+  .fg-card-title {
+    font-family: var(--font-display, 'Fraunces', serif);
+    font-weight: 500;
+    font-size: 1.85rem;
+    margin: 0 0 0.4rem;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+  }
+  .fg-card-title em { color: var(--accent, var(--ochre)); font-style: italic; }
+  .fg-card-lede {
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+    margin: 0 0 1.1rem;
+    line-height: 1.5;
+    max-width: 56ch;
+  }
+  .fg-card-body {
+    font-size: 0.85rem;
+    color: var(--ink);
+    line-height: 1.55;
+    max-width: 60ch;
+  }
+  .fg-card-body p { margin: 0 0 0.8rem; }
+  .fg-card-body strong { color: var(--ink); font-weight: 600; }
+  .fg-card-body em { color: var(--ink); font-style: italic; }
+  .fg-card-body kbd {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    padding: 0.05rem 0.35rem;
+    background: var(--cream);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    color: var(--ink);
+  }
+  .fg-card-body code {
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    background: var(--cream);
+    padding: 0.06rem 0.35rem;
+    border-radius: 3px;
+    color: var(--ink);
+  }
+  .fg-tip {
+    margin: 1rem 0 0.4rem;
+    padding: 0.6rem 0.85rem;
+    background: color-mix(in srgb, var(--accent, var(--ochre)) 10%, transparent);
+    border-left: 3px solid var(--accent, var(--ochre));
+    border-radius: 0 3px 3px 0;
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+    line-height: 1.45;
+  }
+  .fg-tip strong {
     font-family: var(--font-mono);
     font-size: 0.62rem;
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--accent, var(--ochre));
-    margin-bottom: 0.1rem;
+    margin-right: 0.4rem;
+    font-weight: 700;
   }
-  .onb-checklist-progress {
+  .fg-footer {
+    flex: 0 0 auto;
+    padding: 0.7rem 1.5rem;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+    background: color-mix(in srgb, var(--ink) 2%, transparent);
+  }
+  .fg-nav-btn {
+    background: transparent;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 0.45rem 0.95rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    cursor: pointer;
+    font-weight: 600;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+  }
+  .fg-nav-btn:hover {
+    color: var(--accent, var(--ochre));
+    border-color: var(--accent, var(--ochre));
+  }
+  .fg-nav-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+  .fg-counter {
     font-family: var(--font-display, 'Fraunces', serif);
     font-style: italic;
-    font-size: 0.84rem;
-    color: var(--ink-soft);
-  }
-  .onb-checklist-tools {
-    display: inline-flex;
-    gap: 0.15rem;
-  }
-  .onb-checklist-collapse, .onb-checklist-dismiss {
-    background: transparent;
-    border: 0;
-    color: var(--ink-faint);
-    cursor: pointer;
-    font-family: var(--font-mono);
     font-size: 0.95rem;
-    padding: 0 0.35rem;
-    line-height: 1;
-    border-radius: 3px;
-  }
-  .onb-checklist-collapse { transform: rotate(-90deg); display: inline-block; }
-  .onb-checklist-collapse:hover, .onb-checklist-dismiss:hover { color: var(--accent, var(--ochre)); background: color-mix(in srgb, var(--ink) 4%, transparent); }
-  .onb-checklist-dismiss:hover { color: var(--rust, var(--accent)); }
-
-  .onb-checklist-list {
-    list-style: none;
-    margin: 0;
-    padding: 0.4rem 0.4rem 0.7rem;
-  }
-  .onb-checklist-list li {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.55rem;
-    padding: 0.45rem 0.55rem;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background 0.12s;
-  }
-  .onb-checklist-list li:hover { background: color-mix(in srgb, var(--ink) 4%, transparent); }
-  .onb-checklist-list li[data-done="true"] { opacity: 0.6; }
-  .onb-checklist-list li[data-done="true"] .onb-task-text { text-decoration: line-through; color: var(--ink-faint); }
-  .onb-task-mark {
-    flex: 0 0 auto;
-    width: 1.05rem;
-    height: 1.05rem;
-    border: 1.5px solid var(--ink-faint);
-    border-radius: 999px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--paper, #fff);
-    font-size: 0.7rem;
-    line-height: 1;
-    margin-top: 0.1rem;
-    transition: background 0.15s, border-color 0.15s;
-  }
-  li[data-done="true"] .onb-task-mark {
-    background: var(--mossy, var(--accent));
-    border-color: var(--mossy, var(--accent));
-  }
-  .onb-task-text {
-    font-size: 0.84rem;
-    line-height: 1.35;
-    color: var(--ink);
-  }
-  .onb-task-hint {
-    display: block;
-    font-size: 0.7rem;
     color: var(--ink-faint);
-    margin-top: 0.1rem;
-    font-style: italic;
   }
+  .fg-counter strong {
+    color: var(--ink);
+    font-weight: 500;
+    font-style: normal;
+    font-family: var(--font-mono);
+    margin: 0 0.1rem;
+  }
+
 
   /* ===== Empty-state utility =====
      For surfaces that LOOK like they should have content but don't —
@@ -12810,12 +12925,13 @@ function renderNav() {
   gearBtn.innerHTML = '<span class="fn-icon">⚙</span>';
   gearBtn.onclick = openConfigModal;
   nav.appendChild(gearBtn);
-  // Help (?) button → re-opens the onboarding welcome card.
+  // Field-guide button — labeled so it's discoverable. Opens the
+  // browseable flashcard guide.
   const helpBtn = document.createElement('button');
   helpBtn.className = 'fn-item fn-help';
-  helpBtn.title = 'Replay the welcome';
-  helpBtn.innerHTML = '<span class="fn-icon">?</span>';
-  helpBtn.onclick = () => onbShowWelcome();
+  helpBtn.title = 'Open the field guide — learn what Horarium can do';
+  helpBtn.innerHTML = '<span class="fn-icon">?</span><span class="fn-label">Guide</span>';
+  helpBtn.onclick = () => { if (typeof fgShow === 'function') fgShow(0); };
   nav.appendChild(helpBtn);
 }
 
@@ -16757,85 +16873,53 @@ function _catUpdateEmptyState() {
       </li>
     </ol>
     <div class="onb-actions">
-      <button type="button" class="onb-primary" id="onb-walk">Walk me through it</button>
+      <button type="button" class="onb-primary" id="onb-walk">Open the field guide</button>
       <button type="button" class="onb-secondary" id="onb-explore">Let me explore</button>
     </div>
-    <p class="onb-foot">You can replay this any time from the <strong>?</strong> button in the nav.</p>
+    <p class="onb-foot">You can re-open the field guide any time from the <strong>? Guide</strong> button in the nav.</p>
   </article>
 </div>
 
-<!-- ========== ONBOARDING — floating progress checklist ==========
-     Bottom-left counterpart to the right-edge flags. Tracks 5
-     core milestones and auto-checks them as the user does things.
-     Collapsible; permanently dismissible via × once all done. -->
+<!-- ========== FIELD GUIDE — flashcard-style help / onboarding ==========
+     Browseable encyclopedia of features. TOC on the left, the active
+     card on the right. Prev/next walks through every card; clicking
+     a TOC item jumps. -->
+<div class="fg-overlay" id="fg-overlay" hidden aria-modal="true" role="dialog" aria-labelledby="fg-title">
+  <article class="fg-modal">
+    <header class="fg-header">
+      <div class="fg-header-text">
+        <span class="fg-tag">field guide</span>
+        <h2 class="fg-title" id="fg-title">How Horarium <em>works</em></h2>
+      </div>
+      <button type="button" class="fg-close" id="fg-close" aria-label="Close">×</button>
+    </header>
+    <div class="fg-body">
+      <nav class="fg-toc" id="fg-toc" aria-label="Topics"></nav>
+      <section class="fg-card-pane" id="fg-card-pane" tabindex="-1"></section>
+    </div>
+    <footer class="fg-footer">
+      <button type="button" class="fg-nav-btn" id="fg-prev" aria-label="Previous card">‹ Previous</button>
+      <span class="fg-counter" id="fg-counter">— / —</span>
+      <button type="button" class="fg-nav-btn" id="fg-next" aria-label="Next card">Next ›</button>
+    </footer>
+  </article>
+</div>
+
 <script>
 // =========================================================
-// ONBOARDING — welcome card + progress checklist
-// localStorage keys:
-//   horarium.onboarding.welcomed   "true" once the user has dismissed
-//                                  the welcome card (any path)
-//   horarium.onboarding.checklist_dismissed
-//                                  "true" if the user explicitly hid
-//                                  the checklist permanently
-//   horarium.onboarding.checklist_collapsed
-//                                  "true" if collapsed to tab (soft)
+// ONBOARDING — welcome card + Field Guide
+//
+// Flow:
+//   First run → welcome card appears (one-shot, gated by
+//     localStorage flag horarium.onboarding.welcomed).
+//   "Open the field guide" → closes welcome, opens Field Guide.
+//   "Let me explore" → closes welcome, no Field Guide.
+//   Nav "? Guide" button → re-opens the Field Guide any time.
+//   Welcome can also be re-shown via onbShowWelcome() in console.
 // =========================================================
 const ONB_KEYS = {
   WELCOMED: 'horarium.onboarding.welcomed',
-  CHECKLIST_DISMISSED: 'horarium.onboarding.checklist_dismissed',
-  CHECKLIST_COLLAPSED: 'horarium.onboarding.checklist_collapsed',
 };
-const ONB_TASKS = [
-  {
-    id: 'paste',
-    text: 'Paste your Albert catalog',
-    hint: 'Catalog tab → paste box',
-    goto: 'catalog',
-    done: () => (window.HS && window.HS.catalog && window.HS.catalog.getEffective().courses.length > 0),
-  },
-  {
-    id: 'stage',
-    text: 'Stage your first section',
-    hint: 'Main tab → click Stage on any section',
-    goto: 'main',
-    done: () => {
-      const p = window.HS && window.HS.catalog && window.HS.catalog.plans.getActive();
-      return !!(p && p.sections && p.sections.length > 0);
-    },
-  },
-  {
-    id: 'calendar',
-    text: 'See it on the calendar',
-    hint: 'Main tab — schedule grid lights up',
-    goto: 'main',
-    done: () => {
-      const p = window.HS && window.HS.catalog && window.HS.catalog.plans.getActive();
-      return !!(p && p.sections && p.sections.length > 0);
-    },
-  },
-  {
-    id: 'wanted',
-    text: 'Build a wanted expression',
-    hint: 'Open the logic maker (bottom-right tab)',
-    goto: 'main',
-    action: () => { if (typeof toggleSchedulerDrawer === 'function' && !document.body.classList.contains('sch-drawer-open')) toggleSchedulerDrawer(); },
-    done: () => {
-      const p = window.HS && window.HS.catalog && window.HS.catalog.plans.getActive();
-      return !!(p && p.wanted && p.wanted.root);
-    },
-  },
-  {
-    id: 'auto',
-    text: 'Pick an auto-generated schedule',
-    hint: 'Generate schedules → Pick one',
-    goto: 'main',
-    done: () => {
-      if (!(window.HS && window.HS.catalog && window.HS.catalog.plans)) return false;
-      return window.HS.catalog.plans.list().some((p) => p.origin === 'auto-scheduler');
-    },
-  },
-];
-
 function onbHasWelcomed() {
   try { return localStorage.getItem(ONB_KEYS.WELCOMED) === 'true'; } catch { return true; }
 }
@@ -16851,151 +16935,192 @@ function onbShowWelcome() {
   if (ov) ov.hidden = false;
 }
 
-function onbChecklistShouldShow() {
-  // Hidden permanently?
-  try {
-    if (localStorage.getItem(ONB_KEYS.CHECKLIST_DISMISSED) === 'true') return false;
-  } catch {}
-  // All tasks done? Auto-hide so we don't pester finished users.
-  if (ONB_TASKS.every((t) => safeDone(t))) return false;
-  return true;
-}
-function safeDone(task) {
-  try { return !!task.done(); } catch { return false; }
-}
+// ---- Field Guide content ----
+// Each card: { id, section, title, lede, body, tip? }
+// `body` is HTML; keep it short and scannable.
+const FG_CARDS = [
+  // -------- Basics --------
+  { id: 'overview', section: 'Basics', title: 'What is <em>Horarium</em>?',
+    lede: 'A schedule planner for NYU Abu Dhabi students. Local-first, browser-only, no accounts.',
+    body: '<p>Horarium reads your Albert search results and turns them into something you can plan against. Stage sections to see them on the calendar; build a wanted expression and let the auto-scheduler find arrangements that fit.</p><p>Everything stays in <strong>this browser tab</strong>. Nothing is uploaded. Storage is opt-in (Catalog → Manage).</p>' },
+  { id: 'paste', section: 'Basics', title: 'Paste from <em>Albert</em>',
+    lede: 'You bring the catalog data. Horarium parses it.',
+    body: '<p>Open Albert, run a class search filtered by a single subject (ENGR-UH, MATH-UH, &amp;c.), then <kbd>Ctrl+A</kbd> / <kbd>⌘A</kbd>, copy, and paste into the <strong>Catalog</strong> tab.</p><p>Subjects accumulate. Re-pasting the same subject replaces it.</p>',
+    tip: 'Include the entire results page — the <code>1 – N results for: ENGR-UH</code> header has to be there so the parser can anchor.' },
+  { id: 'browsing', section: 'Basics', title: 'Browsing &amp; <em>filtering</em>',
+    lede: 'Subjects collapse; expand to see courses; filters narrow the list.',
+    body: '<p>The <strong>Main</strong> tab shows your catalog as a directory. Click a subject to expand its courses, click a course to see its sections.</p><p>Filter chips above the list (Status, Type, Days, Time) narrow the directory in real time. You can also full-text search by code, title, or instructor.</p>' },
+  { id: 'staging', section: 'Basics', title: 'Stage <em>sections</em>',
+    lede: 'Click <kbd>Stage</kbd> on any section to add it to the active plan.',
+    body: '<p>Staging is non-blocking. If a section conflicts with what you already have, the picker shows the conflict inline but stages anyway — you can always unstage. The calendar fills in immediately.</p>',
+    tip: 'Closed and waitlisted sections are stage-able too. They show a small confirm prompt because of the obvious tradeoff.' },
 
-function onbRenderChecklist() {
-  const root = document.getElementById('onb-checklist');
-  if (!root) return;
-  if (!onbChecklistShouldShow()) {
-    root.hidden = true;
-    return;
-  }
-  root.hidden = false;
-  // Collapsed?
-  let collapsed = false;
-  try { collapsed = localStorage.getItem(ONB_KEYS.CHECKLIST_COLLAPSED) === 'true'; } catch {}
-  root.setAttribute('data-collapsed', collapsed ? 'true' : 'false');
+  // -------- Schedule --------
+  { id: 'calendar', section: 'Schedule', title: 'The <em>calendar</em>',
+    lede: 'Two halves — NYU AD splits each semester.',
+    body: '<p>The grid splits into <strong>i. First half (A71)</strong> and <strong>ii. Second half (A72)</strong> because NYUAD courses run over either half or the full term. Tiles are colored per subject for quick scanning.</p><p>Click a tile to see the section detail in the legend below.</p>' },
+  { id: 'table', section: 'Schedule', title: 'The <em>table</em> view',
+    lede: 'Same plan, list form. Useful for reading rooms and instructors.',
+    body: '<p>Toggle to <strong>Table</strong> next to the Calendar button. Same staged sections, but laid out as a list with full instructor and room columns. Better for printing or copying.</p>' },
+  { id: 'plans', section: 'Schedule', title: '<em>Plans</em>',
+    lede: 'Sandbox different schedules side-by-side.',
+    body: '<p>Section 01 holds your plans. The <strong>active</strong> plan is what most of the app reads from. Create a candidate to try a different arrangement without losing your main one. Promote a candidate to make it active.</p>' },
+  { id: 'links', section: 'Schedule', title: 'Linking <em>sections</em>',
+    lede: 'Tie a Lecture to a particular Lab so they move together.',
+    body: '<p>Click the <kbd>⛓</kbd> icon on any staged section, then click another to link them. When you unstage one, you get a prompt about the linked partner.</p>' },
 
-  // Tasks
-  const list = document.getElementById('onb-checklist-list');
-  if (!list) return;
-  let doneCount = 0;
-  list.innerHTML = ONB_TASKS.map((task) => {
-    const done = safeDone(task);
-    if (done) doneCount++;
-    return '<li data-done="' + done + '" data-task-id="' + task.id + '">' +
-      '<span class="onb-task-mark">' + (done ? '✓' : '') + '</span>' +
-      '<span><span class="onb-task-text">' + _brEscape(task.text) + '</span>' +
-      '<span class="onb-task-hint">' + _brEscape(task.hint) + '</span></span>' +
-    '</li>';
-  }).join('');
-  // Wire row clicks → switch tab + run action
-  list.querySelectorAll('[data-task-id]').forEach((li) => {
-    li.addEventListener('click', () => {
-      const tid = li.getAttribute('data-task-id');
-      const task = ONB_TASKS.find((t) => t.id === tid);
-      if (!task) return;
-      if (task.goto && typeof switchTab === 'function') switchTab(task.goto);
-      setTimeout(() => { if (typeof task.action === 'function') task.action(); }, 100);
+  // -------- Auto-scheduler --------
+  { id: 'logic', section: 'Auto-scheduler', title: 'The <em>logic maker</em>',
+    lede: 'Tell the scheduler what you want with rainbow brackets.',
+    body: '<p>Open with the <strong>? Auto Schedule</strong> tab at the bottom-right. The bottom sheet that slides up holds a nested AND/OR expression. Each depth gets its own bracket color so the scope reads at a glance.</p><p>Click <kbd>+ Want</kbd> on any course in the picker; the cursor picks it up. Drop into a bracket to nest it under that group.</p>' },
+  { id: 'andor', section: 'Auto-scheduler', title: '<em>AND</em> vs <em>OR</em>',
+    lede: 'And = include all of these. Or = pick one of these.',
+    body: '<p>Click any operator label (<em>and</em> / <em>or</em>) to flip it. The <kbd>+ group</kbd> button next to a bracket nests a sub-group inside it. The <kbd>⌥</kbd> on a chip wraps that one chip into an <em>or</em>-group so you can drop alternatives next to it.</p>',
+    tip: 'A typical NYU AD wanted: <code>and [ ENGR-UH 1000  or [ 2010, 2011 ]  CORE-UH 1234 ]</code>.' },
+  { id: 'shelves', section: 'Auto-scheduler', title: 'Shelving <em>categories</em>',
+    lede: 'Defer "any course from CSTS" to after the schedule is built.',
+    body: '<p>While the logic maker is open, every subject in the picker grows a <kbd>+ ANY</kbd> pill. Click it to <strong>shelve</strong> the subject — the solver will skip it (so it doesn\'t multiply candidates by every CSTS course).</p><p>Shelves render as dashed plum chips in the expression and the dock summary.</p>' },
+  { id: 'generate', section: 'Auto-scheduler', title: 'Generate, preview, <em>pick</em>',
+    lede: 'The dock below the calendar drives the pipeline.',
+    body: '<p>The <strong>Auto-scheduler</strong> section under the calendar shows your wanted summary, preferences (no-starts-before, lunch break, day distribution), and the <kbd>Generate schedules</kbd> button.</p><p>Results are ranked. Click <strong>Preview</strong> on any candidate to see it on the calendar; <strong>Pick</strong> commits it as a candidate plan.</p>' },
+  { id: 'fillin', section: 'Auto-scheduler', title: 'Fill-in <em>shelves</em>',
+    lede: 'After preview/pick, the under-table panel asks you to fill in shelved subjects.',
+    body: '<p>If you shelved CSTS, after picking a schedule you\'ll see a <strong>Fill-in</strong> panel beneath the calendar listing every shelved subject. Click <kbd>Pick</kbd> to jump to that subject in the picker; staging anything from it flips the row to <em>✓ filled</em>.</p>' },
+
+  // -------- More --------
+  { id: 'filters', section: 'More', title: 'Personal-time <em>filters</em>',
+    lede: 'Block out hours so the auto-scheduler avoids them.',
+    body: '<p>The <strong>+ Add</strong> flag at the top-right adds a personal-time filter (e.g. workout, prayer, meal). The auto-scheduler treats those blocks as conflicts and won\'t schedule classes inside them.</p>' },
+  { id: 'themes', section: 'More', title: '<em>Themes</em>',
+    lede: 'Editorial, Coffee, Futuristic, Nature.',
+    body: '<p>Switch from the gear button in the nav. Each theme has its own typography, palette, and copy — calendar tiles, chips, and accents all retint accordingly. Your data is unaffected.</p>' },
+  { id: 'data', section: 'More', title: 'Your <em>data</em>',
+    lede: 'Local-first means just that: it lives in this tab.',
+    body: '<p>On first run you choose a storage mode: <strong>save always</strong> (localStorage, persists across sessions), <strong>session only</strong> (in-memory, cleared on tab close), or <strong>never</strong> (you re-paste each session).</p><p>Wipe everything from <strong>Catalog → Manage → Clear</strong>.</p>' },
+];
+
+let _fgIdx = 0;
+function fgShow(idx) {
+  const ov = document.getElementById('fg-overlay');
+  if (!ov) return;
+  if (typeof idx === 'number') _fgIdx = Math.max(0, Math.min(FG_CARDS.length - 1, idx));
+  ov.hidden = false;
+  fgRenderTOC();
+  fgRenderCard();
+  setTimeout(() => {
+    const pane = document.getElementById('fg-card-pane');
+    if (pane) pane.focus();
+  }, 0);
+}
+function fgHide() {
+  const ov = document.getElementById('fg-overlay');
+  if (ov) ov.hidden = true;
+}
+function fgRenderTOC() {
+  const toc = document.getElementById('fg-toc');
+  if (!toc) return;
+  let html = '';
+  let lastSection = null;
+  FG_CARDS.forEach((card, i) => {
+    if (card.section !== lastSection) {
+      html += '<div class="fg-toc-section">' + _brEscape(card.section) + '</div>';
+      lastSection = card.section;
+    }
+    const isActive = i === _fgIdx ? ' is-active' : '';
+    // Strip <em> tags for the TOC label (visual noise).
+    const tocLabel = card.title.replace(/<\/?em>/g, '');
+    html += '<button type="button" class="fg-toc-item' + isActive + '" data-fg-idx="' + i + '">' + tocLabel + '</button>';
+  });
+  toc.innerHTML = html;
+  toc.querySelectorAll('[data-fg-idx]').forEach((b) => {
+    b.addEventListener('click', () => {
+      _fgIdx = Number(b.getAttribute('data-fg-idx'));
+      fgRenderTOC();
+      fgRenderCard();
+      const pane = document.getElementById('fg-card-pane');
+      if (pane) pane.scrollTop = 0;
     });
   });
-  const total = ONB_TASKS.length;
-  const numEl = document.getElementById('onb-checklist-tab-num');
-  const progressEl = document.getElementById('onb-checklist-progress');
-  if (numEl) numEl.textContent = String(doneCount);
-  if (progressEl) progressEl.textContent = doneCount + ' of ' + total + ' done';
+  // Scroll active TOC item into view.
+  const active = toc.querySelector('.fg-toc-item.is-active');
+  if (active && active.scrollIntoView) active.scrollIntoView({ block: 'nearest' });
+}
+function fgRenderCard() {
+  const pane = document.getElementById('fg-card-pane');
+  const card = FG_CARDS[_fgIdx];
+  if (!pane || !card) return;
+  let html = '';
+  html += '<div class="fg-card-num">' + _brEscape(card.section) + ' &middot; <em>' + (_fgIdx + 1) + ' / ' + FG_CARDS.length + '</em></div>';
+  html += '<h3 class="fg-card-title">' + card.title + '</h3>';
+  if (card.lede) html += '<p class="fg-card-lede">' + card.lede + '</p>';
+  html += '<div class="fg-card-body">' + card.body + '</div>';
+  if (card.tip) html += '<div class="fg-tip"><strong>Tip</strong>' + card.tip + '</div>';
+  pane.innerHTML = html;
+  // Footer state
+  const counter = document.getElementById('fg-counter');
+  if (counter) counter.innerHTML = '<strong>' + (_fgIdx + 1) + '</strong> of <strong>' + FG_CARDS.length + '</strong>';
+  const prev = document.getElementById('fg-prev');
+  const next = document.getElementById('fg-next');
+  if (prev) prev.disabled = _fgIdx === 0;
+  if (next) next.disabled = _fgIdx === FG_CARDS.length - 1;
 }
 
+let _onbBooted = false;
 function onbBoot() {
-  // Welcome card wiring
+  if (_onbBooted) return;
+  _onbBooted = true;
+  // Welcome card wiring.
   const ov = document.getElementById('onb-overlay');
-  if (!ov) return;
-  document.getElementById('onb-walk').addEventListener('click', () => {
-    onbMarkWelcomed();
-    onbHideWelcome();
-    // "Walk me through" → expand checklist + jump to Catalog tab.
-    try { localStorage.removeItem(ONB_KEYS.CHECKLIST_COLLAPSED); } catch {}
-    try { localStorage.removeItem(ONB_KEYS.CHECKLIST_DISMISSED); } catch {}
-    onbRenderChecklist();
-    if (typeof switchTab === 'function') switchTab('catalog');
-  });
-  document.getElementById('onb-explore').addEventListener('click', () => {
-    onbMarkWelcomed();
-    onbHideWelcome();
-    onbRenderChecklist();
-  });
-  document.getElementById('onb-close').addEventListener('click', () => {
-    onbMarkWelcomed();
-    onbHideWelcome();
-    onbRenderChecklist();
-  });
-  // Esc closes the welcome card
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && !ov.hidden) {
+  if (ov) {
+    document.getElementById('onb-walk').addEventListener('click', () => {
       onbMarkWelcomed();
       onbHideWelcome();
-      onbRenderChecklist();
+      fgShow(0);
+    });
+    document.getElementById('onb-explore').addEventListener('click', () => {
+      onbMarkWelcomed();
+      onbHideWelcome();
+    });
+    document.getElementById('onb-close').addEventListener('click', () => {
+      onbMarkWelcomed();
+      onbHideWelcome();
+    });
+  }
+
+  // Field-guide wiring.
+  document.getElementById('fg-close').addEventListener('click', fgHide);
+  document.getElementById('fg-prev').addEventListener('click', () => {
+    if (_fgIdx > 0) { _fgIdx--; fgRenderTOC(); fgRenderCard(); document.getElementById('fg-card-pane').scrollTop = 0; }
+  });
+  document.getElementById('fg-next').addEventListener('click', () => {
+    if (_fgIdx < FG_CARDS.length - 1) { _fgIdx++; fgRenderTOC(); fgRenderCard(); document.getElementById('fg-card-pane').scrollTop = 0; }
+  });
+
+  // Global keyboard shortcuts: Esc closes either modal; arrow keys
+  // navigate the field guide when it's the topmost.
+  document.addEventListener('keydown', (e) => {
+    const fgOpen = !document.getElementById('fg-overlay').hidden;
+    const onbOpen = !document.getElementById('onb-overlay').hidden;
+    if (e.key === 'Escape') {
+      if (fgOpen) { fgHide(); e.preventDefault(); return; }
+      if (onbOpen) { onbMarkWelcomed(); onbHideWelcome(); e.preventDefault(); return; }
+    }
+    if (fgOpen && e.key === 'ArrowRight') {
+      if (_fgIdx < FG_CARDS.length - 1) { _fgIdx++; fgRenderTOC(); fgRenderCard(); }
+      e.preventDefault();
+    }
+    if (fgOpen && e.key === 'ArrowLeft') {
+      if (_fgIdx > 0) { _fgIdx--; fgRenderTOC(); fgRenderCard(); }
+      e.preventDefault();
     }
   });
 
-  // Checklist wiring
-  const tab = document.getElementById('onb-checklist-tab');
-  const collapseBtn = document.getElementById('onb-checklist-collapse');
-  const dismissBtn = document.getElementById('onb-checklist-dismiss');
-  if (tab) tab.addEventListener('click', () => {
-    try { localStorage.removeItem(ONB_KEYS.CHECKLIST_COLLAPSED); } catch {}
-    onbRenderChecklist();
-  });
-  if (collapseBtn) collapseBtn.addEventListener('click', () => {
-    try { localStorage.setItem(ONB_KEYS.CHECKLIST_COLLAPSED, 'true'); } catch {}
-    onbRenderChecklist();
-  });
-  if (dismissBtn) dismissBtn.addEventListener('click', () => {
-    try { localStorage.setItem(ONB_KEYS.CHECKLIST_DISMISSED, 'true'); } catch {}
-    onbRenderChecklist();
-  });
-
-  // Subscribe to catalog mutations so the checklist auto-checks tasks
-  // as the user does them. Throttle to one paint per task change.
-  if (window.HS && window.HS.catalog && window.HS.catalog.subscribe) {
-    let raf = null;
-    window.HS.catalog.subscribe(() => {
-      if (raf) return;
-      raf = requestAnimationFrame(() => { raf = null; onbRenderChecklist(); });
-    });
-  }
-
-  // First paint
-  onbRenderChecklist();
-
   // Show welcome on first run.
-  if (!onbHasWelcomed()) {
-    onbShowWelcome();
-  }
+  if (!onbHasWelcomed()) onbShowWelcome();
 }
 window.addEventListener('horarium:ready', onbBoot);
 </script>
 
-<aside class="onb-checklist" id="onb-checklist" hidden>
-  <button type="button" class="onb-checklist-tab" id="onb-checklist-tab" title="Show progress">
-    <span class="onb-checklist-tab-num" id="onb-checklist-tab-num">0</span>
-    <span class="onb-checklist-tab-of">/ 5</span>
-  </button>
-  <div class="onb-checklist-body" id="onb-checklist-body">
-    <header class="onb-checklist-head">
-      <div>
-        <div class="onb-checklist-tag">Get started</div>
-        <div class="onb-checklist-progress" id="onb-checklist-progress">0 of 5 done</div>
-      </div>
-      <div class="onb-checklist-tools">
-        <button type="button" class="onb-checklist-collapse" id="onb-checklist-collapse" title="Hide">›</button>
-        <button type="button" class="onb-checklist-dismiss" id="onb-checklist-dismiss" title="Dismiss permanently">×</button>
-      </div>
-    </header>
-    <ol class="onb-checklist-list" id="onb-checklist-list"></ol>
-  </div>
-</aside>
 
 </body>
 </html>
