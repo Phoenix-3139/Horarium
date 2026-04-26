@@ -94,6 +94,30 @@
     --font-heading: var(--font-display);
   }
 
+  /* Themed scrollbars. Thin track, ink-tinted thumb at rest, accent
+     on hover. The padding-box border trick gives the thumb a small
+     inset so it doesn't touch the edge — reads more refined than the
+     OS default. Picks up the active theme automatically via the ink
+     and accent tokens. */
+  :root {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--ink, #2b2a26) 22%, transparent) transparent;
+  }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--ink, #2b2a26) 22%, transparent);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    border-radius: 999px;
+    transition: background 0.15s;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in srgb, var(--accent, var(--ochre)) 65%, transparent);
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-corner { background: transparent; }
+
   /* dark theme — editorial after dark
      Warm coffee-charcoal canvas with the same Fraunces serif voice.
      Ink is a warm cream (NOT cool grey), accent is a refined honey
