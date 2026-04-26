@@ -256,6 +256,7 @@ export function createPersistence(catalog, options = {}) {
       "addAlternative", "removeAlternative",
       "lockRequirementSection", "unlockRequirementSection",
       "updatePreferences",
+      "addToWanted", "removeFromWanted", "clearWanted",
       "clearByOrigin",
     ];
     for (const name of PLAN_MUTATORS) {

@@ -6122,18 +6122,22 @@
   .scheduler-flag:hover { transform: translateX(5px); }
   .scheduler-flag.hidden { transform: translateX(-110%); }
 
+  /* No backdrop dim — drawer pushes the page instead. */
   .scheduler-backdrop {
-    position: fixed;
-    inset: 0;
-    z-index: 100;
-    background: rgba(0, 0, 0, 0.35);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.25s;
+    display: none;
   }
-  .scheduler-backdrop.open {
-    opacity: 1;
-    pointer-events: auto;
+  /* When the drawer is open, the main container slides right to make
+     room. When the results panel is open it slides left. Together
+     they can squeeze the calendar a bit, which is intended. */
+  body.sch-drawer-open .container {
+    transform: translateX(440px);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  body.sch-drawer-open.sch-results-open .container {
+    transform: translateX(220px);
+  }
+  body:not(.sch-drawer-open) .container {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   .scheduler-drawer {
     position: fixed;
@@ -6167,6 +6171,132 @@
     text-transform: uppercase;
     color: var(--ink-faint);
   }
+  /* Pending-selection pill: shows the course the user has clicked in
+     the picker but hasn't yet placed in one of the zones. */
+  .sch-pending-row {
+    margin: 0 1.25rem 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.45rem 0.65rem;
+    background: var(--cream);
+    border: 1px dashed color-mix(in srgb, var(--ink) 18%, transparent);
+    border-radius: var(--radius-sm, 2px);
+  }
+  .sch-pending-label {
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .sch-pending-pill {
+    flex: 1;
+    font-family: var(--font-mono);
+    font-size: 0.84rem;
+    color: var(--ink-soft);
+  }
+  .sch-pending-pill.is-set {
+    color: var(--accent, var(--ochre));
+    font-weight: 600;
+  }
+  .sch-pending-clear {
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    color: var(--ink-faint);
+    padding: 0 0.35rem;
+    font-size: 0.95rem;
+    line-height: 1;
+  }
+  .sch-pending-clear:hover { color: var(--error, var(--rust)); }
+
+  /* AND / OR drop zones. Two shaded boxes side by side, become an
+     active "drop target" while a course is pending selection. */
+  .sch-zones {
+    margin: 0 1.25rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.65rem;
+  }
+  .sch-zone {
+    background: color-mix(in srgb, var(--ink) 4%, transparent);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-md, 4px);
+    padding: 0.6rem 0.7rem 0.7rem;
+    min-height: 7rem;
+    cursor: default;
+    transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+    outline: none;
+  }
+  .sch-zone-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 0.4rem;
+  }
+  .sch-zone-label {
+    font-family: var(--font-display, 'Fraunces', serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 1.05rem;
+    color: var(--ink);
+  }
+  .sch-zone-help {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .sch-zone-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  .sch-zone-empty {
+    font-size: 0.78rem;
+    color: var(--ink-faint);
+    font-style: italic;
+    padding: 0.25rem 0;
+  }
+  /* When a course is pending, both zones glow as drop targets. */
+  body.sch-has-pending .sch-zone {
+    cursor: copy;
+    background: color-mix(in srgb, var(--accent, var(--ochre)) 8%, transparent);
+    border-color: color-mix(in srgb, var(--accent, var(--ochre)) 35%, transparent);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent, var(--ochre)) 20%, transparent);
+  }
+  body.sch-has-pending .sch-zone:hover,
+  body.sch-has-pending .sch-zone:focus {
+    background: color-mix(in srgb, var(--accent, var(--ochre)) 14%, transparent);
+    border-color: var(--accent, var(--ochre));
+  }
+  /* Each course chip inside a zone. */
+  .sch-zone-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.55rem;
+    background: var(--cream);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent, var(--ochre));
+    border-radius: var(--radius-sm, 2px);
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    color: var(--ink);
+  }
+  .sch-zone-item-x {
+    background: transparent;
+    border: 0;
+    color: var(--ink-faint);
+    cursor: pointer;
+    padding: 0 0.2rem;
+    font-size: 0.85rem;
+    line-height: 1;
+  }
+  .sch-zone-item-x:hover { color: var(--error, var(--rust)); }
+
   .sch-req-list {
     padding: 0 1.25rem;
     display: flex;
@@ -7918,18 +8048,34 @@
   <div class="drawer-header">
     <div>
       <div class="drawer-tag">Auto-scheduler</div>
-      <h3>Build a schedule <em>from your requirements</em></h3>
+      <h3>Build a schedule <em>from your wanted</em></h3>
     </div>
     <button class="drawer-close" onclick="toggleSchedulerDrawer()" aria-label="Close drawer">×</button>
   </div>
   <div class="drawer-body">
-    <p class="picker-sub">Pick the courses you need and the soft preferences. The solver enumerates valid combinations, scores them, and lists the best candidates on the right.</p>
+    <p class="picker-sub">Click <strong>+ Want</strong> on a course in the picker, then drop it into one of the zones below. <em>And</em> = include all of these. <em>Or</em> = at least one of these.</p>
 
-    <div class="sch-section-h">Required</div>
-    <div class="sch-req-list" id="sch-req-list"></div>
-    <div class="sch-add-row">
-      <input type="text" class="sch-add-input" id="sch-add-input" placeholder="e.g. ENGR-UH 1000" autocomplete="off">
-      <button type="button" class="sch-add-btn" onclick="_schAddFromInput()">+ Add</button>
+    <div class="sch-section-h">Wanted</div>
+    <div class="sch-pending-row" id="sch-pending-row">
+      <span class="sch-pending-label">Selected for adding</span>
+      <span class="sch-pending-pill" id="sch-pending-pill">— pick a course in the picker —</span>
+      <button type="button" class="sch-pending-clear" id="sch-pending-clear" hidden onclick="_schClearPending()">×</button>
+    </div>
+    <div class="sch-zones">
+      <div class="sch-zone sch-zone-and" id="sch-zone-and" data-sch-zone="and" tabindex="0">
+        <div class="sch-zone-head">
+          <span class="sch-zone-label">And</span>
+          <span class="sch-zone-help">include all of these</span>
+        </div>
+        <div class="sch-zone-body" id="sch-zone-and-body"></div>
+      </div>
+      <div class="sch-zone sch-zone-or" id="sch-zone-or" data-sch-zone="or" tabindex="0">
+        <div class="sch-zone-head">
+          <span class="sch-zone-label">Or</span>
+          <span class="sch-zone-help">at least one of these</span>
+        </div>
+        <div class="sch-zone-body" id="sch-zone-or-body"></div>
+      </div>
     </div>
 
     <div class="sch-section-h">Preferences</div>
@@ -8462,21 +8608,104 @@ let _schSavedViewPlanId = null;   // restored on cancel-preview
 let _schPickedPlanIds = new Set(); // tracks the auto-scheduler plans we've created so we can clean up on regen
 const _schAutoOrigin = 'auto-scheduler';
 
+// _schPendingCourse holds a course code the user has clicked the
+// + Want pill on, but hasn't yet placed in the AND or OR zone.
+let _schPendingCourse = null;
+
 function toggleSchedulerDrawer() {
   _schDrawerOpen = !_schDrawerOpen;
   const drawer = document.getElementById('scheduler-drawer');
-  const backdrop = document.getElementById('scheduler-backdrop');
   if (_schDrawerOpen) {
     drawer.classList.add('open');
-    backdrop.classList.add('open');
     drawer.setAttribute('aria-hidden', 'false');
-    _schRenderRequirements();
+    document.body.classList.add('sch-drawer-open');
+    _schRenderZones();
     _schSyncPreferencesFromPlan();
   } else {
     drawer.classList.remove('open');
-    backdrop.classList.remove('open');
     drawer.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('sch-drawer-open');
   }
+}
+
+// The active plan's wanted bucket: { and: [...], or: [...] }. Single
+// source of truth for the drop-zone UI. Solver-time mapping happens
+// in _schGenerate.
+function _schWantedFromPlan() {
+  const plan = _schScopePlan();
+  const w = (plan && plan.wanted) || { and: [], or: [] };
+  return { and: (w.and || []).slice(), or: (w.or || []).slice() };
+}
+
+function _schRenderZones() {
+  const andEl = document.getElementById('sch-zone-and-body');
+  const orEl = document.getElementById('sch-zone-or-body');
+  if (!andEl || !orEl) return;
+  const w = _schWantedFromPlan();
+
+  // Render the pending pill.
+  const pill = document.getElementById('sch-pending-pill');
+  const clearBtn = document.getElementById('sch-pending-clear');
+  if (pill) {
+    if (_schPendingCourse) {
+      pill.textContent = _schPendingCourse;
+      pill.classList.add('is-set');
+      if (clearBtn) clearBtn.hidden = false;
+      document.body.classList.add('sch-has-pending');
+    } else {
+      pill.textContent = '— pick a course in the picker —';
+      pill.classList.remove('is-set');
+      if (clearBtn) clearBtn.hidden = true;
+      document.body.classList.remove('sch-has-pending');
+    }
+  }
+
+  function renderList(zoneEl, codes, zone) {
+    if (codes.length === 0) {
+      zoneEl.innerHTML = '<div class="sch-zone-empty">empty</div>';
+      return;
+    }
+    zoneEl.innerHTML = codes.map((c) =>
+      '<span class="sch-zone-item">' + _brEscape(c) +
+      '<button type="button" class="sch-zone-item-x" data-sch-zone-rm="' + zone +
+      '" data-sch-code="' + _brEscape(c) + '" title="Remove">×</button>' +
+      '</span>'
+    ).join('');
+  }
+  renderList(andEl, w.and, 'and');
+  renderList(orEl, w.or, 'or');
+
+  // Wire remove buttons.
+  document.querySelectorAll('[data-sch-zone-rm]').forEach((b) => {
+    b.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const zone = b.getAttribute('data-sch-zone-rm');
+      const code = b.getAttribute('data-sch-code');
+      window.HS.catalog.plans.removeFromWanted(_schScopePlanId(), zone, code);
+    });
+  });
+  // Wire the zone drop targets — only when a course is pending.
+  ['and', 'or'].forEach((zoneType) => {
+    const zone = document.getElementById('sch-zone-' + zoneType);
+    if (!zone) return;
+    zone.onclick = (e) => {
+      if (e.target.closest('[data-sch-zone-rm], .sch-zone-item-x')) return;
+      if (!_schPendingCourse) return;
+      window.HS.catalog.plans.addToWanted(_schScopePlanId(), zoneType, _schPendingCourse);
+      _schPendingCourse = null;
+      _schRenderZones();
+    };
+  });
+}
+
+function _schSetPendingCourse(code) {
+  _schPendingCourse = code;
+  _schRenderZones();
+}
+
+function _schClearPending() {
+  _schPendingCourse = null;
+  _schRenderZones();
 }
 
 // The auto-scheduler always reads/writes the ACTIVE plan's
@@ -8518,92 +8747,28 @@ function _schReadPreferencesFromForm() {
   };
 }
 
-function _schRenderRequirements() {
-  const list = document.getElementById('sch-req-list');
-  if (!list) return;
-  const plan = _schScopePlan();
-  const reqs = (plan && plan.requirements) || [];
-  if (reqs.length === 0) {
-    list.innerHTML = '<div class="sch-req-empty">No requirements yet — add a course code below or click + Req on a picker row.</div>';
-    return;
+// Build requirements[] for the solver from plan.wanted at call time.
+// Each AND code → one single-course requirement. The OR list (if
+// non-empty) → one OR-group requirement with all courses.
+function _schRequirementsFromWanted(wanted) {
+  const out = [];
+  let n = 0;
+  for (const code of (wanted.and || [])) {
+    out.push({ id: 'and-' + (n++), courses: [code] });
   }
-  let html = '';
-  for (const r of reqs) {
-    if (r.courses.length === 1) {
-      const lockText = r.locked_section ? ' · locked #' + _brEscape(r.locked_section.class_number) : '';
-      html += '<div class="sch-req-chip" data-req-id="' + _brEscape(r.id) + '">';
-      html += '<span class="sch-req-chip-code">' + _brEscape(r.courses[0]) + '</span>';
-      if (r.locked_section) html += '<span class="sch-req-chip-locked">🔒' + lockText + '</span>';
-      html += '<span class="sch-req-chip-actions">';
-      html += '<button type="button" data-sch-action="add-alt" data-req-id="' + _brEscape(r.id) + '" title="Add alternative">+</button>';
-      if (r.locked_section) {
-        html += '<button type="button" data-sch-action="unlock" data-req-id="' + _brEscape(r.id) + '" title="Unlock">⊘</button>';
-      }
-      html += '<button type="button" class="is-danger" data-sch-action="remove" data-req-id="' + _brEscape(r.id) + '" title="Remove">×</button>';
-      html += '</span></div>';
-    } else {
-      // OR-group
-      html += '<div class="sch-req-chip" data-req-id="' + _brEscape(r.id) + '">';
-      html += '<div class="sch-req-orgroup"><span class="sch-req-paren">(</span>';
-      r.courses.forEach(function (c, i) {
-        if (i > 0) html += '<span class="sch-req-pipe"></span>';
-        html += '<span class="sch-req-alt">' + _brEscape(c) +
-          '<button type="button" class="sch-req-alt-x" data-sch-action="remove-alt" data-req-id="' +
-          _brEscape(r.id) + '" data-course="' + _brEscape(c) + '" title="Remove alternative">×</button>' +
-          '</span>';
-      });
-      html += '<button type="button" class="sch-req-add-alt" data-sch-action="add-alt" data-req-id="' +
-        _brEscape(r.id) + '">+ alt</button>';
-      html += '<span class="sch-req-paren">)</span></div>';
-      html += '<span class="sch-req-chip-actions">';
-      html += '<button type="button" class="is-danger" data-sch-action="remove" data-req-id="' + _brEscape(r.id) + '" title="Remove">×</button>';
-      html += '</span></div>';
-    }
+  if ((wanted.or || []).length > 0) {
+    out.push({ id: 'or-' + (n++), courses: (wanted.or || []).slice() });
   }
-  list.innerHTML = html;
-  list.querySelectorAll('[data-sch-action]').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      const action = btn.getAttribute('data-sch-action');
-      const id = btn.getAttribute('data-req-id');
-      const planId = _schScopePlanId();
-      if (action === 'remove') {
-        window.HS.catalog.plans.removeRequirement(planId, id);
-      } else if (action === 'add-alt') {
-        _hsPrompt('Add alternative course', '', { title: 'Add alternative', placeholder: 'e.g. STAT-UH 1101' })
-          .then(function (code) {
-            if (code && String(code).trim()) {
-              window.HS.catalog.plans.addAlternative(planId, id, String(code).trim());
-            }
-          });
-      } else if (action === 'remove-alt') {
-        const c = btn.getAttribute('data-course');
-        window.HS.catalog.plans.removeAlternative(planId, id, c);
-      } else if (action === 'unlock') {
-        window.HS.catalog.plans.unlockRequirementSection(planId, id);
-      }
-    });
-  });
-}
-
-function _schAddFromInput() {
-  const inp = document.getElementById('sch-add-input');
-  if (!inp) return;
-  const v = (inp.value || '').trim();
-  if (!v) return;
-  try {
-    window.HS.catalog.plans.addRequirement(_schScopePlanId(), [v]);
-    inp.value = '';
-  } catch (err) {
-    _hsAlert((err && err.message) || String(err), 'Could not add');
-  }
+  return out;
 }
 
 function _schGenerate() {
   const plan = _schScopePlan();
   if (!plan) return;
-  const reqs = plan.requirements || [];
+  const wanted = (plan.wanted) || { and: [], or: [] };
+  const reqs = _schRequirementsFromWanted(wanted);
   if (reqs.length === 0) {
-    _hsAlert('Add at least one required course before generating.', 'No requirements');
+    _hsAlert('Drop at least one course in the And or Or zone before generating.', 'Nothing to schedule');
     return;
   }
   // Persist the form's preferences to the plan first.
@@ -8905,7 +9070,7 @@ window.addEventListener('horarium:ready', function () {
   // touches requirements/locks.
   window.HS.catalog.subscribe(function (e) {
     if (e && e.reason === 'plan_mutation' && _schDrawerOpen) {
-      _schRenderRequirements();
+      _schRenderZones();
     }
   });
   // Wire the sort/filter dropdowns.
@@ -14336,14 +14501,16 @@ function _pkRenderCourseRow(c, sections, stagedSet, hydratedStaged) {
     : '';
   const userBadge = c._user_authored ? '<span class="mp-user-tag">USER</span>' : '';
   const stagedClass = stagedCount > 0 ? ' has-staged' : '';
-  // Piece 6 — "+ Req" affordance: shows whether this course is
-  // already a requirement on the active plan, click to toggle.
+  // Piece 6 rework — "+ WANT" pill selects the course as pending in
+  // the auto-scheduler drawer. The user then drops it into the And
+  // or Or zone there. If the course is already in either zone the
+  // pill flips to ✓ to show it's wired up.
   const planForReq = (typeof _schScopePlan === 'function') ? _schScopePlan() : null;
-  const reqs = (planForReq && planForReq.requirements) || [];
-  const inReqs = reqs.some(r => (r.courses || []).includes(c.code));
-  const reqBadge = inReqs
-    ? '<button type="button" class="mp-req-tag is-on" data-pkreq-toggle="' + _escHtml(c.code) + '" title="Remove from auto-scheduler requirements">✓ REQ</button>'
-    : '<button type="button" class="mp-req-tag" data-pkreq-toggle="' + _escHtml(c.code) + '" title="Add to auto-scheduler requirements">+ REQ</button>';
+  const w = (planForReq && planForReq.wanted) || { and: [], or: [] };
+  const inWanted = (w.and || []).includes(c.code) || (w.or || []).includes(c.code);
+  const reqBadge = inWanted
+    ? '<button type="button" class="mp-req-tag is-on" data-pkwant="' + _escHtml(c.code) + '" title="Already in auto-scheduler — click to remove from both zones">✓ WANT</button>'
+    : '<button type="button" class="mp-req-tag" data-pkwant="' + _escHtml(c.code) + '" title="Mark as pending; click And or Or zone to drop in">+ WANT</button>';
   let html = '<div class="mp-course' + (isExpanded ? ' is-open' : '') + stagedClass + (c._user_authored ? ' is-user-authored' : '') + '" data-course-code="' + _escHtml(c.code) + '">';
   html += '<button type="button" class="mp-course-head" data-pkcourse="' + _escHtml(c.code) + '">';
   html += '<span class="mp-course-head-text">';
@@ -14455,24 +14622,25 @@ function _pkWireAll(root) {
       renderPicker();
     });
   });
-  // Piece 6 — "+ Req / ✓ Req" toggle on each course header.
-  // Always targets the ACTIVE plan so requirements live in one place
-  // even if the user is currently viewing a candidate.
-  root.querySelectorAll('[data-pkreq-toggle]').forEach(function (btn) {
+  // Piece 6 rework — + WANT click sets the pending course on the
+  // auto-scheduler. If already in either zone, click removes from
+  // both. If drawer is closed, opens it so the user sees where the
+  // pending pill landed.
+  root.querySelectorAll('[data-pkwant]').forEach(function (btn) {
     btn.addEventListener('click', function (e) {
       e.stopPropagation();
-      const code = btn.getAttribute('data-pkreq-toggle');
+      const code = btn.getAttribute('data-pkwant');
       const plan = (typeof _schScopePlan === 'function') ? _schScopePlan() : null;
       if (!plan) return;
-      const existing = (plan.requirements || []).find(r => (r.courses || []).includes(code));
-      if (existing) {
-        if (existing.courses.length === 1) {
-          window.HS.catalog.plans.removeRequirement(plan.id, existing.id);
-        } else {
-          window.HS.catalog.plans.removeAlternative(plan.id, existing.id, code);
-        }
+      const w = plan.wanted || { and: [], or: [] };
+      const inAnd = (w.and || []).includes(code);
+      const inOr = (w.or || []).includes(code);
+      if (inAnd || inOr) {
+        if (inAnd) window.HS.catalog.plans.removeFromWanted(plan.id, 'and', code);
+        if (inOr) window.HS.catalog.plans.removeFromWanted(plan.id, 'or', code);
       } else {
-        window.HS.catalog.plans.addRequirement(plan.id, [code]);
+        if (typeof _schSetPendingCourse === 'function') _schSetPendingCourse(code);
+        if (!_schDrawerOpen) toggleSchedulerDrawer();
       }
     });
   });

@@ -592,6 +592,13 @@ export function createCatalog() {
       // toJSON/fromJSON and default to empty/sensible-defaults so
       // existing plans without these fields load cleanly.
       requirements: [],
+      // Piece 6 rework — visual AND/OR zones the user drops course
+      // codes into. AND = include all of these (each becomes a
+      // single-course requirement at solver time). OR = pick at
+      // least one (single OR-group requirement). Storage is a thin
+      // direct shape; requirements[] is computed on the way to the
+      // solver. Empty arrays = no constraints.
+      wanted: { and: [], or: [] },
       scheduler_preferences: {
         no_starts_before: null,
         no_ends_after: null,
@@ -663,6 +670,10 @@ export function createCatalog() {
         { courses: (r.courses || []).slice() },
         r.locked_section ? { locked_section: Object.assign({}, r.locked_section) } : {},
       )),
+      wanted: {
+        and: ((src.wanted && src.wanted.and) || []).slice(),
+        or: ((src.wanted && src.wanted.or) || []).slice(),
+      },
       scheduler_preferences: Object.assign({},
         src.scheduler_preferences || {
           no_starts_before: null, no_ends_after: null, lunch_break: false,
@@ -836,6 +847,39 @@ export function createCatalog() {
   function _planUpdatePreferences(planId, partial) {
     return _applyPlanUpdate(planId, (p) => _reqHelpers.updatePreferences(p, partial), "update_scheduler_preferences");
   }
+  // Piece 6 rework — AND/OR-zone wanted manipulation. Pure mutations
+  // on the plan's `wanted` field; no requirements[] involvement here
+  // (those are computed at solver-call time).
+  function _planAddToWanted(planId, zone, code) {
+    const plan = state.plans.byId.get(planId);
+    if (!plan) throw new Error(`Unknown plan ${planId}`);
+    if (zone !== "and" && zone !== "or") return;
+    if (!plan.wanted) plan.wanted = { and: [], or: [] };
+    const list = plan.wanted[zone];
+    const c = String(code || "").trim();
+    if (!c) return;
+    if (list.includes(c)) return;
+    list.push(c);
+    plan.modified_at = _nowISO();
+    _planNotify("add_to_wanted", planId, { zone, code: c });
+  }
+  function _planRemoveFromWanted(planId, zone, code) {
+    const plan = state.plans.byId.get(planId);
+    if (!plan) throw new Error(`Unknown plan ${planId}`);
+    if (!plan.wanted || (zone !== "and" && zone !== "or")) return;
+    const before = plan.wanted[zone].length;
+    plan.wanted[zone] = plan.wanted[zone].filter((c) => c !== code);
+    if (plan.wanted[zone].length === before) return;
+    plan.modified_at = _nowISO();
+    _planNotify("remove_from_wanted", planId, { zone, code });
+  }
+  function _planClearWanted(planId) {
+    const plan = state.plans.byId.get(planId);
+    if (!plan) throw new Error(`Unknown plan ${planId}`);
+    plan.wanted = { and: [], or: [] };
+    plan.modified_at = _nowISO();
+    _planNotify("clear_wanted", planId);
+  }
   // The pure helpers live in src/scheduler/requirements.js but the
   // catalog can't import them at module-load time (would create a
   // cycle since the index.html boot wires both via the same module
@@ -984,6 +1028,13 @@ export function createCatalog() {
                   })
                   .filter((r) => r.courses.length > 0)
               : [],
+            wanted: (() => {
+              const w = plan.wanted || {};
+              return {
+                and: Array.isArray(w.and) ? w.and.filter(c => typeof c === 'string') : [],
+                or: Array.isArray(w.or) ? w.or.filter(c => typeof c === 'string') : [],
+              };
+            })(),
             scheduler_preferences: (() => {
               const p = plan.scheduler_preferences || {};
               return {
@@ -1089,6 +1140,9 @@ export function createCatalog() {
       lockRequirementSection: _planLockSection,
       unlockRequirementSection: _planUnlockSection,
       updatePreferences: _planUpdatePreferences,
+      addToWanted: _planAddToWanted,
+      removeFromWanted: _planRemoveFromWanted,
+      clearWanted: _planClearWanted,
       _injectRequirementsHelpers: _injectRequirementsHelpers,
       clearByOrigin: _planClearByOrigin,
     },
