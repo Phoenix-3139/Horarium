@@ -11476,6 +11476,32 @@ function _hydrateForExport(plan) {
   }
   return out;
 }
+
+// Sum each unique course's credits exactly once, regardless of how
+// many of its sections are staged. A 4-credit course with staged
+// Lecture + Lab counts as 4, not 8. For variable-credit courses
+// (units = {min, max}) we take the lower bound — a conservative
+// default; the user has to declare their actual credit choice
+// elsewhere if they're taking a variable-credit course.
+//
+// Accepts any iterable yielding `{ course, ... }` objects (the shape
+// _hydrateForExport / resolveStagedSections both produce).
+function _sumCreditsByCourse(items) {
+  const seen = new Set();
+  let total = 0;
+  for (const it of (items || [])) {
+    const c = it && it.course;
+    const code = c && c.code;
+    if (!code || seen.has(code)) continue;
+    seen.add(code);
+    const u = c.units;
+    if (u == null) continue;
+    const v = (typeof u === 'object') ? Number(u.min) : Number(u);
+    if (Number.isFinite(v)) total += v;
+  }
+  return total;
+}
+
 function _optSlug(planId) {
   const p = _planForExport(planId);
   return (p ? p.name : 'plan').replace(/[^a-zA-Z0-9]/g, '_') || 'plan';
@@ -11534,11 +11560,10 @@ function _exportRenderTableHtml(hydrated) {
     return '<div class="export-table-empty">No sections staged in this plan.</div>';
   }
   const rows = [];
-  let totalCredits = 0;
+  // Credits are course-level; sum each unique course once even when
+  // multiple of its sections (Lecture + Lab + …) are staged.
+  const totalCredits = _sumCreditsByCourse(hydrated);
   for (const { course, section } of hydrated) {
-    const units = (course.units == null) ? 0 :
-      (typeof course.units === 'object' ? Number(course.units.min) : Number(course.units));
-    if (Number.isFinite(units)) totalCredits += units;
     const meetings = (section.meetings || []);
     if (meetings.length === 0) {
       rows.push({
@@ -11920,7 +11945,8 @@ function exportAsJSON(planId) {
     const opts = (typeof _exportImageOptions === 'function') ? _exportImageOptions() : {
       includeName: true, includeNetId: true, includeProgram: true,
     };
-    const totalCredits = enrolled.reduce((s, c) => s + (Number(c.credits) || 0), 0);
+    // Course-level credits, deduped — see _sumCreditsByCourse.
+    const totalCredits = _sumCreditsByCourse(hydrated);
     const payload = {
       schema_version: '1.1.0',
       exported_at: now,
@@ -13069,22 +13095,26 @@ function buildScheduleTable() {
     return;
   }
 
-  let totalCredits = 0;
+  // Resolve all staged sections up front so we can compute the
+  // course-deduped credit total before walking the rows.
+  const hits = [];
+  for (const ref of plan.sections) {
+    const hit = (typeof _resolveSection === 'function') ? _resolveSection(ref.class_number) : null;
+    if (hit) hits.push(hit);
+  }
+  const totalCredits = _sumCreditsByCourse(hits);
   let totalMeetings = 0;
   let html = '';
   let halfA71Count = 0;
   let halfA72Count = 0;
 
-  for (const ref of plan.sections) {
-    const hit = (typeof _resolveSection === 'function') ? _resolveSection(ref.class_number) : null;
-    if (!hit) continue;
+  for (const hit of hits) {
     const c = hit.course;
     const s = hit.section;
     const code = c.code || '';
     const name = c.title || '';
     const units = (c.units == null) ? 0 :
       (typeof c.units === 'object' ? (c.units.min + c.units.max) / 2 : c.units);
-    totalCredits += Number(units) || 0;
 
     // Color via main_planner.colorForCourse — same palette as the grid.
     const accent = (window.HS && window.HS.mainPlanner)
