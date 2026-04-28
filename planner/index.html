@@ -24,8 +24,26 @@
       var t = localStorage.getItem('horarium.theme');
       if (t === 'coffee' || t === 'dark' || t === 'futuristic' || t === 'nature' || t === 'editorial') {
         document.documentElement.dataset.theme = t;
+        return;
+      }
+      // First-run default: follow the OS color preference. Dark → Coffee
+      // (warm charcoal is the closest analog to a system dark mode);
+      // light → Editorial (cream paper, the editorial default). We DO
+      // NOT persist this — the user hasn't expressed a choice yet, and
+      // the next boot will re-evaluate the OS preference.
+      if (window.matchMedia) {
+        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.dataset.theme = prefersDark ? 'coffee' : 'editorial';
       }
     } catch (_) { /* private mode */ }
+  })();
+  // Sidebar stow state — primed before paint so we don't flash an
+  // expanded sidebar then immediately collapse.
+  (function () {
+    try {
+      var stowed = localStorage.getItem('horarium.sidebar.stowed') === 'true';
+      if (stowed) document.documentElement.dataset.sidebar = 'stowed';
+    } catch (_) {}
   })();
 
   // Splash drain. Trigger when boot is done; small minimum so it
@@ -383,15 +401,12 @@
     background: color-mix(in srgb, var(--cell-ink, var(--ink)) 14%, transparent);
     border-color: color-mix(in srgb, var(--cell-ink, var(--ink)) 38%, transparent);
   }
-  /* Filter flag — honey-amber instead of editorial's brick red. Sits
+  /* Filter tab — honey-amber instead of editorial's brick red. Sits
      better on the warm dark canvas. */
-  :root[data-theme="coffee"] .drawer-flag .flag-tip {
-    border-color: transparent var(--accent) transparent transparent;
-  }
-  :root[data-theme="coffee"] .drawer-flag .flag-body {
+  :root[data-theme="coffee"] .drawer-flag {
     background: var(--accent);
     color: var(--paper);
-    box-shadow: -4px 3px 14px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 -3px 14px rgba(0, 0, 0, 0.4);
   }
   /* Legend in Coffee — warmer surface lift, single clean edge.
      The base .legend rule already provides border-left: 3px var(--accent);
@@ -527,13 +542,10 @@
     background: color-mix(in srgb, var(--ink) 10%, transparent);
     border-color: color-mix(in srgb, var(--ink) 30%, transparent);
   }
-  :root[data-theme="futuristic"] .drawer-flag .flag-tip {
-    border-color: transparent var(--accent) transparent transparent;
-  }
-  :root[data-theme="futuristic"] .drawer-flag .flag-body {
+  :root[data-theme="futuristic"] .drawer-flag {
     background: var(--accent);
     color: #04070d;
-    box-shadow: -4px 3px 18px rgba(94, 229, 229, 0.35), 0 0 0 1px rgba(94, 229, 229, 0.5);
+    box-shadow: 0 -3px 18px rgba(94, 229, 229, 0.35), 0 0 0 1px rgba(94, 229, 229, 0.5);
   }
   :root[data-theme="futuristic"] .drawer-flag .flag-label {
     text-shadow: 0 0 6px rgba(255, 255, 255, 0.45);
@@ -630,14 +642,11 @@
   :root[data-theme="nature"] .grid .cell.c-dynamic {
     background: color-mix(in srgb, var(--cell-bg, var(--paper-soft)) var(--tile-intensity, 85%), var(--surface)) !important;
   }
-  /* Filter flag in leaf green — keeps the nature voice. */
-  :root[data-theme="nature"] .drawer-flag .flag-tip {
-    border-color: transparent var(--accent) transparent transparent;
-  }
-  :root[data-theme="nature"] .drawer-flag .flag-body {
+  /* Filter tab in leaf green — keeps the nature voice. */
+  :root[data-theme="nature"] .drawer-flag {
     background: var(--accent);
     color: #fafcf8;
-    box-shadow: -4px 3px 14px rgba(42, 58, 40, 0.18);
+    box-shadow: 0 -3px 14px rgba(42, 58, 40, 0.18);
   }
   /* Legend in Nature — pale sage canvas with rounded corners. The
      theme's larger radius + the base border-left stripe + an inset
@@ -2927,55 +2936,249 @@
     .schedule-table .td-room { display: none; }
   }
 
-  /* floating island navigation */
-  body {
-    padding-top: 86px;
-  }
-  .floating-nav {
-    position: fixed;
-    top: 16px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(24, 20, 14, 0.82);
-    backdrop-filter: blur(22px) saturate(180%);
-    -webkit-backdrop-filter: blur(22px) saturate(180%);
-    border-radius: 999px;
-    padding: 5px;
-    display: inline-flex;
-    box-shadow:
-      0 10px 40px rgba(0, 0, 0, 0.25),
-      0 2px 6px rgba(0, 0, 0, 0.12),
-      inset 0 0 0 1px var(--cream);
-    z-index: 100;
-    gap: 0;
-    max-width: calc(100vw - 32px);
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-  .floating-nav::-webkit-scrollbar { display: none; }
+  /* SIDE DOCK NAVIGATION
+     A vertical, glassy, stowable rail anchored to the left edge —
+     somewhere between a Mac dock and an app sidebar. Holds the theme
+     grid up top, the tab list in the middle, the field-guide button
+     at the bottom, and a stow toggle. The dock floats: it doesn't
+     touch the viewport edges, leaving a gutter so the page feels
+     framed rather than walled-in.
 
+     Stow state is primed by a tiny inline script in <head> so we
+     don't flash the wrong width on first paint. The :root selector
+     :root[data-sidebar="stowed"] flips the whole dock into icon-only
+     mode (52px wide). */
+  body {
+    padding-top: 1rem;
+    padding-left: 244px;
+    transition: padding-left 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  :root[data-sidebar="stowed"] body { padding-left: 84px; }
+  @media (max-width: 720px) {
+    body { padding-left: 72px; padding-top: 1rem; }
+    :root[data-sidebar="stowed"] body { padding-left: 56px; }
+  }
+
+  /* Theme-aware dock tokens. Each theme overrides these below so the
+     sidebar reads as a quiet "vibrancy" panel that takes character
+     from the underlying theme rather than always being dark.
+
+     Defaults (editorial) — paper-toned glass on a light page. */
+  :root {
+    --dock-bg-top: rgba(255, 250, 240, 0.78);
+    --dock-bg-bot: rgba(243, 235, 220, 0.72);
+    --dock-ink: #2a2520;
+    --dock-ink-soft: rgba(42, 37, 32, 0.62);
+    --dock-border: rgba(42, 37, 32, 0.10);
+    --dock-active-bg: rgba(28, 22, 18, 0.07);
+    --dock-active-ring: rgba(28, 22, 18, 0.10);
+    --dock-divider: rgba(42, 37, 32, 0.10);
+    --dock-stow-bg: rgba(28, 22, 18, 0.05);
+    --dock-stow-bg-hover: rgba(28, 22, 18, 0.10);
+    --dock-shadow:
+      0 16px 50px rgba(48, 32, 16, 0.10),
+      0 2px 6px rgba(48, 32, 16, 0.06);
+    --dock-highlight: rgba(255, 255, 255, 0.45);
+  }
+  :root[data-theme="coffee"] {
+    --dock-bg-top: rgba(38, 30, 22, 0.78);
+    --dock-bg-bot: rgba(24, 18, 12, 0.78);
+    --dock-ink: rgba(245, 240, 228, 0.96);
+    --dock-ink-soft: rgba(245, 240, 228, 0.60);
+    --dock-border: rgba(245, 240, 228, 0.10);
+    --dock-active-bg: rgba(255, 255, 255, 0.10);
+    --dock-active-ring: rgba(255, 255, 255, 0.14);
+    --dock-divider: rgba(245, 240, 228, 0.10);
+    --dock-stow-bg: rgba(245, 240, 228, 0.06);
+    --dock-stow-bg-hover: rgba(245, 240, 228, 0.12);
+    --dock-shadow:
+      0 18px 54px rgba(0, 0, 0, 0.34),
+      0 2px 6px rgba(0, 0, 0, 0.18);
+    --dock-highlight: rgba(255, 255, 255, 0.06);
+  }
+  :root[data-theme="futuristic"] {
+    --dock-bg-top: rgba(18, 26, 36, 0.80);
+    --dock-bg-bot: rgba(8, 14, 22, 0.82);
+    --dock-ink: rgba(212, 234, 244, 0.96);
+    --dock-ink-soft: rgba(180, 210, 224, 0.62);
+    --dock-border: rgba(77, 208, 225, 0.16);
+    --dock-active-bg: rgba(77, 208, 225, 0.12);
+    --dock-active-ring: rgba(77, 208, 225, 0.32);
+    --dock-divider: rgba(77, 208, 225, 0.14);
+    --dock-stow-bg: rgba(77, 208, 225, 0.06);
+    --dock-stow-bg-hover: rgba(77, 208, 225, 0.14);
+    --dock-shadow:
+      0 18px 54px rgba(0, 8, 16, 0.40),
+      0 2px 6px rgba(0, 8, 16, 0.24);
+    --dock-highlight: rgba(180, 232, 248, 0.10);
+  }
+  :root[data-theme="nature"] {
+    --dock-bg-top: rgba(238, 244, 232, 0.78);
+    --dock-bg-bot: rgba(218, 230, 210, 0.74);
+    --dock-ink: #2c3a2a;
+    --dock-ink-soft: rgba(44, 58, 42, 0.62);
+    --dock-border: rgba(44, 58, 42, 0.12);
+    --dock-active-bg: rgba(74, 122, 74, 0.12);
+    --dock-active-ring: rgba(74, 122, 74, 0.24);
+    --dock-divider: rgba(44, 58, 42, 0.12);
+    --dock-stow-bg: rgba(44, 58, 42, 0.05);
+    --dock-stow-bg-hover: rgba(74, 122, 74, 0.10);
+    --dock-shadow:
+      0 16px 50px rgba(40, 60, 40, 0.14),
+      0 2px 6px rgba(40, 60, 40, 0.08);
+    --dock-highlight: rgba(255, 255, 255, 0.40);
+  }
+
+  .side-dock {
+    position: fixed;
+    top: 14px;
+    bottom: 14px;
+    left: 14px;
+    width: 212px;
+    /* Subtle top→bottom gradient — Apple's dock and translucent
+       sidebars usually have a faint vertical wash that adds depth
+       without screaming. */
+    background:
+      linear-gradient(180deg, var(--dock-bg-top), var(--dock-bg-bot));
+    backdrop-filter: blur(36px) saturate(180%);
+    -webkit-backdrop-filter: blur(36px) saturate(180%);
+    border-radius: 20px;
+    padding: 12px 9px 9px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    /* Hairline outer + soft inset highlight on top, mimicking the
+       light bevel Apple uses on vibrancy panels. */
+    box-shadow:
+      var(--dock-shadow),
+      inset 0 0 0 1px var(--dock-border),
+      inset 0 1px 0 var(--dock-highlight);
+    z-index: 100;
+    transition: width 0.28s cubic-bezier(0.32, 0.72, 0, 1),
+                background 0.45s ease,
+                box-shadow 0.45s ease;
+  }
+  :root[data-sidebar="stowed"] .side-dock {
+    width: 52px;
+    padding: 10px 6px 6px;
+  }
+  @media (max-width: 720px) {
+    .side-dock { width: 56px; padding: 10px 6px 6px; }
+    :root[data-sidebar="stowed"] .side-dock { width: 40px; }
+    .side-dock .sd-label,
+    .side-dock .sd-themes-head,
+    .side-dock .sd-divider-label { display: none !important; }
+  }
+
+  /* Theme picker — 2x2 grid of small swatch tiles. No "Theme" header
+     so the grid speaks for itself; tooltips name each one. */
+  .sd-themes {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 4px 4px 6px;
+  }
+  .sd-themes-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  :root[data-sidebar="stowed"] .sd-themes-grid {
+    grid-template-columns: 1fr;
+  }
+  .sd-theme {
+    aspect-ratio: 1.6 / 1;
+    background: transparent;
+    border: 1px solid var(--dock-border);
+    border-radius: 9px;
+    cursor: pointer;
+    padding: 0;
+    overflow: hidden;
+    position: relative;
+    transition: border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+  }
+  :root[data-sidebar="stowed"] .sd-theme { aspect-ratio: 1 / 1; }
+  .sd-theme .sd-theme-swatch {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--swatch-a, #fff) 50%, var(--swatch-b, #aaa) 50%);
+  }
+  .sd-theme:hover {
+    border-color: color-mix(in srgb, var(--dock-ink) 35%, transparent);
+    transform: translateY(-1px);
+  }
+  .sd-theme.is-active {
+    border-color: color-mix(in srgb, var(--dock-ink) 70%, transparent);
+    box-shadow: 0 0 0 2px var(--dock-active-ring);
+  }
+  /* Theme swatches — chosen to evoke each theme's hero palette. */
+  .sd-theme[data-theme-name="editorial"]  { --swatch-a: #f0e7d3; --swatch-b: #8b3a2b; }
+  .sd-theme[data-theme-name="coffee"]     { --swatch-a: #2a221a; --swatch-b: #c8923f; }
+  .sd-theme[data-theme-name="futuristic"] { --swatch-a: #0a0e14; --swatch-b: #4dd0e1; }
+  .sd-theme[data-theme-name="nature"]     { --swatch-a: #d8e3d2; --swatch-b: #4a7a4a; }
+
+  .sd-divider {
+    height: 1px;
+    margin: 4px 6px;
+    background: var(--dock-divider);
+  }
+
+  .sd-tabs {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    padding: 0 2px;
+  }
+  .sd-tabs::-webkit-scrollbar { width: 6px; }
+  .sd-tabs::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--dock-ink) 22%, transparent);
+    border-radius: 3px;
+  }
+
+  .sd-foot {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 4px 2px 2px;
+  }
+
+  /* Tab buttons — same .fn-item / .fn-item.active hooks the JS uses,
+     just restyled for vertical layout. */
   .fn-item {
     background: transparent;
     border: none;
-    color: rgba(245, 240, 228, 0.6);
+    color: var(--dock-ink-soft);
     font-family: var(--font-mono);
-    font-size: 10.5px;
+    font-size: 11px;
     font-weight: 500;
-    letter-spacing: 0.15em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    padding: 11px 20px;
-    border-radius: 100px;
+    padding: 10px 14px;
+    border-radius: 10px;
     cursor: pointer;
     transition: color 0.2s ease, background 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s ease;
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     white-space: nowrap;
-    font-family: inherit;
+    overflow: hidden;
+    text-align: left;
+    width: 100%;
   }
+  :root[data-sidebar="stowed"] .fn-item {
+    padding: 10px 6px;
+    justify-content: center;
+  }
+  :root[data-sidebar="stowed"] .fn-item .fn-label { display: none; }
   .fn-item .fn-label {
     font-family: var(--font-mono);
-    letter-spacing: 0.15em;
+    letter-spacing: 0.14em;
+    flex: 1;
   }
   .fn-item .fn-icon {
     font-family: var(--font-display);
@@ -2983,17 +3186,53 @@
     font-style: italic;
     letter-spacing: 0;
     line-height: 1;
+    width: 18px;
+    text-align: center;
+    flex: 0 0 18px;
   }
-  .fn-item:hover { color: rgba(245, 240, 228, 0.95); }
+  .fn-item:hover {
+    color: var(--dock-ink);
+    background: color-mix(in srgb, var(--dock-ink) 6%, transparent);
+  }
   .fn-item.active {
-    background: rgba(255, 255, 255, 0.14);
-    color: rgba(245, 240, 228, 0.95);
+    background: var(--dock-active-bg);
+    color: var(--dock-ink);
     box-shadow:
-      0 0 0 1px rgba(255, 255, 255, 0.05),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1),
-      inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+      0 0 0 1px var(--dock-active-ring),
+      inset 0 1px 0 var(--dock-highlight);
   }
-  .fn-item.active:active { transform: scale(0.97); }
+  .fn-item.active:active { transform: scale(0.98); }
+
+  /* Stow toggle — a slim chevron pill at the bottom that flips the
+     whole dock between expanded and stowed. Tooltip explains. */
+  .sd-stow {
+    background: var(--dock-stow-bg);
+    border: 1px solid var(--dock-border);
+    color: var(--dock-ink-soft);
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 8px 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+  }
+  .sd-stow:hover {
+    background: var(--dock-stow-bg-hover);
+    color: var(--dock-ink);
+    border-color: color-mix(in srgb, var(--dock-ink) 28%, transparent);
+  }
+  .sd-stow .sd-stow-caret {
+    display: inline-block;
+    transition: transform 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  :root[data-sidebar="stowed"] .sd-stow .sd-stow-caret { transform: rotate(180deg); }
+  :root[data-sidebar="stowed"] .sd-stow .sd-stow-label { display: none; }
 
   /* Tab panes */
   .tab-pane {
@@ -3008,61 +3247,50 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
-  /* right-side drawer (filters) */
+  /* Personal-time filter tab — bottom-right, same compact-tab idiom
+     as the auto-scheduler tab (which sits to its right). The previous
+     red banner protruding from the side was loud; this matches the
+     auto-scheduler's restraint and lets both feel like peer entries
+     into modal-ish drawers. */
   .drawer-flag {
     position: fixed;
-    right: 0;
-    top: 180px;
+    right: 9.5rem;
+    bottom: 0;
     border: none;
-    padding: 0;
+    padding: 0.55rem 0.95rem 0.6rem;
     cursor: pointer;
     z-index: 90;
-    display: flex;
-    align-items: stretch;
-    background: transparent;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    font-family: var(--font-mono);
-  }
-  .drawer-flag .flag-tip {
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: 25px 14px 25px 0;
-    border-color: transparent var(--rust) transparent transparent;
-    flex-shrink: 0;
-  }
-  .drawer-flag .flag-body {
     background: var(--rust);
     color: var(--cream);
-    padding: 12px 16px 12px 6px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 2px;
-    box-shadow: -4px 3px 14px rgba(0, 0, 0, 0.18);
-  }
-  .drawer-flag .flag-count {
-    font-size: 9.5px;
-    letter-spacing: 0.2em;
-    opacity: 0.75;
-  }
-  .drawer-flag .flag-label {
-    font-size: 11.5px;
-    letter-spacing: 0.22em;
+    border-radius: 6px 6px 0 0;
+    box-shadow: 0 -3px 14px rgba(0, 0, 0, 0.16);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s, filter 0.2s;
+    font-size: 0.7rem;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
     font-weight: 600;
   }
-  /* Hover lifts the flag with a shadow boost instead of a translate
-     — translateX would expose the bare edge behind the flag, leaving
-     it floating off the page border. Filter brightness keeps the
-     affordance without the gap. */
+  .drawer-flag .flag-body { display: contents; }
+  .drawer-flag .flag-tip { display: none; }
+  .drawer-flag .flag-count {
+    font-size: 0.6rem;
+    letter-spacing: 0.18em;
+    opacity: 0.85;
+    font-weight: 500;
+  }
+  .drawer-flag .flag-label { font-size: 0.7rem; letter-spacing: 0.16em; }
   .drawer-flag:hover {
-    filter: brightness(1.06);
+    filter: brightness(1.08);
+    box-shadow: 0 -8px 26px rgba(0, 0, 0, 0.24);
   }
-  .drawer-flag:hover .flag-body {
-    box-shadow: -6px 4px 18px rgba(0, 0, 0, 0.24);
-  }
-  .drawer-flag.hidden { transform: translateX(110%); }
+  .drawer-flag.hidden { transform: translateY(120%); }
+  /* When the auto-scheduler bottom sheet is open it lifts up — keep
+     the filter tab anchored next to it so they stay paired. */
+  body.sch-drawer-open .drawer-flag { transform: translateY(-200px); }
 
   .side-drawer {
     position: fixed;
@@ -3295,14 +3523,14 @@
   .export-card.done .ec-go { color: var(--forest); border-bottom-color: var(--forest); }
   .export-card.done .ec-go::before { content: "✓ "; }
 
-  /* Mobile adjustments */
+  /* Mobile adjustments — sidebar collapses to icon-only by default
+     (user can still expand it). */
   @media (max-width: 720px) {
-    body { padding-top: 70px; }
-    .floating-nav { padding: 3px; }
-    .fn-item { padding: 9px 14px; font-size: 10px; }
-    .fn-item .fn-label { display: none; }
-    .fn-item.active .fn-label { display: inline; }
-    .drawer-flag { top: 140px; }
+    body { padding-top: 0.75rem; }
+    .fn-item { font-size: 10px; }
+    /* Bottom tabs sit above the screen edge; on phones, narrow gap
+       between them since horizontal real estate is tight. */
+    .drawer-flag { right: 8.5rem; padding: 0.5rem 0.7rem; }
   }
 
   /* modular tab system */
@@ -3786,22 +4014,6 @@
     transition: color 0.12s ease;
   }
   .config-reset:hover { color: var(--rust); text-decoration: underline; }
-
-  /* Gear button in the nav */
-  .fn-item.fn-gear {
-    color: rgba(245, 240, 228, 0.55);
-    padding: 11px 14px;
-  }
-  .fn-item.fn-gear:hover {
-    color: var(--cream);
-    background: rgba(255, 255, 255, 0.1);
-  }
-  .fn-item.fn-gear .fn-icon {
-    font-family: var(--font-display);
-    font-size: 16px;
-    font-style: normal;
-    line-height: 1;
-  }
 
   /* drag-to-reorder (tile insertion indicators) */
   .ct-tile {
@@ -6521,6 +6733,47 @@
   .scheduler-drawer .sch-tree-wrap {
     margin: 0;
   }
+  /* Role note at the top of the drawer — makes it explicit that this
+     panel is the *logic maker*, not the runner. The runner lives in
+     the dock below the calendar; the jump button at the bottom takes
+     you there. */
+  .sch-role-note {
+    margin: 0 1.25rem 0.85rem;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.78rem;
+    background: color-mix(in srgb, var(--accent, var(--ochre)) 8%, transparent);
+    border: 1px dashed color-mix(in srgb, var(--accent, var(--ochre)) 38%, transparent);
+    border-radius: 8px;
+    color: var(--ink-soft, var(--ink));
+  }
+  .scheduler-drawer .sch-role-note { margin: 0 0 0.85rem; }
+  .sch-jump-runner-wrap {
+    margin: 1.25rem 1.25rem 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .scheduler-drawer .sch-jump-runner-wrap { margin: 1.25rem 0 0.5rem; }
+  .sch-jump-runner {
+    background: var(--accent, var(--ochre));
+    color: var(--paper, #fff);
+    border: none;
+    padding: 0.7rem 1rem;
+    border-radius: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: filter 0.15s, transform 0.1s;
+  }
+  .sch-jump-runner:hover { filter: brightness(0.95); }
+  .sch-jump-runner:active { transform: scale(0.99); }
+  .sch-jump-runner-hint {
+    font-size: 0.72rem;
+    color: var(--ink-faint);
+    font-style: italic;
+  }
 
   /* Section heading inside the drawer. */
   .sch-section-h {
@@ -7832,34 +8085,27 @@
   /* Help / Field-guide button — solid-filled pill on the dark nav.
      The previous tinted version blended into the dark backdrop;
      filled accent + cream text reads at a glance. */
+  /* Guide button — accent-tinted so it stands apart from the tab
+     list, but inherits the same vertical-sidebar geometry as
+     .fn-item so it lines up with the tabs above. */
   .fn-item.fn-help {
     background: var(--accent, var(--ochre));
     color: var(--cream, #faf6ec);
-    border: 0;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding-left: 0.85rem;
-    padding-right: 0.95rem;
-    margin-left: 4px;
     font-weight: 700;
     box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--cream, #fff) 25%, transparent);
     transition: filter 0.15s, box-shadow 0.15s;
   }
   .fn-item.fn-help:hover {
     filter: brightness(1.1);
+    background: var(--accent, var(--ochre));
     box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--cream, #fff) 50%, transparent), 0 2px 8px rgba(0,0,0,0.2);
   }
   .fn-item.fn-help .fn-icon {
-    font-family: var(--font-display, 'Fraunces', serif);
-    font-style: italic;
-    font-size: 1.1rem;
-    line-height: 1;
     color: var(--cream, #faf6ec);
   }
   .fn-item.fn-help .fn-label {
     font-weight: 700;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.16em;
     color: var(--cream, #faf6ec);
   }
 
@@ -9053,10 +9299,19 @@
         <button type="button" class="mn-btn-ghost" id="mn-term-clear">Reset</button>
       </div>
 
+      <!-- Layout & tabs -->
+      <h3 class="mn-section-h">Layout &amp; tabs</h3>
+      <p class="picker-sub mn-section-lead">
+        Reorganise modules across tabs, rename or delete tabs, or restore the default layout. Used to live behind the gear icon in the navigation; now it's here so all settings are in one place.
+      </p>
+      <div class="mn-export-row">
+        <button type="button" class="mn-btn" onclick="openConfigModal()">Configure tabs &amp; modules…</button>
+      </div>
+
       <!-- Theme -->
       <h3 class="mn-section-h" data-i18n="manage.theme.heading">Theme</h3>
       <p class="picker-sub mn-section-lead">
-        Visual register and copy. Editorial keeps the cream-paper Shakespearean feel; Dark goes neutral on a black canvas; Futuristic is monospace + cyan; Nature is sage greens with softer corners.
+        Quick-switch is in the sidebar (the 2&times;2 swatch grid up top). The fuller picker below shows each theme's character and stays in sync with whatever you choose anywhere.
       </p>
       <div class="mn-theme-grid" id="mn-theme-grid" role="radiogroup" aria-label="Theme">
         <label class="mn-theme-opt">
@@ -9186,7 +9441,22 @@
 </div>
 
 <!-- FLOATING ISLAND NAV (dynamically populated) -->
-<nav class="floating-nav" id="floating-nav"></nav>
+<nav class="side-dock" id="floating-nav" aria-label="Primary">
+  <div class="sd-themes" id="sd-themes" aria-label="Theme picker">
+    <div class="sd-themes-grid" id="sd-themes-grid" role="radiogroup" aria-label="Theme">
+      <button type="button" class="sd-theme" data-theme-name="editorial" role="radio" aria-checked="false" title="Editorial — cream paper, warm earthtones"><span class="sd-theme-swatch" aria-hidden="true"></span></button>
+      <button type="button" class="sd-theme" data-theme-name="coffee" role="radio" aria-checked="false" title="Coffee — warm charcoal, honey accents"><span class="sd-theme-swatch" aria-hidden="true"></span></button>
+      <button type="button" class="sd-theme" data-theme-name="futuristic" role="radio" aria-checked="false" title="Futuristic — monospace, cyan accents"><span class="sd-theme-swatch" aria-hidden="true"></span></button>
+      <button type="button" class="sd-theme" data-theme-name="nature" role="radio" aria-checked="false" title="Nature — sage greens, soft corners"><span class="sd-theme-swatch" aria-hidden="true"></span></button>
+    </div>
+  </div>
+  <div class="sd-divider"></div>
+  <div class="sd-tabs" id="sd-tabs"></div>
+  <div class="sd-foot" id="sd-foot"></div>
+  <button type="button" class="sd-stow" id="sd-stow" title="Collapse sidebar">
+    <span class="sd-stow-caret">‹</span><span class="sd-stow-label">Collapse</span>
+  </button>
+</nav>
 
 <!-- DRAWER FLAG BUTTON -->
 <button class="drawer-flag" id="drawer-flag" onclick="toggleDrawer()" title="Open personal time filters">
@@ -9337,6 +9607,9 @@
     </div>
   </div>
   <div class="drawer-body">
+    <p class="picker-sub sch-role-note">
+      This panel is for <strong>declaring logic only</strong> — what courses, sections, or alternatives you want. Run the actual generator from the <em>Auto-scheduler</em> dock under the calendar.
+    </p>
     <div class="sch-section-h">
       <span>Selected</span>
       <span class="sch-wanted-tools">
@@ -9346,6 +9619,12 @@
     </div>
     <p class="picker-sub sch-pending-hint" id="sch-pending-hint">Click <strong>+ Want</strong> on a course in the picker. Drop into a bracket to nest it under that group; drop on the empty tile to add a new top-level chip. Click an op label to flip <em>and</em> ↔ <em>or</em>. ESC cancels.</p>
     <div class="sch-tree-wrap" id="sch-tree-wrap"></div>
+    <div class="sch-jump-runner-wrap">
+      <button type="button" class="sch-jump-runner" id="sch-jump-runner" title="Close this panel and scroll to the auto-scheduler dock where you set preferences and run the generator">
+        Jump to the runner <span aria-hidden="true">↓</span>
+      </button>
+      <span class="sch-jump-runner-hint">Where you set preferences and click <em>Generate</em>.</span>
+    </div>
   </div>
 </aside>
 
@@ -9716,6 +9995,21 @@ function _applyThemeText() {
 window.addEventListener('horarium:ready', _applyThemeText);
 window.addEventListener('horarium:theme-changed', _applyThemeText);
 
+// Sidebar wiring — runs once boot is done so window.HS.themes exists.
+window.addEventListener('horarium:ready', function () {
+  if (typeof _sdWireThemeGrid === 'function') _sdWireThemeGrid();
+  if (typeof _sdSyncThemeGrid === 'function') _sdSyncThemeGrid();
+  const stowBtn = document.getElementById('sd-stow');
+  if (stowBtn && typeof _sdToggleStow === 'function') {
+    stowBtn.addEventListener('click', _sdToggleStow);
+    stowBtn.title = document.documentElement.dataset.sidebar === 'stowed'
+      ? 'Expand sidebar' : 'Collapse sidebar';
+  }
+});
+window.addEventListener('horarium:theme-changed', function () {
+  if (typeof _sdSyncThemeGrid === 'function') _sdSyncThemeGrid();
+});
+
 // component notification (piece 5b)
 // Surfaces a top-right card when a multi-component course has uncovered
 // components in the active plan. Stays visible until dismissed; dismissal
@@ -9841,6 +10135,30 @@ function toggleSchedulerDrawer() {
     document.body.classList.remove('sch-drawer-open');
   }
 }
+
+// Jump from the logic-maker drawer to the runner dock under the
+// calendar: close the drawer, ensure the dock is expanded (so the
+// scroll lands on something visible, not a closed accordion), and
+// scroll smoothly so the user sees the transition. Wired below in
+// horarium:ready so the elements exist before we attach.
+function _schJumpToRunner() {
+  if (_schDrawerOpen) toggleSchedulerDrawer();
+  const dock = document.getElementById('sch-dock');
+  if (dock && dock.getAttribute('data-collapsed') !== 'false') {
+    const toggle = document.getElementById('sch-dock-toggle');
+    if (toggle) toggle.click(); // re-uses the existing expand handler
+  }
+  setTimeout(() => {
+    const target = document.getElementById('sch-dock');
+    if (target && target.scrollIntoView) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, 60);
+}
+window.addEventListener('horarium:ready', function () {
+  const btn = document.getElementById('sch-jump-runner');
+  if (btn) btn.addEventListener('click', _schJumpToRunner);
+});
 
 // Tiny persisted UI settings store. Survives across sessions in
 // localStorage, independent of the catalog consent gate. These are
@@ -13359,38 +13677,69 @@ let userTabs = [
 let currentTab = 'main';
 
 function renderNav() {
-  const nav = document.getElementById('floating-nav');
-  if (!nav) return;
-  nav.innerHTML = '';
+  // Tabs render into the dock's middle column; the field-guide button
+  // pins to the bottom (it's a global shortcut, not a tab).
+  const tabsHost = document.getElementById('sd-tabs');
+  const footHost = document.getElementById('sd-foot');
+  if (!tabsHost || !footHost) return;
+  tabsHost.innerHTML = '';
+  footHost.innerHTML = '';
   userTabs.forEach(tab => {
     const btn = document.createElement('button');
     btn.className = 'fn-item' + (tab.id === currentTab ? ' active' : '');
     btn.dataset.tabId = tab.id;
-    // Tab labels stay constant across themes — switching themes
-    // shouldn't rename your navigation. Themes only affect copy in
-    // the body chrome (subtitle, footer, placeholder, etc.).
-    btn.innerHTML = '<span class="fn-label">' + _brEscape(tab.label) + '</span>';
+    // First letter of the label as a glyph for stowed mode — keeps
+    // the dock readable when collapsed without forcing emoji choices.
+    const initial = (tab.label || '?').trim().charAt(0).toUpperCase();
+    btn.innerHTML = '<span class="fn-icon">' + _brEscape(initial) + '</span><span class="fn-label">' + _brEscape(tab.label) + '</span>';
+    btn.title = tab.label;
     btn.onclick = () => switchTab(tab.id);
     btn.ondblclick = (e) => { e.preventDefault(); renameTab(tab.id, btn); };
-    // Tab deletion now lives in the gear-button config modal — keeps
-    // the dock chrome quiet. Double-click still renames in place.
-    nav.appendChild(btn);
+    tabsHost.appendChild(btn);
   });
-  // Gear button → opens visual config modal
-  const gearBtn = document.createElement('button');
-  gearBtn.className = 'fn-item fn-gear';
-  gearBtn.title = 'Organise modules & tabs';
-  gearBtn.innerHTML = '<span class="fn-icon">⚙</span>';
-  gearBtn.onclick = openConfigModal;
-  nav.appendChild(gearBtn);
-  // Field-guide button — labeled so it's discoverable. Opens the
-  // browseable flashcard guide.
+  // Field-guide button — pinned to the foot so it stays reachable
+  // regardless of how many tabs the user has.
   const helpBtn = document.createElement('button');
   helpBtn.className = 'fn-item fn-help';
   helpBtn.title = 'Open the field guide — learn what Horarium can do';
   helpBtn.innerHTML = '<span class="fn-icon">?</span><span class="fn-label">Guide</span>';
   helpBtn.onclick = () => { if (typeof fgShow === 'function') fgShow(0); };
-  nav.appendChild(helpBtn);
+  footHost.appendChild(helpBtn);
+}
+
+// Sidebar stow toggle — flips :root[data-sidebar] and persists.
+// The CSS handles every visual transition; this is just state.
+function _sdToggleStow() {
+  const root = document.documentElement;
+  const stowed = root.dataset.sidebar === 'stowed';
+  if (stowed) delete root.dataset.sidebar;
+  else root.dataset.sidebar = 'stowed';
+  try { localStorage.setItem('horarium.sidebar.stowed', String(!stowed)); } catch (_) {}
+  const btn = document.getElementById('sd-stow');
+  if (btn) btn.title = stowed ? 'Collapse sidebar' : 'Expand sidebar';
+}
+
+// Theme grid — wires the 4 swatch tiles into window.HS.themes.setTheme
+// and reflects the active theme via .is-active. Called on boot AND on
+// every horarium:theme-changed event so external mutations keep the
+// grid in sync.
+function _sdSyncThemeGrid() {
+  if (!(window.HS && window.HS.themes)) return;
+  const active = window.HS.themes.getActiveTheme();
+  document.querySelectorAll('.sd-theme').forEach((el) => {
+    const isActive = el.getAttribute('data-theme-name') === active;
+    el.classList.toggle('is-active', isActive);
+    el.setAttribute('aria-checked', isActive ? 'true' : 'false');
+  });
+}
+function _sdWireThemeGrid() {
+  document.querySelectorAll('.sd-theme').forEach((el) => {
+    el.addEventListener('click', () => {
+      const name = el.getAttribute('data-theme-name');
+      if (window.HS && window.HS.themes) window.HS.themes.setTheme(name);
+      _sdSyncThemeGrid();
+    });
+  });
 }
 
 function ensureTabPane(tabId) {
@@ -17568,7 +17917,7 @@ const FG_CARDS = [
     body: '<p>The <strong>+ Add</strong> flag at the top-right adds a personal-time filter (e.g. workout, prayer, meal). The auto-scheduler treats those blocks as conflicts and won\'t schedule classes inside them.</p>' },
   { id: 'themes', section: 'More', title: '<em>Themes</em>',
     lede: 'Editorial, Coffee, Futuristic, Nature.',
-    body: '<p>Switch from the gear button in the nav. Each theme has its own typography, palette, and copy — calendar tiles, chips, and accents all retint accordingly. Your data is unaffected.</p>' },
+    body: '<p>Switch from the 2&times;2 swatch grid at the top of the sidebar, or from <strong>Manage → Theme</strong>. Each theme has its own typography, palette, and copy — calendar tiles, chips, and accents all retint accordingly. Your data is unaffected.</p>' },
   { id: 'data', section: 'More', title: 'Your <em>data</em>',
     lede: 'Local-first means just that: it lives in this tab.',
     body: '<p>On first run you choose a storage mode: <strong>save always</strong> (localStorage, persists across sessions), <strong>session only</strong> (in-memory, cleared on tab close), or <strong>never</strong> (you re-paste each session).</p><p>Wipe everything from <strong>Catalog → Manage → Clear</strong>.</p>' },
