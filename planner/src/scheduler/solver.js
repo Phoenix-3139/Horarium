@@ -54,15 +54,25 @@ function _isStageable(section, includeClosedWaitlisted) {
 //   { course_code, sections: [section, ...] }
 function _enumerateCourseBundles(course, includeClosedWaitlisted) {
   if (!course || !Array.isArray(course.sections)) return [];
-  // Group sections by component label.
+  // Group sections by component label *before* applying the
+  // stageable filter. We need to know which components the course
+  // requires so that if every section of one of them (e.g. Lab) is
+  // closed, the course as a whole is unsolvable — not silently
+  // reduced to a Lecture-only bundle that drops the required Lab.
   const byComp = new Map();
   for (const s of course.sections) {
-    if (!_isStageable(s, includeClosedWaitlisted)) continue;
     const comp = s.component || "Lecture";
     if (!byComp.has(comp)) byComp.set(comp, []);
     byComp.get(comp).push(s);
   }
   if (byComp.size === 0) return [];
+  // Now filter each component bucket. If any required component
+  // ends up empty, abort — there is no way to staff this course.
+  for (const [comp, sections] of byComp) {
+    const stageable = sections.filter((s) => _isStageable(s, includeClosedWaitlisted));
+    if (stageable.length === 0) return [];
+    byComp.set(comp, stageable);
+  }
   // Cartesian product across components.
   let bundles = [[]];
   for (const [, sections] of byComp) {

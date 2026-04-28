@@ -457,6 +457,27 @@ describe("generateSchedules — component pairing depth", () => {
     }
   });
 
+  it("required component fully closed → course unsolvable (no Lecture-only bundle)", () => {
+    // Lecture is open, Lab is closed, include_closed_waitlisted=false.
+    // The course needs both a Lecture AND a Lab; if every Lab section
+    // is closed, the whole course can't be staffed and we should
+    // return zero bundles + a conflict. The pre-fix solver silently
+    // dropped the Lab component and returned a Lecture-only bundle,
+    // letting students "solve" by ignoring an unavailable component.
+    const c = course("X 1", [
+      sec("L1", "Lecture", ["Mon"], "09:00", "10:00", { status: "open" }),
+      sec("LAB1", "Laboratory", ["Wed"], "13:00", "14:00", { status: "closed" }),
+    ]);
+    const out = generateSchedules({
+      requirements: [req("X 1")],
+      preferences: {},
+      catalog: cat(c),
+      filters: [],
+    });
+    expect(out.candidates).toEqual([]);
+    expect(out.conflicts.length).toBe(1);
+  });
+
   it("course where every section (across components) is closed → conflict", () => {
     const c = course("X 1", [
       sec("L1", "Lecture", ["Mon"], "09:00", "10:00", { status: "closed" }),
