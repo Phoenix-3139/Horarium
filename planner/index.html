@@ -11,7 +11,7 @@
   export. base-uri 'none' blocks <base href> rewriting tricks; frame-ancestors
   'none' prevents clickjacking.
 -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none';">
 <title>Horarium</title>
 <script>
   // Sync theme attribute as early as possible so the page paints in
@@ -46,9 +46,12 @@
     setTimeout(drain, 4000);
   })();
 </script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400;1,9..144,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=JetBrains+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<!-- Self-hosted fonts. Same Fraunces / DM Sans / JetBrains Mono
+     subsets Google would have served, but origin-local — no third-
+     party request, no CSP carve-outs, works offline after first load,
+     and avoids Firefox font-sanitizer rejections we were seeing on
+     gstatic-served WOFF2 in some environments. -->
+<link href="./fonts/fonts.css" rel="stylesheet">
 <style>
   /* theme system
      Each theme provides:
@@ -228,69 +231,71 @@
      inset so it doesn't touch the edge — reads more refined than the
      OS default. Picks up the active theme automatically via the ink
      and accent tokens. */
+  /* Standard scrollbar properties — Firefox + every modern browser. */
   :root {
     scrollbar-width: thin;
     scrollbar-color: color-mix(in srgb, var(--ink, #2b2a26) 22%, transparent) transparent;
   }
-  ::-webkit-scrollbar { width: 10px; height: 10px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb {
-    background: color-mix(in srgb, var(--ink, #2b2a26) 22%, transparent);
-    border: 2px solid transparent;
-    background-clip: padding-box;
-    border-radius: 999px;
-    transition: background 0.15s;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: color-mix(in srgb, var(--accent, var(--ochre)) 65%, transparent);
-    background-clip: padding-box;
-  }
-  ::-webkit-scrollbar-corner { background: transparent; }
-
-  /* Per-theme scrollbar personality. The defaults above already adapt
-     via --ink and --accent; these tweaks dial in the right contrast +
-     character for each palette. */
-  /* Editorial — paper feel, warm rust thumb so it reads against the
-     cream paper without going harsh black. */
-  :root[data-theme="editorial"]::-webkit-scrollbar-thumb,
-  :root:not([data-theme])::-webkit-scrollbar-thumb {
-    background: color-mix(in srgb, var(--rust) 30%, transparent);
-    border: 2px solid transparent;
-    background-clip: padding-box;
-  }
-  :root[data-theme="editorial"]::-webkit-scrollbar-thumb:hover,
-  :root:not([data-theme])::-webkit-scrollbar-thumb:hover {
-    background: color-mix(in srgb, var(--rust) 70%, transparent);
-    background-clip: padding-box;
-  }
-  /* Nature — leafy moss against parchment; slightly thicker so it
-     reads like a vine on the margin. */
   :root[data-theme="nature"] {
     scrollbar-color: color-mix(in srgb, var(--mossy) 40%, transparent) transparent;
   }
-  :root[data-theme="nature"]::-webkit-scrollbar { width: 12px; height: 12px; }
-  :root[data-theme="nature"]::-webkit-scrollbar-thumb {
-    background: color-mix(in srgb, var(--mossy) 40%, transparent);
-    border: 3px solid transparent;
-    background-clip: padding-box;
+  /* Webkit pseudo-elements — Chrome / Safari / Edge fine-tuning.
+     Wrapped in @supports selector() so Firefox doesn't emit
+     "ruleset ignored" warnings for selectors it can't parse. */
+  @supports selector(::-webkit-scrollbar) {
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb {
+      background: color-mix(in srgb, var(--ink, #2b2a26) 22%, transparent);
+      border: 2px solid transparent;
+      background-clip: padding-box;
+      border-radius: 999px;
+      transition: background 0.15s;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: color-mix(in srgb, var(--accent, var(--ochre)) 65%, transparent);
+      background-clip: padding-box;
+    }
+    ::-webkit-scrollbar-corner { background: transparent; }
+
+    /* Per-theme scrollbar personality. The defaults above already
+       adapt via --ink and --accent; these tweaks dial in the right
+       contrast + character for each palette.
+       Editorial — paper feel, warm rust thumb. */
+    :root[data-theme="editorial"]::-webkit-scrollbar-thumb,
+    :root:not([data-theme])::-webkit-scrollbar-thumb {
+      background: color-mix(in srgb, var(--rust) 30%, transparent);
+      border: 2px solid transparent;
+      background-clip: padding-box;
+    }
+    :root[data-theme="editorial"]::-webkit-scrollbar-thumb:hover,
+    :root:not([data-theme])::-webkit-scrollbar-thumb:hover {
+      background: color-mix(in srgb, var(--rust) 70%, transparent);
+      background-clip: padding-box;
+    }
+    /* Nature — thicker mossy thumb. */
+    :root[data-theme="nature"]::-webkit-scrollbar { width: 12px; height: 12px; }
+    :root[data-theme="nature"]::-webkit-scrollbar-thumb {
+      background: color-mix(in srgb, var(--mossy) 40%, transparent);
+      border: 3px solid transparent;
+      background-clip: padding-box;
+    }
+    :root[data-theme="nature"]::-webkit-scrollbar-thumb:hover {
+      background: var(--mossy);
+      background-clip: padding-box;
+    }
+    /* Futuristic — phosphor-cyan thumb, no glow. */
+    :root[data-theme="futuristic"]::-webkit-scrollbar-thumb {
+      background: color-mix(in srgb, var(--accent) 32%, transparent);
+      border: 2px solid transparent;
+      background-clip: padding-box;
+    }
+    :root[data-theme="futuristic"]::-webkit-scrollbar-thumb:hover {
+      background: color-mix(in srgb, var(--accent) 70%, transparent);
+      background-clip: padding-box;
+    }
+    /* Coffee uses the default ink-22% / accent-65% formula. */
   }
-  :root[data-theme="nature"]::-webkit-scrollbar-thumb:hover {
-    background: var(--mossy);
-    background-clip: padding-box;
-  }
-  /* Futuristic — phosphor cyan thumb, no glow (blends into the dark
-     panel like a flat indicator). */
-  :root[data-theme="futuristic"]::-webkit-scrollbar-thumb {
-    background: color-mix(in srgb, var(--accent) 32%, transparent);
-    border: 2px solid transparent;
-    background-clip: padding-box;
-  }
-  :root[data-theme="futuristic"]::-webkit-scrollbar-thumb:hover {
-    background: color-mix(in srgb, var(--accent) 70%, transparent);
-    background-clip: padding-box;
-  }
-  /* Coffee already uses the default ink-22%/accent-65% formula —
-     the warm cream ink against the dark backdrop reads well as-is. */
 
   /* dark theme — editorial after dark
      Warm coffee-charcoal canvas with the same Fraunces serif voice.
