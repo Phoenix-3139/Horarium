@@ -12329,7 +12329,8 @@ function _buildOwnCell(evt, extraClass) {
   cell.style.setProperty('--cell-ink', meta.color.ink);
   const typeNote = evt.label === 'Lecture' ? '' : ' <em>' + _escHtml(String(evt.label || '').toLowerCase()) + '</em>';
   const titleLine = meta.title ? '<div class="title-sub">' + _escHtml(meta.title) + '</div>' : '';
-  // Chain icon when the section is linked to another const plan = (typeof _viewedPlan === 'function') ? _viewedPlan() : null;
+  // Chain icon when the section is linked to another section.
+  const plan = (typeof _viewedPlan === 'function') ? _viewedPlan() : null;
   const linkSet = _buildLinkSet(plan);
   const linkBadge = (evt.secKey && linkSet.has(String(evt.secKey)))
     ? '<span class="cell-link-icon" title="Linked to another section">⛓</span>' : '';
