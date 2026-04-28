@@ -878,6 +878,13 @@ export function createCatalog() {
     if (node.type === "shelf") {
       return { type: "shelf", subject: String(node.subject || "") };
     }
+    if (node.type === "section") {
+      return {
+        type: "section",
+        class_number: String(node.class_number || ""),
+        course_code: String(node.course_code || ""),
+      };
+    }
     if (node.op === "AND" || node.op === "OR") {
       return {
         id: typeof node.id === "string" && node.id ? node.id : _wantedNewId(),
@@ -902,6 +909,12 @@ export function createCatalog() {
       const subject = String(node.subject || "").trim();
       if (!subject) return null;
       return { type: "shelf", subject };
+    }
+    if (node.type === "section") {
+      const class_number = String(node.class_number || "").trim();
+      const course_code = String(node.course_code || "").trim();
+      if (!class_number) return null;
+      return { type: "section", class_number, course_code };
     }
     if (node.op !== "AND" && node.op !== "OR") return null;
     const kids = (node.children || [])
@@ -933,11 +946,12 @@ export function createCatalog() {
     // callers (wantedAddCourse, wantedAddGroup, ...) need a
     // children[]-bearing node to mutate.
     let cur = root;
+    function isLeaf(n) { return n && (n.type === "course" || n.type === "shelf" || n.type === "section"); }
     for (const idx of path) {
-      if (!cur || cur.type === "course" || cur.type === "shelf") return null;
+      if (!cur || isLeaf(cur)) return null;
       cur = cur.children[idx];
     }
-    if (!cur || cur.type === "course" || cur.type === "shelf") return null;
+    if (!cur || isLeaf(cur)) return null;
     return cur;
   }
   function _wantedFindCode(node, code) {
@@ -945,6 +959,7 @@ export function createCatalog() {
     if (!node) return false;
     if (node.type === "course") return node.code === code;
     if (node.type === "shelf") return false;
+    if (node.type === "section") return false;
     return (node.children || []).some((c) => _wantedFindCode(c, code));
   }
   function _wantedRemoveCodeAll(node, code) {
@@ -953,8 +968,25 @@ export function createCatalog() {
     if (!node) return null;
     if (node.type === "course") return node.code === code ? null : node;
     if (node.type === "shelf") return node;
+    if (node.type === "section") return node;
     const kids = node.children
       .map((c) => _wantedRemoveCodeAll(c, code))
+      .filter((c) => !!c);
+    if (kids.length === 0) return null;
+    return Object.assign({}, node, { children: kids });
+  }
+  function _wantedFindSection(node, classNumber) {
+    if (!node) return false;
+    if (node.type === "section") return node.class_number === classNumber;
+    if (node.type === "course" || node.type === "shelf") return false;
+    return (node.children || []).some((c) => _wantedFindSection(c, classNumber));
+  }
+  function _wantedRemoveSectionAll(node, classNumber) {
+    if (!node) return null;
+    if (node.type === "section") return node.class_number === classNumber ? null : node;
+    if (node.type === "course" || node.type === "shelf") return node;
+    const kids = node.children
+      .map((c) => _wantedRemoveSectionAll(c, classNumber))
       .filter((c) => !!c);
     if (kids.length === 0) return null;
     return Object.assign({}, node, { children: kids });
@@ -962,9 +994,12 @@ export function createCatalog() {
   function _wantedFinish(planId, plan, root, reason, payload) {
     let normalized = _wantedNormalize(root);
     // Keep the root stable as a group: if normalization collapsed it
-    // down to a bare course leaf, wrap it back into an AND group of
-    // one so the UI always has a header to interact with.
-    if (normalized && normalized.type === "course") {
+    // down to a bare leaf (course / shelf / section), wrap it back
+    // into an AND group of one so the UI always has a header.
+    if (normalized &&
+        (normalized.type === "course" ||
+         normalized.type === "shelf" ||
+         normalized.type === "section")) {
       normalized = { id: _wantedNewId(), op: "AND", children: [normalized] };
     }
     plan.wanted = { root: normalized };
@@ -1023,12 +1058,49 @@ export function createCatalog() {
     function strip(node) {
       if (!node) return null;
       if (node.type === "shelf") return node.subject === s ? null : node;
-      if (node.type === "course") return node;
+      if (node.type === "course" || node.type === "section") return node;
       const kids = (node.children || []).map(strip).filter((c) => c !== null);
       return Object.assign({}, node, { children: kids });
     }
     root = strip(root);
     _wantedFinish(planId, plan, root, "wanted_remove_shelf", { subject: s });
+  }
+
+  // Section pin: "I want this exact section." Composes with the rest
+  // of the AND/OR tree so users can express e.g.
+  //   AND[ Lec 001, Lab 003 ]   — strict pairing
+  //   OR[ AND[Lec 001, Lab 003], AND[Lec 002, Lab 005] ]
+  function _planWantedAddSection(planId, path, classNumber, courseCode) {
+    const plan = state.plans.byId.get(planId);
+    if (!plan) throw new Error(`Unknown plan ${planId}`);
+    const cn = String(classNumber || "").trim();
+    if (!cn) return;
+    const cc = String(courseCode || "").trim();
+    let root = _wantedCloneNode(plan.wanted && plan.wanted.root);
+    if (!root) {
+      root = {
+        id: _wantedNewId(), op: "AND",
+        children: [{ type: "section", class_number: cn, course_code: cc }],
+      };
+      _wantedFinish(planId, plan, root, "wanted_add_section", { path, class_number: cn, course_code: cc });
+      return;
+    }
+    const target = _wantedNodeAtPath(root, path || []);
+    if (!target) return;
+    if (target.children.some((k) => k.type === "section" && k.class_number === cn)) return;
+    target.children.push({ type: "section", class_number: cn, course_code: cc });
+    _wantedFinish(planId, plan, root, "wanted_add_section", { path, class_number: cn, course_code: cc });
+  }
+
+  function _planWantedRemoveSection(planId, classNumber) {
+    const plan = state.plans.byId.get(planId);
+    if (!plan) throw new Error(`Unknown plan ${planId}`);
+    const cn = String(classNumber || "").trim();
+    if (!cn) return;
+    let root = _wantedCloneNode(plan.wanted && plan.wanted.root);
+    if (!root) return;
+    root = _wantedRemoveSectionAll(root, cn);
+    _wantedFinish(planId, plan, root, "wanted_remove_section", { class_number: cn });
   }
 
   function _planWantedAddGroup(planId, path, op) {
@@ -1410,10 +1482,12 @@ export function createCatalog() {
       updatePreferences: _planUpdatePreferences,
       wantedAddCourse: _planWantedAddCourse,
       wantedAddShelf: _planWantedAddShelf,
+      wantedAddSection: _planWantedAddSection,
       wantedAddGroup: _planWantedAddGroup,
       wantedRemove: _planWantedRemove,
       wantedRemoveCode: _planWantedRemoveCode,
       wantedRemoveShelf: _planWantedRemoveShelf,
+      wantedRemoveSection: _planWantedRemoveSection,
       wantedToggleOp: _planWantedToggleOp,
       wantedWrap: _planWantedWrap,
       clearWanted: _planWantedClear,

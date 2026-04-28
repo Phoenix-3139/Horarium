@@ -6178,6 +6178,33 @@
     line-height: 1;
     transition: background 0.12s, color 0.12s, border-color 0.12s;
   }
+  /* Section-level pin pill. Same plum-tinted look as the subject
+     +ANY pill but smaller (sits among the inline section actions).
+     Hidden unless the auto-scheduler bottom sheet is open. */
+  .mp-pin-btn {
+    display: none;
+    background: transparent;
+    border: 1px solid color-mix(in srgb, var(--plum, var(--ochre)) 38%, transparent);
+    color: var(--plum, var(--ochre));
+    border-radius: 999px;
+    padding: 0.1rem 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor: pointer;
+    line-height: 1.4;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+  }
+  .mp-pin-btn:hover {
+    background: color-mix(in srgb, var(--plum, var(--ochre)) 14%, transparent);
+    border-color: var(--plum, var(--ochre));
+  }
+  .mp-pin-btn.is-on {
+    background: color-mix(in srgb, var(--plum, var(--ochre)) 18%, transparent);
+    border-color: var(--plum, var(--ochre));
+  }
+  body.sch-drawer-open .mp-pin-btn { display: inline-block; }
   .mp-link-btn:hover {
     background: color-mix(in srgb, var(--accent, var(--ochre)) 10%, transparent);
     border-color: color-mix(in srgb, var(--accent, var(--ochre)) 40%, transparent);
@@ -9870,8 +9897,18 @@ function _schAllShelvedSubjects(node, out) {
   out = out || new Set();
   if (!node) return out;
   if (node.type === 'shelf') { out.add(node.subject); return out; }
-  if (node.type === 'course') return out;
+  if (node.type === 'course' || node.type === 'section') return out;
   for (const c of (node.children || [])) _schAllShelvedSubjects(c, out);
+  return out;
+}
+// Walk the tree and collect every pinned section's class_number.
+// Used by the picker's section-row pin pill (✓ PIN state).
+function _schAllSectionPins(node, out) {
+  out = out || new Set();
+  if (!node) return out;
+  if (node.type === 'section') { out.add(String(node.class_number)); return out; }
+  if (node.type === 'course' || node.type === 'shelf') return out;
+  for (const c of (node.children || [])) _schAllSectionPins(c, out);
   return out;
 }
 
@@ -10258,7 +10295,7 @@ const _SCH_CNF_CAP = 64;
 function _schPruneShelves(node) {
   if (!node) return null;
   if (node.type === 'shelf') return 'TRUE';
-  if (node.type === 'course') return node;
+  if (node.type === 'course' || node.type === 'section') return node;
   if (node.op === 'AND') {
     const kids = (node.children || []).map(_schPruneShelves);
     const filtered = kids.filter((k) => k !== 'TRUE' && k !== null);
@@ -10274,9 +10311,22 @@ function _schPruneShelves(node) {
   if (filtered.length === 1) return filtered[0];
   return Object.assign({}, node, { children: filtered });
 }
+
+// Atom shape: { type: 'course', code } or { type: 'section', class_number, course_code }.
+// Two atoms are equal if the keying tuple matches; used to dedupe inside an OR clause.
+function _schAtomKey(a) {
+  if (a.type === 'course') return 'C:' + a.code;
+  if (a.type === 'section') return 'S:' + a.class_number;
+  return '?';
+}
+
+// Convert the wanted tree into a CNF list of clauses, each clause an
+// array of atoms. Course leaves emit a course-atom; section leaves
+// emit a section-atom; shelves are stripped earlier.
 function _schToCNF(node) {
   if (!node) return [];
-  if (node.type === 'course') return [[node.code]];
+  if (node.type === 'course') return [[{ type: 'course', code: node.code }]];
+  if (node.type === 'section') return [[{ type: 'section', class_number: node.class_number, course_code: node.course_code }]];
   if (node.type === 'shelf') return []; // stripped earlier; defensive
   if (node.op === 'AND') {
     const out = [];
@@ -10286,7 +10336,7 @@ function _schToCNF(node) {
     }
     return out;
   }
-  // OR
+  // OR — distribute via cartesian product, deduping by atom key.
   const kids = node.children || [];
   if (kids.length === 0) return [];
   let result = [[]];
@@ -10296,9 +10346,12 @@ function _schToCNF(node) {
     const next = [];
     for (const a of result) {
       for (const b of childCNF) {
-        const seen = new Set(a);
+        const seen = new Set(a.map(_schAtomKey));
         const merged = a.slice();
-        for (const x of b) if (!seen.has(x)) { seen.add(x); merged.push(x); }
+        for (const atom of b) {
+          const k = _schAtomKey(atom);
+          if (!seen.has(k)) { seen.add(k); merged.push(atom); }
+        }
         next.push(merged);
         if (next.length > _SCH_CNF_CAP) {
           throw new Error('Selection is too complex to schedule (>' + _SCH_CNF_CAP + ' CNF clauses). Try simplifying.');
@@ -10317,7 +10370,29 @@ function _schRequirementsFromWanted(wanted) {
   const pruned = _schPruneShelves(root);
   if (!pruned || pruned === 'TRUE') return [];
   const clauses = _schToCNF(pruned);
-  return clauses.map((cl, i) => ({ id: 'r-' + i, courses: cl.slice() }));
+  // Each clause becomes one requirement. The solver inspects atoms[]
+  // directly; courses[] is kept populated for back-compat (existing
+  // solver path enumerates from there) but section atoms add extra
+  // class-number filtering.
+  return clauses.map((atoms, i) => {
+    const courses = [];
+    const section_pins = [];
+    const seenCourses = new Set();
+    for (const a of atoms) {
+      if (a.type === 'course') {
+        if (!seenCourses.has(a.code)) { courses.push(a.code); seenCourses.add(a.code); }
+      } else if (a.type === 'section') {
+        section_pins.push({ class_number: a.class_number, course_code: a.course_code });
+        // Make sure the parent course of the section is in courses[]
+        // so the solver's bundle enumerator picks it up.
+        if (a.course_code && !seenCourses.has(a.course_code)) {
+          courses.push(a.course_code);
+          seenCourses.add(a.course_code);
+        }
+      }
+    }
+    return { id: 'r-' + i, courses, atoms, section_pins };
+  });
 }
 
 function _schGenerate() {
@@ -16393,16 +16468,30 @@ function _pkRenderSectionRow(s, c, stagedSet, hydratedStaged) {
     '" data-pkaction="link" data-class-number="' + _escHtml(s.class_number) +
     '" title="' + linkTitle + '" aria-label="' + linkTitle + '">⛓</button>';
 
+  // Section-level pin pill — shown only when the auto-scheduler sheet
+  // is open (CSS-gated). Pins this exact section into the user's
+  // selection, with full AND/OR composition support via the tree.
+  let pinBtnHtml = '';
+  if (typeof _schAllSectionPins === 'function') {
+    const planForPin = (typeof _schScopePlan === 'function') ? _schScopePlan() : null;
+    const pinned = planForPin
+      ? _schAllSectionPins((planForPin.wanted && planForPin.wanted.root) || null).has(String(s.class_number))
+      : false;
+    pinBtnHtml = pinned
+      ? '<button type="button" class="mp-pin-btn is-on" data-pksecpin="' + _escHtml(s.class_number) + '" data-pksecpin-course="' + _escHtml(c.code) + '" title="Pinned to selection — click to remove">✓ PIN</button>'
+      : '<button type="button" class="mp-pin-btn" data-pksecpin="' + _escHtml(s.class_number) + '" data-pksecpin-course="' + _escHtml(c.code) + '" title="Pin this exact section into your selection">+ PIN</button>';
+  }
+
   if (isStaged) {
     html += '<div class="mp-section-actions">';
-    html += linkBtnHtml;
+    html += pinBtnHtml + linkBtnHtml;
     html += '<button type="button" class="mp-stage is-staged" data-pkaction="unstage" data-class-number="' +
       _escHtml(s.class_number) + '">Staged ✓</button>';
     html += '</div>';
   } else {
     const cls = action.needsConfirm ? 'mp-stage is-warn' : 'mp-stage';
     html += '<div class="mp-section-actions">';
-    html += linkBtnHtml;
+    html += pinBtnHtml + linkBtnHtml;
     html += '<button type="button" class="' + cls + '" data-pkaction="stage" data-class-number="' +
       _escHtml(s.class_number) + '" data-subject="' + _escHtml(s.subject || c.subject || '') +
       '" data-confirm="' + _escHtml(action.confirmReason || '') + '">' +
@@ -16448,6 +16537,28 @@ function _pkWireAll(root) {
       // Open drawer once if closed, then leave it alone.
       if (!_schDrawerOpen && typeof toggleSchedulerDrawer === 'function') {
         toggleSchedulerDrawer();
+      }
+    });
+  });
+  // Section "+ Pin" pill — pins this exact section into the user's
+  // selection at the root of the wanted tree. From there the user
+  // can compose with AND/OR groups (e.g. wrap a pin into an OR with
+  // another to express "either of these two combos"). Click an
+  // already-pinned section to remove every occurrence.
+  root.querySelectorAll('[data-pksecpin]').forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      const cn = btn.getAttribute('data-pksecpin');
+      const code = btn.getAttribute('data-pksecpin-course');
+      const plan = (typeof _schScopePlan === 'function') ? _schScopePlan() : null;
+      if (!plan) return;
+      const pins = (typeof _schAllSectionPins === 'function')
+        ? _schAllSectionPins((plan.wanted && plan.wanted.root) || null)
+        : new Set();
+      if (pins.has(String(cn))) {
+        window.HS.catalog.plans.wantedRemoveSection(plan.id, cn);
+      } else {
+        window.HS.catalog.plans.wantedAddSection(plan.id, [], cn, code);
       }
     });
   });

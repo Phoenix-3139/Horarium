@@ -256,8 +256,10 @@ export function createPersistence(catalog, options = {}) {
       "addAlternative", "removeAlternative",
       "lockRequirementSection", "unlockRequirementSection",
       "updatePreferences",
-      "wantedAddCourse", "wantedAddShelf", "wantedAddGroup", "wantedRemove",
-      "wantedRemoveCode", "wantedRemoveShelf", "wantedToggleOp", "wantedWrap", "clearWanted",
+      "wantedAddCourse", "wantedAddShelf", "wantedAddSection",
+      "wantedAddGroup", "wantedRemove", "wantedRemoveCode",
+      "wantedRemoveShelf", "wantedRemoveSection",
+      "wantedToggleOp", "wantedWrap", "clearWanted",
       "clearByOrigin",
     ];
     for (const name of PLAN_MUTATORS) {

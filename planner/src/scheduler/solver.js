@@ -172,13 +172,34 @@ export function generateSchedules({
       const locked = String(req.locked_section.class_number);
       domain = domain.filter((b) => _classNumbersIn(b).has(locked));
     }
+    // Atom-based filtering. A clause is satisfied by a bundle iff some
+    // atom in the clause matches the bundle:
+    //   course atom (code C)        → bundle.course_code === C
+    //   section atom (cn N, code C) → bundle is a bundle of C AND
+    //                                 contains a section with class_number N.
+    // If req.atoms is unset, we skip (back-compat with course-only path).
+    if (Array.isArray(req.atoms) && req.atoms.length > 0) {
+      domain = domain.filter((b) => {
+        for (const a of req.atoms) {
+          if (a.type === 'course' && b.course_code === a.code) return true;
+          if (a.type === 'section' &&
+              b.course_code === a.course_code &&
+              _classNumbersIn(b).has(String(a.class_number))) return true;
+        }
+        return false;
+      });
+    }
     domains.push(domain);
 
     if (domain.length === 0) {
+      const label = (req.atoms || []).length > 0
+        ? req.atoms.map((a) => a.type === 'section' ? '§' + a.class_number : a.code).join(' or ')
+        : (req.courses || []).join(' or ');
       conflicts.push({
-        course_code: (req.courses || []).join(" or "),
+        course_code: label,
         reason: "No sections found in the catalog" +
-          (req.locked_section ? ` matching the locked section ${req.locked_section.class_number}.` : "."),
+          (req.locked_section ? ` matching the locked section ${req.locked_section.class_number}.` : ".") +
+          ((req.atoms || []).some((a) => a.type === 'section') ? ' (Section pins may not match any catalog section.)' : ''),
       });
     }
   }
