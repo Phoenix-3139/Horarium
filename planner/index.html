@@ -3254,7 +3254,10 @@
      into modal-ish drawers. */
   .drawer-flag {
     position: fixed;
-    right: 9.5rem;
+    /* Sit to the left of the auto-schedule tab with a small gap.
+       The auto-schedule tab is ~150px wide + 1.25rem from edge,
+       so 12.75rem clears it on common viewports. */
+    right: 12.75rem;
     bottom: 0;
     border: none;
     padding: 0.55rem 0.95rem 0.6rem;
@@ -3530,7 +3533,7 @@
     .fn-item { font-size: 10px; }
     /* Bottom tabs sit above the screen edge; on phones, narrow gap
        between them since horizontal real estate is tight. */
-    .drawer-flag { right: 8.5rem; padding: 0.5rem 0.7rem; }
+    .drawer-flag { right: 11rem; padding: 0.5rem 0.7rem; }
   }
 
   /* modular tab system */
