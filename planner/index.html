@@ -5893,13 +5893,23 @@
     width: 100%;
     align-items: center;
     justify-content: space-between;
-    padding: 0.65rem 0.95rem;
+    /* Right padding clears the fixed flags (+Add filter at top-right
+       and Auto-Schedule tab at bottom-right) so the "N courses ›"
+       chevron never sits behind them at any scroll position. The
+       Auto-Schedule tab is the wider of the two (~152px). */
+    padding: 0.65rem 10.5rem 0.65rem 0.95rem;
     background: transparent;
     border: 0;
     cursor: pointer;
     font-family: inherit;
     text-align: left;
     color: inherit;
+  }
+  /* On wide viewports the picker is offset enough that the right-
+     padding clearance becomes excess whitespace. Trim it back when
+     the page has plenty of horizontal room. */
+  @media (min-width: 1100px) {
+    .mp-subject-head { padding-right: 0.95rem; }
   }
   .mp-subject-head:hover { background: color-mix(in srgb, var(--ink) 3%, transparent); }
   .mp-subject-code {
