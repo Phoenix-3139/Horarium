@@ -11288,7 +11288,7 @@ function _openLegendSectionMenu(classNumber) {
   window.HS.modal.showModal({
     title: title,
     body: isLinked ? 'This section is linked. Removing the link won\'t unstage anything.'
-                   : 'Pick another staged section to pair with this one. Linked sections offer to unstage together.',
+                   : 'Pick another section to pair with this one. Links survive across staging — linked sections offer to unstage together when both are staged.',
     buttons: buttons,
     onCancel: function () {},
   });
@@ -16371,35 +16371,43 @@ function _pkRenderSectionRow(s, c, stagedSet, hydratedStaged) {
   }
   html += '</div>';
 
-  if (isStaged) {
-    // Two-tap link flow: click chain → others highlight as targets,
-    // click another to commit. Click same again to cancel.
-    const plan = (typeof _viewedPlan === 'function') ? _viewedPlan() : null;
-    const linkSet = _buildLinkSet(plan);
-    const isLinked = linkSet.has(String(s.class_number));
-    const isLinkSource = _legendLinkSourceCN === String(s.class_number);
-    const isLinkTarget = !!_legendLinkSourceCN && !isLinkSource;
-    let linkClass = 'mp-link-btn';
-    if (isLinked) linkClass += ' is-linked';
-    if (isLinkSource) linkClass += ' is-source';
-    if (isLinkTarget) linkClass += ' is-target';
-    let title = isLinked ? 'Linked — click to manage'
+  // Two-tap link flow: click chain → others highlight as targets,
+  // click another to commit. Click same again to cancel. Available
+  // for staged AND unstaged sections — links survive across staging
+  // so the user can declare component pairings up front, then stage
+  // them in any order.
+  const planForLink = (typeof _viewedPlan === 'function') ? _viewedPlan() : null;
+  const linkSet = _buildLinkSet(planForLink);
+  const isLinked = linkSet.has(String(s.class_number));
+  const isLinkSource = _legendLinkSourceCN === String(s.class_number);
+  const isLinkTarget = !!_legendLinkSourceCN && !isLinkSource;
+  let linkClass = 'mp-link-btn';
+  if (isLinked) linkClass += ' is-linked';
+  if (isLinkSource) linkClass += ' is-source';
+  if (isLinkTarget) linkClass += ' is-target';
+  const linkTitle = isLinked ? 'Linked — click to manage'
               : isLinkSource ? 'Click again to cancel link mode'
               : isLinkTarget ? 'Click to link to the source section'
-              : 'Link to another staged section';
+              : 'Link to another section';
+  const linkBtnHtml = '<button type="button" class="' + linkClass +
+    '" data-pkaction="link" data-class-number="' + _escHtml(s.class_number) +
+    '" title="' + linkTitle + '" aria-label="' + linkTitle + '">⛓</button>';
+
+  if (isStaged) {
     html += '<div class="mp-section-actions">';
-    html += '<button type="button" class="' + linkClass +
-      '" data-pkaction="link" data-class-number="' + _escHtml(s.class_number) +
-      '" title="' + title + '" aria-label="' + title + '">⛓</button>';
+    html += linkBtnHtml;
     html += '<button type="button" class="mp-stage is-staged" data-pkaction="unstage" data-class-number="' +
       _escHtml(s.class_number) + '">Staged ✓</button>';
     html += '</div>';
   } else {
     const cls = action.needsConfirm ? 'mp-stage is-warn' : 'mp-stage';
+    html += '<div class="mp-section-actions">';
+    html += linkBtnHtml;
     html += '<button type="button" class="' + cls + '" data-pkaction="stage" data-class-number="' +
       _escHtml(s.class_number) + '" data-subject="' + _escHtml(s.subject || c.subject || '') +
       '" data-confirm="' + _escHtml(action.confirmReason || '') + '">' +
       _escHtml(action.label) + '</button>';
+    html += '</div>';
   }
   html += '</div>';
   return html;
