@@ -3035,7 +3035,7 @@
   body {
     padding-top: 1rem;
     padding-left: 244px;
-    transition: padding-left 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+    transition: padding-left 0.38s cubic-bezier(0.4, 0, 0.2, 1);
   }
   :root[data-sidebar="stowed"] body { padding-left: 84px; }
   @media (max-width: 720px) {
@@ -3138,7 +3138,10 @@
       inset 0 0 0 1px var(--dock-border),
       inset 0 1px 0 var(--dock-highlight);
     z-index: 100;
-    transition: width 0.28s cubic-bezier(0.32, 0.72, 0, 1),
+    /* width: longer + more even curve so the user can see the
+       dock visibly collapsing/expanding instead of the iOS-style
+       fast-snap that ate most of the motion in the first 80ms. */
+    transition: width 0.38s cubic-bezier(0.4, 0, 0.2, 1),
                 background 0.45s ease,
                 box-shadow 0.45s ease;
   }
@@ -3178,10 +3181,12 @@
     overflow: hidden;
     max-height: 220px;
     opacity: 1;
+    /* Expand: max-height grows first, swatches fade in once they
+       have their full layout. */
     transition:
-      max-height 0.18s cubic-bezier(0.32, 0.72, 0, 1) 0s,
-      padding 0.18s cubic-bezier(0.32, 0.72, 0, 1) 0s,
-      opacity 0.12s ease 0.16s;
+      max-height 0.26s cubic-bezier(0.4, 0, 0.2, 1) 0s,
+      padding 0.26s cubic-bezier(0.4, 0, 0.2, 1) 0s,
+      opacity 0.18s ease 0.20s;
   }
   :root[data-sidebar="stowed"] .sd-themes {
     max-height: 0;
@@ -3189,25 +3194,19 @@
     padding-top: 0;
     padding-bottom: 0;
     pointer-events: none;
+    /* Stow: swatches fade out across the dock-width window so the
+       user sees them visibly stowing instead of disappearing.
+       Opacity matches the dock width duration; max-height collapses
+       last, behind the now-transparent layer. */
     transition:
-      opacity 0.10s ease 0s,
-      max-height 0.18s cubic-bezier(0.32, 0.72, 0, 1) 0.10s,
-      padding 0.18s cubic-bezier(0.32, 0.72, 0, 1) 0.10s;
+      opacity 0.30s ease 0s,
+      max-height 0.18s cubic-bezier(0.4, 0, 0.2, 1) 0.20s,
+      padding 0.18s cubic-bezier(0.4, 0, 0.2, 1) 0.20s;
   }
   .sd-themes-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 6px;
-    /* Lock the grid to the dock's expanded content width so the
-       swatches keep their dimensions while the dock animates from
-       212px→52px. Without this, the swatches would scale-down with
-       the dock width (because of their aspect-ratio + 1fr columns),
-       producing the "explode then implode" flicker the eye picks up
-       even at sub-second timescales. .sd-themes has overflow:hidden,
-       so the now-fixed-width grid is just clipped as the dock
-       narrows behind it. */
-    width: 188px;
-    flex-shrink: 0;
   }
   .sd-theme {
     aspect-ratio: 1.6 / 1;
@@ -3218,6 +3217,11 @@
     padding: 0;
     overflow: hidden;
     position: relative;
+    /* Note: aspect-ratio is intentionally NOT in the transition
+       list. Browsers can interpolate it, which produced a momentary
+       "swelling" mid-collapse when paired with width changes. With
+       it static, the swatches just shrink proportionally with the
+       dock width — visibly stowing, no explode. */
     transition: border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
   }
   /* Don't transition aspect-ratio — it'd interpolate between 1.6:1
@@ -3300,8 +3304,8 @@
     transition: color 0.2s ease,
                 background 0.25s cubic-bezier(0.4, 0, 0.2, 1),
                 transform 0.2s ease,
-                padding 0.28s cubic-bezier(0.32, 0.72, 0, 1),
-                gap 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+                padding 0.38s cubic-bezier(0.4, 0, 0.2, 1),
+                gap 0.38s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     align-items: center;
     gap: 10px;
@@ -3326,8 +3330,8 @@
     max-width: 200px;
     opacity: 1;
     overflow: hidden;
-    transition: max-width 0.28s cubic-bezier(0.32, 0.72, 0, 1),
-                opacity 0.18s ease;
+    transition: max-width 0.38s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.24s ease;
   }
   :root[data-sidebar="stowed"] .fn-item .fn-label {
     max-width: 0;
@@ -3393,8 +3397,8 @@
     max-width: 200px;
     opacity: 1;
     white-space: nowrap;
-    transition: max-width 0.28s cubic-bezier(0.32, 0.72, 0, 1),
-                opacity 0.18s ease;
+    transition: max-width 0.38s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.24s ease;
   }
   :root[data-sidebar="stowed"] .sd-stow .sd-stow-label {
     max-width: 0;
