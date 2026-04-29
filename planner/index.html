@@ -12407,6 +12407,81 @@ function exportAsJSON(planId) {
 let friendData = null;
 let friendOverlayOn = false;
 
+// Normalise an enrolled_courses[] entry from any Horarium export
+// schema into the single shape friend-compare + friend-overlay
+// expect: { class_numbers, course_name, short_name, instructor,
+// meetings: [{ days, start_minute, end_minute, session, label }] }.
+//
+// exportAsJSON (current schema 1.1.0) emits per-course:
+//   { class_number (scalar), course_code, course_title, component,
+//     session: {code, start_date, end_date}, meetings: [{
+//       days: ['Mon', 'Wed'], start_time: '09:00', end_time: '10:15',
+//       instructors: ['Doe, J'], ... }] }
+// Older / hand-rolled exports may already be in the internal shape
+// (with class_numbers and start_minute). We accept both — anything
+// already containing `class_numbers` and minute-resolved meetings
+// passes through untouched; otherwise we map from the export shape.
+function _friendNormalizeCourse(c) {
+  if (!c || typeof c !== 'object') return null;
+
+  // Already-internal shape — pass through with light defaulting.
+  if (Array.isArray(c.class_numbers) && Array.isArray(c.meetings) &&
+      c.meetings[0] && c.meetings[0].start_minute !== undefined) {
+    return {
+      class_numbers: c.class_numbers.map(String),
+      course_name: c.course_name || c.short_name || '',
+      short_name: c.short_name || c.course_name || '',
+      instructor: c.instructor || '—',
+      meetings: c.meetings.map(m => ({
+        days: Array.isArray(m.days) ? m.days.slice() : [],
+        start_minute: m.start_minute,
+        end_minute: m.end_minute,
+        session: typeof m.session === 'string' ? m.session
+                 : (m.session && m.session.code) || 'AD',
+        label: m.label || c.component || 'Meeting',
+      })),
+    };
+  }
+
+  // Current export schema. session is an object on the course (not the
+  // meeting); replicate it onto each meeting for the internal shape.
+  const cn = c.class_number != null ? String(c.class_number) : null;
+  const codeBase = c.course_code || c.short_name || '';
+  const title = c.course_title || '';
+  const sess = (c.session && c.session.code) || (typeof c.session === 'string' ? c.session : 'AD');
+  const label = c.component || 'Meeting';
+  const hhmmToMin = (window.HS && window.HS.mainPlanner)
+    ? window.HS.mainPlanner.hhmmToMinutes
+    : (s) => { if (!s) return null; const m = String(s).match(/^(\d{1,2}):(\d{2})/); return m ? (+m[1]) * 60 + (+m[2]) : null; };
+
+  const meetings = (Array.isArray(c.meetings) ? c.meetings : []).map(m => ({
+    days: Array.isArray(m.days) ? m.days.slice() : [],
+    start_minute: m.start_minute != null ? m.start_minute : hhmmToMin(m.start_time),
+    end_minute: m.end_minute != null ? m.end_minute : hhmmToMin(m.end_time),
+    session: m.session
+      ? (typeof m.session === 'string' ? m.session : (m.session.code || sess))
+      : sess,
+    label: m.label || label,
+  })).filter(m => m.start_minute != null && m.end_minute != null);
+
+  // Pull instructor list from the first meeting (export schema), or
+  // fall back to a top-level field if a hand-rolled export uses one.
+  let instructor = '—';
+  if (Array.isArray(c.meetings) && c.meetings[0] && Array.isArray(c.meetings[0].instructors) && c.meetings[0].instructors.length) {
+    instructor = c.meetings[0].instructors.join(', ');
+  } else if (typeof c.instructor === 'string' && c.instructor) {
+    instructor = c.instructor;
+  }
+
+  return {
+    class_numbers: cn ? [cn] : [],
+    course_name: codeBase + (title ? ' — ' + title : ''),
+    short_name: codeBase,
+    instructor,
+    meetings,
+  };
+}
+
 function importFriend(fileInput) {
   const file = fileInput.files[0];
   if (!file) return;
@@ -12420,7 +12495,13 @@ function importFriend(fileInput) {
       if (!Array.isArray(parsed.enrolled_courses)) {
         throw new Error('This file has no enrolled_courses array.');
       }
-      friendData = parsed;
+      // Normalise every enrolled_courses entry into the internal shape
+      // friend-compare + overlay expect, regardless of which Horarium
+      // schema this file was exported under.
+      const normalized = parsed.enrolled_courses
+        .map(_friendNormalizeCourse)
+        .filter(Boolean);
+      friendData = Object.assign({}, parsed, { enrolled_courses: normalized });
       renderComparison();
       // If overlay was on, re-render the grids to show friend's classes
       if (friendOverlayOn) {
