@@ -11,7 +11,7 @@
   export. base-uri 'none' blocks <base href> rewriting tricks; frame-ancestors
   'none' prevents clickjacking.
 -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none';">
 <title>Horarium</title>
 <script>
   // Sync theme attribute as early as possible so the page paints in
@@ -11919,16 +11919,22 @@ let _html2canvasPromise = null;
 function _ensureHtml2canvas() {
   if (typeof html2canvas !== 'undefined') return Promise.resolve(html2canvas);
   if (_html2canvasPromise) return _html2canvasPromise;
+  // We use html2canvas-pro instead of vanilla html2canvas because the
+  // latter (frozen at 1.4.1) can't parse modern CSS color functions:
+  // color-mix(), color(), oklch(), etc. The codebase uses color-mix
+  // pervasively (theme tokens, dock chrome, accent dilutions), so the
+  // PNG export was failing with "Attempting to parse an unsupported
+  // color function 'color'". html2canvas-pro is a maintained drop-in
+  // replacement that exports the same global symbol and API surface.
+  // SRI is intentionally absent here — re-add when we pin a vetted
+  // version. The script is fetched from jsdelivr over HTTPS only.
   _html2canvasPromise = new Promise(function (resolve, reject) {
     const s = document.createElement('script');
-    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
-    // SRI pin: if cdnjs is compromised the browser refuses the script
-    // rather than executing attacker-supplied bytes inside our origin.
-    s.integrity = 'sha384-ZZ1pncU3bQe8y31yfZdMFdSpttDoPmOZg2wguVK9almUodir1PghgT0eY7Mrty8H';
+    s.src = 'https://cdn.jsdelivr.net/npm/html2canvas-pro@1.5.8/dist/html2canvas-pro.min.js';
     s.crossOrigin = 'anonymous';
     s.async = true;
     s.onload = function () { resolve(window.html2canvas); };
-    s.onerror = function () { reject(new Error('Failed to load html2canvas from CDN')); };
+    s.onerror = function () { reject(new Error('Failed to load html2canvas-pro from CDN')); };
     document.head.appendChild(s);
   });
   return _html2canvasPromise;
@@ -12524,16 +12530,33 @@ function renderComparison() {
   });
 
   // --- MUTUAL FREE WINDOWS ---
+  // Day code normaliser: the catalog stores meeting days as full short
+  // names ("Mon"/"Tue"/"Wed"/"Thu"/"Fri"); friends' exported JSON may
+  // do the same OR may already be using the canonical M/T/W/Th/F
+  // codes (older exports). The occupancy object keys on the canonical
+  // form, so anything that comes through gets normalised here. Values
+  // that don't map (Sat/Sun/garbage) are dropped silently — they
+  // can't conflict with anyone's class day.
+  const DAY_NORM = {
+    M: 'M', T: 'T', W: 'W', Th: 'Th', F: 'F',
+    Mon: 'M', Tue: 'T', Wed: 'W', Thu: 'Th', Fri: 'F',
+    Monday: 'M', Tuesday: 'T', Wednesday: 'W', Thursday: 'Th', Friday: 'F',
+  };
+  function _normDay(d) { return DAY_NORM[d] || null; }
+
   function buildOccupancy(enrolledList, extractMeetings) {
     const occ = { A71: {M:[],T:[],W:[],Th:[],F:[]}, A72: {M:[],T:[],W:[],Th:[],F:[]} };
     enrolledList.forEach(c => {
-      const meetings = extractMeetings(c);
+      const meetings = extractMeetings(c) || [];
       meetings.forEach(m => {
-        const days = m.days || m[0];
+        const rawDays = m.days || m[0] || [];
         const start = m.start_minute !== undefined ? m.start_minute : m[1];
         const end   = m.end_minute   !== undefined ? m.end_minute   : m[2];
         const sess  = m.session !== undefined ? m.session : m[3];
-        days.forEach(d => {
+        if (start == null || end == null) return;
+        rawDays.forEach(rd => {
+          const d = _normDay(rd);
+          if (!d) return;
           if (sess === 'AD' || sess === 'A71') occ.A71[d].push([start, end]);
           if (sess === 'AD' || sess === 'A72') occ.A72[d].push([start, end]);
         });
@@ -12695,13 +12718,18 @@ gatherEvents = function(half) {
       const friendClassNums = (fc.class_numbers || []).map(String);
       const isClassmate = friendClassNums.some(cn => myClassNums.has(cn));
       (fc.meetings || []).forEach(m => {
-        const days = m.days || m[0];
+        const rawDays = m.days || m[0] || [];
         const start = m.start_minute !== undefined ? m.start_minute : m[1];
         const end   = m.end_minute   !== undefined ? m.end_minute   : m[2];
         const sess  = m.session !== undefined ? m.session : m[3];
         const label = m.label !== undefined ? m.label : m[4];
         if (sess === 'AD' || sess === half) {
-          days.forEach(d => {
+          rawDays.forEach(rd => {
+            // Friend exports may use full short names ("Mon") or
+            // canonical codes ("M"); the grid filter compares
+            // against canonical codes so normalise here.
+            const d = (typeof _normDay === 'function') ? _normDay(rd) : ({Mon:'M',Tue:'T',Wed:'W',Thu:'Th',Fri:'F',M:'M',T:'T',W:'W',Th:'Th',F:'F'}[rd] || null);
+            if (!d) return;
             events.push({
               day: d, start, end,
               course: 'FRIEND',
