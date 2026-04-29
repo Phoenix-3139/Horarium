@@ -3155,20 +3155,59 @@
   }
 
   /* Theme picker — 2x2 grid of small swatch tiles. No "Theme" header
-     so the grid speaks for itself; tooltips name each one. */
+     so the grid speaks for itself; tooltips name each one.
+
+     The transitions here are asymmetric so the user never sees a
+     squished-swatch frame:
+
+       expanding (default state): the box height grows first
+       (max-height 0..0.18s), THEN the swatches fade in
+       (opacity 0.18..0.28s) — so the content materialises only
+       once it has its full layout.
+
+       stowing ([data-sidebar="stowed"]): the swatches fade out
+       first (opacity 0..0.10s), THEN the box collapses
+       (max-height 0.10..0.28s) — so any aspect-ratio squishing
+       that happens while the dock width transitions is hidden
+       behind a fully transparent layer. */
   .sd-themes {
     display: flex;
     flex-direction: column;
     gap: 6px;
     padding: 4px 4px 6px;
+    overflow: hidden;
+    max-height: 220px;
+    opacity: 1;
+    transition:
+      max-height 0.18s cubic-bezier(0.32, 0.72, 0, 1) 0s,
+      padding 0.18s cubic-bezier(0.32, 0.72, 0, 1) 0s,
+      opacity 0.12s ease 0.16s;
+  }
+  :root[data-sidebar="stowed"] .sd-themes {
+    max-height: 0;
+    opacity: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    pointer-events: none;
+    transition:
+      opacity 0.10s ease 0s,
+      max-height 0.18s cubic-bezier(0.32, 0.72, 0, 1) 0.10s,
+      padding 0.18s cubic-bezier(0.32, 0.72, 0, 1) 0.10s;
   }
   .sd-themes-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 6px;
-  }
-  :root[data-sidebar="stowed"] .sd-themes-grid {
-    grid-template-columns: 1fr;
+    /* Lock the grid to the dock's expanded content width so the
+       swatches keep their dimensions while the dock animates from
+       212px→52px. Without this, the swatches would scale-down with
+       the dock width (because of their aspect-ratio + 1fr columns),
+       producing the "explode then implode" flicker the eye picks up
+       even at sub-second timescales. .sd-themes has overflow:hidden,
+       so the now-fixed-width grid is just clipped as the dock
+       narrows behind it. */
+    width: 188px;
+    flex-shrink: 0;
   }
   .sd-theme {
     aspect-ratio: 1.6 / 1;
@@ -3181,7 +3220,20 @@
     position: relative;
     transition: border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
   }
-  :root[data-sidebar="stowed"] .sd-theme { aspect-ratio: 1 / 1; }
+  /* Don't transition aspect-ratio — it'd interpolate between 1.6:1
+     and 1:1, briefly making swatches taller mid-collapse (the
+     "explode" effect). The whole .sd-themes block fades out
+     before the dock has narrowed meaningfully so the tiles stay
+     their original shape until they're invisible. */
+  .sd-divider {
+    transition: opacity 0.2s ease, margin 0.28s, height 0.28s;
+  }
+  :root[data-sidebar="stowed"] .sd-divider {
+    opacity: 0;
+    height: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
   .sd-theme .sd-theme-swatch {
     display: block;
     width: 100%;
@@ -3245,7 +3297,11 @@
     padding: 10px 14px;
     border-radius: 10px;
     cursor: pointer;
-    transition: color 0.2s ease, background 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s ease;
+    transition: color 0.2s ease,
+                background 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.2s ease,
+                padding 0.28s cubic-bezier(0.32, 0.72, 0, 1),
+                gap 0.28s cubic-bezier(0.32, 0.72, 0, 1);
     display: flex;
     align-items: center;
     gap: 10px;
@@ -3257,12 +3313,25 @@
   :root[data-sidebar="stowed"] .fn-item {
     padding: 10px 6px;
     justify-content: center;
+    gap: 0;
   }
-  :root[data-sidebar="stowed"] .fn-item .fn-label { display: none; }
+  /* Labels collapse via max-width + opacity rather than display:none
+     so they animate in sync with the dock width. display:none is
+     instant and would flash content before the dock finished
+     resizing — the "explode then settle" effect. */
   .fn-item .fn-label {
     font-family: var(--font-mono);
     letter-spacing: 0.14em;
-    flex: 1;
+    flex: 0 1 auto;
+    max-width: 200px;
+    opacity: 1;
+    overflow: hidden;
+    transition: max-width 0.28s cubic-bezier(0.32, 0.72, 0, 1),
+                opacity 0.18s ease;
+  }
+  :root[data-sidebar="stowed"] .fn-item .fn-label {
+    max-width: 0;
+    opacity: 0;
   }
   .fn-item .fn-icon {
     font-family: var(--font-display);
@@ -3316,7 +3385,21 @@
     transition: transform 0.28s cubic-bezier(0.32, 0.72, 0, 1);
   }
   :root[data-sidebar="stowed"] .sd-stow .sd-stow-caret { transform: rotate(180deg); }
-  :root[data-sidebar="stowed"] .sd-stow .sd-stow-label { display: none; }
+  /* Same max-width/opacity trick as .fn-label so the stow button's
+     "Collapse" text fades cleanly instead of vanishing instantly. */
+  .sd-stow .sd-stow-label {
+    display: inline-block;
+    overflow: hidden;
+    max-width: 200px;
+    opacity: 1;
+    white-space: nowrap;
+    transition: max-width 0.28s cubic-bezier(0.32, 0.72, 0, 1),
+                opacity 0.18s ease;
+  }
+  :root[data-sidebar="stowed"] .sd-stow .sd-stow-label {
+    max-width: 0;
+    opacity: 0;
+  }
 
   /* Tab panes */
   .tab-pane {
@@ -11580,9 +11663,38 @@ function gatherEvents(half) {
 // whitespace. Replaces the old slot-stacked layout where each
 // distinct (start,end) pair claimed an equal-height row regardless
 // of duration.
+// Empty-grid fallback only — used when a grid has no events at all
+// to size the "no classes scheduled yet" placeholder. The real range
+// is derived from events at render time so a schedule with a 21:00
+// class extends through the night naturally and a schedule that
+// stops at noon doesn't waste half the page on empty afternoon.
 const TIMELINE_DEFAULT_START_MIN = 8 * 60 + 30;  // 8:30 AM
 const TIMELINE_DEFAULT_END_MIN   = 19 * 60;       // 7:00 PM
 const TIMELINE_PX_PER_MIN        = 1.1;
+// Minimum visible range so a single morning class doesn't collapse
+// the grid down to one hour of vertical real estate. The timeline
+// extends forward from the earliest class until at least this many
+// minutes are visible.
+const TIMELINE_MIN_RANGE_MIN     = 6 * 60;        // 6 hours
+
+// Compute the timeline window from a set of events. Returns
+// { startMin, endMin } snapped to whole hours, with no upper cap so
+// late-night classes (21:00, 22:30, etc.) aren't silently clipped.
+// Caller must guarantee `events` is non-empty.
+function _gridTimelineRange(events) {
+  let startMin = events[0].start;
+  let endMin = events[0].end;
+  for (const e of events) {
+    if (e.start < startMin) startMin = e.start;
+    if (e.end   > endMin)   endMin   = e.end;
+  }
+  startMin = Math.floor(startMin / 60) * 60;
+  endMin   = Math.ceil(endMin / 60) * 60;
+  if (endMin - startMin < TIMELINE_MIN_RANGE_MIN) {
+    endMin = startMin + TIMELINE_MIN_RANGE_MIN;
+  }
+  return { startMin, endMin };
+}
 
 function _gridLayoutDay(events) {
   // Greedy lane assignment: an event claims the lowest-numbered lane
@@ -11641,17 +11753,10 @@ function buildGrid(gridId, half) {
     return;
   }
 
-  // Compute the timeline range. Defaults to 8:30..19:00, extended
-  // outward to whole hours if any event sits outside.
-  let startMin = TIMELINE_DEFAULT_START_MIN;
-  let endMin   = TIMELINE_DEFAULT_END_MIN;
-  for (const e of allEvents) {
-    if (e.start < startMin) startMin = Math.floor(e.start / 60) * 60;
-    if (e.end   > endMin)   endMin   = Math.ceil(e.end / 60) * 60;
-  }
-  // Snap to whole hours so background gridlines align cleanly.
-  startMin = Math.floor(startMin / 60) * 60;
-  endMin   = Math.ceil(endMin   / 60) * 60;
+  // Timeline range pulled from the actual events — no rigid 7pm cap,
+  // no rigid 8:30 floor. Falls back to a 6-hour window if everything
+  // sits inside a single morning so the grid doesn't squish down.
+  const { startMin, endMin } = _gridTimelineRange(allEvents);
   const totalPx = (endMin - startMin) * TIMELINE_PX_PER_MIN;
   const hourPx  = 60 * TIMELINE_PX_PER_MIN;
   grid.style.setProperty('--hour-px', hourPx + 'px');
@@ -13079,16 +13184,11 @@ buildGrid = function(gridId, half) {
     return;
   }
 
-  // Compute timeline range — extend outside the 8:30..19:00 default
-  // if any event reaches further out. Snap to whole hours.
-  let startMin = TIMELINE_DEFAULT_START_MIN;
-  let endMin   = TIMELINE_DEFAULT_END_MIN;
-  for (const e of events) {
-    if (e.start < startMin) startMin = e.start;
-    if (e.end   > endMin)   endMin   = e.end;
-  }
-  startMin = Math.floor(startMin / 60) * 60;
-  endMin   = Math.ceil(endMin   / 60) * 60;
+  // Timeline range derived from the actual rendered set (mine plus
+  // any non-classmate friend events). Late classes extend the grid
+  // through the night; light schedules don't reserve afternoon space
+  // they don't need.
+  const { startMin, endMin } = _gridTimelineRange(events);
   const totalPx = (endMin - startMin) * TIMELINE_PX_PER_MIN;
   const hourPx  = 60 * TIMELINE_PX_PER_MIN;
   grid.style.setProperty('--hour-px', hourPx + 'px');
