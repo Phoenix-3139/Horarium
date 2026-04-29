@@ -12044,7 +12044,6 @@ async function exportAsImage(planId) {
     const plan = _planForExport(planId);
     const planName = plan ? plan.name : '';
     const planTagline = (plan && plan.kind === 'active') ? '' : 'Candidate';
-    const today = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 
     // Privacy toggles + view-mode pulled from the export-options panel
     // each render so users can flip flags between exports without
@@ -12088,6 +12087,10 @@ async function exportAsImage(planId) {
         <div id="stage-a72"></div>`;
     }
 
+    // Header keeps the title + subhead (term, plan name, optional
+    // identity bits the user toggled on). The "Exported …" date and
+    // the "Prepared … · Final registration in Albert" footer were
+    // redundant and clipped on narrow exports — both removed.
     stage.innerHTML = `
       <div class="export-header">
         <div>
@@ -12096,17 +12099,13 @@ async function exportAsImage(planId) {
             ${headerSubBits.filter(Boolean).map(_escHtml).join(' · ')}
           </div>
         </div>
-        <div class="meta">
-          ${_escHtml(planTagline)}<br>
-          Exported ${today}
-        </div>
+        ${planTagline ? `<div class="meta">${_escHtml(planTagline)}</div>` : ''}
       </div>
       ${bodyHtml}
       <div class="export-legend">
         <span class="lg-title">Legend</span>
         ${courseLegend}
       </div>
-      <div class="footer-note">Prepared ${today}. Final registration in Albert.</div>
     `;
 
     document.body.appendChild(stage);
