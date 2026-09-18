@@ -9829,7 +9829,7 @@ window.HS = {};
 import { createCatalog } from './src/store/catalog.js';
 import { createPersistence } from './src/store/persistence.js';
 import { parse } from './src/ingester/parse.js';
-import { computeOverlayBlocks } from './src/ui/filter_overlay.js';
+import * as filterOverlay from './src/ui/filter_overlay.js';
 import { translateWarning, WARNING_COPY, REPAIR_HINTS } from './src/ui/warning_copy.js';
 import {
   classifyWarnings,
@@ -9941,7 +9941,7 @@ persistence.load();
 window.HS.catalog = catalog;
 window.HS.persistence = persistence;
 window.HS.parse = parse;
-window.HS.computeOverlayBlocks = computeOverlayBlocks;
+window.HS.filterOverlay = filterOverlay;
 window.HS.translateWarning = translateWarning;
 window.HS.browse = {
   classifyWarnings,
@@ -10060,10 +10060,6 @@ window.HS.edit = {
 // Fire horarium:ready after exposures so the classic controller can
 // subscribe to catalog mutations and render its first Browse frame.
 window.dispatchEvent(new CustomEvent('horarium:ready'));
-// Broadcast that HS is fully ready so the Catalog module can refresh any
-// post-load UI (e.g. if localStorage already had catalog data from a prior
-// session, the effective view is populated now).
-window.dispatchEvent(new CustomEvent('horarium:ready'));
 </script>
 
 <script>
@@ -10077,6 +10073,9 @@ window.dispatchEvent(new CustomEvent('horarium:ready'));
 // it). Distinct from catalog.plans.getActive() which is the *promoted*
 // plan — viewing a candidate doesn't promote it.
 let currentViewPlanId = null;
+let filters = [];
+let editingFilterId = null;
+let filterPlanId = null;
 
 // Native-dialog replacements. All native confirm /
 // alert / prompt have been rewritten to use the custom modal. These
@@ -11212,8 +11211,7 @@ window.addEventListener('horarium:ready', function () {
   if (filterEl) filterEl.addEventListener('change', _schRenderResults);
 
   // Display-mode toggle (code ↔ title) and clear-all button inside
-  // the wanted tree. horarium:ready fires twice during boot — guard
-  // so we only wire each once.
+  // the wanted tree. Guard against accidentally wiring them again.
   const dispBtn = document.getElementById('sch-display-toggle');
   if (dispBtn && !dispBtn._schWired) {
     dispBtn._schWired = true;
@@ -11667,37 +11665,11 @@ function gatherEvents(half) {
 // whitespace. Replaces the old slot-stacked layout where each
 // distinct (start,end) pair claimed an equal-height row regardless
 // of duration.
-// Empty-grid fallback only — used when a grid has no events at all
-// to size the "no classes scheduled yet" placeholder. The real range
-// is derived from events at render time so a schedule with a 21:00
-// class extends through the night naturally and a schedule that
-// stops at noon doesn't waste half the page on empty afternoon.
-const TIMELINE_DEFAULT_START_MIN = 8 * 60 + 30;  // 8:30 AM
-const TIMELINE_DEFAULT_END_MIN   = 19 * 60;       // 7:00 PM
-const TIMELINE_PX_PER_MIN        = 1.1;
-// Minimum visible range so a single morning class doesn't collapse
-// the grid down to one hour of vertical real estate. The timeline
-// extends forward from the earliest class until at least this many
-// minutes are visible.
-const TIMELINE_MIN_RANGE_MIN     = 6 * 60;        // 6 hours
+const TIMELINE_PX_PER_MIN = 1.1;
 
-// Compute the timeline window from a set of events. Returns
-// { startMin, endMin } snapped to whole hours, with no upper cap so
-// late-night classes (21:00, 22:30, etc.) aren't silently clipped.
-// Caller must guarantee `events` is non-empty.
-function _gridTimelineRange(events) {
-  let startMin = events[0].start;
-  let endMin = events[0].end;
-  for (const e of events) {
-    if (e.start < startMin) startMin = e.start;
-    if (e.end   > endMin)   endMin   = e.end;
-  }
-  startMin = Math.floor(startMin / 60) * 60;
-  endMin   = Math.ceil(endMin / 60) * 60;
-  if (endMin - startMin < TIMELINE_MIN_RANGE_MIN) {
-    endMin = startMin + TIMELINE_MIN_RANGE_MIN;
-  }
-  return { startMin, endMin };
+function _gridTimelineRange(events, half) {
+  if (!(window.HS && window.HS.filterOverlay)) return null;
+  return window.HS.filterOverlay.computeTimelineRange(events, filters, half, dayList);
 }
 
 function _gridLayoutDay(events) {
@@ -11733,7 +11705,8 @@ function buildGrid(gridId, half) {
   // friend-band cell on top of the user's own. Non-classmate friend
   // events are kept; lane assignment will split their column.
   const allEvents = gatherEvents(half).filter(e => !(e.friend && e.classmate));
-  const isEmpty = allEvents.length === 0;
+  const range = _gridTimelineRange(allEvents, half);
+  const isEmpty = !range;
   grid.classList.toggle('grid-empty', isEmpty);
 
   // Header row: corner + 5 day heads. Same as the slot-era grid.
@@ -11760,7 +11733,7 @@ function buildGrid(gridId, half) {
   // Timeline range pulled from the actual events — no rigid 7pm cap,
   // no rigid 8:30 floor. Falls back to a 6-hour window if everything
   // sits inside a single morning so the grid doesn't squish down.
-  const { startMin, endMin } = _gridTimelineRange(allEvents);
+  const { startMin, endMin } = range;
   const totalPx = (endMin - startMin) * TIMELINE_PX_PER_MIN;
   const hourPx  = 60 * TIMELINE_PX_PER_MIN;
   grid.style.setProperty('--hour-px', hourPx + 'px');
@@ -11769,6 +11742,8 @@ function buildGrid(gridId, half) {
   // absolutely positioned.
   const gutter = document.createElement('div');
   gutter.className = 'gutter';
+  gutter.dataset.startMinute = startMin;
+  gutter.dataset.endMinute = endMin;
   gutter.style.height = totalPx + 'px';
   for (let m = startMin; m <= endMin; m += 60) {
     const lbl = document.createElement('span');
@@ -11857,7 +11832,7 @@ function buildLegend() {
       if (!p) return;
       const f = p.filters.find(function (x) { return x.id === fid; });
       if (!f) return;
-      window.HS.catalog.plans.updateFilter(p.id, fid, { visible: !f.visible });
+      window.HS.catalog.plans.updateFilter(p.id, fid, { visible: f.visible === false });
     });
   });
   // Wire staged-section clicks. In normal mode → scroll to the
@@ -12032,6 +12007,8 @@ document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal
 
 // render
 function render() {
+  _syncFiltersFromPlan();
+  renderFilterList();
   buildTabs();
   buildOptionDetail();
   buildGrid('grid-a71', 'A71');
@@ -13163,7 +13140,8 @@ buildGrid = function(gridId, half) {
     }
   }
 
-  const isEmpty = events.length === 0;
+  const range = _gridTimelineRange(events, half);
+  const isEmpty = !range;
   grid.classList.toggle('grid-empty', isEmpty);
 
   // Header row
@@ -13192,7 +13170,7 @@ buildGrid = function(gridId, half) {
   // any non-classmate friend events). Late classes extend the grid
   // through the night; light schedules don't reserve afternoon space
   // they don't need.
-  const { startMin, endMin } = _gridTimelineRange(events);
+  const { startMin, endMin } = range;
   const totalPx = (endMin - startMin) * TIMELINE_PX_PER_MIN;
   const hourPx  = 60 * TIMELINE_PX_PER_MIN;
   grid.style.setProperty('--hour-px', hourPx + 'px');
@@ -13200,6 +13178,8 @@ buildGrid = function(gridId, half) {
   // Time gutter
   const gutter = document.createElement('div');
   gutter.className = 'gutter';
+  gutter.dataset.startMinute = startMin;
+  gutter.dataset.endMinute = endMin;
   gutter.style.height = totalPx + 'px';
   for (let m = startMin; m <= endMin; m += 60) {
     const lbl = document.createElement('span');
@@ -13302,12 +13282,13 @@ renderComparison();
 // every render call resyncs it. Form save / delete also writes through
 // to catalog.plans.{addFilter,updateFilter,removeFilter} so the plan
 // is the source of truth and reload restores the per-plan state.
-let filters = [];
-let editingFilterId = null;
-let filterIdCounter = 0;
-
 function _syncFiltersFromPlan() {
   const p = _viewedPlan();
+  const nextPlanId = p ? p.id : null;
+  if (filterPlanId !== nextPlanId) {
+    if (editingFilterId) closeFilterForm();
+    filterPlanId = nextPlanId;
+  }
   if (!p || !Array.isArray(p.filters)) { filters = []; return; }
   // Project plan filters into the legacy shape the existing form / list
   // / overlay code reads. Plan filters carry the canonical id; keep it.
@@ -13336,7 +13317,7 @@ window.addEventListener('horarium:ready', function () {
   _syncFiltersFromPlan();
   if (typeof renderFilterList === 'function') renderFilterList();
   window.HS.catalog.subscribe(function (e) {
-    if (e && e.reason === 'plan_mutation') {
+    if (e) {
       _syncFiltersFromPlan();
       if (typeof renderFilterList === 'function') renderFilterList();
       // Filter overlay re-renders via the catalog subscriber that
@@ -13400,10 +13381,6 @@ function _minToHHMM(m) {
   const h = Math.floor(m/60), mn = m % 60;
   return String(h).padStart(2,'0') + ':' + String(mn).padStart(2,'0');
 }
-function _parseHHMM(s) {
-  const parts = s.split(':').map(Number);
-  return (parts[0] || 0) * 60 + (parts[1] || 0);
-}
 
 function _syncFormUI() {
   // Day chips
@@ -13442,6 +13419,15 @@ function _syncFormUI() {
 
 // Hook up form interactions (once, on load)
 function _initFilterForm() {
+  document.getElementById('filter-list').addEventListener('click', (e) => {
+    const button = e.target.closest('[data-filter-action]');
+    if (!button) return;
+    const f = filters.find((item) => String(item.id) === button.dataset.filterId);
+    if (!f) return;
+    const actions = { toggle: toggleFilterVisible, edit: openFilterForm, delete: deleteFilter };
+    const action = actions[button.dataset.filterAction];
+    if (action) action(f.id);
+  });
   document.querySelectorAll('.day-chip').forEach(el => {
     el.addEventListener('click', () => {
       const d = el.dataset.day;
@@ -13474,8 +13460,9 @@ _initFilterForm();
 function saveFilter() {
   const name = document.getElementById('f-name').value.trim();
   if (!name) { _hsAlert('Please give your filter a name.'); return; }
-  const start = _parseHHMM(document.getElementById('f-start').value);
-  const end = _parseHHMM(document.getElementById('f-end').value);
+  const start = window.HS.mainPlanner.hhmmToMinutes(document.getElementById('f-start').value);
+  const end = window.HS.mainPlanner.hhmmToMinutes(document.getElementById('f-end').value);
+  if (start == null || end == null) { _hsAlert('Enter a valid start and end time.'); return; }
   if (end <= start) { _hsAlert('End time must be after start time.'); return; }
   if (ffDaysSelected.size === 0) { _hsAlert('Select at least one day.'); return; }
 
@@ -13564,13 +13551,13 @@ function renderFilterList() {
     html += '<div class="filter-chip' + (f.visible ? '' : ' hidden-chip') + '">';
     html += '<div class="chip-swatch" style="' + swatchStyle + '"></div>';
     html += '<div class="chip-body">';
-    html += '<div class="chip-name">' + f.name.replace(/</g,'&lt;') + '</div>';
+    html += '<div class="chip-name">' + _escHtml(f.name) + '</div>';
     html += '<div class="chip-meta">' + dayStr + ' · ' + timeStr + ' · ' + sessStr + '</div>';
     html += '</div>';
     html += '<div class="chip-actions">';
-    html += '<button onclick="toggleFilterVisible(' + f.id + ')" title="' + (f.visible ? 'Hide' : 'Show') + ' on grid">' + (f.visible ? '◉' : '○') + '</button>';
-    html += '<button onclick="openFilterForm(' + f.id + ')" title="Edit">✎</button>';
-    html += '<button class="del-btn" onclick="deleteFilter(' + f.id + ')" title="Delete">×</button>';
+    html += '<button type="button" data-filter-action="toggle" data-filter-id="' + _escHtml(f.id) + '" title="' + (f.visible ? 'Hide' : 'Show') + ' on grid">' + (f.visible ? '◉' : '○') + '</button>';
+    html += '<button type="button" data-filter-action="edit" data-filter-id="' + _escHtml(f.id) + '" title="Edit">✎</button>';
+    html += '<button type="button" class="del-btn" data-filter-action="delete" data-filter-id="' + _escHtml(f.id) + '" title="Delete">×</button>';
     html += '</div>';
     html += '</div>';
   });
@@ -13578,121 +13565,52 @@ function renderFilterList() {
 }
 renderFilterList();
 
-// Extend gatherEvents to include filters (builds on existing friend-overlay wrapper)
-// Filter overlay layer (absolute-positioned).
-// Filters don't synthesize grid events anymore — they don't eat a calendar
-// slot. Instead, we append a sibling overlay layer inside the grid that
-// covers the full grid area, then place one translucent rectangle per
-// (filter × applicable day) spanning the filter's time range. The layer
-// sits beneath course cells via z-index so clicks pass through.
-//
-// Time-to-pixel mapping is PROPORTIONAL within the grid's currently-
-// rendered vertical range. We treat the top of the first slot row as
-// minTime and the bottom of the last slot row as maxTime, then linearly
-// interpolate filter.start / filter.end within that range. Filters whose
-// time falls outside the rendered range are clipped to the bounds; a
-// filter wholly outside the rendered range renders nothing.
-
+// Filters sit inside their day column, above course cells, without
+// participating in event lanes. Numeric axis bounds survive hidden tabs,
+// table view, noon crossings, and changes in column width.
 const _buildGridBeforeFilters = buildGrid;
 buildGrid = function(gridId, half) {
+  _syncFiltersFromPlan();
   _buildGridBeforeFilters(gridId, half);
   _renderFilterOverlay(gridId, half);
 };
 
 function _renderFilterOverlay(gridId, half) {
   const grid = document.getElementById(gridId);
-  if (!grid) return;
-
-  // Rebuild from scratch each time.
-  const stale = grid.querySelector(':scope > .filter-overlay-layer');
-  if (stale) stale.remove();
-  if (!filters.some((f) => f.visible)) return;
-
-  // The linear-time grid exposes its axis range via the gutter element
-  // (one per grid). Read its bounding box directly — its top/bottom
-  // align exactly with the start/end of the time range. Day columns
-  // give us the horizontal bounds.
+  if (!grid || !(window.HS && window.HS.filterOverlay)) return;
+  grid.querySelectorAll('.filter-overlay-layer').forEach((layer) => layer.remove());
   const gutter = grid.querySelector(':scope > .gutter');
-  const dayCols = grid.querySelectorAll(':scope > .day-col');
-  if (!gutter || dayCols.length === 0) return;
-  // Read timeline range from the gutter's hour labels — first and
-  // last labels are at the start and end of the timeline. Fall back
-  // to defaults if labels are missing for any reason.
-  const labels = gutter.querySelectorAll('.hour-label');
-  let minTime = TIMELINE_DEFAULT_START_MIN, maxTime = TIMELINE_DEFAULT_END_MIN;
-  if (labels.length >= 2) {
-    // The label text is the formatted hour; recover from offsets:
-    // gutter top corresponds to minTime, bottom to maxTime.
-    // Easier: re-derive from the gutter's height + PX_PER_MIN.
-    const totalMin = parseFloat(gutter.style.height) / TIMELINE_PX_PER_MIN;
-    // Start time = end time - totalMin; end is the last hour label's
-    // implied minute. Just expose start via inline data attribute set
-    // by buildGrid below for robustness — but for now assume the
-    // timeline starts at TIMELINE_DEFAULT_START_MIN unless the grid
-    // had to extend it.
-    // Read the first/last label's `top` to compute start/end exactly.
-    const firstTop = parseFloat(labels[0].style.top) || 0;
-    const lastTop = parseFloat(labels[labels.length - 1].style.top) || 0;
-    // labels are placed at (m - startMin) * PX_PER_MIN; first one's top is 0
-    // → its hour is startMin. Decode label text "9:00" / "8:30" etc.
-    const parseHHMM = (s) => {
-      const m = String(s).match(/^(\d{1,2}):(\d{2})/);
-      return m ? (+m[1]) * 60 + (+m[2]) : null;
-    };
-    const startFromText = parseHHMM(labels[0].textContent);
-    const endFromText = parseHHMM(labels[labels.length - 1].textContent);
-    if (startFromText != null && endFromText != null) {
-      minTime = startFromText;
-      maxTime = endFromText;
-    }
-  }
-  const gridRect = grid.getBoundingClientRect();
-  const gutterRect = gutter.getBoundingClientRect();
-  const gridState = {
-    minTime,
-    maxTime,
-    axisTopPx: gutterRect.top - gridRect.top,
-    axisBottomPx: gutterRect.bottom - gridRect.top,
-    dayBounds: Array.from(dayCols).map((col) => {
-      const r = col.getBoundingClientRect();
-      return { day: col.dataset.day, left: r.left - gridRect.left, width: r.width };
-    }),
+  const dayCols = Array.from(grid.querySelectorAll(':scope > .day-col'));
+  if (!gutter || !dayCols.length) return;
+  const range = {
+    startMin: Number(gutter.dataset.startMinute),
+    endMin: Number(gutter.dataset.endMinute),
     half,
   };
-
-  // Delegate positioning math to the tested pure function in src/ui/.
-  // Falls back to inline computation if the module hasn't finished loading
-  // (unlikely since buildGrid is only called after DOMContentLoaded).
-  const compute = (window.HS && window.HS.computeOverlayBlocks)
-    ? window.HS.computeOverlayBlocks
-    : null;
-  if (!compute) return;
-  const blocks = compute(filters, gridState);
-  if (blocks.length === 0) return;
-
-  const layer = document.createElement('div');
-  layer.className = 'filter-overlay-layer';
-  for (const b of blocks) {
-    const block = document.createElement('div');
-    block.className = 'filter-overlay filter-bg-pat-' + b.pattern;
-    block.style.top = b.top + 'px';
-    block.style.height = b.height + 'px';
-    block.style.left = b.left + 'px';
-    block.style.width = b.width + 'px';
-    block.style.setProperty('--f-color', b.color);
-    block.style.setProperty('--f-color-tint', _tint(b.color));
-    block.style.setProperty('--f-edge', b.color);
-    block.title = 'Filter: ' + b.name;
-    layer.appendChild(block);
+  const blocks = window.HS.filterOverlay.computeColumnOverlayBlocks(
+    filters, range, dayCols.map((col) => col.dataset.day), TIMELINE_PX_PER_MIN,
+  );
+  for (const col of dayCols) {
+    const dayBlocks = blocks.filter((block) => block.day === col.dataset.day);
+    if (!dayBlocks.length) continue;
+    const layer = document.createElement('div');
+    layer.className = 'filter-overlay-layer';
+    for (const b of dayBlocks) {
+      const block = document.createElement('div');
+      block.className = 'filter-overlay filter-bg-pat-' + b.pattern;
+      block.style.top = b.top + 'px';
+      block.style.height = b.height + 'px';
+      block.style.left = '0';
+      block.style.width = '100%';
+      block.style.setProperty('--f-color', b.color);
+      block.style.setProperty('--f-color-tint', _tint(b.color));
+      block.style.setProperty('--f-edge', b.color);
+      block.title = 'Filter: ' + b.name;
+      layer.appendChild(block);
+    }
+    col.appendChild(layer);
   }
-  grid.appendChild(layer);
 }
-
-// Re-render overlay on window resize (day-column widths change with layout).
-window.addEventListener('resize', () => {
-  if (document.getElementById('grid-a71')) _renderFilterOverlay('grid-a71', 'A71');
-  if (document.getElementById('grid-a72')) _renderFilterOverlay('grid-a72', 'A72');
-});
 
 // (buildCourseList wrapper removed in 5a/2 — Cores module deleted, the
 // new picker handles its own filter-clash hints natively via
@@ -14066,6 +13984,8 @@ buildScheduleTable();
 
 const MODULE_DEFS = {
   catalog:  { label: 'Catalog' },
+  'catalog-import': { label: 'Import pack' },
+  'auto-scheduler': { label: 'Auto-scheduler' },
   browse:   { label: 'Browse' },
   plan:     { label: 'Plan' },
   picker:   { label: 'Picker' },
@@ -14076,14 +13996,17 @@ const MODULE_DEFS = {
   edit:     { label: 'Edit' },
 };
 
-let userTabs = [
-  { id: 'main',    label: 'Main',    moduleIds: ['plan', 'picker', 'schedule'] },
-  { id: 'catalog', label: 'Catalog', moduleIds: ['catalog', 'browse'] },
-  { id: 'edit',    label: 'Workshop', moduleIds: ['edit'] },
-  { id: 'compare', label: 'Compare', moduleIds: ['compare'] },
-  { id: 'export',  label: 'Export',  moduleIds: ['export'] },
-  { id: 'manage',  label: 'Manage',  moduleIds: ['manage'] },
-];
+function defaultTabs() {
+  return [
+    { id: 'main',    label: 'Main',    moduleIds: ['plan', 'picker', 'schedule', 'auto-scheduler'] },
+    { id: 'catalog', label: 'Catalog', moduleIds: ['catalog', 'catalog-import', 'browse'] },
+    { id: 'edit',    label: 'Workshop', moduleIds: ['edit'] },
+    { id: 'compare', label: 'Compare', moduleIds: ['compare'] },
+    { id: 'export',  label: 'Export',  moduleIds: ['export'] },
+    { id: 'manage',  label: 'Manage',  moduleIds: ['manage'] },
+  ];
+}
+let userTabs = defaultTabs();
 // Always default to 'main' at parse time — the module script that populates
 // window.HS.persistence / .catalog is deferred, so inspecting them here
 // would always see the stub and always return 'catalog', creating a
@@ -14202,9 +14125,11 @@ function switchTab(tabId) {
   const tab = userTabs.find(t => t.id === tabId);
   if (!tab) return;
   requestAnimationFrame(() => {
+    if (tab.moduleIds.includes('plan')) { buildTabs(); buildOptionDetail(); }
     if (tab.moduleIds.includes('schedule')) {
       if (document.getElementById('grid-a71')) buildGrid('grid-a71', 'A71');
       if (document.getElementById('grid-a72')) buildGrid('grid-a72', 'A72');
+      buildLegend();
       if (currentView === 'table') buildScheduleTable();
       if (typeof _positionSlider === 'function') _positionSlider();
     }
@@ -14269,10 +14194,7 @@ function applyAllTabOrders() {
 }
 
 function addNewTab(autoOpen) {
-  // Returns nothing synchronously now (modal is async). Callers that
-  // need the new tab id should chain via .then on the promise; current
-  // call sites all just trigger the action and don't read the return.
-  _hsPrompt('', 'Tab ' + (userTabs.length + 1), {
+  return _hsPrompt('', 'Tab ' + (userTabs.length + 1), {
     title: 'New tab',
     confirmLabel: 'Create',
   }).then(function (name) {
@@ -14283,8 +14205,8 @@ function addNewTab(autoOpen) {
     renderNav();
     updateEmptyStates();
     if (autoOpen !== false) switchTab(id);
+    return id;
   });
-  return null;
 }
 
 function deleteTab(tabId) {
@@ -14322,15 +14244,15 @@ function _deleteTabConfirmed(tab, remaining) {
 
   // Remove from state
   userTabs = remaining;
-  if (currentTab === tab.id) currentTab = target.id;
 
   // Remove the pane div
-  const pane = document.querySelector('[data-tab-id="' + tab.id + '"]');
+  const pane = document.querySelector('.tab-pane[data-tab-id="' + tab.id + '"]');
   if (pane) pane.remove();
 
   renderNav();
   updateEmptyStates();
   switchTab(target.id);
+  renderConfigBoard();
 }
 
 function renameTab(tabId, btnEl) {
@@ -14392,8 +14314,9 @@ function openModuleMenu(event, moduleId) {
     });
   });
   menu.querySelector('.mm-new').addEventListener('click', () => {
-    const newId = addNewTab(false);
-    if (newId) moveModule(moduleId, newId);
+    addNewTab(false).then(function (newId) {
+      if (newId) moveModule(moduleId, newId);
+    });
     closeModuleMenus();
   });
 
@@ -14642,35 +14565,25 @@ function configDeleteTab(tabId) {
 }
 
 function configResetDefault() {
-  _hsConfirm('Main will contain Plan + Picker + Schedule.', {
+  _hsConfirm('Restore all six default tabs and return their modules to the original positions.', {
     title: 'Reset layout?',
     confirmLabel: 'Reset',
   }).then(function (ok) {
     if (!ok) return;
-    const defaults = [
-      { id: 'main',    label: 'Main',    moduleIds: ['plan', 'picker', 'schedule'] },
-      { id: 'compare', label: 'Compare', moduleIds: ['compare'] },
-      { id: 'export',  label: 'Export',  moduleIds: ['export'] },
-    ];
-    const existingPanes = Array.from(document.querySelectorAll('[data-tab-id]'));
-    existingPanes.forEach(pane => {
-      const tid = pane.dataset.tabId;
-      if (!defaults.find(d => d.id === tid)) pane.remove();
-    });
+    const defaults = defaultTabs();
+    const existingPanes = Array.from(document.querySelectorAll('.tab-pane[data-tab-id]'));
+    // Move modules out of custom panes before removing those panes.
     userTabs = defaults;
-    currentTab = 'main';
-    defaults.forEach(tab => {
-      const pane = ensureTabPane(tab.id);
-      tab.moduleIds.forEach(mid => {
-        const el = document.querySelector('[data-module-id="' + mid + '"]');
-        if (el && pane) pane.appendChild(el);
-      });
+    applyAllTabOrders();
+    existingPanes.forEach(pane => {
+      if (!defaults.some(tab => tab.id === pane.dataset.tabId)) pane.remove();
     });
     renderNav();
     updateEmptyStates();
     renderConfigBoard();
-    document.querySelectorAll('.tab-pane').forEach(p => p.classList.toggle('active', p.dataset.tabId === 'main'));
-    document.querySelectorAll('.fn-item').forEach(el => el.classList.toggle('active', el.dataset.tabId === 'main'));
+    currentTab = null;
+    switchTab('main');
+    render();
   });
 }
 
@@ -14688,6 +14601,8 @@ updateEmptyStates();
 // drawer toggle
 let drawerOpen = false;
 function toggleDrawer() {
+  _syncFiltersFromPlan();
+  renderFilterList();
   drawerOpen = !drawerOpen;
   const drawer = document.getElementById('filter-drawer');
   const backdrop = document.getElementById('drawer-backdrop');
@@ -16817,9 +16732,11 @@ function _bootPicker() {
       // Index needs rebuild on data mutations (ingest / setEdit /
       // import / hydrate). Plan mutations don't change instructors.
       if (e && e.reason !== 'plan_mutation') _pkInstructorIndexDirty = true;
-      if (currentTab === 'main') render();
+      render();
     });
   }
+  // Replace the initial placeholder plan strip and calendar after modules load.
+  render();
 }
 window.addEventListener('horarium:ready', _bootPicker);
 
@@ -18118,7 +18035,7 @@ function _catUpdateEmptyState() {
       <button class="config-add" onclick="configAddTab()">
         <span class="icon">⊕</span> Add new tab
       </button>
-      <button class="config-reset" onclick="configResetDefault()" title="Restore the default 3-tab layout">Reset to default</button>
+      <button class="config-reset" onclick="configResetDefault()" title="Restore the default tabs and modules">Reset to default</button>
     </div>
   </div>
 </div>

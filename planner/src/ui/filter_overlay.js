@@ -12,6 +12,43 @@
 //   - filters that apply to days the grid doesn't show produce no block
 //     for those days
 
+const WEEKDAYS = ["M", "T", "W", "Th", "F"];
+
+export function visibleFiltersForHalf(filters, half, days = WEEKDAYS) {
+  return (filters || []).filter((f) => f && f.visible !== false
+    && (!f.session || f.session === "AD" || f.session === half)
+    && Number.isFinite(f.start) && Number.isFinite(f.end) && f.end > f.start
+    && (f.days || []).some((day) => days.includes(day)));
+}
+
+// Personal blocks establish the axis too, even before any course is staged.
+// Keep times numeric throughout; display labels deliberately omit AM/PM.
+export function computeTimelineRange(events, filters, half, days = WEEKDAYS) {
+  const ranges = (events || []).concat(visibleFiltersForHalf(filters, half, days))
+    .filter((e) => Number.isFinite(e.start) && Number.isFinite(e.end) && e.end > e.start);
+  if (!ranges.length) return null;
+  const startMin = Math.floor(Math.min(...ranges.map((e) => e.start)) / 60) * 60;
+  const endMin = Math.max(
+    Math.ceil(Math.max(...ranges.map((e) => e.end)) / 60) * 60,
+    startMin + 6 * 60,
+  );
+  return { startMin, endMin };
+}
+
+// Column-local coordinates need no DOM measurements. This works while the
+// calendar is hidden and automatically follows column widths on resize.
+export function computeColumnOverlayBlocks(filters, range, days, pixelsPerMinute) {
+  if (!range) return [];
+  return computeOverlayBlocks(filters, {
+    minTime: range.startMin,
+    maxTime: range.endMin,
+    axisTopPx: 0,
+    axisBottomPx: (range.endMin - range.startMin) * pixelsPerMinute,
+    dayBounds: days.map((day) => ({ day, left: 0, width: 100 })),
+    half: range.half,
+  });
+}
+
 /**
  * @typedef {Object} Filter
  * @property {string|number} id
@@ -66,8 +103,9 @@ export function computeOverlayBlocks(filters, gridState) {
   if (!isFinite(axisHeightPx) || axisHeightPx <= 0) return out;
 
   for (const f of filters) {
-    if (!f || !f.visible) continue;
-    if (f.session !== "AD" && f.session !== half) continue;
+    if (!f || f.visible === false) continue;
+    if (f.session && f.session !== "AD" && f.session !== half) continue;
+    if (!Number.isFinite(f.start) || !Number.isFinite(f.end)) continue;
     // Clip to grid time window.
     const clippedStart = Math.max(f.start, minTime);
     const clippedEnd = Math.min(f.end, maxTime);

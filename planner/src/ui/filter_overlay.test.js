@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { computeOverlayBlocks } from "./filter_overlay.js";
+import { computeOverlayBlocks, computeTimelineRange, computeColumnOverlayBlocks } from "./filter_overlay.js";
 
 // Baseline grid state used in most cases: 8am–6pm axis (600 minutes),
 // 1000px vertical span starting at y=30, five-day M–F layout with 100px
@@ -173,5 +173,75 @@ describe("computeOverlayBlocks — multiple overlapping filters", () => {
     expect(blocks[0].pattern).toBe("solid");
     expect(blocks[1].filterId).toBe(2);
     expect(blocks[1].pattern).toBe("dots");
+  });
+});
+
+describe("personal filters on the linear calendar", () => {
+  it("builds a timeline when there are filters but no staged classes", () => {
+    expect(computeTimelineRange([], [filter({ start: 720, end: 780 })], "A71"))
+      .toEqual({ startMin: 720, endMin: 1080 });
+  });
+
+  it("extends the course timeline to include early and late personal blocks", () => {
+    const range = computeTimelineRange([{ start: 600, end: 660 }], [
+      filter({ start: 390, end: 420 }),
+      filter({ start: 1230, end: 1305 }),
+    ], "A71");
+    expect(range).toEqual({ startMin: 360, endMin: 1320 });
+  });
+
+  it("keeps an empty calendar when filters are hidden or in the other half", () => {
+    expect(computeTimelineRange([], [
+      filter({ visible: false }),
+      filter({ session: "A72" }),
+      filter({ days: ["Sat"] }),
+    ], "A71")).toBeNull();
+  });
+
+  it("does not stretch one half for filters that only apply to the other", () => {
+    expect(computeTimelineRange([{ start: 540, end: 600 }], [
+      filter({ start: 1200, end: 1260, session: "A72" }),
+    ], "A71")).toEqual({ startMin: 540, endMin: 900 });
+  });
+
+  it("preserves valid course times when imported filters have missing times", () => {
+    expect(computeTimelineRange([{ start: 540, end: 600 }], [
+      filter({ start: null }), filter({ end: NaN }), filter({ start: 800, end: 700 }),
+    ], "A71")).toEqual({ startMin: 540, endMin: 900 });
+  });
+
+  it("positions lunch correctly across noon, without decoding 12-hour labels", () => {
+    const blocks = computeColumnOverlayBlocks(
+      [filter({ start: 720, end: 780, days: ["M"] })],
+      { startMin: 540, endMin: 900, half: "A71" }, ["M", "T"], 1.1,
+    );
+    expect(blocks).toHaveLength(1);
+    expect(blocks[0].top).toBeCloseTo(198);
+    expect(blocks[0].height).toBeCloseTo(66);
+    expect(blocks[0].left).toBe(0);
+    expect(blocks[0].width).toBe(100);
+  });
+
+  it("positions evening blocks with numeric 24-hour coordinates", () => {
+    const blocks = computeColumnOverlayBlocks(
+      [filter({ start: 1230, end: 1290, days: ["Th"] })],
+      { startMin: 1080, endMin: 1440, half: "A72" }, ["M", "Th"], 1.1,
+    );
+    expect(blocks).toHaveLength(1);
+    expect(blocks[0].top).toBeCloseTo(165);
+    expect(blocks[0].height).toBeCloseTo(66);
+  });
+
+  it("supports saved filters without explicit visibility or session defaults", () => {
+    const f = filter({ start: 720, end: 780, visible: undefined, session: undefined });
+    const range = computeTimelineRange([], [f], "A72");
+    expect(range).not.toBeNull();
+    expect(computeColumnOverlayBlocks([f], { ...range, half: "A72" }, ["M"], 1.1))
+      .toHaveLength(1);
+  });
+
+  it("does not emit invalid rectangles for malformed imported filter times", () => {
+    expect(computeOverlayBlocks([filter({ start: null }), filter({ end: NaN })], baselineGrid))
+      .toEqual([]);
   });
 });
